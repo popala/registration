@@ -47,6 +47,38 @@ namespace Rejestracja
             }
         }
 
+        public static AgeGroup getOlderAgeGroup(String ageGroupName) {
+            
+            AgeGroup ret = null;
+
+            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using (SQLiteCommand cm = new SQLiteCommand(
+                @"SELECT a.Id, a.Name, a.Age, (SELECT MAX(Age) AS Age FROM AgeGroup WHERE Age < a.Age) AS MinAge
+	                FROM AgeGroup a
+	                JOIN (
+		                SELECT MIN(Age) AS Age 
+			                FROM AgeGroup 
+			                WHERE Age > (SELECT Age FROM AgeGroup WHERE Name = @AgeGroupName)
+		                ) m ON a.Age = m.Age", cn))
+            {
+                cn.Open();
+                cm.Parameters.Add("@AgeGroupName", DbType.String).Value = ageGroupName;
+
+                using (SQLiteDataReader dr = cm.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        int bottomAge = 0;
+                        if (!dr.IsDBNull(dr.GetOrdinal("MinAge"))) {
+                            bottomAge = dr.GetInt32(dr.GetOrdinal("MinAge")) + 1;
+                        }
+                        ret = new AgeGroup(dr.GetInt64(0), dr.GetString(1), dr.GetInt32(2), bottomAge);
+                    }
+                }
+            }
+            return ret;
+        }
+
         public static IEnumerable<AgeGroup> getList()
         {
             List<AgeGroup> ret = new List<AgeGroup>();
@@ -125,6 +157,9 @@ namespace Rejestracja
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
+                cm.ExecuteNonQuery();
+
+                cm.CommandText = "CREATE UNIQUE INDEX Idx_AgeGroup_Name ON AgeGroup(Name)";
                 cm.ExecuteNonQuery();
             }
 

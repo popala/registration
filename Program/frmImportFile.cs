@@ -82,13 +82,8 @@ namespace Rejestracja {
             lvFilePreview.Enabled = true;
             chkHasHeaders.Enabled = true;
             btnImport.Enabled = true;
-
             cboAgeGroup.SelectedIndex = 0;
-
-            //cboModelClass2.Enabled = false;
-            //cboModelClass3.Enabled = false;
-
-            tabControl1.SelectedIndex = 0;
+            tabControl1.SelectedIndex = 1;
         }
 
         private void frmImportFile_Load(object sender, EventArgs e) {

@@ -346,33 +346,64 @@ namespace Rejestracja
             }
         }
 
-        public static IEnumerable<String[]> getListForMergingCategories() {
-            
-            String query = @"SELECT r.AgeGroup, r.ModelClass, r.ModelCategory, r.ModelCategoryId, COUNT(r.EntryId) AS EntryCount, CASE m.DisplayOrder WHEN NULL THEN 0 ELSE m.DisplayOrder END AS DisplayOrder
-                FROM Registration r
-	                LEFT JOIN ModelCategory m ON m.Id = r.ModelCategoryId
-	                LEFT JOIN AgeGroup ag ON r.AgeGroup = ag.Name
-                GROUP BY r.AgeGroup, r.ModelClass, r.ModelCategoryId
-                ORDER BY m.DisplayOrder, r.ModelCategory, ag.Age, r.ModelClass";
+        public static IEnumerable<String[]> getListForMergingCategories(int maxEntryCount) {
+
+            String query =
+                @"SELECT r.AgeGroup, r.ModelClass, r.ModelCategory, COALESCE(r.ModelCategoryId, -1) AS ModelCategoryId, COUNT(r.EntryId) AS EntryCount, CASE m.DisplayOrder WHEN NULL THEN 0 ELSE m.DisplayOrder END AS DisplayOrder
+                    FROM Registration r
+	                    LEFT JOIN ModelCategory m ON m.Id = r.ModelCategoryId
+	                    LEFT JOIN AgeGroup ag ON r.AgeGroup = ag.Name
+	                    JOIN (
+		                    SELECT DISTINCT ModelCategoryId
+			                    FROM (
+				                    SELECT ModelCategoryId, AgeGroup, COUNT(EntryId) AS EntryCount 
+					                    FROM Registration 
+					                    WHERE ModelCategoryId > -1
+					                    GROUP BY ModelCategoryId, AgeGroup
+					                    HAVING EntryCount < @MaxCount)
+			                    ) sm ON r.ModelCategoryId = sm.ModelCategoryId
+                    GROUP BY r.AgeGroup, r.ModelClass, r.ModelCategoryId
+                    ORDER BY m.DisplayOrder, r.ModelCategory, ag.Age, r.ModelClass";
+
+            if (maxEntryCount < 1) {
+                yield break;
+            }
             
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(query, cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
+                cm.Parameters.Add("@MaxCount", System.Data.DbType.Int32).Value = maxEntryCount;
 
                 using (SQLiteDataReader dr = cm.ExecuteReader()) {
                     while (dr.Read()) {
-                        yield return
-                            new String[] 
-                                {
-                                    dr["AgeGroup"].ToString(),
-                                    dr["ModelClass"].ToString(),
-                                    dr["ModelCategory"].ToString(),
-                                    dr["ModelCategoryId"].ToString(),
-                                    dr["EntryCount"].ToString()
-                                };
+                        yield return new String[] {
+                            dr["AgeGroup"].ToString(),
+                            dr["ModelClass"].ToString(),
+                            dr["ModelCategory"].ToString(),
+                            dr["ModelCategoryId"].ToString(),
+                            dr["EntryCount"].ToString()
+                        };
                     }
                 }
+            }
+        }
+
+        public static void mergeAgeGroupsInCategory(long modelCategoryId, String sourceAgeGroup, String targetAgeGroup) {
+            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using (SQLiteCommand cm = new SQLiteCommand(
+                    @"DELETE FROM Results WHERE EntryId IN(SELECT EntryId FROM Registration WHERE AgeGroup = @SourceAgeGroup AND ModelCategoryId = @ModelCategoryId) AND AwardId IS NULL", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                cm.Parameters.Add("@SourceAgeGroup", System.Data.DbType.String, 64).Value = sourceAgeGroup;
+                cm.Parameters.Add("@TargetAgeGroup", System.Data.DbType.String, 64).Value = targetAgeGroup;
+                cm.Parameters.Add("@ModelCategoryId", System.Data.DbType.Int64).Value = modelCategoryId;
+
+                cm.ExecuteNonQuery();
+
+                cm.CommandText = "UPDATE Registration SET AgeGroup = @TargetAgeGroup WHERE AgeGroup = @SourceAgeGroup AND ModelCategoryId = @ModelCategoryId";
+                cm.ExecuteNonQuery();
             }
         }
         

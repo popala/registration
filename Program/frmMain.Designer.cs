@@ -296,6 +296,7 @@
             this.mnuJMergeCategories.Name = "mnuJMergeCategories";
             this.mnuJMergeCategories.Size = new System.Drawing.Size(185, 22);
             this.mnuJMergeCategories.Text = "Łączenie Kategorii";
+            this.mnuJMergeCategories.Click += new System.EventHandler(this.mnuJMergeCategories_Click);
             // 
             // mnuJJudgingForms
             // 
@@ -596,9 +597,8 @@
             this.lvEntries.UseCompatibleStateImageBehavior = false;
             this.lvEntries.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvEntries_ColumnClick);
             this.lvEntries.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvEntries_ItemChecked);
-            //this.lvEntries.DoubleClick += new System.EventHandler(this.lvEntries_DoubleClick);
-            this.lvEntries.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvEntries_MouseDoubleClick);
             this.lvEntries.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvEntries_KeyDown);
+            this.lvEntries.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvEntries_MouseDoubleClick);
             this.lvEntries.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lvEntries_MouseDown);
             // 
             // tabControl1

@@ -157,7 +157,7 @@ namespace Rejestracja {
         public static IEnumerable<WinningEntry> getCategoryResults() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT r.ResultId, e.FirstName, e.LastName, e.AgeGroup, e.ModelName, e.ModelClass, e.ModelCategory, r.Place, ag.Age,
+                @"SELECT r.ResultId, e.FirstName, e.LastName, e.AgeGroup, e.EntryId, e.ModelName, e.ModelClass, e.ModelCategory, r.Place, ag.Age,
                     CASE WHEN mc.DisplayOrder IS NULL THEN -1 ELSE mc.DisplayOrder END AS DisplayOrder
                 FROM Results r 
                     JOIN Registration e ON r.EntryId = e.EntryId
@@ -176,6 +176,7 @@ namespace Rejestracja {
                                 dr["FirstName"].ToString(),
                                 dr["LastName"].ToString(),
                                 dr["AgeGroup"].ToString(),
+                                dr.GetInt64(dr.GetOrdinal("EntryId")),
                                 dr["ModelName"].ToString(),
                                 dr["ModelClass"].ToString(),
                                 dr["ModelCategory"].ToString(),
@@ -218,7 +219,7 @@ namespace Rejestracja {
         public static IEnumerable<WinningEntry> getAwardResults() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT r.ResultId, e.FirstName, e.LastName, e.AgeGroup, e.ModelName, e.ModelClass, e.ModelCategory, a.Id AS AwardId, a.Title
+                @"SELECT r.ResultId, e.FirstName, e.LastName, e.AgeGroup, e.EntryId, e.ModelName, e.ModelClass, e.ModelCategory, a.Id AS AwardId, a.Title
                     FROM Results r
                     JOIN Registration e ON r.EntryId = e.EntryId
                     JOIN SpecialAwards a ON r.AwardId = a.Id
@@ -235,6 +236,7 @@ namespace Rejestracja {
                                 dr["FirstName"].ToString(),
                                 dr["LastName"].ToString(),
                                 dr["AgeGroup"].ToString(),
+                                dr.GetInt64(dr.GetOrdinal("EntryId")),
                                 dr["ModelName"].ToString(),
                                 dr["ModelClass"].ToString(),
                                 dr["ModelCategory"].ToString(),

@@ -210,7 +210,7 @@ namespace Rejestracja
                 cm.ExecuteNonQuery();
             }
 
-            String[] defaults = new String[] { "1:9", "1:16", "1:25", "1:33", "1:43", "1:48", "1:50", "1:100", "1:150", "1:200", "1:250", "1:300", "Inna" };
+            String[] defaults = new String[] { "1:9", "1:16", "1:25", "1:33", "1:43", "1:48", "1:50", "1:100", "1:150", "1:200", "1:250", "1:300", "1:400", "1:500", "Inna" };
             int displayOrder = 0;
             foreach (String scale in defaults) {
                 add(scale, displayOrder);

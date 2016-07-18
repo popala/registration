@@ -30,7 +30,6 @@ namespace Rejestracja
                 cm.ExecuteNonQuery();
 
                 cm.CommandText = @"INSERT INTO Options(Name, Value) VALUES(@Name, @Value)";
-                //cm.Parameters.Add("@Name", System.Data.DbType.String).Value = name;
                 cm.Parameters.Add("@Value", System.Data.DbType.String).Value = value;
                 cm.ExecuteNonQuery();
             }

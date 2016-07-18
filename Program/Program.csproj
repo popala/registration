@@ -95,6 +95,12 @@
     <Compile Include="frmImportFile.Designer.cs">
       <DependentUpon>frmImportFile.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmMergeCategory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMergeCategory.Designer.cs">
+      <DependentUpon>frmMergeCategory.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -144,6 +150,9 @@
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmMergeCategory.resx">
+      <DependentUpon>frmMergeCategory.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmRegistrationEntry.resx">
       <DependentUpon>frmRegistrationEntry.cs</DependentUpon>
     </EmbeddedResource>
@@ -167,23 +176,23 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Resource Include="templates\dyplomKategoria.docx">
+    <Content Include="templates\dyplomKategoria.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="templates\dyplomNagroda.docx">
+    </Content>
+    <Content Include="templates\dyplomNagroda.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="templates\kartaModelu.docx">
+    </Content>
+    <Content Include="templates\kartaModelu.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="templates\kartaSedziowania.docx">
+    </Content>
+    <Content Include="templates\kartaSedziowania.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="templates\wyniki.html">
+    <Content Include="templates\wyniki.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </Content>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -65,7 +65,7 @@ namespace Rejestracja {
                         AgeGroup TEXT NOT NULL, 
                         ModelName TEXT NOT NULL,
                         ModelCategory TEXT NOT NULL,
-                        ModelCategoryId NUMERIC NOT NULL DEFAULT 0,
+                        ModelCategoryId NUMERIC NOT NULL DEFAULT -1,
                         ModelScale TEXT NOT NULL,
                         ModelPublisher TEXT,
                         ModelClass TEXT NOT NULL,
@@ -77,6 +77,8 @@ namespace Rejestracja {
                 cm.CommandText = "CREATE INDEX Idx_Reg_Email ON Registration(Email)";
                 cm.ExecuteNonQuery();
                 cm.CommandText = "CREATE INDEX Idx_Reg_ModelName ON Registration(ModelName)";
+                cm.ExecuteNonQuery();
+                cm.CommandText = "CREATE INDEX Idx_Reg_CatId ON Registration(ModelCategoryId)";
                 cm.ExecuteNonQuery();
 
                 if (createAllTables) {

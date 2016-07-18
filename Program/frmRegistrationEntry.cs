@@ -163,24 +163,6 @@ namespace Rejestracja
                 lblErrors.Text += "Kategoria modelu nie znaleziona w konfiguracji\n";
                 lblErrors.Visible = true;
             }
-
-            ////Check if we're in Open category
-            //if(Regex.IsMatch(cboModelCategory.Text, @"\([Ww].{1,}\)"))
-            //{
-            //    if(cboModelClass.SelectedIndex != 1)
-            //    {
-            //        lblErrors.Text += "Ustaw klasę modelu na \"Open\" albo zmień kategorię.\n";
-            //        lblErrors.Visible = true;
-            //    }
-            //}
-            //else
-            //{
-            //    if (cboModelClass.SelectedIndex != 0)
-            //    {
-            //        lblErrors.Text += "Ustaw klasę modelu na \"Standard\" albo zmień kategorię.\n";
-            //        lblErrors.Visible = true;
-            //    }
-            //}
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -214,6 +196,7 @@ namespace Rejestracja
                         int.Parse(cboYearOfBirth.Text));
 
                 entry.update();
+                this.Close();
             }
             catch(Exception err)
             {
@@ -221,8 +204,8 @@ namespace Rejestracja
                 MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            btnSave.Enabled = true;
-            validateExistingEntry();
+            //btnSave.Enabled = true;
+            //validateExistingEntry();
         }
 
         private bool validateEntry()

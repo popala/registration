@@ -15,8 +15,15 @@ namespace Rejestracja
     {
         public void generateDiploma(String templateFile, String outFile, WinningEntry entry)
         {
+            String documentHeader = Options.get("DocumentHeader");
+
             using (DocX template = DocX.Load(templateFile))
             {
+                template.ReplaceText("[Naglowek]", documentHeader, 
+                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                template.ReplaceText("[Naglowek!]", documentHeader.ToUpper(),
+                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+
                 template.ReplaceText("[Imie]", entry.firstName,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[Imię]", entry.firstName,
@@ -51,9 +58,6 @@ namespace Rejestracja
 
         public void generateRegistrationCard(String templateFile, String outFile, RegistrationEntry entry)
         {
-            //LogWriter.info(String.Format("Template: {0}", templateFile));
-            //LogWriter.info(String.Format("Output: {0}", outFile));
-
             using (DocX template = DocX.Load(templateFile))
             {
                 template.ReplaceText("[DataRejestracji]", entry.timeStamp.ToString(Resources.DateFormat),
@@ -210,7 +214,7 @@ namespace Rejestracja
             //DataSource ds = new DataSource();
             String htmlTemplate;
 
-            String[] headers = ConfigurationManager.AppSettings["nagłówkiDokumentWyników"].Split(',');
+            String[] headers = "L.p.,Imię i Nazwisko,Nr i Nazwa Modelu,MIEJSCE".Split(',');
 
             String ageGroup = null;
             String modelClass = null;
@@ -269,9 +273,9 @@ namespace Rejestracja
                     results.AppendFormat(@"<h2>{0}</h2>", entry.modelClass).AppendLine();
                     results.AppendLine(@"<table class=""category"">");
                     //Insert headers
-                    results.AppendFormat(@"<tr><th class=""lp"">{0}</th><th class=""name"">{1}</th><th class=""modelName"">{2}</th><th class=""place"">{3}</th></tr>", headers).AppendLine();
+                    results.AppendFormat(@"<tr><th class=""lp"">{0}</th><th class=""name"">{1}</th><th class=""modelName"" colspan=""2"">{2}</th><th class=""place"">{3}</th></tr>", headers).AppendLine();
                 }
-                results.AppendFormat(@"<tr><td class=""lp"">{0}</td><td class=""name"">{1} {2}</td><td class=""modelName"">{3}</td><td class=""place"">{4}</td></tr>", lpCounter, entry.firstName, entry.lastName, entry.modelName, entry.place).AppendLine();
+                results.AppendFormat(@"<tr><td class=""lp"">{0}</td><td class=""name"">{1} {2}</td><td>{3}</td><td class=""modelName"">{4}</td><td class=""place"">{5}</td></tr>", lpCounter, entry.firstName, entry.lastName, entry.entryId, entry.modelName, entry.place).AppendLine();
                 lpCounter++;
             }
             if(ageGroup != null)
@@ -297,9 +301,9 @@ namespace Rejestracja
                     {
                         results.AppendLine(@"</table><br/><br/>");
                     }
-                    results.AppendFormat(@"<table class=""award""><tr><th colspan=""2"">{0}</th></tr>", entry.awardTitle).AppendLine();
+                    results.AppendFormat(@"<table class=""award""><tr><th colspan=""3"">{0}</th></tr>", entry.awardTitle).AppendLine();
                 }
-                results.AppendFormat(@"<tr><td class=""name"">{0} {1}</td><td class=""modelName"">{2}</td></tr>", entry.firstName, entry.lastName, entry.modelName).AppendLine();
+                results.AppendFormat(@"<tr><td class=""name"">{0} {1}</td><td>{2}</td><td class=""modelName"">{3}</td></tr>", entry.firstName, entry.lastName, entry.entryId, entry.modelName).AppendLine();
                 awardId = entry.awardId.Value;
             }
             if (awardId > -1)

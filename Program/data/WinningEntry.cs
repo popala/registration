@@ -8,6 +8,7 @@ namespace Rejestracja
         public String firstName;
         public String lastName;
         public String ageGroup;
+        public long entryId;
         public String modelName;
         public String modelClass;
         public String modelCategory;
@@ -16,24 +17,26 @@ namespace Rejestracja
         public String awardTitle;
         public int? place;
 
-        public WinningEntry(long resultId, String firstName, String lastName, String ageGroup, String modelName, String modelClass, String modelCategory, int place)
+        public WinningEntry(long resultId, String firstName, String lastName, String ageGroup, long entryId, String modelName, String modelClass, String modelCategory, int place)
         {
             this.resultId = resultId;
             this.firstName = firstName;
             this.lastName = lastName;
             this.ageGroup = ageGroup;
+            this.entryId = entryId;
             this.modelName = modelName;
             this.modelClass = modelClass;
             this.modelCategory = modelCategory;
             this.place = place;
         }
 
-        public WinningEntry(long resultId, String firstName, String lastName, String ageGroup, String modelName, String modelClass, String modelCategory, long awardId, String awardTitle)
+        public WinningEntry(long resultId, String firstName, String lastName, String ageGroup, long entryId, String modelName, String modelClass, String modelCategory, long awardId, String awardTitle)
         {
             this.resultId = resultId;
             this.firstName = firstName;
             this.lastName = lastName;
             this.ageGroup = ageGroup;
+            this.entryId = entryId;
             this.modelName = modelName;
             this.modelClass = modelClass;
             this.modelCategory = modelCategory;

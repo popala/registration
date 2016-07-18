@@ -114,10 +114,6 @@ namespace Rejestracja {
 
             loadRegistrationList(null);
 
-            foreach (ColumnHeader header in lvEntries.Columns) {
-                header.Width = -2;
-            }
-
             mnuRPrint.Enabled = false;
 
             //RESULT ENTRY PANEL
@@ -133,10 +129,6 @@ namespace Rejestracja {
             }
 
             loadResultList();
-
-            foreach (ColumnHeader header in lvResults.Columns) {
-                header.Width = -2;
-            }
 
             //stats
             lvStats.View = View.Details;
@@ -247,6 +239,10 @@ namespace Rejestracja {
                     lvEntries.Items.Add(new ListViewItem(entry));
                 }
 
+                foreach (ColumnHeader header in lvEntries.Columns) {
+                    header.Width = -2;
+                }
+
                 highlightInvalidRegistrationEntries();
             }
             catch (Exception err) {
@@ -266,7 +262,6 @@ namespace Rejestracja {
 
                 List<string[]> entries;
 
-                //lvEntries.CheckBoxes = false;
                 lvEntries.Items.Clear();
                 lvEntries.Groups.Clear();
 
@@ -287,6 +282,10 @@ namespace Rejestracja {
                         lvEntries.Groups.Add(group);
                     }
                     lvEntries.Items.Add(new ListViewItem(entry, group));
+                }
+
+                foreach (ColumnHeader header in lvEntries.Columns) {
+                    header.Width = -2;
                 }
 
                 highlightInvalidRegistrationEntries();
@@ -356,17 +355,11 @@ namespace Rejestracja {
             switch (e.KeyCode) {
                 case Keys.Enter:
                     loadRegistrationList(txtFilter.Text);
-                    foreach (ColumnHeader header in lvEntries.Columns) {
-                        header.Width = -2;
-                    }
                     break;
 
                 case Keys.Escape:
                     txtFilter.Text = "";
                     loadRegistrationList(null);
-                    foreach (ColumnHeader header in lvEntries.Columns) {
-                        header.Width = -2;
-                    }
                     break;
 
                 default:
@@ -757,7 +750,6 @@ namespace Rejestracja {
                 lvStats.Columns[0].Width = 0;
                 lvStats.Columns[1].Width = -2;
                 lvStats.Columns[2].Width = -2;
-
             }
             finally {
                 lvStats.EndUpdate();
@@ -821,9 +813,6 @@ namespace Rejestracja {
         private void btnClearSearch_Click(object sender, EventArgs e) {
             txtFilter.Text = "";
             loadRegistrationList(null);
-            foreach (ColumnHeader header in lvEntries.Columns) {
-                header.Width = -2;
-            }
         }
 
         private void mnuFNewDataFile_Click(object sender, EventArgs e) {
@@ -927,6 +916,7 @@ namespace Rejestracja {
                     }
                     incrementProgressBar();
                 }
+                Process.Start(outputDirectory);
             }
             catch (Exception err) {
                 LogWriter.error(err);
@@ -988,6 +978,7 @@ namespace Rejestracja {
                     }
                     incrementProgressBar();
                 }
+                Process.Start(outputDirectory);
             }
             catch (Exception err) {
                 LogWriter.error(err);
@@ -1002,6 +993,15 @@ namespace Rejestracja {
                 timer.Tick += new EventHandler(this.statusTextTimer_Tick);
                 timer.Start();
             }
+        }
+
+        private void mnuJMergeCategories_Click(object sender, EventArgs e) {
+            frmMergeCategory f = new frmMergeCategory();
+            f.StartPosition = FormStartPosition.CenterParent;
+            f.ShowDialog(this);
+            loadRegistrationList(txtFilter.Text);
+            loadResultList();
+            loadStats();
         }
     }
 }
