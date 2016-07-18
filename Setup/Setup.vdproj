@@ -564,9 +564,9 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Rejestracja"
+        "ProductName" = "8:Rejestrator Oszołomów"
         "ProductCode" = "8:{A0B1687D-ECC1-475F-AF8A-B3A1E0658633}"
-        "PackageCode" = "8:{6E358439-F5AE-40AC-A0E1-4C02F1CAA9A0}"
+        "PackageCode" = "8:{F7FBBD99-F3D9-47CC-B6D1-38029B852DDB}"
         "UpgradeCode" = "8:{393535DE-8772-4280-AC85-396A15E2BE5B}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -582,7 +582,7 @@
         "ARPCONTACT" = "8:Paweł Opała"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
-        "ARPURLINFOABOUT" = "8:"
+        "ARPURLINFOABOUT" = "8:https://github.com/popala/registration"
         "ARPPRODUCTICON" = "8:"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
@@ -688,7 +688,7 @@
         {
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_F86E4F3037F44EA7A492946FD80EA386"
             {
-            "Name" = "8:Rejestracja"
+            "Name" = "8:Rejestrator Oszołomów"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
