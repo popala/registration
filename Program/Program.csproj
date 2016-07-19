@@ -81,14 +81,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Dao\AgeGroupDao.cs" />
-    <Compile Include="Data\Award.cs" />
-    <Compile Include="Data\ModelClass.cs" />
-    <Compile Include="Data\ModelScale.cs" />
-    <Compile Include="Data\ModelCategory.cs" />
-    <Compile Include="Data\objects\AgeGroup.cs" />
-    <Compile Include="Data\objects\Result.cs" />
+    <Compile Include="Data\Dao\AwardDao.cs" />
+    <Compile Include="Data\Dao\ModelClassDao.cs" />
+    <Compile Include="Data\Dao\ModelScaleDao.cs" />
+    <Compile Include="Data\Dao\ModelCategoryDao.cs" />
+    <Compile Include="Data\Objects\AgeGroup.cs" />
+    <Compile Include="Data\Objects\Award.cs" />
+    <Compile Include="Data\Objects\ModelCategory.cs" />
+    <Compile Include="Data\Objects\ModelClass.cs" />
+    <Compile Include="Data\Objects\ModelScale.cs" />
+    <Compile Include="Data\Objects\Publisher.cs" />
+    <Compile Include="Data\Objects\RegistrationEntry.cs" />
+    <Compile Include="Data\Objects\Result.cs" />
     <Compile Include="Data\Options.cs" />
-    <Compile Include="Data\Publisher.cs" />
+    <Compile Include="Data\Dao\PublisherDao.cs" />
     <Compile Include="Data\Dao\ResultDao.cs" />
     <Compile Include="frmImportFile.cs">
       <SubType>Form</SubType>
@@ -120,7 +126,7 @@
     <Compile Include="utils\DocHandler.cs" />
     <Compile Include="utils\FileImportFieldMap.cs" />
     <Compile Include="utils\LogWriter.cs" />
-    <Compile Include="Data\RegistrationEntry.cs" />
+    <Compile Include="Data\Dao\RegistrationEntryDao.cs" />
     <Compile Include="utils\Resources.cs" />
     <Compile Include="frmAddResults.cs">
       <SubType>Form</SubType>

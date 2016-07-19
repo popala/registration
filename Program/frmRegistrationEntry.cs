@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Linq;
-using Rejestracja.Data.objects;
+using Rejestracja.Data.Objects;
 using Rejestracja.Data.Dao;
 
 namespace Rejestracja
@@ -52,24 +52,24 @@ namespace Rejestracja
             cboYearOfBirth.SelectedIndex = cboYearOfBirth.FindString("1970");
 
             cboModelPublisher.Items.Clear();
-            foreach (String item in Publisher.getSimpleList())
+            foreach (String item in PublisherDao.getSimpleList())
                 cboModelPublisher.Items.Add(item.Trim());
             cboModelPublisher.Sorted = true;
 
             cboModelScale.Items.Clear();
-            foreach (String item in ModelScale.getSimpleList())
+            foreach (String item in ModelScaleDao.getSimpleList())
                 cboModelScale.Items.Add(item.Trim());
             cboModelScale.SelectedIndex = cboModelScale.FindString("1:33");
 
             cboModelCategory.Items.Clear();
-            foreach (ModelCategory item in ModelCategory.getList())
-                cboModelCategory.Items.Add(new ComboBoxItem(item.id, item.getFullName()));
+            foreach (ModelCategory item in ModelCategoryDao.getList())
+                cboModelCategory.Items.Add(new ComboBoxItem(item.id, item.fullName));
             if (cboModelCategory.Items.Count > 0) {
                 cboModelCategory.SelectedIndex = 0;
             }
 
             cboModelClass.Items.Clear();
-            foreach (String item in ModelClass.getSimpleList())
+            foreach (String item in ModelClassDao.getSimpleList())
                 cboModelClass.Items.Add(item.Trim());
             cboModelClass.SelectedIndex = cboModelClass.FindString("standard");
             cboModelClass.Enabled = false;
@@ -103,7 +103,7 @@ namespace Rejestracja
         {
             clear();
 
-            RegistrationEntry entry = RegistrationEntry.get(entryId);
+            RegistrationEntry entry = RegistrationEntryDao.get(entryId);
 
             if(entry == null)
             {
@@ -138,7 +138,7 @@ namespace Rejestracja
 
         private void validateExistingEntry()
         {
-            IEnumerable<ModelCategory> modelCategories = ModelCategory.getList();
+            IEnumerable<ModelCategory> modelCategories = ModelCategoryDao.getList();
             String selectedCategory = cboModelCategory.Text.ToLower();
             bool bFound = false;
 
@@ -154,7 +154,7 @@ namespace Rejestracja
 
             foreach (ModelCategory category in modelCategories)
             {
-                if (category.getFullName().ToLower().Equals(selectedCategory))
+                if (category.fullName.ToLower().Equals(selectedCategory))
                 {
                     bFound = true;
                     break;
@@ -197,7 +197,7 @@ namespace Rejestracja
                         categoryId,
                         int.Parse(cboYearOfBirth.Text));
 
-                entry.update();
+                RegistrationEntryDao.update(entry);
                 this.Close();
             }
             catch(Exception err)
@@ -310,7 +310,7 @@ namespace Rejestracja
                     int.Parse(cboYearOfBirth.Text)
                 );
 
-            entry.add();
+            RegistrationEntryDao.add(entry);
             txtEntryId.Text = entry.entryId.ToString();
 
             btnAddPrintModel.Enabled = false;
@@ -338,7 +338,7 @@ namespace Rejestracja
 
             if (cboModelCategory.SelectedIndex > -1) {
                 long catId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
-                ModelCategory cat = ModelCategory.get(catId);
+                ModelCategory cat = ModelCategoryDao.get(catId);
                 cboModelClass.SelectedIndex = cboModelClass.FindString(cat.modelClass);
             }
             else {

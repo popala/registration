@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using Rejestracja.Data.Objects;
 using Rejestracja.Data.Dao;
+using Rejestracja.Data;
 
 namespace Rejestracja
 {
@@ -114,8 +115,8 @@ namespace Rejestracja
 
         public void generateJudgingForms(String template, String outFolder, frmMain parentForm)
         {
-            List<RegistrationEntry> entries = RegistrationEntry.getListForJudging();
-            List<ModelCategory> categories = ModelCategory.getList().ToList();
+            List<RegistrationEntry> entries = RegistrationEntryDao.getListForJudging();
+            List<ModelCategory> categories = ModelCategoryDao.getList().ToList();
             Dictionary<String, Char> authors = new Dictionary<String, Char>();
             
             String authorKey;
@@ -150,7 +151,7 @@ namespace Rejestracja
                         }
 
                         //Match existing category
-                        category = categories.Where(x => x.getFullName().ToLower().Equals(entry.modelCategory.ToLower())).ToArray();
+                        category = categories.Where(x => x.fullName.ToLower().Equals(entry.modelCategory.ToLower())).ToArray();
 
                         outputFileName = 
                             String.Format("{0}\\{1}_{2}_{3}.docx", 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 
-namespace Rejestracja
+namespace Rejestracja.Data
 {
     class Options
     {
@@ -48,20 +48,6 @@ namespace Rejestracja
                         return dr.GetString(0);
                     else
                         return null;
-                }
-            }
-        }
-
-        public static IEnumerable<KeyValuePair<String, String>> getList()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Name, Value FROM Options WHERE ORDER BY Name", cn))
-            {
-                cn.Open();
-                using (SQLiteDataReader dr = cm.ExecuteReader())
-                {
-                    while (dr.Read())
-                        yield return new KeyValuePair<String, String>(dr.GetString(0), dr.GetString(1));
                 }
             }
         }

@@ -5,17 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Rejestracja.Data.Objects {
-    class AgeGroup {
-        public long id;
+    class Publisher {
+        public int id;
         public String name;
-        public int upperAge;
-        public int bottomAge;
 
-        public AgeGroup(long id, String name, int upperAge, int bottomAge) {
+        public Publisher(int id, String name) {
             this.id = id;
             this.name = name;
-            this.upperAge = upperAge;
-            this.bottomAge = bottomAge;
         }
     }
 }

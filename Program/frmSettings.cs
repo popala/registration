@@ -1,5 +1,6 @@
-﻿using Rejestracja.Data.Dao;
-using Rejestracja.Data.objects;
+﻿using Rejestracja.Data;
+using Rejestracja.Data.Dao;
+using Rejestracja.Data.Objects;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -149,35 +150,35 @@ namespace Rejestracja
                 case 2:
                     if (lvModelClass.SelectedItems.Count < 1)
                         return;
-                    ModelClass.delete((Int64)lvModelClass.SelectedItems[0].Tag);
+                    ModelClassDao.delete((Int64)lvModelClass.SelectedItems[0].Tag);
                     loadModelClasses();
                     break;
 
                 case 3:
                     if (lvModelCategory.SelectedItems.Count < 1)
                         return;
-                    ModelCategory.delete((Int64)lvModelCategory.SelectedItems[0].Tag);
+                    ModelCategoryDao.delete((Int64)lvModelCategory.SelectedItems[0].Tag);
                     loadModelCategories();
                     break;
 
                 case 4:
                     if (lvAwards.SelectedItems.Count < 1)
                         return;
-                    Award.delete((Int64)lvAwards.SelectedItems[0].Tag);
+                    AwardDao.delete((Int64)lvAwards.SelectedItems[0].Tag);
                     loadAwards();
                     break;
 
                 case 5:
                     if (lvPublishers.SelectedItems.Count < 1)
                         return;
-                    Publisher.delete((Int64)lvPublishers.SelectedItems[0].Tag);
+                    PublisherDao.delete((Int64)lvPublishers.SelectedItems[0].Tag);
                     loadPublishers();
                     break;
 
                 case 6:
                     if (lvModelScales.SelectedItems.Count < 1)
                         return;
-                    ModelScale.delete((Int64)lvModelScales.SelectedItems[0].Tag);
+                    ModelScaleDao.delete((Int64)lvModelScales.SelectedItems[0].Tag);
                     loadModelScales();
                     break;
             }
@@ -202,7 +203,7 @@ namespace Rejestracja
         {
             lvModelCategory.Items.Clear();
 
-            foreach(ModelCategory mc in ModelCategory.getList())
+            foreach (ModelCategory mc in ModelCategoryDao.getList())
             {
                 ListViewItem li = new ListViewItem(new String[] { mc.code, mc.name, mc.modelClass });
                 li.Tag = mc.id;
@@ -228,8 +229,8 @@ namespace Rejestracja
             lvModelCategory.Items.Insert(index - 1, item);
             lvModelCategory.Items[index - 1].Selected = true;
 
-            ModelCategory.updateDisplayOrder((Int64)lvModelCategory.Items[index - 1].Tag, index - 1);
-            ModelCategory.updateDisplayOrder((Int64)lvModelCategory.Items[index].Tag, index);
+            ModelCategoryDao.updateDisplayOrder((Int64)lvModelCategory.Items[index - 1].Tag, index - 1);
+            ModelCategoryDao.updateDisplayOrder((Int64)lvModelCategory.Items[index].Tag, index);
         }
 
         private void btnMoveDownCategory_Click(object sender, EventArgs e)
@@ -247,8 +248,8 @@ namespace Rejestracja
             lvModelCategory.Items.Insert(index + 1, selectedItem);
             selectedItem.Selected = true;
 
-            ModelCategory.updateDisplayOrder((Int64)lvModelCategory.Items[index].Tag, index);
-            ModelCategory.updateDisplayOrder((Int64)lvModelCategory.Items[index + 1].Tag, index + 1);
+            ModelCategoryDao.updateDisplayOrder((Int64)lvModelCategory.Items[index].Tag, index);
+            ModelCategoryDao.updateDisplayOrder((Int64)lvModelCategory.Items[index + 1].Tag, index + 1);
         }
 
         private void btnAddCategory_Click(object sender, EventArgs e)
@@ -263,7 +264,7 @@ namespace Rejestracja
                 return;
             }
 
-            if(ModelCategory.codeExists(txtCategoryCode.Text.Trim()))
+            if (ModelCategoryDao.codeExists(txtCategoryCode.Text.Trim()))
             {
                 MessageBox.Show("Kod kategorii jest już wykorzystany", "Nowa kategoria", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtCategoryCode.Focus();
@@ -271,7 +272,7 @@ namespace Rejestracja
                 return;
             }
 
-            ModelCategory.add(txtCategoryCode.Text, txtCategoryName.Text, cboModelClass.Text, ModelCategory.getNextSortFlag());
+            ModelCategoryDao.add(txtCategoryCode.Text, txtCategoryName.Text, cboModelClass.Text, ModelCategoryDao.getNextSortFlag());
             loadModelCategories();
             if(lvModelCategory.Items.Count > 0)
                 lvModelCategory.Items[lvModelCategory.Items.Count - 1].Selected = true;
@@ -284,10 +285,10 @@ namespace Rejestracja
         {
             lvPublishers.Items.Clear();
 
-            foreach (Publisher pub in Publisher.getList())
+            foreach (Publisher pub in PublisherDao.getList())
             {
                 ListViewItem li = new ListViewItem(new String[] { pub.name });
-                li.Tag = pub.publisherId;
+                li.Tag = pub.id;
                 lvPublishers.Items.Add(li);
             }
             lvPublishers.Columns[0].Width = -2;
@@ -317,7 +318,7 @@ namespace Rejestracja
                 return;
             }
 
-            if (Publisher.exists(txtPublisherName.Text.Trim()))
+            if (PublisherDao.exists(txtPublisherName.Text.Trim()))
             {
                 MessageBox.Show("Nazwa wydawcy jest już w bazie", "Nowy wydawca", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtPublisherName.Focus();
@@ -325,7 +326,7 @@ namespace Rejestracja
                 return;
             }
 
-            Publisher.add(txtPublisherName.Text.Trim());
+            PublisherDao.add(txtPublisherName.Text.Trim());
             loadPublishers();
             if (lvPublishers.Items.Count > 0)
                 lvPublishers.Items[0].Selected = true;
@@ -367,14 +368,14 @@ namespace Rejestracja
                 return;
             }
 
-            if (ModelClass.exists(txtModelClassName.Text.Trim())) {
+            if (ModelClassDao.exists(txtModelClassName.Text.Trim())) {
                 MessageBox.Show("Klasa istnieje", "Nowa klasa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtModelClassName.Focus();
                 txtModelClassName.SelectAll();
                 return;
             }
 
-            ModelClass.add(txtModelClassName.Text.Trim());
+            ModelClassDao.add(txtModelClassName.Text.Trim());
             loadModelClasses();
             if (lvModelClass.Items.Count > 0)
                 lvModelClass.Items[0].Selected = true;
@@ -387,7 +388,7 @@ namespace Rejestracja
             lvModelClass.Items.Clear();
             cboModelClass.Items.Clear();
 
-            foreach (ModelClass cls in ModelClass.getList()) {
+            foreach (ModelClass cls in ModelClassDao.getList()) {
                 ListViewItem li = new ListViewItem(new String[] { cls.name });
                 li.Tag = cls.id;
                 lvModelClass.Items.Add(li);
@@ -402,7 +403,7 @@ namespace Rejestracja
 
         private void loadModelScales() {
             lvModelScales.Items.Clear();
-            foreach (ModelScale scale in ModelScale.getList()) {
+            foreach (ModelScale scale in ModelScaleDao.getList()) {
                 ListViewItem li = new ListViewItem(new String[] { scale.name });
                 li.Tag = scale.id;
                 lvModelScales.Items.Add(li);
@@ -411,19 +412,19 @@ namespace Rejestracja
         }
 
         private void btnAddModelScale_Click(object sender, EventArgs e) {
-            if (ModelScale.exists(txtModelScale.Text)) {
+            if (ModelScaleDao.exists(txtModelScale.Text)) {
                 MessageBox.Show("Skala już istnieje", "Nowa skala", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtModelScale.Focus();
                 txtModelScale.SelectAll();
                 return;
             }
-            ModelScale.add(txtModelScale.Text, ModelScale.getNextSortFlag());
+            ModelScaleDao.add(txtModelScale.Text, ModelScaleDao.getNextSortFlag());
             loadModelScales();
         }
 
         private void loadAwards() {
             lvAwards.Items.Clear();
-            foreach(Award award in Award.getList()) {
+            foreach(Award award in AwardDao.getList()) {
                 ListViewItem item = new ListViewItem(award.title);
                 item.Tag = award.id;
                 lvAwards.Items.Add(item);
@@ -440,12 +441,12 @@ namespace Rejestracja
                 return;
             }
 
-            if (Award.exists(awardTitle)) {
+            if (AwardDao.exists(awardTitle)) {
                 MessageBox.Show("Nagroda już istnieje", "Nowa Nagroda", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
-            Award.add(awardTitle, Award.getNextSortFlag());
+            AwardDao.add(awardTitle, AwardDao.getNextSortFlag());
             loadAwards();
             txtAwardTitle.SelectAll();
             txtAwardTitle.Focus();
@@ -465,8 +466,8 @@ namespace Rejestracja
             lvAwards.Items.Insert(index - 1, item);
             lvAwards.Items[index - 1].Selected = true;
 
-            Award.updateDisplayOrder((Int64)lvAwards.Items[index - 1].Tag, index - 1);
-            Award.updateDisplayOrder((Int64)lvAwards.Items[index].Tag, index);
+            AwardDao.updateDisplayOrder((Int64)lvAwards.Items[index - 1].Tag, index - 1);
+            AwardDao.updateDisplayOrder((Int64)lvAwards.Items[index].Tag, index);
         }
 
         private void btnMoveDownAward_Click(object sender, EventArgs e) {
@@ -483,8 +484,8 @@ namespace Rejestracja
             lvAwards.Items.Insert(index + 1, selectedItem);
             selectedItem.Selected = true;
 
-            Award.updateDisplayOrder((Int64)lvAwards.Items[index].Tag, index);
-            Award.updateDisplayOrder((Int64)lvAwards.Items[index + 1].Tag, index + 1);
+            AwardDao.updateDisplayOrder((Int64)lvAwards.Items[index].Tag, index);
+            AwardDao.updateDisplayOrder((Int64)lvAwards.Items[index + 1].Tag, index + 1);
         }
     }
 }

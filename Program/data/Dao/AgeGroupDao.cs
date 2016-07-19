@@ -1,4 +1,4 @@
-﻿using Rejestracja.Data.objects;
+﻿using Rejestracja.Data.Objects;
 using System;
 using System.Collections.Generic;
 using System.Data;

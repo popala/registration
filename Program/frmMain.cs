@@ -10,6 +10,7 @@ using System.Linq;
 using Rejestracja.Data.Objects;
 using Rejestracja.Data.Dao;
 using System.Drawing;
+using Rejestracja.Data;
 
 namespace Rejestracja {
     public partial class frmMain : Form {
@@ -236,10 +237,10 @@ namespace Rejestracja {
                 lvEntries.Groups.Clear();
 
                 if (String.IsNullOrWhiteSpace(searchValue)) {
-                    entries = RegistrationEntry.getList(null, _registrationSortColumn, _registrationSortAscending).ToList();
+                    entries = RegistrationEntryDao.getList(null, _registrationSortColumn, _registrationSortAscending).ToList();
                 }
                 else {
-                    entries = RegistrationEntry.getList(searchValue, _registrationSortColumn, _registrationSortAscending).ToList();
+                    entries = RegistrationEntryDao.getList(searchValue, _registrationSortColumn, _registrationSortAscending).ToList();
                 }
 
                 foreach (string[] entry in entries) {
@@ -273,10 +274,10 @@ namespace Rejestracja {
                 lvEntries.Groups.Clear();
 
                 if (String.IsNullOrWhiteSpace(searchValue)) {
-                    entries = RegistrationEntry.getGrouppedList().ToList();
+                    entries = RegistrationEntryDao.getGrouppedList().ToList();
                 }
                 else {
-                    entries = RegistrationEntry.getGrouppedList(searchValue).ToList();
+                    entries = RegistrationEntryDao.getGrouppedList(searchValue).ToList();
                 }
 
                 String categoryName = "";
@@ -308,7 +309,7 @@ namespace Rejestracja {
         }
 
         private void highlightInvalidRegistrationEntries() {
-            List<ModelCategory> modelCategories = ModelCategory.getList().ToList<ModelCategory>();
+            List<ModelCategory> modelCategories = ModelCategoryDao.getList().ToList<ModelCategory>();
             int errorCount = 0;
 
             foreach (ListViewItem item in lvEntries.Items) {
@@ -328,7 +329,7 @@ namespace Rejestracja {
                 }
 
                 //Check if model category is listed in the resources
-                ModelCategory [] catFound = modelCategories.Where(x => x.getFullName().ToLower().Equals(item.SubItems[9].Text.ToLower())).ToArray<ModelCategory>();
+                ModelCategory [] catFound = modelCategories.Where(x => x.fullName.ToLower().Equals(item.SubItems[9].Text.ToLower())).ToArray<ModelCategory>();
                 if (catFound.Length > 0) {
                     continue;
                 }
@@ -488,7 +489,7 @@ namespace Rejestracja {
             f.loadEntry(entryId);
             f.ShowDialog(this);
 
-            RegistrationEntry entry = RegistrationEntry.get(entryId);
+            RegistrationEntry entry = RegistrationEntryDao.get(entryId);
 
             lvEntries.SelectedItems[0].SubItems[2].Text = entry.email;
             lvEntries.SelectedItems[0].SubItems[3].Text = entry.firstName;
@@ -511,7 +512,7 @@ namespace Rejestracja {
             }
 
             try {
-                RegistrationEntry.delete(entryId);
+                RegistrationEntryDao.delete(entryId);
                 lvEntries.SelectedItems[0].Remove();
                 highlightInvalidRegistrationEntries();
             }
@@ -533,7 +534,7 @@ namespace Rejestracja {
 
         public void printRegistrationCard(long entryId) {
             try {
-                RegistrationEntry entry = RegistrationEntry.get(entryId);
+                RegistrationEntry entry = RegistrationEntryDao.get(entryId);
                 if (entry == null) {
                     MessageBox.Show("Numer startowy nie został znaleziony", "Błędne dane", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -797,7 +798,7 @@ namespace Rejestracja {
                     f.setParent(this);
                     f.ShowDialog(this);
 
-                    RegistrationEntry entry = RegistrationEntry.get(entryId);
+                    RegistrationEntry entry = RegistrationEntryDao.get(entryId);
 
                     lvEntries.SelectedItems[0].SubItems[2].Text = entry.email;
                     lvEntries.SelectedItems[0].SubItems[3].Text = entry.firstName;

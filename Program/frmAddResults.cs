@@ -33,8 +33,8 @@ namespace Rejestracja
             lvResults.Columns.Add("Wydawca");
             lvResults.Columns.Add("Miejsce");
 
-            foreach (ModelCategory category in ModelCategory.getList()) {
-                cboModelCategory.Items.Add(new ComboBoxItem(category.id, category.getFullName()));
+            foreach (ModelCategory category in ModelCategoryDao.getList()) {
+                cboModelCategory.Items.Add(new ComboBoxItem(category.id, category.fullName));
             }
             if (cboModelCategory.Items.Count > 0) {
                 cboModelCategory.SelectedIndex = 0;
@@ -52,7 +52,7 @@ namespace Rejestracja
             lvAwardResults.Columns.Add("Wydawca");
             lvAwardResults.Columns.Add("Nagroda");
 
-            foreach (Award award in Award.getList()) {
+            foreach (Award award in AwardDao.getList()) {
                 cboSpecialAward.Items.Add(new ComboBoxItem(award.id, award.title));
             }
             if (cboSpecialAward.Items.Count > 0) {
@@ -79,7 +79,7 @@ namespace Rejestracja
                 }
 
                 long catId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
-                RegistrationEntry[] entries = ResultDao.getCategoryResults(ModelCategory.get(catId).getFullName()).ToArray();
+                RegistrationEntry[] entries = ResultDao.getCategoryResults(ModelCategoryDao.get(catId).fullName).ToArray();
 
                 String modelClass = "";
                 String ageGroup = "";
@@ -236,7 +236,7 @@ namespace Rejestracja
             }
             
             //Check if the entry ID exists
-            RegistrationEntry entry = RegistrationEntry.get(entryId);
+            RegistrationEntry entry = RegistrationEntryDao.get(entryId);
             if(entry == null) {
                 MessageBox.Show("Numer modelu nie znaleziony w bazie", "Dodawanie Wyników", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;

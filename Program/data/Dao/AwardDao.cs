@@ -2,24 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Data.SQLite;
+using Rejestracja.Data.Objects;
 
-namespace Rejestracja
+namespace Rejestracja.Data.Dao
 {
-    class Award
+    class AwardDao
     {
-        public long id;
-        public String title;
-        public long displayOrder;
-
-        public const int TITLE_MAX_LENGTH = 256;
-
-        public Award(long id, String title, long displayOrder)
-        {
-            this.id = id;
-            this.title = title;
-            this.displayOrder = displayOrder;
-        }
-
         public static Award get(long id)
         {
             Award ret = null;
@@ -54,7 +42,7 @@ namespace Rejestracja
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Title", System.Data.DbType.String, TITLE_MAX_LENGTH).Value = title;
+                cm.Parameters.Add("@Title", System.Data.DbType.String, Award.TITLE_MAX_LENGTH).Value = title;
                 cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int64).Value = displayOrder;
                 cm.ExecuteNonQuery();
 

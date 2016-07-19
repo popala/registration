@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic.FileIO;
+using Rejestracja.Data;
 using Rejestracja.Data.Dao;
-using Rejestracja.Data.objects;
+using Rejestracja.Data.Objects;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -21,10 +22,6 @@ namespace Rejestracja {
             Resources.setDataFile(newFilePath);
             this._connectionString = Resources.getConnectionString();
             initDataFile();
-        }
-
-        public void dropCurrentDataFile() {
-            System.IO.File.Delete(Resources.getDataFilePath());
         }
 
         private void initDataFile() {
@@ -52,14 +49,14 @@ namespace Rejestracja {
         }
 
         private void createTables(bool createAllTables) {
-            RegistrationEntry.createTable();
+            RegistrationEntryDao.createTable();
             if (createAllTables) {
                 AgeGroupDao.createTable();
-                Award.createTable();
-                ModelCategory.createTable();
-                ModelClass.createTable();
-                ModelScale.createTable();
-                Publisher.createTable();
+                AwardDao.createTable();
+                ModelCategoryDao.createTable();
+                ModelClassDao.createTable();
+                ModelScaleDao.createTable();
+                PublisherDao.createTable();
                 Options.createTable();                    
             }
             ResultDao.createTable();
@@ -140,10 +137,10 @@ namespace Rejestracja {
         private IEnumerable<RegistrationEntry> parseCSVFile(String filePath, FileImportFieldMap fieldMap, bool hasHeaders) {
             
             TextInfo textInfo = new CultureInfo("pl-PL", false).TextInfo;
-            List<String> publishers = Publisher.getSimpleList().ToList<String>();
-            List<ModelCategory> modelCategories = ModelCategory.getList().ToList<ModelCategory>();
+            List<String> publishers = PublisherDao.getSimpleList().ToList<String>();
+            List<ModelCategory> modelCategories = ModelCategoryDao.getList().ToList<ModelCategory>();
             List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList<AgeGroup>();
-            List<String> modelClasses = ModelClass.getSimpleList().ToList<String>();
+            List<String> modelClasses = ModelClassDao.getSimpleList().ToList<String>();
 
             using (TextFieldParser parser = new TextFieldParser(filePath)) {
                 parser.CommentTokens = new String[] { "#" };
@@ -215,9 +212,9 @@ namespace Rejestracja {
                     ModelCategory [] matchedModelCategory = null;
                     if (enteredModelCategory != null) {
                         //Try to match model category
-                        matchedModelCategory = modelCategories.Where(x => x.getFullName().ToLower().Equals(enteredModelCategory.ToLower())).ToArray<ModelCategory>();
+                        matchedModelCategory = modelCategories.Where(x => x.fullName.ToLower().Equals(enteredModelCategory.ToLower())).ToArray<ModelCategory>();
                         if (matchedModelCategory.Length > 0) {
-                            newRegistration.modelCategory = matchedModelCategory[0].getFullName();
+                            newRegistration.modelCategory = matchedModelCategory[0].fullName;
                             newRegistration.modelCategoryId = matchedModelCategory[0].id;
                             //Matched model category and so set the category if it should be derived from class
                             if (fieldMap.DeriveClassFromCategory) {
@@ -310,7 +307,7 @@ namespace Rejestracja {
             
             IEnumerable<RegistrationEntry> entries = parseCSVFile(filePath, fieldMap, hasHeaders);
             List<RegistrationEntry> failed = new List<RegistrationEntry>();
-            ModelCategory[] categories = ModelCategory.getList().ToArray();
+            ModelCategory[] categories = ModelCategoryDao.getList().ToArray();
             ModelCategory[] matchedCategory = null;
 
             using (SQLiteConnection cn = new SQLiteConnection(_connectionString))
@@ -336,7 +333,7 @@ namespace Rejestracja {
                 using (SQLiteTransaction t = cn.BeginTransaction()) {
                     foreach (RegistrationEntry entry in entries) {
 
-                        matchedCategory = categories.Where(x => x.getFullName().ToLower().Equals(entry.modelCategory.ToLower())).ToArray();
+                        matchedCategory = categories.Where(x => x.fullName.ToLower().Equals(entry.modelCategory.ToLower())).ToArray();
                         if (matchedCategory.Length > 0) {
                             cm.Parameters["@ModelCategoryId"].Value = matchedCategory[0].id;
                         }

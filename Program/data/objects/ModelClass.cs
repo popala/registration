@@ -5,17 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Rejestracja.Data.Objects {
-    class AgeGroup {
+    class ModelClass {
         public long id;
         public String name;
-        public int upperAge;
-        public int bottomAge;
+        public const int MAX_NAME_LENGTH = 128;
 
-        public AgeGroup(long id, String name, int upperAge, int bottomAge) {
+        public ModelClass(long id, String name) {
             this.id = id;
             this.name = name;
-            this.upperAge = upperAge;
-            this.bottomAge = bottomAge;
+        }
+
+        public ModelClass(String name) {
+            this.name = name;
         }
     }
 }

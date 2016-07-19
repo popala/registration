@@ -5,17 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Rejestracja.Data.Objects {
-    class AgeGroup {
+    class ModelScale {
         public long id;
         public String name;
-        public int upperAge;
-        public int bottomAge;
+        public int displayOrder;
 
-        public AgeGroup(long id, String name, int upperAge, int bottomAge) {
+        public ModelScale(long id, String name, int displayOrder) {
             this.id = id;
             this.name = name;
-            this.upperAge = upperAge;
-            this.bottomAge = bottomAge;
+            this.displayOrder = displayOrder;
         }
     }
 }

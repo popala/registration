@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rejestracja.Data.Objects;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
@@ -6,27 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Rejestracja
+namespace Rejestracja.Data.Dao
 {
-    class ModelScale
+    class ModelScaleDao
     {
-        public long id;
-        public String name;
-        public int displayOrder;
-
-        public ModelScale(long id, String name, int displayOrder)
-        {
-            this.id = id;
-            this.name = name;
-            this.displayOrder = displayOrder;
-        }
-
-        public ModelScale(String name, int displayOrder)
-        {
-            this.name = name;
-            this.displayOrder = displayOrder;
-        }
-
         public static IEnumerable<ModelScale> getList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -91,15 +75,6 @@ namespace Rejestracja
             }
         }
 
-        public void add()
-        {
-            if (this.id > 0)
-            {
-                throw new InvalidOperationException("Id populated");
-            }
-            this.id = add(this.name, this.displayOrder);
-        }
-
         public static int getNextSortFlag()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -112,46 +87,6 @@ namespace Rejestracja
                     return 1;
                 else
                     return (int.Parse(res.ToString()) + 1);
-            }
-        }
-
-        public static ModelScale get(long id)
-        {
-            ModelScale ret = null;
-
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name, DisplayOrder FROM ModelScale WHERE Id = @Id", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-
-                cm.Parameters.Add("@Id", DbType.Int64).Value = id;
-
-                using (SQLiteDataReader dr = cm.ExecuteReader())
-                {
-                    if (dr.Read())
-                        ret = new ModelScale(
-                            dr.GetInt64(0),
-                            dr.GetString(1),
-                            dr.GetInt32(2)
-                        );
-                }
-            }
-            return ret;
-        }
-
-        public static void update(long id, String name, int displayOrder)
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"UPDATE ModelScale SET Name = @Name, DisplayOrder = @DisplayOrder WHERE Id = @Id", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
-                cm.Parameters.Add("@Name", System.Data.DbType.String, 128).Value = name;
-                cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int32).Value = displayOrder;
-                cm.ExecuteNonQuery();
             }
         }
 
@@ -169,11 +104,6 @@ namespace Rejestracja
             }
         }
 
-        public void update()
-        {
-            update(this.id, this.name, this.displayOrder);
-        }
-
         public static void delete(long id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -185,12 +115,6 @@ namespace Rejestracja
                 cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
                 cm.ExecuteNonQuery();
             }
-        }
-
-        public void delete()
-        {
-            delete(this.id);
-            this.id = -1;
         }
 
         public static void createTable()
