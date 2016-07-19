@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rejestracja.Data.objects;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
@@ -6,34 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Rejestracja
+namespace Rejestracja.Data.Dao
 {
-    class AgeGroup
+    class AgeGroupDao
     {
-        public long id;
-        public String name;
-        public int upperAge;
-        public int bottomAge;
-
-        public AgeGroup()
-        {
-        }
-
-        public AgeGroup(long id, String name, int upperAge)
-        {
-            this.id = id;
-            this.name = name;
-            this.upperAge = upperAge;
-        }
-
-        public AgeGroup(long id, String name, int upperAge, int bottomAge)
-        {
-            this.id = id;
-            this.name = name;
-            this.upperAge = upperAge;
-            this.bottomAge = bottomAge;
-        }
-
         public static bool exists(int upperAge) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM AgeGroup WHERE Age BETWEEN @Age1 AND @Age2", cn)) {

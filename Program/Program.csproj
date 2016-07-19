@@ -80,15 +80,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="data\AgeGroup.cs" />
-    <Compile Include="data\Award.cs" />
-    <Compile Include="data\ModelClass.cs" />
-    <Compile Include="data\ModelScale.cs" />
-    <Compile Include="data\ModelCategory.cs" />
-    <Compile Include="data\Options.cs" />
-    <Compile Include="data\Publisher.cs" />
-    <Compile Include="data\Results.cs" />
-    <Compile Include="data\WinningEntry.cs" />
+    <Compile Include="Data\Dao\AgeGroupDao.cs" />
+    <Compile Include="Data\Award.cs" />
+    <Compile Include="Data\ModelClass.cs" />
+    <Compile Include="Data\ModelScale.cs" />
+    <Compile Include="Data\ModelCategory.cs" />
+    <Compile Include="Data\objects\AgeGroup.cs" />
+    <Compile Include="Data\objects\Result.cs" />
+    <Compile Include="Data\Options.cs" />
+    <Compile Include="Data\Publisher.cs" />
+    <Compile Include="Data\Dao\ResultDao.cs" />
     <Compile Include="frmImportFile.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -115,11 +116,11 @@
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs" />
     <Compile Include="utils\ComboBoxItem.cs" />
-    <Compile Include="data\DataSource.cs" />
+    <Compile Include="Data\DataSource.cs" />
     <Compile Include="utils\DocHandler.cs" />
     <Compile Include="utils\FileImportFieldMap.cs" />
     <Compile Include="utils\LogWriter.cs" />
-    <Compile Include="data\RegistrationEntry.cs" />
+    <Compile Include="Data\RegistrationEntry.cs" />
     <Compile Include="utils\Resources.cs" />
     <Compile Include="frmAddResults.cs">
       <SubType>Form</SubType>

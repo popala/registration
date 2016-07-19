@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Rejestracja.Data.Dao;
+using Rejestracja.Data.objects;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -39,7 +41,7 @@ namespace Rejestracja {
 
         private void lvCategories_ItemChecked(object sender, ItemCheckedEventArgs e) {
             if (e.Item.Checked) {
-                AgeGroup ag = AgeGroup.getOlderAgeGroup(e.Item.Text);
+                AgeGroup ag = AgeGroupDao.getOlderAgeGroup(e.Item.Text);
                 if (ag == null) {
                     e.Item.Checked = false;
                 }

@@ -22,13 +22,15 @@ namespace Rejestracja
         public String modelClass;
         public int yearOfBirth;
         public int place;
+        public bool skipErrorValidation;
 
         public RegistrationEntry() {
 
         }
 
         public RegistrationEntry(long entryId, DateTime timeStamp, String email, String firstName, String lastName, String clubName, String ageGroup,
-                                String modelName, String modelClass, String modelScale, String modelPublisher, String modelCategory, long modelCategoryId, int yearOfBirth)
+                                String modelName, String modelClass, String modelScale, String modelPublisher, String modelCategory, long modelCategoryId,
+                                int yearOfBirth, bool skipErrorValidation)
         {
             this.entryId = entryId;
             this.timeStamp = timeStamp;
@@ -44,6 +46,7 @@ namespace Rejestracja
             this.modelPublisher = modelPublisher;
             this.modelClass = modelClass;
             this.yearOfBirth = yearOfBirth;
+            this.skipErrorValidation = skipErrorValidation;
         }
 
         public RegistrationEntry(long entryId, String email, String firstName, String lastName, String clubName, String ageGroup, 
@@ -108,8 +111,10 @@ namespace Rejestracja
 
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.CommandText =
-                    @"SELECT EntryId, TmStamp, Email, FirstName, LastName, ClubName, AgeGroup,
-                        ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, COALESCE(ModelCategoryId, -1) AS ModelCategoryId, COALESCE(YearOfBirth,0) AS YearOfBirth 
+                    @"SELECT EntryId, TmStamp, Email, FirstName, LastName, ClubName, AgeGroup, 
+                        ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, 
+                        COALESCE(ModelCategoryId, -1) AS ModelCategoryId,
+                        COALESCE(YearOfBirth,0) AS YearOfBirth, COALESCE(SkipErrorValidation,0) AS SkipErrorValidation
                      FROM Registration ";
 
                 if (entryId.HasValue)
@@ -150,7 +155,8 @@ namespace Rejestracja
                             dr["ModelPublisher"].ToString(),
                             dr["ModelCategory"].ToString(),
                             dr.GetInt64(dr.GetOrdinal("ModelCategoryId")),
-                            dr.GetInt32(dr.GetOrdinal("YearOfBirth"))
+                            dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                            dr.GetBoolean(dr.GetOrdinal("SkipErrorValidation"))
                         );
                     }
                 }
@@ -312,7 +318,8 @@ namespace Rejestracja
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
                 @"SELECT EntryId, TmStamp, Email, FirstName, LastName, ClubName, AgeGroup,
-                        ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, COALESCE(ModelCategoryId, -1) AS ModelCategoryId, COALESCE(YearOfBirth,0) AS YearOfBirth 
+                        ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, COALESCE(ModelCategoryId, -1) AS ModelCategoryId,
+                        COALESCE(YearOfBirth,0) AS YearOfBirth, COALESCE(SkipErrorValidation,0) AS SkipErrorValidation
                     FROM Registration 
                     ORDER BY ModelCategory, AgeGroup, ModelClass, EntryId", cn))
             {
@@ -338,7 +345,8 @@ namespace Rejestracja
                                 dr["ModelPublisher"].ToString(),
                                 dr["ModelCategory"].ToString(),
                                 dr.GetInt64(dr.GetOrdinal("ModelCategoryId")),
-                                dr.GetInt32(dr.GetOrdinal("YearOfBirth"))
+                                dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                                dr.GetBoolean(dr.GetOrdinal("SkipErrorValidation"))
                         ));
                     }
                     return ret;
@@ -479,6 +487,40 @@ namespace Rejestracja
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.Parameters.Add("@entryId", System.Data.DbType.Int64).Value = entryId;
                 return ((int)cm.ExecuteNonQuery() == 1);
+            }
+        }
+
+        public static void createTable() {
+            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+                cm.CommandText =
+                    @"CREATE TABLE Registration(
+                        EntryId INTEGER PRIMARY KEY,
+                        TmStamp DATETIME NOT NULL,
+                        Email TEXT,
+                        FirstName TEXT NOT NULL,
+                        LastName TEXT NOT NULL,
+                        ClubName TEXT,
+                        AgeGroup TEXT NOT NULL, 
+                        ModelName TEXT NOT NULL,
+                        ModelCategory TEXT NOT NULL,
+                        ModelCategoryId INTEGER NOT NULL DEFAULT -1,
+                        ModelScale TEXT NOT NULL,
+                        ModelPublisher TEXT,
+                        ModelClass TEXT NOT NULL,
+                        YearOfBirth INTEGER NOT NULL,
+                        SkipErrorValidation INTEGER NOT NULL DEFAULT 0)";
+                cm.ExecuteNonQuery();
+                cm.CommandText = "CREATE INDEX Idx_Reg_Name ON Registration(LastName, FirstName)";
+                cm.ExecuteNonQuery();
+                cm.CommandText = "CREATE INDEX Idx_Reg_Email ON Registration(Email)";
+                cm.ExecuteNonQuery();
+                cm.CommandText = "CREATE INDEX Idx_Reg_ModelName ON Registration(ModelName)";
+                cm.ExecuteNonQuery();
+                cm.CommandText = "CREATE INDEX Idx_Reg_CatId ON Registration(ModelCategoryId)";
+                cm.ExecuteNonQuery();
             }
         }
 

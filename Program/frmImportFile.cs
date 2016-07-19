@@ -161,32 +161,54 @@ namespace Rejestracja {
 
         private void btnImport_Click(object sender, EventArgs e) {
 
-            //TODO: build field map
-            FileImportFieldMap fieldMap = new FileImportFieldMap();
-            fieldMap.TimeStamp = cboTimeStamp.SelectedIndex - 1;
-            fieldMap.Email = cboEmail.SelectedIndex - 1;
-            
-            fieldMap.FirstName = cboFirstName.SelectedIndex - 1;
-            fieldMap.LastName = cboLastName.SelectedIndex - 1;
-            fieldMap.ClubName = cboClubName.SelectedIndex - 1;
-            
-            fieldMap.AgeGroup = cboAgeGroup.SelectedIndex - 2;
-            fieldMap.CalculateAgeGroup = (cboAgeGroup.SelectedIndex == 0);
-            fieldMap.YearOfBirth = cboYearOfBirth.SelectedIndex - 1;
+            Application.UseWaitCursor = true;
 
-            fieldMap.ModelName = cboModelName.SelectedIndex - 1;
-            fieldMap.ModelCategory = new int[] { cboModelCategory1.SelectedIndex - 1, cboModelCategory2.SelectedIndex - 1, cboModelCategory3.SelectedIndex - 1 };
-            fieldMap.ModelScale = cboModelScale.SelectedIndex - 1;
-            fieldMap.ModelPublisher = cboModelPublisher.SelectedIndex - 1;
-            fieldMap.DeriveClassFromCategory = (cboModelClass.SelectedIndex == 0);
-            fieldMap.ModelClass = cboModelClass.SelectedIndex - 2;
+            btnCancel.Enabled = false;
+            btnImport.Enabled = false;
+            btnSelectFile.Enabled = false;
+            chkHasHeaders.Enabled = false;
+            tabControl1.Enabled = false;
 
-            DataSource ds = new DataSource();
-            ds.dropRegistrationRecords();
-            ds.bulkLoadRegistration(lblFileName.Text, fieldMap, chkHasHeaders.Checked);
+            try {
+                FileImportFieldMap fieldMap = new FileImportFieldMap();
+                fieldMap.TimeStamp = cboTimeStamp.SelectedIndex - 1;
+                fieldMap.Email = cboEmail.SelectedIndex - 1;
 
-            ((frmMain)this.Owner).populateUI();
-            this.Close();
+                fieldMap.FirstName = cboFirstName.SelectedIndex - 1;
+                fieldMap.LastName = cboLastName.SelectedIndex - 1;
+                fieldMap.ClubName = cboClubName.SelectedIndex - 1;
+
+                fieldMap.AgeGroup = cboAgeGroup.SelectedIndex - 2;
+                fieldMap.CalculateAgeGroup = (cboAgeGroup.SelectedIndex == 0);
+                fieldMap.YearOfBirth = cboYearOfBirth.SelectedIndex - 1;
+
+                fieldMap.ModelName = cboModelName.SelectedIndex - 1;
+                fieldMap.ModelCategory = new int[] { cboModelCategory1.SelectedIndex - 1, cboModelCategory2.SelectedIndex - 1, cboModelCategory3.SelectedIndex - 1 };
+                fieldMap.ModelScale = cboModelScale.SelectedIndex - 1;
+                fieldMap.ModelPublisher = cboModelPublisher.SelectedIndex - 1;
+                fieldMap.DeriveClassFromCategory = (cboModelClass.SelectedIndex == 0);
+                fieldMap.ModelClass = cboModelClass.SelectedIndex - 2;
+
+                DataSource ds = new DataSource();
+                ds.dropRegistrationRecords();
+                ds.bulkLoadRegistration(lblFileName.Text, fieldMap, chkHasHeaders.Checked);
+
+                ((frmMain)this.Owner).populateUI();
+                this.Close();
+            }
+            catch (Exception err) {
+                LogWriter.error(err);
+                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                btnCancel.Enabled = true;
+                btnImport.Enabled = true;
+                btnSelectFile.Enabled = true;
+                chkHasHeaders.Enabled = true;
+                tabControl1.Enabled = true;
+            }
+            finally {
+                Application.UseWaitCursor = false;
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e) {

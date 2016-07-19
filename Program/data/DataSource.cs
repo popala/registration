@@ -1,4 +1,6 @@
 ﻿using Microsoft.VisualBasic.FileIO;
+using Rejestracja.Data.Dao;
+using Rejestracja.Data.objects;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -50,58 +52,17 @@ namespace Rejestracja {
         }
 
         private void createTables(bool createAllTables) {
-            using (SQLiteConnection cn = new SQLiteConnection(_connectionString))
-            using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.CommandText =
-                    @"CREATE TABLE Registration(
-                        EntryId INTEGER PRIMARY KEY,
-                        TmStamp DATETIME NOT NULL,
-                        Email TEXT,
-                        FirstName TEXT NOT NULL,
-                        LastName TEXT NOT NULL,
-                        ClubName TEXT,
-                        AgeGroup TEXT NOT NULL, 
-                        ModelName TEXT NOT NULL,
-                        ModelCategory TEXT NOT NULL,
-                        ModelCategoryId NUMERIC NOT NULL DEFAULT -1,
-                        ModelScale TEXT NOT NULL,
-                        ModelPublisher TEXT,
-                        ModelClass TEXT NOT NULL,
-                        YearOfBirth NUMERIC NOT NULL,
-                        SkipErrorValidation INTEGER NOT NULL DEFAULT 0)";
-                cm.ExecuteNonQuery();
-                cm.CommandText = "CREATE INDEX Idx_Reg_Name ON Registration(LastName, FirstName)";
-                cm.ExecuteNonQuery();
-                cm.CommandText = "CREATE INDEX Idx_Reg_Email ON Registration(Email)";
-                cm.ExecuteNonQuery();
-                cm.CommandText = "CREATE INDEX Idx_Reg_ModelName ON Registration(ModelName)";
-                cm.ExecuteNonQuery();
-                cm.CommandText = "CREATE INDEX Idx_Reg_CatId ON Registration(ModelCategoryId)";
-                cm.ExecuteNonQuery();
-
-                if (createAllTables) {
-                    AgeGroup.createTable();
-                    Award.createTable();
-                    ModelCategory.createTable();
-                    ModelClass.createTable();
-                    ModelScale.createTable();
-                    Publisher.createTable();
-                    Options.createTable();                    
-                }
-
-                cm.CommandText =
-                    @"CREATE TABLE Results(
-                        ResultId INTEGER PRIMARY KEY,
-                        EntryId INTEGER NOT NULL REFERENCES Registration(EntryId),
-                        AwardId INTEGER NULL REFERENCES SpecialAwards(AwardId),
-                        Place INTEGER NULL)";
-                cm.ExecuteNonQuery();
-
-                cm.CommandText = "CREATE UNIQUE INDEX Idx_Res_Unique ON Results(EntryId,AwardId,Place)";
-                cm.ExecuteNonQuery();
+            RegistrationEntry.createTable();
+            if (createAllTables) {
+                AgeGroupDao.createTable();
+                Award.createTable();
+                ModelCategory.createTable();
+                ModelClass.createTable();
+                ModelScale.createTable();
+                Publisher.createTable();
+                Options.createTable();                    
             }
+            ResultDao.createTable();
         }
 
         public void export(String outputFile, bool use2003Format) {
@@ -181,7 +142,7 @@ namespace Rejestracja {
             TextInfo textInfo = new CultureInfo("pl-PL", false).TextInfo;
             List<String> publishers = Publisher.getSimpleList().ToList<String>();
             List<ModelCategory> modelCategories = ModelCategory.getList().ToList<ModelCategory>();
-            List<AgeGroup> ageGroups = AgeGroup.getList().ToList<AgeGroup>();
+            List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList<AgeGroup>();
             List<String> modelClasses = ModelClass.getSimpleList().ToList<String>();
 
             using (TextFieldParser parser = new TextFieldParser(filePath)) {

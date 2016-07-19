@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Linq;
+using Rejestracja.Data.objects;
+using Rejestracja.Data.Dao;
 
 namespace Rejestracja
 {
@@ -39,7 +41,7 @@ namespace Rejestracja
 
             txtModelClub.Text = "Indywidualnie";
 
-            _ageGroups = AgeGroup.getList().ToList();
+            _ageGroups = AgeGroupDao.getList().ToList();
             cboAgeGroup.Items.Clear();
             foreach(AgeGroup item in _ageGroups)
                 cboAgeGroup.Items.Add(new ComboBoxItem(item.id, item.name));

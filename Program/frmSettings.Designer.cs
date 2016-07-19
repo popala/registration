@@ -75,6 +75,8 @@
             this.lvModelScales = new System.Windows.Forms.ListView();
             this.btnClose = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
+            this.txtFooter = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.tcOptions.SuspendLayout();
             this.tpDocuments.SuspendLayout();
             this.tpAgeGroup.SuspendLayout();
@@ -106,6 +108,8 @@
             // 
             // tpDocuments
             // 
+            this.tpDocuments.Controls.Add(this.txtFooter);
+            this.tpDocuments.Controls.Add(this.label7);
             this.tpDocuments.Controls.Add(this.txtHeading);
             this.tpDocuments.Controls.Add(this.label1);
             this.tpDocuments.Location = new System.Drawing.Point(4, 22);
@@ -579,6 +583,27 @@
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
+            // txtFooter
+            // 
+            this.txtFooter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFooter.Location = new System.Drawing.Point(98, 153);
+            this.txtFooter.MaxLength = 1024;
+            this.txtFooter.Multiline = true;
+            this.txtFooter.Name = "txtFooter";
+            this.txtFooter.Size = new System.Drawing.Size(533, 126);
+            this.txtFooter.TabIndex = 1;
+            this.txtFooter.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(25, 153);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(71, 26);
+            this.label7.TabIndex = 2;
+            this.label7.Text = "Stopka\r\ndokumentów:";
+            // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -659,5 +684,7 @@
         private System.Windows.Forms.Button btnMoveUpAward;
         private System.Windows.Forms.Button btnMoveDownAward;
         private System.Windows.Forms.ListView lvAwards;
+        private System.Windows.Forms.TextBox txtFooter;
+        private System.Windows.Forms.Label label7;
     }
 }

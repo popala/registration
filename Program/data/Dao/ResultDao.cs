@@ -1,21 +1,22 @@
-﻿using System;
+﻿using Rejestracja.Data.Objects;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Rejestracja {
-    class Results {
+namespace Rejestracja.Data.Dao {
+    class ResultDao {
         public static long addCategoryResult(long entryId, int place) {
-            return addResult(entryId, (int?)null, place);
+            return add(entryId, (int?)null, place);
         }
 
         public static long addAwardWinner(long entryId, long awardId) {
-            return addResult(entryId, awardId, (int?)null);
+            return add(entryId, awardId, (int?)null);
         }
 
-        private static long addResult(long entryId, long? awardId, int? place) {
+        private static long add(long entryId, long? awardId, int? place) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("INSERT INTO Results(EntryId,AwardId,Place) VALUES(@entryId, @awardId, @place)", cn)) {
                 cn.Open();
@@ -41,13 +42,70 @@ namespace Rejestracja {
             }
         }
 
-        public static void deleteResult(long resultId) {
+        public static Result get(int resultId) {
+
+            Result ret = null;
+
+            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using (SQLiteCommand cm = new SQLiteCommand(
+                @"SELECT e.EntryId, e.TmStamp, e.Email, e.FirstName, e.LastName, e.ClubName, e.AgeGroup, 
+                        e.ModelName, e.ModelCategory, COALESCE(e.ModelCategoryId, -1) AS ModelCategoryId,
+                        e.ModelScale, e.ModelPublisher, e.ModelClass, e.YearOfBirth, COALESCE(e.SkipErrorValidation, 0) AS SkipErrorValidation,
+                        r.ResultId, r.Place, a.Id AS AwardId, a.Title, a.DisplayOrder
+                    FROM Results r
+                        JOIN Registration e ON r.EntryId = e.EntryId
+                        LEFT JOIN SpecialAwards a ON r.AwardId = a.Id
+                    WHERE r.ResultId = @ResultId", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+                cm.Parameters.Add("@ResultId", System.Data.DbType.Int32).Value = resultId;
+
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    if (dr.Read()) {
+
+                        RegistrationEntry entry = new RegistrationEntry(
+                            dr.GetInt64(dr.GetOrdinal("EntryId")),
+                            (DateTime)dr["TmStamp"],
+                            dr["Email"].ToString(),
+                            dr["FirstName"].ToString(),
+                            dr["LastName"].ToString(),
+                            dr["ClubName"].ToString(),
+                            dr["AgeGroup"].ToString(),
+                            dr["ModelName"].ToString(),
+                            dr["ModelClass"].ToString(),
+                            dr["ModelScale"].ToString(),
+                            dr["ModelPublisher"].ToString(),
+                            dr["ModelCategory"].ToString(),
+                            dr.GetInt64(dr.GetOrdinal("ModelCategoryId")),
+                            dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                            dr.GetBoolean(dr.GetOrdinal("SkipErrorValidation"))
+                        );
+
+                        if (!dr.IsDBNull(dr.GetOrdinal("Place"))) {
+                            ret = new Result(dr.GetInt32(dr.GetOrdinal("ResultId")), entry, dr.GetInt32(dr.GetOrdinal("Place")));
+                        }
+                        else {
+                            Award award = new Award(
+                                dr.GetInt64(dr.GetOrdinal("AwardId")),
+                                dr["Title"].ToString(),
+                                dr.GetInt64(dr.GetOrdinal("DisplayOrder"))
+                            );
+                            ret = new Result(dr.GetInt32(dr.GetOrdinal("ResultId")), entry, award);
+                        }
+                    }
+                }
+            }
+
+            return ret;
+        }
+
+        public static void delete(int resultId) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE ResultId = @resultId", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@resultId", System.Data.DbType.Int64).Value = resultId;
+                cm.Parameters.Add("@resultId", System.Data.DbType.Int32).Value = resultId;
                 cm.ExecuteNonQuery();
             }
         }
@@ -63,7 +121,7 @@ namespace Rejestracja {
             }
         }
 
-        public static void deleteResult(long entryId, int place) {
+        public static void deleteCategoryResult(long entryId, int place) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE EntryId = @EntryId AND Place = @Place", cn)) {
                 cn.Open();
@@ -75,7 +133,7 @@ namespace Rejestracja {
             }
         }
 
-        public static bool awardEntryExists(long entryId, long awardId) {
+        public static bool awardResultExists(long entryId, long awardId) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("SELECT ResultId FROM Results WHERE EntryId = @EntryId AND AwardId = @AwardId", cn)) {
                 cn.Open();
@@ -108,10 +166,10 @@ namespace Rejestracja {
                             new String[] 
                             {
                                 dr["ResultId"].ToString(),
-                                dr["EntryId"].ToString(),
                                 dr["AgeGroup"].ToString(),
                                 dr["ModelClass"].ToString(),
                                 dr["ModelCategory"].ToString(),
+                                dr["EntryId"].ToString(),
                                 dr["ModelName"].ToString(),
                                 dr["Place"].ToString()
                             };
@@ -120,7 +178,7 @@ namespace Rejestracja {
             }
         }
 
-        public static IEnumerable<RegistrationEntry> getEntriesInCategory(String modelCategory) {
+        public static IEnumerable<RegistrationEntry> getCategoryResults(String modelCategory) {
             if (String.IsNullOrWhiteSpace(modelCategory)) {
                 throw new ArgumentNullException("Kategoria jest wymagana");
             }
@@ -154,10 +212,13 @@ namespace Rejestracja {
             }
         }
 
-        public static IEnumerable<WinningEntry> getCategoryResults() {
+        public static IEnumerable<Result> getCategoryResults() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT r.ResultId, e.FirstName, e.LastName, e.AgeGroup, e.EntryId, e.ModelName, e.ModelClass, e.ModelCategory, r.Place, ag.Age,
+                @"SELECT e.EntryId, e.TmStamp, e.Email, e.FirstName, e.LastName, e.ClubName, e.AgeGroup, 
+                        e.ModelName, e.ModelCategory, COALESCE(e.ModelCategoryId, -1) AS ModelCategoryId,
+                        e.ModelScale, e.ModelPublisher, e.ModelClass, e.YearOfBirth, COALESCE(e.SkipErrorValidation, 0) AS SkipErrorValidation,
+                        r.ResultId, r.Place, ag.Age,
                     CASE WHEN mc.DisplayOrder IS NULL THEN -1 ELSE mc.DisplayOrder END AS DisplayOrder
                 FROM Results r 
                     JOIN Registration e ON r.EntryId = e.EntryId
@@ -170,16 +231,29 @@ namespace Rejestracja {
 
                 using (SQLiteDataReader dr = cm.ExecuteReader()) {
                     while (dr.Read()) {
+
+                        RegistrationEntry entry = new RegistrationEntry(
+                            dr.GetInt64(dr.GetOrdinal("EntryId")),
+                            (DateTime)dr["TmStamp"],
+                            dr["Email"].ToString(),
+                            dr["FirstName"].ToString(),
+                            dr["LastName"].ToString(),
+                            dr["ClubName"].ToString(),
+                            dr["AgeGroup"].ToString(),
+                            dr["ModelName"].ToString(),
+                            dr["ModelClass"].ToString(),
+                            dr["ModelScale"].ToString(),
+                            dr["ModelPublisher"].ToString(),
+                            dr["ModelCategory"].ToString(),
+                            dr.GetInt64(dr.GetOrdinal("ModelCategoryId")),
+                            dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                            dr.GetBoolean(dr.GetOrdinal("SkipErrorValidation"))
+                        );
+                        
                         yield return
-                            new WinningEntry(
-                                dr.GetInt64(dr.GetOrdinal("ResultId")),
-                                dr["FirstName"].ToString(),
-                                dr["LastName"].ToString(),
-                                dr["AgeGroup"].ToString(),
-                                dr.GetInt64(dr.GetOrdinal("EntryId")),
-                                dr["ModelName"].ToString(),
-                                dr["ModelClass"].ToString(),
-                                dr["ModelCategory"].ToString(),
+                            new Result(
+                                dr.GetInt32(dr.GetOrdinal("ResultId")),
+                                entry,
                                 dr.GetInt32(dr.GetOrdinal("Place"))
                             );
                     }
@@ -190,7 +264,7 @@ namespace Rejestracja {
         public static IEnumerable<String[]> getAwardResultList() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT r.ResultId, e.EntryId, e.ModelName, e.ModelScale, e.ModelPublisher, a.Title, a.Id
+                @"SELECT r.ResultId, a.Title, e.EntryId, e.ModelName
                     FROM Results r 
                     JOIN Registration e ON r.EntryId = e.EntryId
                     JOIN SpecialAwards a ON r.AwardId = a.Id
@@ -205,44 +279,61 @@ namespace Rejestracja {
                             new String[] 
                             {
                                 dr["ResultId"].ToString(),
+                                "",
+                                "",
+                                dr["Title"].ToString(),
                                 dr["EntryId"].ToString(),
                                 dr["ModelName"].ToString(),
-                                dr["ModelScale"].ToString(),
-                                dr["ModelPublisher"].ToString(),
-                                dr["Title"].ToString(),
+                                ""
                             };
                     }
                 }
             }
         }
 
-        public static IEnumerable<WinningEntry> getAwardResults() {
+        public static IEnumerable<Result> getAwardResults() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT r.ResultId, e.FirstName, e.LastName, e.AgeGroup, e.EntryId, e.ModelName, e.ModelClass, e.ModelCategory, a.Id AS AwardId, a.Title
+                @"SELECT e.EntryId, e.TmStamp, e.Email, e.FirstName, e.LastName, e.ClubName, e.AgeGroup, 
+                        e.ModelName, e.ModelCategory, COALESCE(e.ModelCategoryId, -1) AS ModelCategoryId,
+                        e.ModelScale, e.ModelPublisher, e.ModelClass, e.YearOfBirth, COALESCE(e.SkipErrorValidation, 0) AS SkipErrorValidation,
+                        r.ResultId, a.Id AS AwardId, a.Title, a.DisplayOrder
                     FROM Results r
-                    JOIN Registration e ON r.EntryId = e.EntryId
-                    JOIN SpecialAwards a ON r.AwardId = a.Id
-                WHERE a.Id IS NOT NULL
-                    ORDER BY a.DisplayOrder, r.ResultId", cn)) {
+                        JOIN Registration e ON r.EntryId = e.EntryId
+                        JOIN SpecialAwards a ON r.AwardId = a.Id
+                    WHERE r.AwardId IS NOT NULL
+                        ORDER BY a.DisplayOrder, a.Id, r.ResultId", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
                 using (SQLiteDataReader dr = cm.ExecuteReader()) {
                     while (dr.Read()) {
+
+                        RegistrationEntry entry = new RegistrationEntry(
+                            dr.GetInt64(dr.GetOrdinal("EntryId")),
+                            (DateTime)dr["TmStamp"],
+                            dr["Email"].ToString(),
+                            dr["FirstName"].ToString(),
+                            dr["LastName"].ToString(),
+                            dr["ClubName"].ToString(),
+                            dr["AgeGroup"].ToString(),
+                            dr["ModelName"].ToString(),
+                            dr["ModelClass"].ToString(),
+                            dr["ModelScale"].ToString(),
+                            dr["ModelPublisher"].ToString(),
+                            dr["ModelCategory"].ToString(),
+                            dr.GetInt64(dr.GetOrdinal("ModelCategoryId")),
+                            dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                            dr.GetBoolean(dr.GetOrdinal("SkipErrorValidation"))
+                        );
+
+                        Award award = new Award(
+                            dr.GetInt64(dr.GetOrdinal("AwardId")),
+                            dr["Title"].ToString(),
+                            dr.GetInt64(dr.GetOrdinal("DisplayOrder"))
+                        );
                         yield return
-                            new WinningEntry(
-                                dr.GetInt64(dr.GetOrdinal("ResultId")),
-                                dr["FirstName"].ToString(),
-                                dr["LastName"].ToString(),
-                                dr["AgeGroup"].ToString(),
-                                dr.GetInt64(dr.GetOrdinal("EntryId")),
-                                dr["ModelName"].ToString(),
-                                dr["ModelClass"].ToString(),
-                                dr["ModelCategory"].ToString(),
-                                dr.GetInt64(dr.GetOrdinal("AwardId")),
-                                dr["Title"].ToString()
-                            );
+                            new Result(dr.GetInt32(dr.GetOrdinal("ResultId")), entry, award);
                     }
                 }
             }
@@ -378,6 +469,24 @@ namespace Rejestracja {
             }
 
             return ret;
+        }
+
+        public static void createTable() {
+            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+                cm.CommandText =
+                    @"CREATE TABLE Results(
+                        ResultId INTEGER PRIMARY KEY,
+                        EntryId INTEGER NOT NULL REFERENCES Registration(EntryId),
+                        AwardId INTEGER NULL REFERENCES SpecialAwards(AwardId),
+                        Place INTEGER NULL)";
+                cm.ExecuteNonQuery();
+
+                cm.CommandText = "CREATE UNIQUE INDEX Idx_Res_Unique ON Results(EntryId,AwardId,Place)";
+                cm.ExecuteNonQuery();
+            }
         }
     }
 }

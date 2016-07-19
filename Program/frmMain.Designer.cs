@@ -75,6 +75,7 @@
             this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.cmsResultsRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cmsRCDeleteResult = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRCPrintDiploma = new System.Windows.Forms.ToolStripMenuItem();
             this.tpStats = new System.Windows.Forms.TabPage();
             this.btnRefreshStats = new System.Windows.Forms.Button();
             this.lvStats = new System.Windows.Forms.ListView();
@@ -435,16 +436,24 @@
             // cmsResultsRightClick
             // 
             this.cmsResultsRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cmsRCDeleteResult});
+            this.cmsRCDeleteResult,
+            this.mnuRCPrintDiploma});
             this.cmsResultsRightClick.Name = "cmsResultsRightClick";
-            this.cmsResultsRightClick.Size = new System.Drawing.Size(131, 26);
+            this.cmsResultsRightClick.Size = new System.Drawing.Size(155, 70);
             // 
             // cmsRCDeleteResult
             // 
             this.cmsRCDeleteResult.Name = "cmsRCDeleteResult";
-            this.cmsRCDeleteResult.Size = new System.Drawing.Size(130, 22);
+            this.cmsRCDeleteResult.Size = new System.Drawing.Size(154, 22);
             this.cmsRCDeleteResult.Text = "Usuń Wpis";
             this.cmsRCDeleteResult.Click += new System.EventHandler(this.cmsRCDeleteResult_Click);
+            // 
+            // mnuRCPrintDiploma
+            // 
+            this.mnuRCPrintDiploma.Name = "mnuRCPrintDiploma";
+            this.mnuRCPrintDiploma.Size = new System.Drawing.Size(154, 22);
+            this.mnuRCPrintDiploma.Text = "Drukuj Dyplom";
+            this.mnuRCPrintDiploma.Click += new System.EventHandler(this.mnuRCPrintDiploma_Click);
             // 
             // tpStats
             // 
@@ -705,6 +714,7 @@
         private System.Windows.Forms.ToolStripMenuItem mnuRAwardDiplomas;
         private System.Windows.Forms.ToolStripMenuItem mnuJMergeCategories;
         private System.Windows.Forms.ToolStripMenuItem mnuJAddResults;
+        private System.Windows.Forms.ToolStripMenuItem mnuRCPrintDiploma;
 
 
     }

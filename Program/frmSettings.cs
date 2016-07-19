@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Rejestracja.Data.Dao;
+using Rejestracja.Data.objects;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -118,11 +120,13 @@ namespace Rejestracja
         private void loadOptions()
         {
             txtHeading.Text = Options.get("DocumentHeader");
+            txtFooter.Text = Options.get("DocumentFooter");
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
             Options.set("DocumentHeader", txtHeading.Text);
+            Options.set("DocumentFooter", txtFooter.Text);
             this.Close();
         }
 
@@ -138,7 +142,7 @@ namespace Rejestracja
                 case 1:
                     if (lvAgeGroup.SelectedItems.Count < 1)
                         return;
-                    AgeGroup.delete((Int64)lvAgeGroup.SelectedItems[0].Tag);
+                    AgeGroupDao.delete((Int64)lvAgeGroup.SelectedItems[0].Tag);
                     loadAgeGroups();
                     break;
 
@@ -293,7 +297,7 @@ namespace Rejestracja
         {
             lvAgeGroup.Items.Clear();
 
-            foreach(AgeGroup ageGroup in AgeGroup.getList())
+            foreach (AgeGroup ageGroup in AgeGroupDao.getList())
             {
                 ListViewItem li = new ListViewItem(new String[] { ageGroup.name, String.Format("{0} - {1}", ageGroup.bottomAge, ageGroup.upperAge) });
                 li.Tag = ageGroup.id;
@@ -337,13 +341,13 @@ namespace Rejestracja
                 MessageBox.Show(this, "Wiek musi być liczbą > 0", "Błędne dane", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            if (AgeGroup.exists(int.Parse(txtAge.Text))) {
+            if (AgeGroupDao.exists(int.Parse(txtAge.Text))) {
                 MessageBox.Show("Nowa kategoria wiekowa musi różnić się o przynajmniej 2 lata od już istniejących", "Nowa grupa wiekowa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtAge.Focus();
                 txtAge.SelectAll();
                 return;
             }
-            AgeGroup.add(txtAgeGroup.Text, int.Parse(txtAge.Text));
+            AgeGroupDao.add(txtAgeGroup.Text, int.Parse(txtAge.Text));
             loadAgeGroups();
         }
 

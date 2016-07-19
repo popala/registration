@@ -13,37 +13,11 @@ namespace Rejestracja
 
         public const int TITLE_MAX_LENGTH = 256;
 
-        public Award(String title, long displayOrder)
-        {
-            this.title = title;
-            this.displayOrder = displayOrder;
-        }
-
         public Award(long id, String title, long displayOrder)
         {
             this.id = id;
             this.title = title;
             this.displayOrder = displayOrder;
-        }
-
-        public Award(long id)
-        {
-            Award award = get(id);
-            if (award == null)
-                return;
-
-            this.id = award.id;
-            this.title = award.title;
-            this.displayOrder = award.displayOrder;
-        }
-
-        public string[] toArray()
-        {
-            return new string[] {
-                this.id.ToString(),
-                this.title,
-                this.displayOrder.ToString()
-            };
         }
 
         public static Award get(long id)
@@ -85,22 +59,6 @@ namespace Rejestracja
                 cm.ExecuteNonQuery();
 
                 return cn.LastInsertRowId;
-            }
-        }
-
-        public void update()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"UPDATE SpecialAwards SET Title = @Title, DisplayOrder = @DisplayOrder WHERE Id = @Id", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-
-                cm.Parameters.Add("@Title", System.Data.DbType.String, TITLE_MAX_LENGTH).Value = this.title;
-                cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int64).Value = this.displayOrder;
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = this.id;
-
-                cm.ExecuteNonQuery();
             }
         }
 

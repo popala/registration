@@ -7,6 +7,9 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Data.SQLite;
 using System.Linq;
+using Rejestracja.Data.Objects;
+using Rejestracja.Data.Dao;
+using System.Drawing;
 
 namespace Rejestracja {
     public partial class frmMain : Form {
@@ -97,6 +100,8 @@ namespace Rejestracja {
 
             Application.UseWaitCursor = true;
 
+            String[] headers;
+
             //REGISTRATION PANEL
             lvEntries.View = View.Details;
             lvEntries.GridLines = true;
@@ -105,7 +110,8 @@ namespace Rejestracja {
             lvEntries.CheckBoxes = true;
 
             lvEntries.Columns.Clear();
-            foreach (String header in ConfigurationManager.AppSettings["nagłówkiTabelaRejestracji"].Split(',')) {
+            headers = new String[] { "Nr Rej.", "Dodane", "Email", "Imię", "Nazwisko", "Rok Ur.", "Klub", "Grupa Wiekowa", "Nazwa Modelu", "Kategoria", "Klasa", "Skala", "Wydawnictwo" };
+            foreach (String header in headers) {
                 lvEntries.Columns.Add(header.Trim());
             }
 
@@ -124,7 +130,8 @@ namespace Rejestracja {
             lvResults.CheckBoxes = false;
 
             lvResults.Columns.Clear();
-            foreach (String header in ConfigurationManager.AppSettings["nagłówkiTabelaWyników"].Split(',')) {
+            headers = new String[] { "Id", "Grupa Wiekowa", "Klasa", "Kategoria / Nagroda", "Nr Modelu", "Model", "Miejsce" };
+            foreach (String header in headers) {
                 lvResults.Columns.Add(header.Trim());
             }
 
@@ -159,11 +166,11 @@ namespace Rejestracja {
                 ListViewGroup group = new ListViewGroup();
                 String ageGroup = "";
 
-                results = Results.getCategoryResultList();
+                results = ResultDao.getCategoryResultList();
 
                 foreach (string[] result in results) {
-                    if (!ageGroup.Equals(result[2])) {
-                        ageGroup = result[2];
+                    if (!ageGroup.Equals(result[1])) {
+                        ageGroup = result[1];
                         group = new ListViewGroup("Wyniki w Kategoriach - " + ageGroup.ToUpper());
                         lvResults.Groups.Add(group);
                     }
@@ -175,10 +182,10 @@ namespace Rejestracja {
                 for (int i = 1; i < lvResults.Items.Count; i++) {
                     ListViewItem prev = lvResults.Items[i - 1];
                     ListViewItem cur = lvResults.Items[i];
-                    if (cur.SubItems[2].Text.ToLower() != prev.SubItems[2].Text.ToLower() ||
-                        cur.SubItems[3].Text.ToLower() != prev.SubItems[3].Text.ToLower() ||
-                        cur.SubItems[4].Text.ToLower() != prev.SubItems[4].Text.ToLower()) {
-                        color = (color == System.Drawing.Color.LightGray ? System.Drawing.Color.White : System.Drawing.Color.LightGray);
+                    if (cur.SubItems[1].Text.ToLower() != prev.SubItems[1].Text.ToLower() ||
+                        cur.SubItems[2].Text.ToLower() != prev.SubItems[2].Text.ToLower() ||
+                        cur.SubItems[3].Text.ToLower() != prev.SubItems[3].Text.ToLower()) {
+                            color = (color == System.Drawing.Color.AliceBlue ? System.Drawing.Color.White : System.Drawing.Color.AliceBlue);
                     }
                     cur.BackColor = color;
                 }
@@ -186,7 +193,7 @@ namespace Rejestracja {
                 group = new ListViewGroup("Nagrody Specjalne");
                 lvResults.Groups.Add(group);
 
-                results = Results.getAwardResultList();
+                results = ResultDao.getAwardResultList();
                 foreach (String[] result in results) {
                     lvResults.Items.Add(new ListViewItem(result, group));
                 }
@@ -606,7 +613,7 @@ namespace Rejestracja {
                         dc.printWordDoc(file.FullName);
                     }
 
-                    toolStripLabelSpring.Text = "Dokumenty wysłane do druku";
+                    showStripLabelMessage("Dokumenty wysłane do druku");
                 }
             }
             catch (Exception err) {
@@ -617,11 +624,15 @@ namespace Rejestracja {
             finally {
                 toolStripProgressBar.Visible = false;
                 Application.UseWaitCursor = false;
-                Timer timer = new Timer();
-                timer.Interval = 1000 * 5;
-                timer.Tick += new EventHandler(this.statusTextTimer_Tick);
-                timer.Start();
             }
+        }
+
+        private void showStripLabelMessage(String message) {
+            toolStripLabelSpring.Text = message;
+            Timer timer = new Timer();
+            timer.Interval = 1000 * 5;
+            timer.Tick += new EventHandler(this.statusTextTimer_Tick);
+            timer.Start();
         }
 
         private void statusTextTimer_Tick(object sender, EventArgs e) {
@@ -689,12 +700,7 @@ namespace Rejestracja {
             }
 
             toolStripProgressBar.Visible = false;
-            toolStripLabelSpring.Text = "Dokumenty wydrukowane";
-
-            Timer timer = new Timer();
-            timer.Interval = 1000 * 5;
-            timer.Tick += new EventHandler(this.statusTextTimer_Tick);
-            timer.Start();
+            showStripLabelMessage("Dokumenty wydrukowane");
 
             Application.UseWaitCursor = false;
         }
@@ -716,7 +722,7 @@ namespace Rejestracja {
         private void cmsRCDeleteResult_Click(object sender, EventArgs e) {
             int resultId = int.Parse(lvResults.SelectedItems[0].SubItems[0].Text);
 
-            Results.deleteResult(resultId);
+            ResultDao.delete(resultId);
             loadResultList();
         }
 
@@ -734,7 +740,7 @@ namespace Rejestracja {
 
                 ListViewGroup group = new ListViewGroup("");
 
-                foreach (KeyValuePair<string, string> stat in Results.getRegistrationStats()) {
+                foreach (KeyValuePair<string, string> stat in ResultDao.getRegistrationStats()) {
                     if (stat.Key.StartsWith("GROUP")) {
                         group = new ListViewGroup(stat.Value);
                         lvStats.Groups.Add(group);
@@ -903,19 +909,20 @@ namespace Rejestracja {
                 toolStripProgressBar.Value = 0;
 
                 DocHandler dc = new DocHandler();
-                IEnumerable<WinningEntry> entries;
+                IEnumerable<Result> results;
 
                 String templateFile = Resources.resolvePath("templateDyplomuKategorii");
-                entries = Results.getCategoryResults();
+                results = ResultDao.getCategoryResults();
 
-                foreach (WinningEntry entry in entries) {
-                    String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", entry.resultId));
-                    dc.generateDiploma(templateFile, outputFile, entry);
+                foreach (Result result in results) {
+                    String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
+                    dc.generateDiploma(templateFile, outputFile, result);
                     if (printForms) {
                         dc.printWordDoc(outputFile);
                     }
                     incrementProgressBar();
                 }
+                showStripLabelMessage("Dokumenty gotowe");
                 Process.Start(outputDirectory);
             }
             catch (Exception err) {
@@ -926,10 +933,6 @@ namespace Rejestracja {
             finally {
                 toolStripProgressBar.Visible = false;
                 Application.UseWaitCursor = false;
-                Timer timer = new Timer();
-                timer.Interval = 1000 * 5;
-                timer.Tick += new EventHandler(this.statusTextTimer_Tick);
-                timer.Start();
             }
         }
 
@@ -966,18 +969,19 @@ namespace Rejestracja {
                 toolStripProgressBar.Value = 0;
 
                 DocHandler dc = new DocHandler();
-                IEnumerable<WinningEntry> entries = Results.getAwardResults();
+                IEnumerable<Result> results = ResultDao.getAwardResults();
                 String templateFile = Resources.resolvePath("templateDyplomuNagrody");
-                resetProgressBar(entries.Count());
+                resetProgressBar(results.Count());
 
-                foreach (WinningEntry entry in entries) {
-                    String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", entry.resultId));
-                    dc.generateDiploma(templateFile, outputFile, entry);
+                foreach (Result result in results) {
+                    String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
+                    dc.generateDiploma(templateFile, outputFile, result);
                     if (printForms) {
                         dc.printWordDoc(outputFile);
                     }
                     incrementProgressBar();
                 }
+                showStripLabelMessage("Dokumenty gotowe");
                 Process.Start(outputDirectory);
             }
             catch (Exception err) {
@@ -988,10 +992,6 @@ namespace Rejestracja {
             finally {
                 toolStripProgressBar.Visible = false;
                 Application.UseWaitCursor = false;
-                Timer timer = new Timer();
-                timer.Interval = 1000 * 5;
-                timer.Tick += new EventHandler(this.statusTextTimer_Tick);
-                timer.Start();
             }
         }
 
@@ -1002,6 +1002,65 @@ namespace Rejestracja {
             loadRegistrationList(txtFilter.Text);
             loadResultList();
             loadStats();
+        }
+
+        private void mnuRCPrintDiploma_Click(object sender, EventArgs e) {
+
+            Application.UseWaitCursor = true;
+
+            try {
+
+                int resultId = int.Parse(lvResults.SelectedItems[0].SubItems[0].Text);
+                Result result = ResultDao.get(resultId);
+                toolStripLabelSpring.Text = "Tworzenie dokumentu...";
+                toolStripLabelSpring.Visible = true;
+
+                if (result.place > 0) {
+
+                    String outputDirectory = Path.Combine(Resources.resolvePath("folderDokumentów"), "dyplomy", "kategorie");
+                    if (!Directory.Exists(outputDirectory)) {
+                        Directory.CreateDirectory(outputDirectory);
+                    }
+
+                    DocHandler dc = new DocHandler();
+                    String templateFile = Resources.resolvePath("templateDyplomuKategorii");
+                    String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
+                    File.Delete(outputFile);
+                    dc.generateDiploma(templateFile, outputFile, result);
+                    dc.printWordDoc(outputFile);
+
+                    showStripLabelMessage("Dokument wysłany do druku");
+                }
+                else if (result.award != null) {
+
+                    String outputDirectory = Path.Combine(Resources.resolvePath("folderDokumentów"), "dyplomy", "nagrody");
+                    if (!Directory.Exists(outputDirectory)) {
+                        Directory.CreateDirectory(outputDirectory);
+                    }
+
+                    DocHandler dc = new DocHandler();
+                    String templateFile = Resources.resolvePath("templateDyplomuNagrody");
+                    String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
+                    File.Delete(outputFile);
+
+                    dc.generateDiploma(templateFile, outputFile, result);
+                    dc.printWordDoc(outputFile);
+
+                    showStripLabelMessage("Dokument wysłany do druku");
+                }
+                else {
+                    LogWriter.info("ERROR printing diploma: Result did not contain place or award");
+                    MessageBox.Show("Wpis nie posiada numeru nagrody lub miejsca", "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception err) {
+                LogWriter.error(err);
+                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                toolStripLabelSpring.Visible = false;
+            }
+            finally {
+                Application.UseWaitCursor = false;
+            }
         }
     }
 }
