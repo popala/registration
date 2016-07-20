@@ -1,18 +1,16 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using Novacode;
-using System.Collections;
-using System.IO;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Text;
-using System.Diagnostics;
-using System.Linq;
-using Rejestracja.Data.Objects;
+﻿using Novacode;
 using Rejestracja.Data.Dao;
-using Rejestracja.Data;
+using Rejestracja.Data.Objects;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
-namespace Rejestracja
+namespace Rejestracja.Utils
 {
     class DocHandler
     {
@@ -39,7 +37,6 @@ namespace Rejestracja
                 template.ReplaceText("[GrupaWiekowa]", result.entry.ageGroup,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[NazwaModelu]", result.entry.modelName,
-
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[KlasaModelu]", result.entry.modelClass,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);

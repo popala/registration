@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Configuration;
-using System.IO;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Data.SQLite;
-using System.Linq;
+﻿using Rejestracja.Data.Dao;
 using Rejestracja.Data.Objects;
-using Rejestracja.Data.Dao;
-using System.Drawing;
-using Rejestracja.Data;
+using Rejestracja.Utils;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Rejestracja {
     public partial class frmMain : Form {
@@ -27,6 +23,17 @@ namespace Rejestracja {
             InitializeComponent();
         }
 
+        private void frmMain_FormClosing(object sender, FormClosingEventArgs e) {
+            //nothing to do
+        }
+
+        private void frmMain_Resize(object sender, EventArgs e) {
+            if (this.WindowState != FormWindowState.Maximized) {
+                String size = string.Format("{0},{1},{2},{3}", this.Left, this.Top, this.Width, this.Height);
+                Options.set("frmMainSize", size);
+            }
+        }
+
         private void frmMain_Shown(object sender, EventArgs e) {
             //nothing
         }
@@ -41,6 +48,15 @@ namespace Rejestracja {
 
         private void frmMain_Load(object sender, EventArgs e) {
             //devTasks();
+
+            String size = Options.get("frmMainSize");
+            if (size != null) {
+                String[] pos = size.Split(',');
+                this.Left = int.Parse(pos[0]);
+                this.Top = int.Parse(pos[1]);
+                this.Width = int.Parse(pos[2]);
+                this.Height = int.Parse(pos[3]);
+            }
 
             _txtFilterTimer = new Timer();
             _txtFilterTimer.Interval = 1000;
@@ -62,6 +78,7 @@ namespace Rejestracja {
                 f.ShowDialog(this);
                 if (_showSettingsForm) {
                     frmSettings fs = new frmSettings();
+                    fs.StartPosition = FormStartPosition.CenterScreen;
                     fs.ShowDialog(this);
                     populateUI();
                     uiEnabled(true);
@@ -95,6 +112,7 @@ namespace Rejestracja {
             mnuFImport.Enabled = isEnabled;
             mnuFExport.Enabled = isEnabled;
             mnuFSettings.Enabled = isEnabled;
+            mnuResults.Enabled = isEnabled;
         }
 
         public void populateUI() {
@@ -469,6 +487,7 @@ namespace Rejestracja {
                 return;
 
             frmImportFile f = new frmImportFile();
+            f.StartPosition = FormStartPosition.CenterParent;
             f.Show(this);
         }
 
@@ -478,6 +497,7 @@ namespace Rejestracja {
 
         private void btnRegister_Click(object sender, EventArgs e) {
             frmRegistrationEntry f = new frmRegistrationEntry();
+            f.StartPosition = FormStartPosition.CenterScreen;
             f._parentForm = this;
             f.ShowDialog(this);
             loadRegistrationList(txtFilter.Text);
@@ -824,7 +844,14 @@ namespace Rejestracja {
 
         private void mnuFNewDataFile_Click(object sender, EventArgs e) {
             frmNewDataFile f = new frmNewDataFile();
-            f.Show(this);
+            f.setSelectedTab(0);
+            f.ShowDialog(this);
+        }
+
+        private void mnuFOpenDataFile_Click(object sender, EventArgs e) {
+            frmNewDataFile f = new frmNewDataFile();
+            f.setSelectedTab(1);
+            f.ShowDialog(this);
         }
 
         private void mnuFFDataFolder_Click(object sender, EventArgs e) {
@@ -878,9 +905,7 @@ namespace Rejestracja {
         }
 
         private void btnAddResults_Click(object sender, EventArgs e) {
-            frmAddResults f = new frmAddResults();
-            f.ShowDialog(this);
-            loadResultList();
+            mnuJAddResults_Click(sender, e);
         }
 
         private void mnuRCategoryDiplomas_Click(object sender, EventArgs e) {
@@ -939,6 +964,7 @@ namespace Rejestracja {
 
         private void mnuJAddResults_Click(object sender, EventArgs e) {
             frmAddResults f = new frmAddResults();
+            f.StartPosition = FormStartPosition.CenterParent;
             f.ShowDialog(this);
             loadResultList();
         }

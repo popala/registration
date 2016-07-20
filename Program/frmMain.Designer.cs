@@ -90,6 +90,7 @@
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.lvEntries = new System.Windows.Forms.ListView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.mnuFOpenDataFile = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -117,6 +118,7 @@
             // 
             this.mnuFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuFNewDataFile,
+            this.mnuFOpenDataFile,
             this.toolStripSeparator6,
             this.mnuFImport,
             this.mnuFExport,
@@ -439,7 +441,7 @@
             this.cmsRCDeleteResult,
             this.mnuRCPrintDiploma});
             this.cmsResultsRightClick.Name = "cmsResultsRightClick";
-            this.cmsResultsRightClick.Size = new System.Drawing.Size(155, 70);
+            this.cmsResultsRightClick.Size = new System.Drawing.Size(155, 48);
             // 
             // cmsRCDeleteResult
             // 
@@ -624,6 +626,13 @@
             this.tabControl1.Size = new System.Drawing.Size(1179, 675);
             this.tabControl1.TabIndex = 1;
             // 
+            // mnuFOpenDataFile
+            // 
+            this.mnuFOpenDataFile.Name = "mnuFOpenDataFile";
+            this.mnuFOpenDataFile.Size = new System.Drawing.Size(156, 22);
+            this.mnuFOpenDataFile.Text = "Otwórz Plik...";
+            this.mnuFOpenDataFile.Click += new System.EventHandler(this.mnuFOpenDataFile_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -650,7 +659,8 @@
             this.tabControl1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
+            this.Resize += new System.EventHandler(this.frmMain_Resize);
         }
 
         #endregion
@@ -715,6 +725,7 @@
         private System.Windows.Forms.ToolStripMenuItem mnuJMergeCategories;
         private System.Windows.Forms.ToolStripMenuItem mnuJAddResults;
         private System.Windows.Forms.ToolStripMenuItem mnuRCPrintDiploma;
+        private System.Windows.Forms.ToolStripMenuItem mnuFOpenDataFile;
 
 
     }

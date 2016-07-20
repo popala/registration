@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Linq;
 
-namespace Rejestracja {
+namespace Rejestracja.Utils {
     class Resources {
         public static String DateFormat = "yyyy-MM-dd HH:mm";
         public static Regex FileNameInvalidChars = new Regex(@"[\\/:*?""<>|]");

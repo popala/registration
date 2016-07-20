@@ -93,7 +93,7 @@
     <Compile Include="Data\Objects\Publisher.cs" />
     <Compile Include="Data\Objects\RegistrationEntry.cs" />
     <Compile Include="Data\Objects\Result.cs" />
-    <Compile Include="Data\Options.cs" />
+    <Compile Include="Utils\Options.cs" />
     <Compile Include="Data\Dao\PublisherDao.cs" />
     <Compile Include="Data\Dao\ResultDao.cs" />
     <Compile Include="frmImportFile.cs">
@@ -121,13 +121,13 @@
       <DependentUpon>frmNewDataFile.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs" />
-    <Compile Include="utils\ComboBoxItem.cs" />
+    <Compile Include="Utils\ComboBoxItem.cs" />
     <Compile Include="Data\DataSource.cs" />
-    <Compile Include="utils\DocHandler.cs" />
-    <Compile Include="utils\FileImportFieldMap.cs" />
-    <Compile Include="utils\LogWriter.cs" />
+    <Compile Include="Utils\DocHandler.cs" />
+    <Compile Include="Data\Objects\FileImportFieldMap.cs" />
+    <Compile Include="Utils\LogWriter.cs" />
     <Compile Include="Data\Dao\RegistrationEntryDao.cs" />
-    <Compile Include="utils\Resources.cs" />
+    <Compile Include="Utils\Resources.cs" />
     <Compile Include="frmAddResults.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -183,21 +183,21 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Content Include="templates\dyplomKategoria.docx">
+    <Content Include="Templates\dyplomKategoria.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="templates\dyplomNagroda.docx">
+    <Content Include="Templates\dyplomNagroda.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="templates\kartaModelu.docx">
+    <Content Include="Templates\kartaModelu.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="templates\kartaSedziowania.docx">
+    <Content Include="Templates\kartaSedziowania.docx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="templates\wyniki.html">
+    <Content Include="Templates\wyniki.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

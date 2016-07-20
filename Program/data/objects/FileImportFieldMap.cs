@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Rejestracja {
+﻿
+namespace Rejestracja.Data.Objects {
     class FileImportFieldMap {
         public int TimeStamp { get; set; }
         public int Email { get; set; }

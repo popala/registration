@@ -1,5 +1,5 @@
 ﻿
-namespace Rejestracja
+namespace Rejestracja.Utils
 {
     class ComboBoxItem
     {
