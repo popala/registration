@@ -49,15 +49,6 @@ namespace Rejestracja {
         private void frmMain_Load(object sender, EventArgs e) {
             //devTasks();
 
-            String size = Options.get("frmMainSize");
-            if (size != null) {
-                String[] pos = size.Split(',');
-                this.Left = int.Parse(pos[0]);
-                this.Top = int.Parse(pos[1]);
-                this.Width = int.Parse(pos[2]);
-                this.Height = int.Parse(pos[3]);
-            }
-
             _txtFilterTimer = new Timer();
             _txtFilterTimer.Interval = 1000;
             _txtFilterTimer.Tick += new EventHandler(this.txtFilterTimer_Tick);
@@ -86,10 +77,20 @@ namespace Rejestracja {
                 }
                 return;
             }
+            else {
+                String size = Options.get("frmMainSize");
+                if (size != null) {
+                    String[] pos = size.Split(',');
+                    this.Left = int.Parse(pos[0]);
+                    this.Top = int.Parse(pos[1]);
+                    this.Width = int.Parse(pos[2]);
+                    this.Height = int.Parse(pos[3]);
+                }
 
-            if (Options.get("RegistrationView").Equals("groupped")) {
-                mnuRVStandard.Checked = false;
-                mnuRVGroupped.Checked = true;
+                if (Options.get("RegistrationView").Equals("groupped")) {
+                    mnuRVStandard.Checked = false;
+                    mnuRVGroupped.Checked = true;
+                }
             }
 
             try {
