@@ -2,14 +2,14 @@
 
 namespace Rejestracja.Data.Objects {
     class ModelCategory {
-        public long id;
+        public int id;
         public String code;
         public String name;
         public String fullName;
         public String modelClass;
         public int displayOrder;
 
-        public ModelCategory(long id, String code, String name, String modelClass, int displayOrder) {
+        public ModelCategory(int id, String code, String name, String modelClass, int displayOrder) {
             this.id = id;
             this.code = code;
             this.name = name;

@@ -145,12 +145,12 @@ namespace Rejestracja
             lblErrors.Text = "";
             lblErrors.Visible = false;
 
-            //Only seniors are allowed in non-standard category
-            if (cboAgeGroup.Text.ToLower() != "senior" && cboModelClass.Text.ToLower() != "standard")
-            {
-                lblErrors.Text = "Tylko Senior powinien startować w kategorii Open.\n";
-                lblErrors.Visible = true;
-            }
+            ////Only seniors are allowed in non-standard category
+            //if (cboAgeGroup.Text.ToLower() != "senior" && cboModelClass.Text.ToLower() != "standard")
+            //{
+            //    lblErrors.Text = "Tylko Senior powinien startować w kategorii Open.\n";
+            //    lblErrors.Visible = true;
+            //}
 
             foreach (ModelCategory category in modelCategories)
             {
@@ -203,11 +203,8 @@ namespace Rejestracja
             catch(Exception err)
             {
                 LogWriter.error(err);
-                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            //btnSave.Enabled = true;
-            //validateExistingEntry();
         }
 
         private bool validateEntry()
@@ -284,46 +281,61 @@ namespace Rejestracja
 
         private void btnAddPrintModel_Click(object sender, EventArgs e)
         {
-            if (!validateEntry()) {
-                return;
+            try {
+                if (!validateEntry()) {
+                    return;
+                }
+
+                long categoryId = -1;
+                if (cboModelCategory.SelectedIndex > -1) {
+                    categoryId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
+                }
+
+                RegistrationEntry entry =
+                    new RegistrationEntry(
+                        DateTime.Now,
+                        txtEmail.Text,
+                        txtFirstName.Text,
+                        txtLastName.Text,
+                        txtModelClub.Text,
+                        cboAgeGroup.Text,
+                        txtModelName.Text,
+                        cboModelClass.Text,
+                        cboModelScale.Text,
+                        cboModelPublisher.Text,
+                        cboModelCategory.Text,
+                        categoryId,
+                        int.Parse(cboYearOfBirth.Text)
+                    );
+
+                btnAddPrintModel.Enabled = false;
+                btnNewModel.Enabled = false;
+                btnNewRegistration.Enabled = false;
+                btnClose.Enabled = false;
+
+                RegistrationEntryDao.add(entry);
+                txtEntryId.Text = entry.entryId.ToString();
+
+                if (!chkPrintRegistrationCard.Checked) {
+                    this._parentForm.printRegistrationCard(entry.entryId);
+                }
+
+                txtEntryId.Text = "";
+                txtModelName.Text = "";
+                cboModelPublisher.SelectedIndex = -1;
+                btnAddPrintModel.Enabled = true;
+                txtModelName.Focus();
             }
-
-            long categoryId = -1;
-            if (cboModelCategory.SelectedIndex > -1) {
-                categoryId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
+            catch (Exception err) {
+                LogWriter.error(err);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            RegistrationEntry entry =
-                new RegistrationEntry(
-                    DateTime.Now,
-                    txtEmail.Text,
-                    txtFirstName.Text,
-                    txtLastName.Text,
-                    txtModelClub.Text,
-                    cboAgeGroup.Text,
-                    txtModelName.Text,
-                    cboModelClass.Text,
-                    cboModelScale.Text,
-                    cboModelPublisher.Text,
-                    cboModelCategory.Text,
-                    categoryId,
-                    int.Parse(cboYearOfBirth.Text)
-                );
-
-            RegistrationEntryDao.add(entry);
-            txtEntryId.Text = entry.entryId.ToString();
-
-            btnAddPrintModel.Enabled = false;
-
-            if (!chkPrintRegistrationCard.Checked) {
-                this._parentForm.printRegistrationCard(entry.entryId);
+            finally {
+                btnAddPrintModel.Enabled = true;
+                btnNewModel.Enabled = true;
+                btnNewRegistration.Enabled = true;
+                btnClose.Enabled = true;
             }
-
-            txtEntryId.Text = "";
-            txtModelName.Text = "";
-            cboModelPublisher.SelectedIndex = -1;
-            btnAddPrintModel.Enabled = true;
-            txtModelName.Focus();
         }
 
         private void btnNewModel_Click(object sender, EventArgs e)

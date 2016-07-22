@@ -161,7 +161,7 @@ namespace Rejestracja
                 case 4:
                     if (lvAwards.SelectedItems.Count < 1)
                         return;
-                    AwardDao.delete((Int64)lvAwards.SelectedItems[0].Tag);
+                    AwardDao.delete((int)lvAwards.SelectedItems[0].Tag);
                     loadAwards();
                     break;
 
@@ -463,8 +463,8 @@ namespace Rejestracja
             lvAwards.Items.Insert(index - 1, item);
             lvAwards.Items[index - 1].Selected = true;
 
-            AwardDao.updateDisplayOrder((Int64)lvAwards.Items[index - 1].Tag, index - 1);
-            AwardDao.updateDisplayOrder((Int64)lvAwards.Items[index].Tag, index);
+            AwardDao.updateDisplayOrder((int)lvAwards.Items[index - 1].Tag, index - 1);
+            AwardDao.updateDisplayOrder((int)lvAwards.Items[index].Tag, index);
         }
 
         private void btnMoveDownAward_Click(object sender, EventArgs e) {
@@ -481,8 +481,8 @@ namespace Rejestracja
             lvAwards.Items.Insert(index + 1, selectedItem);
             selectedItem.Selected = true;
 
-            AwardDao.updateDisplayOrder((Int64)lvAwards.Items[index].Tag, index);
-            AwardDao.updateDisplayOrder((Int64)lvAwards.Items[index + 1].Tag, index + 1);
+            AwardDao.updateDisplayOrder((int)lvAwards.Items[index].Tag, index);
+            AwardDao.updateDisplayOrder((int)lvAwards.Items[index + 1].Tag, index + 1);
         }
     }
 }

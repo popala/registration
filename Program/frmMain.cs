@@ -4,6 +4,7 @@ using Rejestracja.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,6 +15,23 @@ namespace Rejestracja {
         private int _registrationSortColumn = 0;
         private bool _registrationSortAscending = true;
         private bool _showSettingsForm = false;
+        private ListViewItem _selectedItem = null;
+        private bool _refreshList = false;
+
+        public void changeCategoryInSelected(int categoryId) {
+            ModelCategory category = ModelCategoryDao.get(categoryId);
+            if (category == null) {
+                return;
+            }
+
+            foreach(ListViewItem item in lvEntries.Items) {
+                if (item.Checked) {
+                    RegistrationEntryDao.changeCategory((int)item.Tag, category.id, category.fullName);
+                }
+            }
+
+            this._refreshList = true;
+        }
 
         public void setShowSettingsForm(bool value) {
             this._showSettingsForm = value;
@@ -44,6 +62,16 @@ namespace Rejestracja {
             //ModelScale.createTable();
             //AgeGroup.createTable();
             //ModelClass.createTable();
+        }
+
+        private void resizeScreen(int left, int top, int width, int height) {
+
+            Rectangle screenArea = Screen.FromControl(this).WorkingArea;
+
+            this.Left = (left < 0 || left > screenArea.Width) ? 0 : left;
+            this.Top = (top < 0 || top > screenArea.Height) ? 0 : top;
+            this.Width = (width < 700 || width > screenArea.Width) ? 700 : width;
+            this.Height = (height < 400 || height > screenArea.Height) ? 400 : height;
         }
 
         private void frmMain_Load(object sender, EventArgs e) {
@@ -81,10 +109,7 @@ namespace Rejestracja {
                 String size = Options.get("frmMainSize");
                 if (size != null) {
                     String[] pos = size.Split(',');
-                    this.Left = int.Parse(pos[0]);
-                    this.Top = int.Parse(pos[1]);
-                    this.Width = int.Parse(pos[2]);
-                    this.Height = int.Parse(pos[3]);
+                    resizeScreen(int.Parse(pos[0]), int.Parse(pos[1]), int.Parse(pos[2]), int.Parse(pos[3]));
                 }
 
                 if (Options.get("RegistrationView").Equals("groupped")) {
@@ -102,7 +127,7 @@ namespace Rejestracja {
             catch (Exception err) {
                 uiEnabled(false);
                 LogWriter.error(err);
-                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -112,7 +137,6 @@ namespace Rejestracja {
             mnuJudging.Enabled = isEnabled;
             mnuFImport.Enabled = isEnabled;
             mnuFExport.Enabled = isEnabled;
-            mnuFSettings.Enabled = isEnabled;
             mnuResults.Enabled = isEnabled;
         }
 
@@ -128,6 +152,7 @@ namespace Rejestracja {
             lvEntries.FullRowSelect = true;
             lvEntries.HeaderStyle = ColumnHeaderStyle.Clickable;
             lvEntries.CheckBoxes = true;
+            lvEntries.MultiSelect = false;
 
             lvEntries.Columns.Clear();
             headers = new String[] { "Nr Rej.", "Dodane", "Email", "Imię", "Nazwisko", "Rok Ur.", "Klub", "Grupa Wiekowa", "Nazwa Modelu", "Kategoria", "Klasa", "Skala", "Wydawnictwo" };
@@ -225,7 +250,7 @@ namespace Rejestracja {
             }
             catch (Exception err) {
                 LogWriter.error(err);
-                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally 
             {
@@ -263,7 +288,9 @@ namespace Rejestracja {
                 }
 
                 foreach (string[] entry in entries) {
-                    lvEntries.Items.Add(new ListViewItem(entry));
+                    ListViewItem item = new ListViewItem(entry);
+                    item.Tag = int.Parse(entry[0]);
+                    lvEntries.Items.Add(item);
                 }
 
                 foreach (ColumnHeader header in lvEntries.Columns) {
@@ -274,7 +301,7 @@ namespace Rejestracja {
             }
             catch (Exception err) {
                 LogWriter.error(err);
-                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally {
                 lvEntries.EndUpdate();
@@ -308,7 +335,9 @@ namespace Rejestracja {
                         group = new ListViewGroup(categoryName);
                         lvEntries.Groups.Add(group);
                     }
-                    lvEntries.Items.Add(new ListViewItem(entry, group));
+                    ListViewItem item = new ListViewItem(entry, group);
+                    item.Tag = int.Parse(entry[0]);
+                    lvEntries.Items.Add(item);
                 }
 
                 foreach (ColumnHeader header in lvEntries.Columns) {
@@ -319,12 +348,55 @@ namespace Rejestracja {
             }
             catch (Exception err) {
                 LogWriter.error(err);
-                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally {
                 lvEntries.EndUpdate();
                 Application.UseWaitCursor = false;
             }
+        }
+
+        private void editItem(ListViewItem item) {
+            int entryId = (int)item.Tag;
+            bool bRefresh = false;
+
+            frmRegistrationEntry f = new frmRegistrationEntry();
+            f.StartPosition = FormStartPosition.CenterParent;
+            f.loadEntry(entryId);
+            f.ShowDialog(this);
+
+            RegistrationEntry entry = RegistrationEntryDao.get(entryId);
+            item.SubItems[2].Text = entry.email;
+            item.SubItems[3].Text = entry.firstName;
+            item.SubItems[4].Text = entry.lastName;
+            item.SubItems[5].Text = entry.yearOfBirth.ToString();
+            item.SubItems[6].Text = entry.clubName;
+            item.SubItems[7].Text = entry.ageGroup;
+            item.SubItems[8].Text = entry.modelName;
+            //Check if category changed in Groupped View
+            if (mnuRVGroupped.Checked && !entry.modelCategory.Equals(item.SubItems[9].Text)) {
+                bRefresh = true;
+            }
+            item.SubItems[9].Text = entry.modelCategory;
+            item.SubItems[10].Text = entry.modelClass;
+            item.SubItems[11].Text = entry.modelScale;
+            item.SubItems[12].Text = entry.modelPublisher;
+
+            if (bRefresh) {
+                String cat = item.Group.Header;
+                loadRegistrationList(txtFilter.Text);
+                foreach(ListViewGroup group in lvEntries.Groups) {
+                    if (group.Header.Equals(cat)) {
+                        if (group.Items.Count > 0) {
+                            group.Items[0].Selected = true;
+                            group.Items[0].EnsureVisible();
+                        }
+                        break;
+                    }
+                }
+            }
+
+            highlightInvalidRegistrationEntries();
         }
 
         private void highlightInvalidRegistrationEntries() {
@@ -410,16 +482,7 @@ namespace Rejestracja {
                 ListViewItem item = hitTest.Item;
                 int index = item.Index;
                 item.Checked = !item.Checked;
-
-                int entryId = int.Parse(item.SubItems[0].Text);
-                frmRegistrationEntry f = new frmRegistrationEntry();
-                f.StartPosition = FormStartPosition.CenterParent;
-                f.loadEntry(entryId);
-                f.ShowDialog(this);
-                loadRegistrationList(txtFilter.Text);
-                if (lvEntries.Items.Count > index) {
-                    lvEntries.Items[index].Selected = true;
-                }
+                editItem(item);
             }
         }
 
@@ -431,11 +494,13 @@ namespace Rejestracja {
                     mnuRCDeleteRegistration.Enabled = true;
                     mnuRCModifyRegistration.Enabled = true;
                     mnuRCPrint.Enabled = true;
+                    this._selectedItem = hitTest.Item;
                 }
                 else {
                     mnuRCDeleteRegistration.Enabled = false;
                     mnuRCModifyRegistration.Enabled = false;
                     mnuRCPrint.Enabled = false;
+                    this._selectedItem = null;
                 }
                 cmsEntryRightClick.Show(Cursor.Position);
             }
@@ -477,7 +542,7 @@ namespace Rejestracja {
                 }
                 catch (Exception err) {
                     LogWriter.error(err);
-                    MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -505,46 +570,35 @@ namespace Rejestracja {
         }
 
         private void mnuRCModifyRegistration_Click(object sender, EventArgs e) {
-            int entryId = int.Parse(lvEntries.SelectedItems[0].SubItems[0].Text);
-            frmRegistrationEntry f = new frmRegistrationEntry();
-            f.loadEntry(entryId);
-            f.ShowDialog(this);
-
-            RegistrationEntry entry = RegistrationEntryDao.get(entryId);
-
-            lvEntries.SelectedItems[0].SubItems[2].Text = entry.email;
-            lvEntries.SelectedItems[0].SubItems[3].Text = entry.firstName;
-            lvEntries.SelectedItems[0].SubItems[4].Text = entry.lastName;
-            lvEntries.SelectedItems[0].SubItems[5].Text = entry.clubName;
-            lvEntries.SelectedItems[0].SubItems[6].Text = entry.ageGroup;
-            lvEntries.SelectedItems[0].SubItems[7].Text = entry.modelName;
-            lvEntries.SelectedItems[0].SubItems[8].Text = entry.modelCategory;
-            lvEntries.SelectedItems[0].SubItems[9].Text = entry.modelScale;
-            lvEntries.SelectedItems[0].SubItems[10].Text = entry.modelPublisher;
-            lvEntries.SelectedItems[0].SubItems[11].Text = entry.modelClass;
-            lvEntries.SelectedItems[0].SubItems[12].Text = entry.yearOfBirth.ToString();
-
-            highlightInvalidRegistrationEntries();
+            if (this._selectedItem == null) {
+                return;
+            }
+            editItem(this._selectedItem);
         }
 
         private void deleteRegistrationItem(int entryId) {
-            if (MessageBox.Show("Usunięcie rejestracji jest nieodwracalne.  Jesteś pewien?", "Usuń Rejestrację", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) != System.Windows.Forms.DialogResult.OK) {
-                return;
-            }
-
             try {
                 RegistrationEntryDao.delete(entryId);
-                lvEntries.SelectedItems[0].Remove();
+                //lvEntries.SelectedItems[0].Remove();
+                lvEntries.Items.Remove(this._selectedItem);
+                this._selectedItem = null;
                 highlightInvalidRegistrationEntries();
             }
             catch (Exception err) {
                 LogWriter.error(err);
-                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void mnuRCDeleteRegistration_Click(object sender, EventArgs e) {
-            int entryId = int.Parse(lvEntries.SelectedItems[0].SubItems[0].Text);
+            
+            if (this._selectedItem == null) {
+                return;
+            }
+            if (MessageBox.Show("Usunięcie rejestracji jest nieodwracalne.  Jesteś pewien?", "Usuń Rejestrację", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) != System.Windows.Forms.DialogResult.OK) {
+                return;
+            }
+            int entryId = int.Parse(this._selectedItem.SubItems[0].Text);
             deleteRegistrationItem(entryId);
         }
 
@@ -575,7 +629,7 @@ namespace Rejestracja {
             }
             catch (Exception err) {
                 LogWriter.error(err);
-                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -640,7 +694,7 @@ namespace Rejestracja {
             }
             catch (Exception err) {
                 LogWriter.error(err);
-                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 toolStripLabelSpring.Visible = false;
             }
             finally {
@@ -697,7 +751,7 @@ namespace Rejestracja {
             }
         }
 
-        private void printEntryCards() {
+        private void printEntryCards(bool printAll) {
             List<KeyValuePair<string, int>> entries = new List<KeyValuePair<string, int>>();
 
             Application.UseWaitCursor = true;
@@ -706,9 +760,16 @@ namespace Rejestracja {
             toolStripProgressBar.Visible = true;
             toolStripLabelSpring.Text = "Wysyłanie dokumentów do druku...";
 
-            foreach (ListViewItem item in lvEntries.Items) {
-                if (item.Checked) {
+            if (printAll) {
+                foreach (ListViewItem item in lvEntries.Items) {
                     entries.Add(new KeyValuePair<string, int>(item.SubItems[4].Text, int.Parse(item.SubItems[0].Text)));
+                }
+            }
+            else {
+                foreach (ListViewItem item in lvEntries.Items) {
+                    if (item.Checked) {
+                        entries.Add(new KeyValuePair<string, int>(item.SubItems[4].Text, int.Parse(item.SubItems[0].Text)));
+                    }
                 }
             }
 
@@ -733,14 +794,6 @@ namespace Rejestracja {
             }
         }
 
-        private void mnuFSettings_Click(object sender, EventArgs e) {
-            frmSettings f = new frmSettings();
-            f.StartPosition = FormStartPosition.CenterParent;
-            f.ShowDialog(this);
-            loadResultList();
-            highlightInvalidRegistrationEntries();
-        }
-
         private void cmsRCDeleteResult_Click(object sender, EventArgs e) {
             int resultId = int.Parse(lvResults.SelectedItems[0].SubItems[0].Text);
 
@@ -762,7 +815,7 @@ namespace Rejestracja {
 
                 ListViewGroup group = new ListViewGroup("");
 
-                foreach (KeyValuePair<string, string> stat in ResultDao.getRegistrationStats()) {
+                foreach (KeyValuePair<string, string> stat in RegistrationEntryDao.getRegistrationStats()) {
                     if (stat.Key.StartsWith("GROUP")) {
                         group = new ListViewGroup(stat.Value);
                         lvStats.Groups.Add(group);
@@ -791,7 +844,15 @@ namespace Rejestracja {
         }
 
         private void mnuRPrint_Click(object sender, EventArgs e) {
-            printEntryCards();
+            if (mnuRPrintSorted.Checked) {
+                if (MessageBox.Show("Wydrukować wszystkie karty startowe alfabetycznie?", "Drukuj Karty Startowe", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+                    return;
+            }
+            else {
+                if (MessageBox.Show("Wydrukować wszystkie karty startowe według numeru startowego?", "Drukuj Karty Startowe", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
+                    return;
+            }
+            printEntryCards(true);
         }
 
         private void txtFilterTimer_Tick(object sender, EventArgs e) {
@@ -800,11 +861,13 @@ namespace Rejestracja {
         }
 
         private void lvEntries_KeyDown(object sender, KeyEventArgs e) {
-            int entryId;
 
             switch (e.KeyCode) {
                 case Keys.Delete:
-                    entryId = int.Parse(lvEntries.SelectedItems[0].SubItems[0].Text);
+                    if (MessageBox.Show("Usunięcie rejestracji jest nieodwracalne.  Jesteś pewien?", "Usuń Rejestrację", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) != System.Windows.Forms.DialogResult.OK) {
+                        return;
+                    }
+                    int entryId = int.Parse(lvEntries.SelectedItems[0].SubItems[0].Text);
                     deleteRegistrationItem(entryId);
                     break;
 
@@ -812,28 +875,7 @@ namespace Rejestracja {
                     if (lvEntries.SelectedItems.Count == 0) {
                         return;
                     }
-
-                    entryId = int.Parse(lvEntries.SelectedItems[0].SubItems[0].Text);
-                    frmRegistrationEntry f = new frmRegistrationEntry();
-                    f.loadEntry(entryId);
-                    f.setParent(this);
-                    f.ShowDialog(this);
-
-                    RegistrationEntry entry = RegistrationEntryDao.get(entryId);
-
-                    lvEntries.SelectedItems[0].SubItems[2].Text = entry.email;
-                    lvEntries.SelectedItems[0].SubItems[3].Text = entry.firstName;
-                    lvEntries.SelectedItems[0].SubItems[4].Text = entry.lastName;
-                    lvEntries.SelectedItems[0].SubItems[5].Text = entry.clubName;
-                    lvEntries.SelectedItems[0].SubItems[6].Text = entry.ageGroup;
-                    lvEntries.SelectedItems[0].SubItems[7].Text = entry.modelName;
-                    lvEntries.SelectedItems[0].SubItems[8].Text = entry.modelCategory;
-                    lvEntries.SelectedItems[0].SubItems[9].Text = entry.modelScale;
-                    lvEntries.SelectedItems[0].SubItems[10].Text = entry.modelPublisher;
-                    lvEntries.SelectedItems[0].SubItems[11].Text = entry.modelClass;
-                    lvEntries.SelectedItems[0].SubItems[12].Text = entry.yearOfBirth.ToString();
-
-                    highlightInvalidRegistrationEntries();
+                    editItem(lvEntries.SelectedItems[0]);
                     break;
             }
         }
@@ -954,7 +996,7 @@ namespace Rejestracja {
             }
             catch (Exception err) {
                 LogWriter.error(err);
-                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 toolStripLabelSpring.Visible = false;
             }
             finally {
@@ -1014,7 +1056,7 @@ namespace Rejestracja {
             }
             catch (Exception err) {
                 LogWriter.error(err);
-                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 toolStripLabelSpring.Visible = false;
             }
             finally {
@@ -1083,12 +1125,67 @@ namespace Rejestracja {
             }
             catch (Exception err) {
                 LogWriter.error(err);
-                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 toolStripLabelSpring.Visible = false;
             }
             finally {
                 Application.UseWaitCursor = false;
             }
+        }
+
+        private void mnuVSPrintRegistrationCards_Click(object sender, EventArgs e) {
+            printEntryCards(false);
+        }
+
+        private void mnuRSChangeCategory_Click(object sender, EventArgs e) {
+            
+            this._refreshList = false;
+            frmChangeCategory f = new frmChangeCategory();
+            f.StartPosition = FormStartPosition.CenterParent;
+            f.setParent(this);
+            f.ShowDialog();
+            if (this._refreshList) {
+                loadRegistrationList(txtFilter.Text);
+                loadResultList();
+                loadStats();
+            }
+        }
+
+        private void mnuRSDelete_Click(object sender, EventArgs e) {
+            if (lvEntries.CheckedItems.Count == 0) {
+                return;
+            }
+            if (MessageBox.Show("Usunięcie rejestracji jest nieodwracalne.  Jesteś pewien?", "Usuń Rejestrację", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) != System.Windows.Forms.DialogResult.OK) {
+                return;
+            }
+
+            Application.UseWaitCursor = true;
+            uiEnabled(false);
+
+            try {
+                foreach (ListViewItem item in lvEntries.CheckedItems) {
+                    deleteRegistrationItem((int)item.Tag);
+                }
+                loadRegistrationList(txtFilter.Text);
+                loadResultList();
+                loadStats();
+            }
+            catch (Exception err) {
+                LogWriter.error(err);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally {
+                uiEnabled(true);
+                Application.UseWaitCursor = false;
+            }
+        }
+
+        private void mnuRSettings_Click(object sender, EventArgs e) {
+            frmSettings f = new frmSettings();
+            f.StartPosition = FormStartPosition.CenterParent;
+            f.ShowDialog(this);
+            loadResultList();
+            highlightInvalidRegistrationEntries();
         }
     }
 }

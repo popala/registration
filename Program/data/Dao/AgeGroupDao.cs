@@ -37,7 +37,7 @@ namespace Rejestracja.Data.Dao
 		                ) m ON a.Age = m.Age", cn))
             {
                 cn.Open();
-                cm.Parameters.Add("@AgeGroupName", DbType.String).Value = ageGroupName;
+                cm.Parameters.Add("@AgeGroupName", DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = ageGroupName;
 
                 using (SQLiteDataReader dr = cm.ExecuteReader())
                 {
@@ -47,7 +47,7 @@ namespace Rejestracja.Data.Dao
                         if (!dr.IsDBNull(dr.GetOrdinal("MinAge"))) {
                             bottomAge = dr.GetInt32(dr.GetOrdinal("MinAge")) + 1;
                         }
-                        ret = new AgeGroup(dr.GetInt64(0), dr.GetString(1), dr.GetInt32(2), bottomAge);
+                        ret = new AgeGroup(dr.GetInt32(0), dr.GetString(1), dr.GetInt32(2), bottomAge);
                     }
                 }
             }
@@ -68,7 +68,7 @@ namespace Rejestracja.Data.Dao
                 {
                     while (dr.Read())
                     {
-                        AgeGroup ageGroup = new AgeGroup(dr.GetInt64(0), dr.GetString(1), dr.GetInt32(2), bottomAge);
+                        AgeGroup ageGroup = new AgeGroup(dr.GetInt32(0), dr.GetString(1), dr.GetInt32(2), bottomAge);
                         bottomAge = ageGroup.upperAge + 1;
                         ret.Add(ageGroup);
                     }

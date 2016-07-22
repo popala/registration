@@ -195,7 +195,7 @@ namespace Rejestracja {
             }
             catch (Exception err) {
                 LogWriter.error(err);
-                MessageBox.Show(err.Message, "Application Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 btnCancel.Enabled = true;
                 btnImport.Enabled = true;

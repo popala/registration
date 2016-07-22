@@ -84,9 +84,9 @@ namespace Rejestracja.Data.Dao {
                         }
                         else {
                             Award award = new Award(
-                                dr.GetInt64(dr.GetOrdinal("AwardId")),
+                                dr.GetInt32(dr.GetOrdinal("AwardId")),
                                 dr["Title"].ToString(),
-                                dr.GetInt64(dr.GetOrdinal("DisplayOrder"))
+                                dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
                             );
                             ret = new Result(dr.GetInt32(dr.GetOrdinal("ResultId")), entry, award);
                         }
@@ -326,9 +326,9 @@ namespace Rejestracja.Data.Dao {
                         );
 
                         Award award = new Award(
-                            dr.GetInt64(dr.GetOrdinal("AwardId")),
+                            dr.GetInt32(dr.GetOrdinal("AwardId")),
                             dr["Title"].ToString(),
-                            dr.GetInt64(dr.GetOrdinal("DisplayOrder"))
+                            dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
                         );
                         yield return
                             new Result(dr.GetInt32(dr.GetOrdinal("ResultId")), entry, award);
@@ -344,129 +344,6 @@ namespace Rejestracja.Data.Dao {
                 cm.CommandType = System.Data.CommandType.Text;
                 return (int)cm.ExecuteScalar();
             }
-        }
-
-        public static List<KeyValuePair<string, string>> getRegistrationStats() {
-            List<KeyValuePair<string, string>> ret = new List<KeyValuePair<string, string>>();
-            int count;
-            int i;
-            object result;
-
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-
-                // --- POSUMOWANIE ---
-                ret.Add(new KeyValuePair<string, string>("GROUP1", "Podsumowanie"));
-
-                //Liczba modelarzy
-                cm.CommandText = "SELECT COUNT(*) AS cnt FROM (SELECT DISTINCT LastName, FirstName, AgeGroup FROM Registration) x";
-                result = cm.ExecuteScalar();
-                count = (result == null ? 0 : int.Parse(result.ToString()));
-                ret.Add(new KeyValuePair<string, string>("Liczba modelarzy", count.ToString()));
-
-                //Liczba modeli
-                cm.CommandText = "SELECT COUNT(EntryId) FROM Registration";
-                result = cm.ExecuteScalar();
-                count = (result == null ? 0 : int.Parse(result.ToString()));
-                ret.Add(new KeyValuePair<string, string>("Liczba modeli", count.ToString()));
-
-                //Liczba kategorii
-                cm.CommandText = "SELECT COUNT(*) FROM (SELECT DISTINCT ModelCategory FROM Registration) x";
-                result = cm.ExecuteScalar();
-                count = (result == null ? 0 : int.Parse(result.ToString()));
-                ret.Add(new KeyValuePair<string, string>("Liczba kategorii", count.ToString()));
-
-                // --- GRUPY WIEKOWE ---
-                ret.Add(new KeyValuePair<string, string>("GROUP2", "Grupy wiekowe"));
-
-                //Liczba modelarzy w każdej grupie wiekowej
-                cm.CommandText = "SELECT AgeGroup, COUNT(LastName) AS cnt FROM (SELECT DISTINCT LastName, FirstName, AgeGroup FROM Registration) x GROUP BY AgeGroup";
-                using (SQLiteDataReader dr = cm.ExecuteReader()) {
-                    i = 0;
-                    while (dr.Read()) {
-                        ret.Add(new KeyValuePair<string, string>(
-                            (i == 0 ? "Liczba modelarzy w groupie " : "") + dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
-                        i++;
-                    }
-                }
-
-                //Liczba modeli w każdej grupie wiekowej
-                cm.CommandText = "SELECT AgeGroup, COUNT(ModelName) AS cnt FROM Registration GROUP BY AgeGroup";
-                using (SQLiteDataReader dr = cm.ExecuteReader()) {
-                    i = 0;
-                    while (dr.Read()) {
-                        ret.Add(new KeyValuePair<string, string>(
-                            (i == 0 ? "Liczba modeli w groupie " : "") + dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
-                        i++;
-                    }
-                }
-
-                // --- KATEGORIE ---
-                ret.Add(new KeyValuePair<string, string>("GROUP3", "Modele w klasach"));
-
-                //Liczba modeli w każdej kategorii
-                cm.CommandText = "SELECT ModelClass, COUNT(ModelName) AS cnt FROM Registration GROUP BY ModelClass ORDER BY cnt DESC, ModelClass ASC";
-                using (SQLiteDataReader dr = cm.ExecuteReader()) {
-                    while (dr.Read()) {
-                        ret.Add(new KeyValuePair<string, string>(dr["ModelClass"].ToString(), dr["cnt"].ToString()));
-                    }
-                }
-
-                // --- OPEN ---
-                ret.Add(new KeyValuePair<string, string>("GROUP4", "Modele w kategorii 'Waloryzowane (Open)'"));
-
-                //Liczba modeli w każdej kategorii
-                cm.CommandText = "SELECT ModelClass, COUNT(ModelName) AS cnt FROM Registration WHERE ModelCategory = LOWER('waloryzowane (open)') GROUP BY ModelClass ORDER BY cnt DESC, ModelClass ASC";
-                using (SQLiteDataReader dr = cm.ExecuteReader()) {
-                    while (dr.Read()) {
-                        ret.Add(new KeyValuePair<string, string>(dr["ModelClass"].ToString(), dr["cnt"].ToString()));
-                    }
-                }
-
-                // --- Standard ---
-                ret.Add(new KeyValuePair<string, string>("GROUP5", "Modele w kategorii 'Standard'"));
-
-                //Liczba modeli w każdej kategorii
-                cm.CommandText = "SELECT ModelClass, COUNT(ModelName) AS cnt FROM Registration WHERE ModelCategory = LOWER('standard') GROUP BY ModelClass ORDER BY cnt DESC, ModelClass ASC";
-                using (SQLiteDataReader dr = cm.ExecuteReader()) {
-                    while (dr.Read()) {
-                        ret.Add(new KeyValuePair<string, string>(dr["ModelClass"].ToString(), dr["cnt"].ToString()));
-                    }
-                }
-
-                // --- Youngest/Oldest ---
-                ret.Add(new KeyValuePair<string, string>("GROUP6", "Najmłodsi modelarze"));
-
-                cm.CommandText =
-                    @"SELECT DISTINCT FirstName, LastName, YearOfBirth FROM Registration 
-                        WHERE YearOfBirth IN (
-                            SELECT x.YearOfBirth FROM (SELECT DISTINCT YearOfBirth FROM Registration) x ORDER BY x.YearOfBirth DESC LIMIT 3
-                        )
-                        ORDER BY YearOfBirth DESC";
-                using (SQLiteDataReader dr = cm.ExecuteReader()) {
-                    while (dr.Read()) {
-                        ret.Add(new KeyValuePair<string, string>(dr["FirstName"].ToString() + " " + dr["LastName"].ToString(), dr["YearOfBirth"].ToString()));
-                    }
-                }
-
-                ret.Add(new KeyValuePair<string, string>("GROUP6", "Najstarsi modelarze"));
-
-                cm.CommandText =
-                    @"SELECT DISTINCT FirstName, LastName, YearOfBirth FROM Registration 
-                        WHERE YearOfBirth IN (
-                            SELECT x.YearOfBirth FROM (SELECT DISTINCT YearOfBirth FROM Registration) x ORDER BY x.YearOfBirth ASC LIMIT 3
-                        )
-                        ORDER BY YearOfBirth ASC";
-                using (SQLiteDataReader dr = cm.ExecuteReader()) {
-                    while (dr.Read()) {
-                        ret.Add(new KeyValuePair<string, string>(dr["FirstName"].ToString() + " " + dr["LastName"].ToString(), dr["YearOfBirth"].ToString()));
-                    }
-                }
-            }
-
-            return ret;
         }
 
         public static void createTable() {

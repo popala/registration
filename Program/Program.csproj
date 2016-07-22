@@ -41,7 +41,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -111,6 +111,17 @@
     <Compile Include="Data\Objects\Publisher.cs" />
     <Compile Include="Data\Objects\RegistrationEntry.cs" />
     <Compile Include="Data\Objects\Result.cs" />
+    <Compile Include="frmChangeCategory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmChangeCategory.Designer.cs">
+      <DependentUpon>frmChangeCategory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\GlobalResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GlobalResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Options.cs" />
     <Compile Include="Data\Dao\PublisherDao.cs" />
     <Compile Include="Data\Dao\ResultDao.cs" />
@@ -138,7 +149,6 @@
     <Compile Include="frmNewDataFile.Designer.cs">
       <DependentUpon>frmNewDataFile.cs</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Resources.Designer.cs" />
     <Compile Include="Utils\ComboBoxItem.cs" />
     <Compile Include="Data\DataSource.cs" />
     <Compile Include="Utils\DocHandler.cs" />
@@ -166,14 +176,36 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include="x64\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x86\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Include="Resources\NewFile_6276.png" />
+    <None Include="Resources\OpenFileDialog_692.png" />
+    <None Include="Resources\Open_6529.png" />
+    <None Include="Resources\Files_7954.png" />
+    <None Include="Resources\DocumentsLibrary_9001.png" />
+    <None Include="Resources\WritetoDatabase_9889.png" />
+    <None Include="Resources\NewBuildDefinition_8952.png" />
+    <None Include="Resources\Print_11009.png" />
+    <None Include="Resources\Clearallrequests_8816.png" />
+    <None Include="Resources\dialog_16xMD.png" />
+    <None Include="Resources\dialog_16xLG.png" />
+    <None Include="Resources\WorkflowActivity_16xLG.png" />
+    <None Include="Resources\process_16xLG.png" />
+    <None Include="Resources\database_16xLG.png" />
+    <None Include="Resources\FileGroup_10135_16x.png" />
+    <None Include="Resources\library_16xLG.png" />
+    <None Include="Resources\arrow_open_16xLG.png" />
+    <None Include="Resources\arrow_merge_16xLG.png" />
+    <None Include="Resources\PencilAngled_16xLG_color.png" />
+    <None Include="Resources\StatusAnnotations_Complete_and_ok_16xLG.png" />
+    <None Include="Resources\certificate_16xLG.png" />
+    <None Include="Resources\package_16xLG.png" />
+    <None Include="Resources\list_16xLG.png" />
+    <Content Include="x64\SQLite.Interop.dll" />
+    <Content Include="x86\SQLite.Interop.dll" />
     <EmbeddedResource Include="frmAddResults.resx">
       <DependentUpon>frmAddResults.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmChangeCategory.resx">
+      <DependentUpon>frmChangeCategory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmImportFile.resx">
       <DependentUpon>frmImportFile.cs</DependentUpon>
@@ -193,7 +225,10 @@
     <EmbeddedResource Include="frmSettings.resx">
       <DependentUpon>frmSettings.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx" />
+    <EmbeddedResource Include="Properties\GlobalResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GlobalResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>

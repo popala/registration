@@ -323,13 +323,28 @@ namespace Rejestracja.Data.Dao
                 cm.ExecuteNonQuery();
             }
         }
+
+        public static void changeCategory(int entryId, int modelCategoryId, String modelCategory) {
+            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using (SQLiteCommand cm = new SQLiteCommand(
+                @"UPDATE Registration SET ModelCategory = @ModelCategory, ModelCategoryId = @ModelCategoryId WHERE EntryId = @EntryId", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                cm.Parameters.Add("@modelCategory", System.Data.DbType.String).Value = modelCategory;
+                cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int32).Value = modelCategoryId;
+                cm.Parameters.Add("@entryId", System.Data.DbType.Int32).Value = entryId;
+
+                cm.ExecuteNonQuery();
+            }
+        }
         
         public static void add(RegistrationEntry entry)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"INSERT INTO Registration(TmStamp,Email,FirstName,LastName,ClubName,AgeGroup,ModelName,ModelClass,ModelScale,ModelPublisher,ModelCategory,YearOfBirth)
-                  VALUES(@tmStamp,@email,@firstName,@lastName,@clubName,@ageGroup,@modelName,@modelClass,@modelScale,@modelPublisher,@modelCategory,@yearOfBirth)", cn))
+                @"INSERT INTO Registration(TmStamp,Email,FirstName,LastName,ClubName,AgeGroup,ModelName,ModelClass,ModelScale,ModelPublisher,ModelCategory,ModelCategoryId,YearOfBirth)
+                  VALUES(@tmStamp,@email,@firstName,@lastName,@clubName,@ageGroup,@modelName,@modelClass,@modelScale,@modelPublisher,@modelCategory,@modelCategoryId,@yearOfBirth)", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -339,12 +354,13 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@firstName", System.Data.DbType.String, 64).Value = entry.firstName;
                 cm.Parameters.Add("@lastName", System.Data.DbType.String, 64).Value = entry.lastName;
                 cm.Parameters.Add("@clubName", System.Data.DbType.String, 128).Value = entry.clubName;
-                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, 16).Value = entry.ageGroup;
+                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = entry.ageGroup;
                 cm.Parameters.Add("@modelName", System.Data.DbType.String, 256).Value = entry.modelName;
                 cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = entry.modelClass;
                 cm.Parameters.Add("@modelScale", System.Data.DbType.String, 8).Value = entry.modelScale;
                 cm.Parameters.Add("@modelPublisher", System.Data.DbType.String, 64).Value = entry.modelPublisher;
                 cm.Parameters.Add("@modelCategory", System.Data.DbType.String, 64).Value = entry.modelCategory;
+                cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int32).Value = entry.modelCategoryId;
                 cm.Parameters.Add("@yearOfBirth", System.Data.DbType.Int32).Value = entry.yearOfBirth;
                 cm.ExecuteNonQuery();
 
@@ -368,7 +384,7 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@firstName", System.Data.DbType.String, 64).Value = entry.firstName;
                 cm.Parameters.Add("@lastName", System.Data.DbType.String, 64).Value = entry.lastName;
                 cm.Parameters.Add("@clubName", System.Data.DbType.String, 128).Value = entry.clubName;
-                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, 16).Value = entry.ageGroup;
+                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = entry.ageGroup;
                 cm.Parameters.Add("@modelName", System.Data.DbType.String, 256).Value = entry.modelName;
                 cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = entry.modelClass;
                 cm.Parameters.Add("@modelScale", System.Data.DbType.String, 8).Value = entry.modelScale;
@@ -392,6 +408,137 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@entryId", System.Data.DbType.Int64).Value = entryId;
                 return ((int)cm.ExecuteNonQuery() == 1);
             }
+        }
+
+        public static List<KeyValuePair<string, string>> getRegistrationStats() {
+            List<KeyValuePair<string, string>> ret = new List<KeyValuePair<string, string>>();
+            int count;
+            int i;
+            object result;
+
+            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                // --- Summary section ---
+                ret.Add(new KeyValuePair<string, string>("GROUP1", "Podsumowanie"));
+
+                //Modeler count
+                cm.CommandText = "SELECT COUNT(*) AS cnt FROM (SELECT DISTINCT LastName, FirstName, AgeGroup FROM Registration) x";
+                result = cm.ExecuteScalar();
+                count = (result == null ? 0 : int.Parse(result.ToString()));
+                ret.Add(new KeyValuePair<string, string>("Liczba modelarzy", count.ToString()));
+
+                //Model count
+                cm.CommandText = "SELECT COUNT(EntryId) FROM Registration";
+                result = cm.ExecuteScalar();
+                count = (result == null ? 0 : int.Parse(result.ToString()));
+                ret.Add(new KeyValuePair<string, string>("Liczba modeli", count.ToString()));
+
+                //Category count
+                cm.CommandText = "SELECT COUNT(*) FROM (SELECT DISTINCT ModelCategory FROM Registration) x";
+                result = cm.ExecuteScalar();
+                count = (result == null ? 0 : int.Parse(result.ToString()));
+                ret.Add(new KeyValuePair<string, string>("Liczba kategorii", count.ToString()));
+
+                // --- AGE GROUPS ---
+                ret.Add(new KeyValuePair<string, string>("GROUP2", "Grupy wiekowe"));
+
+                //Modelers by age group
+                cm.CommandText = "SELECT AgeGroup, COUNT(LastName) AS cnt FROM (SELECT DISTINCT LastName, FirstName, AgeGroup FROM Registration) x GROUP BY AgeGroup";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    i = 0;
+                    while (dr.Read()) {
+                        ret.Add(new KeyValuePair<string, string>(
+                            (i == 0 ? "Liczba modelarzy w groupie " : "") + dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
+                        i++;
+                    }
+                }
+
+                //Models by age group
+                cm.CommandText = "SELECT AgeGroup, COUNT(ModelName) AS cnt FROM Registration GROUP BY AgeGroup";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    i = 0;
+                    while (dr.Read()) {
+                        ret.Add(new KeyValuePair<string, string>(
+                            (i == 0 ? "Liczba modeli w groupie " : "") + dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
+                        i++;
+                    }
+                }
+
+                // --- Youngest/Oldest ---
+                ret.Add(new KeyValuePair<string, string>("GROUP6", "Najmłodsi modelarze"));
+
+                cm.CommandText =
+                    @"SELECT DISTINCT FirstName, LastName, YearOfBirth FROM Registration 
+                        WHERE YearOfBirth IN (
+                            SELECT x.YearOfBirth FROM (SELECT DISTINCT YearOfBirth FROM Registration) x ORDER BY x.YearOfBirth DESC LIMIT 3
+                        )
+                        ORDER BY YearOfBirth DESC";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    while (dr.Read()) {
+                        ret.Add(new KeyValuePair<string, string>(dr["FirstName"].ToString() + " " + dr["LastName"].ToString(), dr["YearOfBirth"].ToString()));
+                    }
+                }
+
+                ret.Add(new KeyValuePair<string, string>("GROUP6", "Najstarsi modelarze"));
+
+                cm.CommandText =
+                    @"SELECT DISTINCT FirstName, LastName, YearOfBirth FROM Registration 
+                        WHERE YearOfBirth IN (
+                            SELECT x.YearOfBirth FROM (SELECT DISTINCT YearOfBirth FROM Registration) x ORDER BY x.YearOfBirth ASC LIMIT 3
+                        )
+                        ORDER BY YearOfBirth ASC";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    while (dr.Read()) {
+                        ret.Add(new KeyValuePair<string, string>(dr["FirstName"].ToString() + " " + dr["LastName"].ToString(), dr["YearOfBirth"].ToString()));
+                    }
+                }
+
+                // --- Model Class ---
+                ret.Add(new KeyValuePair<string, string>("GROUP3", "Modele w klasach"));
+
+                //Model count in class
+                cm.CommandText = "SELECT ModelClass, COUNT(ModelName) AS cnt FROM Registration GROUP BY ModelClass ORDER BY cnt DESC, ModelClass ASC";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    while (dr.Read()) {
+                        ret.Add(new KeyValuePair<string, string>(dr["ModelClass"].ToString(), dr["cnt"].ToString()));
+                    }
+                }
+
+                // --- Model Category ---
+                ret.Add(new KeyValuePair<string, string>("GROUP4", "Modele w kategoriach"));
+
+//                //Model count in class
+//                cm.CommandText = 
+//                    @"SELECT r.ModelClass, r.ModelCategory, r.AgeGroup, COUNT(EntryId) AS cnt, r.ModelCategoryId
+//	                    FROM Registration r
+//	                    LEFT JOIN ModelCategory mc ON r.ModelCategoryId = mc.Id
+//	                    GROUP BY r.ModelClass, r.ModelCategoryId, r.AgeGroup
+//                    ORDER BY mc.DisplayOrder, r.ModelCategory, r.AgeGroup, r.ModelClass";
+//                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    
+//                    int catId = -2;
+//                    String countSummary = "";
+
+//                    while (dr.Read()) {
+//                        int currentCatId = dr.GetInt32(dr.GetOrdinal("ModelCategoryId"));
+
+//                        if (catId != currentCatId) {
+//                            if (catId > -2) {
+//                                ret.Add(new KeyValuePair<string, string>(
+//                                String.Format("{0} {1}", dr["ModelClass"].ToString().ToUpper(), dr["ModelCategory"].ToString()),
+//                                dr["cnt"].ToString()));
+//                            }
+//                            countSummary = "";
+//                            catId = currentCatId;
+//                        }
+//                    }
+//                }
+            }
+
+            return ret;
         }
 
         public static void createTable() {

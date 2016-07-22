@@ -8,7 +8,7 @@ namespace Rejestracja.Data.Dao
 {
     class AwardDao
     {
-        public static Award get(long id)
+        public static Award get(int id)
         {
             Award ret = null;
 
@@ -17,16 +17,16 @@ namespace Rejestracja.Data.Dao
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
 
                 using (SQLiteDataReader dr = cm.ExecuteReader())
                 {
                     if (dr.Read())
                     {
                         ret = new Award(
-                            dr.GetInt64(dr.GetOrdinal("Id")),
+                            dr.GetInt32(dr.GetOrdinal("Id")),
                             dr["Title"].ToString(),
-                            dr.GetInt64(dr.GetOrdinal("DisplayOrder"))
+                            dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
                         );
                     }
                 }
@@ -34,7 +34,7 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public static long add(String title, long displayOrder)
+        public static int add(String title, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO SpecialAwards(Title, DisplayOrder) VALUES(@Title, @DisplayOrder)", cn))
@@ -46,30 +46,30 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int64).Value = displayOrder;
                 cm.ExecuteNonQuery();
 
-                return cn.LastInsertRowId;
+                return (int)cn.LastInsertRowId;
             }
         }
 
-        public static void updateDisplayOrder(long id, int displayOrder) {
+        public static void updateDisplayOrder(int id, int displayOrder) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"UPDATE SpecialAwards SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
                 cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int32).Value = displayOrder;
                 cm.ExecuteNonQuery();
             }
         }
 
-        public static bool delete(long id)
+        public static bool delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Results WHERE AwardId = @Id", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
                 cm.ExecuteNonQuery();
 
                 cm.CommandText = @"DELETE FROM SpecialAwards WHERE Id = @Id";
@@ -116,9 +116,9 @@ namespace Rejestracja.Data.Dao
                     {
                         yield return
                             new Award( 
-                                dr.GetInt64(dr.GetOrdinal("Id")),
+                                dr.GetInt32(dr.GetOrdinal("Id")),
                                 dr["Title"].ToString(),
-                                dr.GetInt64(dr.GetOrdinal("DisplayOrder"))
+                                dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
                             );
                     }
                 }

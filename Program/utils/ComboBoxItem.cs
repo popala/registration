@@ -4,13 +4,13 @@ namespace Rejestracja.Utils
     class ComboBoxItem
     {
         public string text { get; set; }
-        public long id { get; set; }
+        public int id { get; set; }
 
         public ComboBoxItem()
         {
         }
 
-        public ComboBoxItem(long id, string text)
+        public ComboBoxItem(int id, string text)
         {
             this.text = text;
             this.id = id;

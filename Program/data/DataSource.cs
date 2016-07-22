@@ -338,7 +338,7 @@ namespace Rejestracja {
                             cm.Parameters["@ModelCategoryId"].Value = matchedCategory[0].id;
                         }
                         else {
-                            cm.Parameters["@ModelCategoryId"].Value = 0;
+                            cm.Parameters["@ModelCategoryId"].Value = -1;
                         }
 
                         cm.Parameters["@TmStamp"].Value = entry.timeStamp;

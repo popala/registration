@@ -20,7 +20,7 @@ namespace Rejestracja.Data.Dao
                 {
                     while (dr.Read())
                         yield return new ModelCategory(
-                            dr.GetInt64(0),
+                            dr.GetInt32(0),
                             dr.GetString(1),
                             dr.GetString(2),
                             dr.GetString(3),
@@ -93,7 +93,7 @@ namespace Rejestracja.Data.Dao
                 {
                     if (dr.Read())
                         ret = new ModelCategory(
-                            dr.GetInt64(0),
+                            dr.GetInt32(0),
                             dr.GetString(1),
                             dr.GetString(2),
                             dr.GetString(3),

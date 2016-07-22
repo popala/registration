@@ -32,35 +32,23 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.mnuFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuFNewDataFile = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.mnuFImport = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuFExport = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.mnuFSettings = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuFOpenFileFolder = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuFFDataFolder = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuFFDocumentFolder = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuFFTemplateFolder = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRegistration = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuRNewRegistration = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRSelected = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.mnuRPrintSorted = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuRView = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRVStandard = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRVGroupped = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.mnuRPrint = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuRPrintSorted = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuJudging = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuJMergeCategories = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuJJudgingForms = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuJAddResults = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuResults = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRResultList = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuRCategoryDiplomas = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuRAwardDiplomas = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsEntryRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnuRCModifyRegistration = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRCDeleteRegistration = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,7 +78,24 @@
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.lvEntries = new System.Windows.Forms.ListView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.mnuFNewDataFile = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuFOpenDataFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuFImport = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuFOpenFileFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuFFDataFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuFFDocumentFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuFFTemplateFolder = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRNewRegistration = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuVSPrintRegistrationCards = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRSChangeCategory = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRSDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRPrint = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuJMergeCategories = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuJJudgingForms = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuJAddResults = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRCategoryDiplomas = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRAwardDiplomas = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -123,7 +128,6 @@
             this.mnuFImport,
             this.mnuFExport,
             this.toolStripSeparator1,
-            this.mnuFSettings,
             this.mnuFOpenFileFolder,
             this.toolStripSeparator4,
             this.exitToolStripMenuItem});
@@ -131,24 +135,10 @@
             this.mnuFile.Size = new System.Drawing.Size(65, 20);
             this.mnuFile.Text = "Program";
             // 
-            // mnuFNewDataFile
-            // 
-            this.mnuFNewDataFile.Name = "mnuFNewDataFile";
-            this.mnuFNewDataFile.Size = new System.Drawing.Size(156, 22);
-            this.mnuFNewDataFile.Text = "Nowy Plik...";
-            this.mnuFNewDataFile.Click += new System.EventHandler(this.mnuFNewDataFile_Click);
-            // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(153, 6);
-            // 
-            // mnuFImport
-            // 
-            this.mnuFImport.Name = "mnuFImport";
-            this.mnuFImport.Size = new System.Drawing.Size(156, 22);
-            this.mnuFImport.Text = "&Import Danych";
-            this.mnuFImport.Click += new System.EventHandler(this.mnuFImport_Click);
             // 
             // mnuFExport
             // 
@@ -161,44 +151,6 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(153, 6);
-            // 
-            // mnuFSettings
-            // 
-            this.mnuFSettings.Name = "mnuFSettings";
-            this.mnuFSettings.Size = new System.Drawing.Size(156, 22);
-            this.mnuFSettings.Text = "&Ustawienia";
-            this.mnuFSettings.Click += new System.EventHandler(this.mnuFSettings_Click);
-            // 
-            // mnuFOpenFileFolder
-            // 
-            this.mnuFOpenFileFolder.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuFFDataFolder,
-            this.mnuFFDocumentFolder,
-            this.mnuFFTemplateFolder});
-            this.mnuFOpenFileFolder.Name = "mnuFOpenFileFolder";
-            this.mnuFOpenFileFolder.Size = new System.Drawing.Size(156, 22);
-            this.mnuFOpenFileFolder.Text = "Foldery";
-            // 
-            // mnuFFDataFolder
-            // 
-            this.mnuFFDataFolder.Name = "mnuFFDataFolder";
-            this.mnuFFDataFolder.Size = new System.Drawing.Size(182, 22);
-            this.mnuFFDataFolder.Text = "Folder Danych";
-            this.mnuFFDataFolder.Click += new System.EventHandler(this.mnuFFDataFolder_Click);
-            // 
-            // mnuFFDocumentFolder
-            // 
-            this.mnuFFDocumentFolder.Name = "mnuFFDocumentFolder";
-            this.mnuFFDocumentFolder.Size = new System.Drawing.Size(182, 22);
-            this.mnuFFDocumentFolder.Text = "Folder Dokumentów";
-            this.mnuFFDocumentFolder.Click += new System.EventHandler(this.mnuFFDocumentFolder_Click);
-            // 
-            // mnuFFTemplateFolder
-            // 
-            this.mnuFFTemplateFolder.Name = "mnuFFTemplateFolder";
-            this.mnuFFTemplateFolder.Size = new System.Drawing.Size(182, 22);
-            this.mnuFFTemplateFolder.Text = "Folder Wzorców";
-            this.mnuFFTemplateFolder.Click += new System.EventHandler(this.mnuFFTemplateFolder_Click);
             // 
             // toolStripSeparator4
             // 
@@ -216,28 +168,49 @@
             // 
             this.mnuRegistration.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuRNewRegistration,
+            this.mnuRSelected,
             this.toolStripSeparator7,
-            this.mnuRView,
-            this.toolStripSeparator5,
             this.mnuRPrint,
-            this.mnuRPrintSorted});
+            this.mnuRPrintSorted,
+            this.toolStripSeparator5,
+            this.mnuRSettings,
+            this.mnuRView});
             this.mnuRegistration.Name = "mnuRegistration";
             this.mnuRegistration.Size = new System.Drawing.Size(75, 20);
             this.mnuRegistration.Text = "Rejestracja";
             // 
-            // mnuRNewRegistration
+            // mnuRSelected
             // 
-            this.mnuRNewRegistration.Name = "mnuRNewRegistration";
-            this.mnuRNewRegistration.ShortcutKeyDisplayString = "";
-            this.mnuRNewRegistration.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.mnuRNewRegistration.Size = new System.Drawing.Size(227, 22);
-            this.mnuRNewRegistration.Text = "Nowa rejestracja...";
-            this.mnuRNewRegistration.Click += new System.EventHandler(this.mnuRNewRegistration_Click);
+            this.mnuRSelected.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuVSPrintRegistrationCards,
+            this.mnuRSChangeCategory,
+            this.toolStripSeparator8,
+            this.mnuRSDelete});
+            this.mnuRSelected.Name = "mnuRSelected";
+            this.mnuRSelected.Size = new System.Drawing.Size(279, 22);
+            this.mnuRSelected.Text = "Zaznaczone wpisy";
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(183, 6);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(224, 6);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(276, 6);
+            // 
+            // mnuRPrintSorted
+            // 
+            this.mnuRPrintSorted.CheckOnClick = true;
+            this.mnuRPrintSorted.Name = "mnuRPrintSorted";
+            this.mnuRPrintSorted.Size = new System.Drawing.Size(279, 22);
+            this.mnuRPrintSorted.Text = "Drukuj karty alfabetycznie";
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(276, 6);
             // 
             // mnuRView
             // 
@@ -245,7 +218,7 @@
             this.mnuRVStandard,
             this.mnuRVGroupped});
             this.mnuRView.Name = "mnuRView";
-            this.mnuRView.Size = new System.Drawing.Size(227, 22);
+            this.mnuRView.Size = new System.Drawing.Size(279, 22);
             this.mnuRView.Text = "Widok";
             // 
             // mnuRVStandard
@@ -264,26 +237,6 @@
             this.mnuRVGroupped.Text = "Grupowany";
             this.mnuRVGroupped.Click += new System.EventHandler(this.mnuRVItem_Click);
             // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(224, 6);
-            // 
-            // mnuRPrint
-            // 
-            this.mnuRPrint.Name = "mnuRPrint";
-            this.mnuRPrint.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.mnuRPrint.Size = new System.Drawing.Size(227, 22);
-            this.mnuRPrint.Text = "Drukuj karty startowe";
-            this.mnuRPrint.Click += new System.EventHandler(this.mnuRPrint_Click);
-            // 
-            // mnuRPrintSorted
-            // 
-            this.mnuRPrintSorted.CheckOnClick = true;
-            this.mnuRPrintSorted.Name = "mnuRPrintSorted";
-            this.mnuRPrintSorted.Size = new System.Drawing.Size(227, 22);
-            this.mnuRPrintSorted.Text = "Drukuj karty alfabetycznie";
-            // 
             // mnuJudging
             // 
             this.mnuJudging.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -293,27 +246,6 @@
             this.mnuJudging.Name = "mnuJudging";
             this.mnuJudging.Size = new System.Drawing.Size(84, 20);
             this.mnuJudging.Text = "Sędziowanie";
-            // 
-            // mnuJMergeCategories
-            // 
-            this.mnuJMergeCategories.Name = "mnuJMergeCategories";
-            this.mnuJMergeCategories.Size = new System.Drawing.Size(185, 22);
-            this.mnuJMergeCategories.Text = "Łączenie Kategorii";
-            this.mnuJMergeCategories.Click += new System.EventHandler(this.mnuJMergeCategories_Click);
-            // 
-            // mnuJJudgingForms
-            // 
-            this.mnuJJudgingForms.Name = "mnuJJudgingForms";
-            this.mnuJJudgingForms.Size = new System.Drawing.Size(185, 22);
-            this.mnuJJudgingForms.Text = "Karty sędziowania";
-            this.mnuJJudgingForms.Click += new System.EventHandler(this.mnuJJudgingForms_Click);
-            // 
-            // mnuJAddResults
-            // 
-            this.mnuJAddResults.Name = "mnuJAddResults";
-            this.mnuJAddResults.Size = new System.Drawing.Size(185, 22);
-            this.mnuJAddResults.Text = "Dodawanie Wyników";
-            this.mnuJAddResults.Click += new System.EventHandler(this.mnuJAddResults_Click);
             // 
             // mnuResults
             // 
@@ -327,24 +259,11 @@
             // 
             // mnuRResultList
             // 
+            this.mnuRResultList.Image = global::Rejestracja.Properties.GlobalResources.list_16xLG;
             this.mnuRResultList.Name = "mnuRResultList";
             this.mnuRResultList.Size = new System.Drawing.Size(183, 22);
             this.mnuRResultList.Text = "Lista Wyników";
             this.mnuRResultList.Click += new System.EventHandler(this.mnuRResultList_Click);
-            // 
-            // mnuRCategoryDiplomas
-            // 
-            this.mnuRCategoryDiplomas.Name = "mnuRCategoryDiplomas";
-            this.mnuRCategoryDiplomas.Size = new System.Drawing.Size(183, 22);
-            this.mnuRCategoryDiplomas.Text = "Dyplomy - Kategorie";
-            this.mnuRCategoryDiplomas.Click += new System.EventHandler(this.mnuRCategoryDiplomas_Click);
-            // 
-            // mnuRAwardDiplomas
-            // 
-            this.mnuRAwardDiplomas.Name = "mnuRAwardDiplomas";
-            this.mnuRAwardDiplomas.Size = new System.Drawing.Size(183, 22);
-            this.mnuRAwardDiplomas.Text = "Dyplomy - Nagrody";
-            this.mnuRAwardDiplomas.Click += new System.EventHandler(this.mnuRAwardDiplomas_Click);
             // 
             // cmsEntryRightClick
             // 
@@ -626,12 +545,155 @@
             this.tabControl1.Size = new System.Drawing.Size(1179, 675);
             this.tabControl1.TabIndex = 1;
             // 
+            // mnuFNewDataFile
+            // 
+            this.mnuFNewDataFile.Image = global::Rejestracja.Properties.GlobalResources.NewFile_6276;
+            this.mnuFNewDataFile.Name = "mnuFNewDataFile";
+            this.mnuFNewDataFile.Size = new System.Drawing.Size(156, 22);
+            this.mnuFNewDataFile.Text = "Nowy Plik...";
+            this.mnuFNewDataFile.Click += new System.EventHandler(this.mnuFNewDataFile_Click);
+            // 
             // mnuFOpenDataFile
             // 
+            this.mnuFOpenDataFile.Image = global::Rejestracja.Properties.GlobalResources.arrow_open_16xLG;
             this.mnuFOpenDataFile.Name = "mnuFOpenDataFile";
             this.mnuFOpenDataFile.Size = new System.Drawing.Size(156, 22);
             this.mnuFOpenDataFile.Text = "Otwórz Plik...";
             this.mnuFOpenDataFile.Click += new System.EventHandler(this.mnuFOpenDataFile_Click);
+            // 
+            // mnuFImport
+            // 
+            this.mnuFImport.Image = global::Rejestracja.Properties.GlobalResources.WritetoDatabase_9889;
+            this.mnuFImport.Name = "mnuFImport";
+            this.mnuFImport.Size = new System.Drawing.Size(156, 22);
+            this.mnuFImport.Text = "&Import Danych";
+            this.mnuFImport.Click += new System.EventHandler(this.mnuFImport_Click);
+            // 
+            // mnuFOpenFileFolder
+            // 
+            this.mnuFOpenFileFolder.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuFFDataFolder,
+            this.mnuFFDocumentFolder,
+            this.mnuFFTemplateFolder});
+            this.mnuFOpenFileFolder.Image = global::Rejestracja.Properties.GlobalResources.Open_6529;
+            this.mnuFOpenFileFolder.Name = "mnuFOpenFileFolder";
+            this.mnuFOpenFileFolder.Size = new System.Drawing.Size(156, 22);
+            this.mnuFOpenFileFolder.Text = "Otwórz folder";
+            // 
+            // mnuFFDataFolder
+            // 
+            this.mnuFFDataFolder.Image = global::Rejestracja.Properties.GlobalResources.database_16xLG;
+            this.mnuFFDataFolder.Name = "mnuFFDataFolder";
+            this.mnuFFDataFolder.Size = new System.Drawing.Size(218, 22);
+            this.mnuFFDataFolder.Text = "Plików danych";
+            this.mnuFFDataFolder.Click += new System.EventHandler(this.mnuFFDataFolder_Click);
+            // 
+            // mnuFFDocumentFolder
+            // 
+            this.mnuFFDocumentFolder.Image = global::Rejestracja.Properties.GlobalResources.FileGroup_10135_16x;
+            this.mnuFFDocumentFolder.Name = "mnuFFDocumentFolder";
+            this.mnuFFDocumentFolder.Size = new System.Drawing.Size(218, 22);
+            this.mnuFFDocumentFolder.Text = "Utworzonych dokumentów";
+            this.mnuFFDocumentFolder.Click += new System.EventHandler(this.mnuFFDocumentFolder_Click);
+            // 
+            // mnuFFTemplateFolder
+            // 
+            this.mnuFFTemplateFolder.Image = global::Rejestracja.Properties.GlobalResources.library_16xLG;
+            this.mnuFFTemplateFolder.Name = "mnuFFTemplateFolder";
+            this.mnuFFTemplateFolder.Size = new System.Drawing.Size(218, 22);
+            this.mnuFFTemplateFolder.Text = "Wzorców dokumentów";
+            this.mnuFFTemplateFolder.Click += new System.EventHandler(this.mnuFFTemplateFolder_Click);
+            // 
+            // mnuRNewRegistration
+            // 
+            this.mnuRNewRegistration.Image = global::Rejestracja.Properties.GlobalResources.NewBuildDefinition_8952;
+            this.mnuRNewRegistration.Name = "mnuRNewRegistration";
+            this.mnuRNewRegistration.ShortcutKeyDisplayString = "";
+            this.mnuRNewRegistration.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
+            this.mnuRNewRegistration.Size = new System.Drawing.Size(279, 22);
+            this.mnuRNewRegistration.Text = "Nowa rejestracja";
+            this.mnuRNewRegistration.Click += new System.EventHandler(this.mnuRNewRegistration_Click);
+            // 
+            // mnuVSPrintRegistrationCards
+            // 
+            this.mnuVSPrintRegistrationCards.Image = global::Rejestracja.Properties.GlobalResources.Print_11009;
+            this.mnuVSPrintRegistrationCards.Name = "mnuVSPrintRegistrationCards";
+            this.mnuVSPrintRegistrationCards.Size = new System.Drawing.Size(186, 22);
+            this.mnuVSPrintRegistrationCards.Text = "Drukuj karty startowe";
+            this.mnuVSPrintRegistrationCards.Click += new System.EventHandler(this.mnuVSPrintRegistrationCards_Click);
+            // 
+            // mnuRSChangeCategory
+            // 
+            this.mnuRSChangeCategory.Image = global::Rejestracja.Properties.GlobalResources.WorkflowActivity_16xLG;
+            this.mnuRSChangeCategory.Name = "mnuRSChangeCategory";
+            this.mnuRSChangeCategory.Size = new System.Drawing.Size(186, 22);
+            this.mnuRSChangeCategory.Text = "Zmień kategorię";
+            this.mnuRSChangeCategory.Click += new System.EventHandler(this.mnuRSChangeCategory_Click);
+            // 
+            // mnuRSDelete
+            // 
+            this.mnuRSDelete.Image = global::Rejestracja.Properties.GlobalResources.Clearallrequests_8816;
+            this.mnuRSDelete.Name = "mnuRSDelete";
+            this.mnuRSDelete.Size = new System.Drawing.Size(186, 22);
+            this.mnuRSDelete.Text = "Usuń";
+            this.mnuRSDelete.Click += new System.EventHandler(this.mnuRSDelete_Click);
+            // 
+            // mnuRPrint
+            // 
+            this.mnuRPrint.Image = global::Rejestracja.Properties.GlobalResources.Print_11009;
+            this.mnuRPrint.Name = "mnuRPrint";
+            this.mnuRPrint.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+            this.mnuRPrint.Size = new System.Drawing.Size(279, 22);
+            this.mnuRPrint.Text = "Drukuj wszystkie karty startowe";
+            this.mnuRPrint.Click += new System.EventHandler(this.mnuRPrint_Click);
+            // 
+            // mnuRSettings
+            // 
+            this.mnuRSettings.Image = global::Rejestracja.Properties.GlobalResources.process_16xLG;
+            this.mnuRSettings.Name = "mnuRSettings";
+            this.mnuRSettings.Size = new System.Drawing.Size(279, 22);
+            this.mnuRSettings.Text = "Ustawienia konkursu";
+            this.mnuRSettings.Click += new System.EventHandler(this.mnuRSettings_Click);
+            // 
+            // mnuJMergeCategories
+            // 
+            this.mnuJMergeCategories.Image = global::Rejestracja.Properties.GlobalResources.arrow_merge_16xLG;
+            this.mnuJMergeCategories.Name = "mnuJMergeCategories";
+            this.mnuJMergeCategories.Size = new System.Drawing.Size(185, 22);
+            this.mnuJMergeCategories.Text = "Łączenie Kategorii";
+            this.mnuJMergeCategories.Click += new System.EventHandler(this.mnuJMergeCategories_Click);
+            // 
+            // mnuJJudgingForms
+            // 
+            this.mnuJJudgingForms.Image = global::Rejestracja.Properties.GlobalResources.PencilAngled_16xLG_color;
+            this.mnuJJudgingForms.Name = "mnuJJudgingForms";
+            this.mnuJJudgingForms.Size = new System.Drawing.Size(185, 22);
+            this.mnuJJudgingForms.Text = "Karty sędziowania";
+            this.mnuJJudgingForms.Click += new System.EventHandler(this.mnuJJudgingForms_Click);
+            // 
+            // mnuJAddResults
+            // 
+            this.mnuJAddResults.Image = global::Rejestracja.Properties.GlobalResources.StatusAnnotations_Complete_and_ok_16xLG;
+            this.mnuJAddResults.Name = "mnuJAddResults";
+            this.mnuJAddResults.Size = new System.Drawing.Size(185, 22);
+            this.mnuJAddResults.Text = "Dodawanie Wyników";
+            this.mnuJAddResults.Click += new System.EventHandler(this.mnuJAddResults_Click);
+            // 
+            // mnuRCategoryDiplomas
+            // 
+            this.mnuRCategoryDiplomas.Image = global::Rejestracja.Properties.GlobalResources.certificate_16xLG;
+            this.mnuRCategoryDiplomas.Name = "mnuRCategoryDiplomas";
+            this.mnuRCategoryDiplomas.Size = new System.Drawing.Size(183, 22);
+            this.mnuRCategoryDiplomas.Text = "Dyplomy - Kategorie";
+            this.mnuRCategoryDiplomas.Click += new System.EventHandler(this.mnuRCategoryDiplomas_Click);
+            // 
+            // mnuRAwardDiplomas
+            // 
+            this.mnuRAwardDiplomas.Image = global::Rejestracja.Properties.GlobalResources.package_16xLG;
+            this.mnuRAwardDiplomas.Name = "mnuRAwardDiplomas";
+            this.mnuRAwardDiplomas.Size = new System.Drawing.Size(183, 22);
+            this.mnuRAwardDiplomas.Text = "Dyplomy - Nagrody";
+            this.mnuRAwardDiplomas.Click += new System.EventHandler(this.mnuRAwardDiplomas_Click);
             // 
             // frmMain
             // 
@@ -644,8 +706,10 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmMain";
             this.Text = "Konkurs";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.Shown += new System.EventHandler(this.frmMain_Shown);
+            this.Resize += new System.EventHandler(this.frmMain_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.cmsEntryRightClick.ResumeLayout(false);
@@ -659,8 +723,7 @@
             this.tabControl1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
-            this.Resize += new System.EventHandler(this.frmMain_Resize);
+
         }
 
         #endregion
@@ -685,7 +748,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem mnuRCCheckAll;
         private System.Windows.Forms.ToolStripMenuItem mnuRCUncheckAll;
-        private System.Windows.Forms.ToolStripMenuItem mnuFSettings;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ContextMenuStrip cmsResultsRightClick;
         private System.Windows.Forms.ToolStripMenuItem cmsRCDeleteResult;
@@ -726,6 +788,12 @@
         private System.Windows.Forms.ToolStripMenuItem mnuJAddResults;
         private System.Windows.Forms.ToolStripMenuItem mnuRCPrintDiploma;
         private System.Windows.Forms.ToolStripMenuItem mnuFOpenDataFile;
+        private System.Windows.Forms.ToolStripMenuItem mnuRSelected;
+        private System.Windows.Forms.ToolStripMenuItem mnuVSPrintRegistrationCards;
+        private System.Windows.Forms.ToolStripMenuItem mnuRSChangeCategory;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
+        private System.Windows.Forms.ToolStripMenuItem mnuRSDelete;
+        private System.Windows.Forms.ToolStripMenuItem mnuRSettings;
 
 
     }

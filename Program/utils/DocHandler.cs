@@ -93,11 +93,11 @@ namespace Rejestracja.Utils
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[SkalaModelu]", entry.modelScale,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KlasaModelu]", entry.modelCategory,
+                template.ReplaceText("[KlasaModelu]", entry.modelClass,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[Wydawnictwo]", entry.modelPublisher,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KategoriaModelu]", entry.modelClass,
+                template.ReplaceText("[KategoriaModelu]", entry.modelCategory,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[RokUrodzenia]", entry.yearOfBirth.ToString(),
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
@@ -274,13 +274,13 @@ namespace Rejestracja.Utils
                 {
                     if(ageGroup != null)
                     {
-                        resultHtml.AppendLine(@"</table>");
+                        resultHtml.AppendLine(@"</table></div>");
                     }
                     ageGroup = result.entry.ageGroup;
                     modelCategory = result.entry.modelCategory;
                     modelClass = "";
 
-                    resultHtml.AppendFormat(@"<h2>Grupa Wiekowa <span class=""ageGroup"">{0}</span> - <span class=""modelCategory"">{1}</span></h2>",
+                    resultHtml.AppendFormat(@"<div class=""tbl""><h2>Grupa Wiekowa <span class=""ageGroup"">{0}</span> - <span class=""modelCategory"">{1}</span></h2>",
                         result.entry.ageGroup.ToUpper(), result.entry.modelCategory).AppendLine();
                 }
                 if (modelClass != result.entry.modelClass)
@@ -289,7 +289,7 @@ namespace Rejestracja.Utils
 
                     if(!String.IsNullOrWhiteSpace(modelClass))
                     {
-                        resultHtml.AppendLine(@"</table>");
+                        resultHtml.AppendLine(@"</table></div>");
                     }
 
                     modelClass = result.entry.modelClass;
@@ -298,13 +298,13 @@ namespace Rejestracja.Utils
                     //Insert headers
                     resultHtml.AppendFormat(@"<tr><th class=""lp"">{0}</th><th class=""name"">{1}</th><th class=""modelName"" colspan=""2"">{2}</th><th class=""place"">{3}</th></tr>", headers).AppendLine();
                 }
-                resultHtml.AppendFormat(@"<tr><td class=""lp"">{0}</td><td class=""name"">{1} {2}</td><td>{3}</td><td class=""modelName"">{4}</td><td class=""place"">{5}</td></tr>",
+                resultHtml.AppendFormat(@"<tr><td class=""lp"">{0}</td><td class=""name"">{1} {2}</td><td class=""modelNumber"">{3}</td><td class=""modelName"">{4}</td><td class=""place"">{5}</td></tr>",
                     lpCounter, result.entry.firstName, result.entry.lastName, result.entry.entryId, result.entry.modelName, result.place).AppendLine();
                 lpCounter++;
             }
             if(ageGroup != null)
             {
-                resultHtml.AppendLine(@"</table>");
+                resultHtml.AppendLine(@"</table></div>");
             }
 
             htmlTemplate = htmlTemplate.Replace("[KATEGORIE]", resultHtml.ToString());
@@ -327,7 +327,7 @@ namespace Rejestracja.Utils
                     }
                     resultHtml.AppendFormat(@"<table class=""award""><tr><th colspan=""3"">{0}</th></tr>", result.award.title).AppendLine();
                 }
-                resultHtml.AppendFormat(@"<tr><td class=""name"">{0} {1}</td><td>{2}</td><td class=""modelName"">{3}</td></tr>", 
+                resultHtml.AppendFormat(@"<tr><td class=""name"">{0} {1}</td><td class=""modelNumber"">{2}</td><td class=""modelName"">{3}</td></tr>", 
                     result.entry.firstName, result.entry.lastName, result.entry.entryId, result.entry.modelName).AppendLine();
                 awardId = result.award.id;
             }
