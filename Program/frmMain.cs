@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Rejestracja {
@@ -38,6 +40,8 @@ namespace Rejestracja {
         }
 
         public frmMain() {
+            //System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
+            //System.Threading.Thread.CurrentThread.CurrentUICulture = new CultureInfo("pl");
             InitializeComponent();
         }
 
@@ -76,7 +80,6 @@ namespace Rejestracja {
 
         private void frmMain_Load(object sender, EventArgs e) {
             //devTasks();
-
             _txtFilterTimer = new Timer();
             _txtFilterTimer.Interval = 1000;
             _txtFilterTimer.Tick += new EventHandler(this.txtFilterTimer_Tick);
@@ -153,6 +156,7 @@ namespace Rejestracja {
             lvEntries.HeaderStyle = ColumnHeaderStyle.Clickable;
             lvEntries.CheckBoxes = true;
             lvEntries.MultiSelect = false;
+            lvEntries.ShowItemToolTips = true;
 
             lvEntries.Columns.Clear();
             headers = new String[] { "Nr Rej.", "Dodane", "Email", "Imię", "Nazwisko", "Rok Ur.", "Klub", "Grupa Wiekowa", "Nazwa Modelu", "Kategoria", "Klasa", "Skala", "Wydawnictwo" };
@@ -165,7 +169,7 @@ namespace Rejestracja {
 
             loadRegistrationList(null);
 
-            mnuRPrint.Enabled = false;
+            mnuRSelected.Enabled = false;
 
             //RESULT ENTRY PANEL
             lvResults.View = View.Details;
@@ -259,6 +263,13 @@ namespace Rejestracja {
         }
 
         private void loadRegistrationList(String searchValue) {
+
+            if (txtFilter.Text.Length == 0) {
+                btnClearSearch.Text = "Odśwież (F5)";
+            }
+            else {
+                btnClearSearch.Text = "Wyczyść (Esc)";
+            }
 
             if (mnuRVStandard.Checked) {
                 loadSortedRegistrationList(searchValue);
@@ -400,40 +411,86 @@ namespace Rejestracja {
         }
 
         private void highlightInvalidRegistrationEntries() {
-            List<ModelCategory> modelCategories = ModelCategoryDao.getList().ToList<ModelCategory>();
+            List<ModelCategory> modelCategories = ModelCategoryDao.getList().ToList();
+            List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList();
             int errorCount = 0;
+            int badEntryCount = 0;
+            int year = DateTime.Now.Year;
 
             foreach (ListViewItem item in lvEntries.Items) {
+
+                StringBuilder sb = new StringBuilder();
                 item.ToolTipText = "";
 
-                //TODO: Make this an option
-                //Only seniors are allowed in non-standard category
-                if (item.SubItems[7].Text.ToLower() != "senior" && item.SubItems[10].Text.ToLower() != "standard") {
-                    item.ForeColor = System.Drawing.Color.Red;
-                    item.ToolTipText = "Tylko Senior może startować w kategorii Open.";
-                    lvEntries.ShowItemToolTips = true;
-                    errorCount++;
-                    continue;
-                }
-                else {
-                    item.ForeColor = System.Drawing.Color.Black;
-                }
+                ////TODO: Make this an option
+                ////Only seniors are allowed in non-standard category
+                //if (item.SubItems[7].Text.ToLower() != "senior" && item.SubItems[10].Text.ToLower() != "standard") {
+                //    item.ForeColor = System.Drawing.Color.Red;
+                //    item.ToolTipText = "Tylko Senior może startować w kategorii Open.";
+                //    lvEntries.ShowItemToolTips = true;
+                //    errorCount++;
+                //    continue;
+                //}
+                //else {
+                //    item.ForeColor = System.Drawing.Color.Black;
+                //}
 
                 //Check if model category is listed in the resources
-                ModelCategory [] catFound = modelCategories.Where(x => x.fullName.ToLower().Equals(item.SubItems[9].Text.ToLower())).ToArray<ModelCategory>();
-                if (catFound.Length > 0) {
-                    continue;
-                }
-                else {
-                    item.ForeColor = System.Drawing.Color.Red;
-                    item.ToolTipText += " Kategoria modelu nie znaleziona w konfiguracji.";
-                    lvEntries.ShowItemToolTips = true;
+                ModelCategory [] catFound = modelCategories.Where(x => x.fullName.ToLower().Equals(item.SubItems[9].Text.ToLower())).ToArray();
+                if (catFound.Length == 0) {
+                    sb.Append("Kategoria modelu nie znaleziona w konfiguracji. ");
                     errorCount++;
+                    badEntryCount++;
+                }
+                else if (!catFound[0].modelClass.ToLower().Equals(item.SubItems[10].Text.ToLower())) {
+                    if (sb.Length == 0) {
+                        badEntryCount++;
+                    }
+                    sb.Append("Kategoria i klasa modelu nie zgadzają się. ");
+                    errorCount++;
+                }
+
+                AgeGroup [] agFound = ageGroups.Where(x => x.name.ToLower().Equals(item.SubItems[7].Text.ToLower())).ToArray();
+                if(agFound.Length == 0) {
+                    if (sb.Length == 0) {
+                        badEntryCount++;
+                    }
+                    sb.Append("Grupa wiekowa nie znaleziona. ");
+                    errorCount++;
+                }
+
+                int age = year - int.Parse(item.SubItems[5].Text);
+                if (age > agFound[0].upperAge || age < agFound[0].bottomAge) {
+                    if (sb.Length == 0) {
+                        badEntryCount++;
+                    }
+                    sb.Append("Wiek modelarza wykracza poza wybraną grupę wiekową. ");
+                    errorCount++;
+                }
+
+                if (sb.Length > 0) {
+                    item.ForeColor = System.Drawing.Color.Red;
+                    item.ToolTipText = sb.ToString();
                 }
             }
 
             if (errorCount > 0) {
-                lblErrorCount.Text = string.Format("Znaleziono błędy w {0} {1}", errorCount, (errorCount == 1 ? "rejestracji" : "rejestracjach"));
+                String word1 = "błąd";
+                if (errorCount > 1) {
+                    if (errorCount < 5) {
+                        word1 = "błędy";
+                    }
+                    else if (errorCount > 4 && errorCount < 22) {
+                        word1 = "błędów";
+                    }
+                    else if(errorCount % 10 > 1 && errorCount % 10 < 5) {
+                        word1 = "błędy";
+                    }
+                    else {
+                        word1 = "błędów";
+                    }
+                }
+                lblErrorCount.Text = string.Format("Znaleziono {0} {1} w {2} {3}", errorCount, word1, badEntryCount, (badEntryCount == 1 ? "rejestracji" : "rejestracjach"));
                 lblErrorCount.Visible = true;
             }
             else {
@@ -444,8 +501,8 @@ namespace Rejestracja {
         private void txtFilter_KeyUp(object sender, KeyEventArgs e) {
             _txtFilterTimer.Stop();
 
-            Debug.Print(e.KeyCode.ToString());
-            Debug.Print(e.Control.ToString());
+            //Debug.Print(e.KeyCode.ToString());
+            //Debug.Print(e.Control.ToString());
 
             if (e.Alt || e.Control || e.KeyCode == Keys.ControlKey || e.KeyCode == Keys.Tab) {
                 return;
@@ -623,9 +680,8 @@ namespace Rejestracja {
                 string outFile = String.Format("{0}\\rejestracja_{1}.docx", directory, entry.entryId);
                 File.Delete(outFile);
 
-                DocHandler dc = new DocHandler();
-                dc.generateRegistrationCard(Resources.resolvePath("templateKartyModelu"), outFile, entry);
-                dc.printWordDoc(outFile);
+                DocHandler.generateRegistrationCard(Resources.resolvePath("templateKartyModelu"), outFile, entry);
+                DocHandler.printWordDoc(outFile);
             }
             catch (Exception err) {
                 LogWriter.error(err);
@@ -635,24 +691,23 @@ namespace Rejestracja {
 
         private void lvEntries_ItemChecked(object sender, ItemCheckedEventArgs e) {
             if (e.Item.Checked) {
-                mnuRPrint.Enabled = true;
+                mnuRSelected.Enabled = true;
                 return;
             }
 
             foreach (ListViewItem item in lvEntries.Items) {
                 if (item.Checked) {
-                    mnuRPrint.Enabled = true;
+                    mnuRSelected.Enabled = true;
                     return;
                 }
             }
-            mnuRPrint.Enabled = false;
+            mnuRSelected.Enabled = false;
         }
 
         private void mnuJJudgingForms_Click(object sender, EventArgs e) {
             DialogResult q = MessageBox.Show("Wydrukować dokumenty po utworzeniu?", "Karty Sędziowania - Druk", MessageBoxButtons.YesNoCancel);
             if (q == System.Windows.Forms.DialogResult.Cancel)
                 return;
-            Boolean printForms = (q == System.Windows.Forms.DialogResult.Yes);
 
             try {
                 Application.UseWaitCursor = true;
@@ -674,11 +729,10 @@ namespace Rejestracja {
 
                 toolStripProgressBar.Value = 0;
 
-                DocHandler dc = new DocHandler();
-                dc.generateJudgingForms(Resources.resolvePath("templateKartySędziowania"), directory, this);
+                DocHandler.generateJudgingForms(Resources.resolvePath("templateKartySędziowania"), directory, this);
                 toolStripLabelSpring.Text = "Dokumenty gotowe";
 
-                if (printForms) {
+                if (q == System.Windows.Forms.DialogResult.Yes) {
                     toolStripLabelSpring.Text = "Przesyłanie do druku...";
                     toolStripProgressBar.Value = 0;
 
@@ -686,7 +740,7 @@ namespace Rejestracja {
                     toolStripProgressBar.Maximum = files.Length;
 
                     foreach (FileInfo file in files) {
-                        dc.printWordDoc(file.FullName);
+                        DocHandler.printWordDoc(file.FullName);
                     }
 
                     showStripLabelMessage("Dokumenty wysłane do druku");
@@ -726,23 +780,39 @@ namespace Rejestracja {
         }
 
         private void mnuRResultList_Click(object sender, EventArgs e) {
-            String outFile = String.Format("{0}\\{1}", Resources.resolvePath("folderDokumentów"), "wyniki.html");
-            String templateFile = Resources.resolvePath("templateWynikow");
-
-            String directory = Path.GetDirectoryName(outFile);
-            if (!Directory.Exists(directory)) {
-                Directory.CreateDirectory(directory);
+            DialogResult q = MessageBox.Show("Wydrukować wyniki po utworzeniu?", "Lista Wyników", MessageBoxButtons.YesNoCancel);
+            if (q == System.Windows.Forms.DialogResult.Cancel) {
+                return;
             }
 
-            if (File.Exists(outFile)) {
-                if (MessageBox.Show("Plik \"wyniki.html\" istnieje. Nadpisać instniejący plik?", "Możliwa utrata danych", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != System.Windows.Forms.DialogResult.OK)
-                    return;
-                File.Delete(outFile);
-            }
+            Application.UseWaitCursor = true;
 
-            DocHandler dc = new DocHandler();
-            dc.generateHtmlResults(templateFile, outFile);
-            System.Diagnostics.Process.Start(outFile);
+            try {
+                String outFile = String.Format("{0}\\{1}", Resources.resolvePath("folderDokumentów"), "wyniki.html");
+                String templateFile = Resources.resolvePath("templateWynikow");
+
+                String directory = Path.GetDirectoryName(outFile);
+                if (!Directory.Exists(directory)) {
+                    Directory.CreateDirectory(directory);
+                }
+
+                if (File.Exists(outFile)) {
+                    File.Delete(outFile);
+                }
+
+                DocHandler.generateHtmlResults(templateFile, outFile);
+                if (q == System.Windows.Forms.DialogResult.Yes) {
+                    DocHandler.PrintHtmlDoc(outFile);
+                }
+                System.Diagnostics.Process.Start(outFile);
+            }
+            catch (Exception err) {
+                LogWriter.error(err);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally {
+                Application.UseWaitCursor = false;
+            }
         }
 
         private void mnuRCCheckAll_Click(object sender, EventArgs e) {
@@ -821,9 +891,11 @@ namespace Rejestracja {
                         lvStats.Groups.Add(group);
                     }
                     else {
-                        ListViewItem item = new ListViewItem("", group);
-                        item.SubItems.Add(stat.Key);
-                        item.SubItems.Add(stat.Value);
+                        ListViewItem item = new ListViewItem(new String[] { "", stat.Key, stat.Value }, group);
+                        if (stat.Key.StartsWith("*")) {
+                            item.SubItems[1].Text = stat.Key.Substring(1);
+                            item.Font = new Font(item.Font, FontStyle.Bold);
+                        }
                         lvStats.Items.Add(item);
                     }
                 }
@@ -844,14 +916,6 @@ namespace Rejestracja {
         }
 
         private void mnuRPrint_Click(object sender, EventArgs e) {
-            if (mnuRPrintSorted.Checked) {
-                if (MessageBox.Show("Wydrukować wszystkie karty startowe alfabetycznie?", "Drukuj Karty Startowe", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
-                    return;
-            }
-            else {
-                if (MessageBox.Show("Wydrukować wszystkie karty startowe według numeru startowego?", "Drukuj Karty Startowe", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.No)
-                    return;
-            }
             printEntryCards(true);
         }
 
@@ -977,7 +1041,6 @@ namespace Rejestracja {
 
                 toolStripProgressBar.Value = 0;
 
-                DocHandler dc = new DocHandler();
                 IEnumerable<Result> results;
 
                 String templateFile = Resources.resolvePath("templateDyplomuKategorii");
@@ -985,9 +1048,9 @@ namespace Rejestracja {
 
                 foreach (Result result in results) {
                     String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
-                    dc.generateDiploma(templateFile, outputFile, result);
+                    DocHandler.generateDiploma(templateFile, outputFile, result);
                     if (printForms) {
-                        dc.printWordDoc(outputFile);
+                        DocHandler.printWordDoc(outputFile);
                     }
                     incrementProgressBar();
                 }
@@ -1038,16 +1101,15 @@ namespace Rejestracja {
 
                 toolStripProgressBar.Value = 0;
 
-                DocHandler dc = new DocHandler();
                 IEnumerable<Result> results = ResultDao.getAwardResults();
                 String templateFile = Resources.resolvePath("templateDyplomuNagrody");
                 resetProgressBar(results.Count());
 
                 foreach (Result result in results) {
                     String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
-                    dc.generateDiploma(templateFile, outputFile, result);
+                    DocHandler.generateDiploma(templateFile, outputFile, result);
                     if (printForms) {
-                        dc.printWordDoc(outputFile);
+                        DocHandler.printWordDoc(outputFile);
                     }
                     incrementProgressBar();
                 }
@@ -1092,12 +1154,11 @@ namespace Rejestracja {
                         Directory.CreateDirectory(outputDirectory);
                     }
 
-                    DocHandler dc = new DocHandler();
                     String templateFile = Resources.resolvePath("templateDyplomuKategorii");
                     String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
                     File.Delete(outputFile);
-                    dc.generateDiploma(templateFile, outputFile, result);
-                    dc.printWordDoc(outputFile);
+                    DocHandler.generateDiploma(templateFile, outputFile, result);
+                    DocHandler.printWordDoc(outputFile);
 
                     showStripLabelMessage("Dokument wysłany do druku");
                 }
@@ -1108,13 +1169,12 @@ namespace Rejestracja {
                         Directory.CreateDirectory(outputDirectory);
                     }
 
-                    DocHandler dc = new DocHandler();
                     String templateFile = Resources.resolvePath("templateDyplomuNagrody");
                     String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
                     File.Delete(outputFile);
 
-                    dc.generateDiploma(templateFile, outputFile, result);
-                    dc.printWordDoc(outputFile);
+                    DocHandler.generateDiploma(templateFile, outputFile, result);
+                    DocHandler.printWordDoc(outputFile);
 
                     showStripLabelMessage("Dokument wysłany do druku");
                 }
@@ -1133,7 +1193,7 @@ namespace Rejestracja {
             }
         }
 
-        private void mnuVSPrintRegistrationCards_Click(object sender, EventArgs e) {
+        private void mnuRSPrintChecked_Click(object sender, EventArgs e) {
             printEntryCards(false);
         }
 
@@ -1186,6 +1246,58 @@ namespace Rejestracja {
             f.ShowDialog(this);
             loadResultList();
             highlightInvalidRegistrationEntries();
+        }
+
+        private void txtFilter_TextChanged(object sender, EventArgs e) {
+            if (txtFilter.Text.Length == 0) {
+                btnClearSearch.Text = "Odśwież (F5)";
+            }
+            else {
+                btnClearSearch.Text = "Wyczyść (Esc)";
+            }
+        }
+
+        private void frmMain_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Control) {
+                if (e.KeyCode == Keys.F) {
+                    txtFilter.Focus();
+                    Debug.Print("KEY EVENT: Ctrl+F");
+                }
+                return;
+            }
+            if (e.KeyCode == Keys.F5) {
+                loadResultList();
+                Debug.Print("KEY EVENT: F5");
+                return;
+            }
+            if (e.KeyCode == Keys.Escape) {
+                Debug.Print("KEY EVENT: Esc");
+                if (txtFilter.Text.Length > 0) {
+                    txtFilter.Text = "";
+                    loadRegistrationList(null);
+                }
+            }
+        }
+
+        private void mnuRPrintAll_Click(object sender, EventArgs e) {
+            printEntryCards(true);
+        }
+
+        private void lblErrorCount_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+
+            Application.UseWaitCursor = true;
+            lvEntries.BeginUpdate();
+
+            foreach (ListViewItem item in lvEntries.Items) {
+                if (item.ForeColor != System.Drawing.Color.Red) {
+                    item.Remove();
+                }
+            }
+            
+            btnClearSearch.Text = "Wyczyść (Esc)";
+
+            lvEntries.EndUpdate();
+            Application.UseWaitCursor = false;
         }
     }
 }

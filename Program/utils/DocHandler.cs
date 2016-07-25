@@ -9,12 +9,13 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace Rejestracja.Utils
 {
     class DocHandler
     {
-        public void generateDiploma(String templateFile, String outFile, Result result)
+        public static void generateDiploma(String templateFile, String outFile, Result result)
         {
             String documentHeader = Options.get("DocumentHeader") ?? "";
             String documentFooter = Options.get("DocumentFooter") ?? "";
@@ -63,7 +64,7 @@ namespace Rejestracja.Utils
             }
         }
 
-        public void generateRegistrationCard(String templateFile, String outFile, RegistrationEntry entry)
+        public static void generateRegistrationCard(String templateFile, String outFile, RegistrationEntry entry)
         {
             String documentFooter = Options.get("DocumentFooter");
 
@@ -110,7 +111,7 @@ namespace Rejestracja.Utils
             }
         }
 
-        public void generateJudgingForms(String template, String outFolder, frmMain parentForm)
+        public static void generateJudgingForms(String template, String outFolder, frmMain parentForm)
         {
             List<RegistrationEntry> entries = RegistrationEntryDao.getListForJudging();
             List<ModelCategory> categories = ModelCategoryDao.getList().ToList();
@@ -222,7 +223,7 @@ namespace Rejestracja.Utils
             Process.Start(outFolder);
         }
 
-        public void generateHtmlResults(String template, String outputFileName)
+        public static void generateHtmlResults(String template, String outputFileName)
         {
             //DataSource ds = new DataSource();
             String htmlTemplate;
@@ -340,7 +341,26 @@ namespace Rejestracja.Utils
             File.WriteAllText(outputFileName, htmlTemplate);
         }
 
-        public void printWordDoc(String filePath)
+        public static void PrintHtmlDoc(String filePath) {
+            // Create a WebBrowser instance. 
+            WebBrowser webBrowserForPrinting = new WebBrowser();
+
+            // Add an event handler that prints the document after it loads.
+            webBrowserForPrinting.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(PrintDocument);
+
+            // Set the Url property to load the document.
+            webBrowserForPrinting.Url = new Uri(filePath);
+        }
+
+        private static void PrintDocument(object sender, WebBrowserDocumentCompletedEventArgs e) {
+            // Print the document now that it is fully loaded.
+            ((WebBrowser)sender).Print();
+
+            // Dispose the WebBrowser now that the task is complete. 
+            ((WebBrowser)sender).Dispose();
+        }
+
+        public static void printWordDoc(String filePath)
         {
             ProcessStartInfo psi = new ProcessStartInfo()
             {

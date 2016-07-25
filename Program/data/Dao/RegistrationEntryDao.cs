@@ -412,7 +412,7 @@ namespace Rejestracja.Data.Dao
 
         public static List<KeyValuePair<string, string>> getRegistrationStats() {
             List<KeyValuePair<string, string>> ret = new List<KeyValuePair<string, string>>();
-            int count;
+            int categoryTotal;
             int i;
             object result;
 
@@ -427,20 +427,20 @@ namespace Rejestracja.Data.Dao
                 //Modeler count
                 cm.CommandText = "SELECT COUNT(*) AS cnt FROM (SELECT DISTINCT LastName, FirstName, AgeGroup FROM Registration) x";
                 result = cm.ExecuteScalar();
-                count = (result == null ? 0 : int.Parse(result.ToString()));
-                ret.Add(new KeyValuePair<string, string>("Liczba modelarzy", count.ToString()));
+                categoryTotal = (result == null ? 0 : int.Parse(result.ToString()));
+                ret.Add(new KeyValuePair<string, string>("Liczba modelarzy", categoryTotal.ToString()));
 
                 //Model count
                 cm.CommandText = "SELECT COUNT(EntryId) FROM Registration";
                 result = cm.ExecuteScalar();
-                count = (result == null ? 0 : int.Parse(result.ToString()));
-                ret.Add(new KeyValuePair<string, string>("Liczba modeli", count.ToString()));
+                categoryTotal = (result == null ? 0 : int.Parse(result.ToString()));
+                ret.Add(new KeyValuePair<string, string>("Liczba modeli", categoryTotal.ToString()));
 
                 //Category count
                 cm.CommandText = "SELECT COUNT(*) FROM (SELECT DISTINCT ModelCategory FROM Registration) x";
                 result = cm.ExecuteScalar();
-                count = (result == null ? 0 : int.Parse(result.ToString()));
-                ret.Add(new KeyValuePair<string, string>("Liczba kategorii", count.ToString()));
+                categoryTotal = (result == null ? 0 : int.Parse(result.ToString()));
+                ret.Add(new KeyValuePair<string, string>("Liczba kategorii", categoryTotal.ToString()));
 
                 // --- AGE GROUPS ---
                 ret.Add(new KeyValuePair<string, string>("GROUP2", "Grupy wiekowe"));
@@ -510,32 +510,29 @@ namespace Rejestracja.Data.Dao
                 // --- Model Category ---
                 ret.Add(new KeyValuePair<string, string>("GROUP4", "Modele w kategoriach"));
 
-//                //Model count in class
-//                cm.CommandText = 
-//                    @"SELECT r.ModelClass, r.ModelCategory, r.AgeGroup, COUNT(EntryId) AS cnt, r.ModelCategoryId
-//	                    FROM Registration r
-//	                    LEFT JOIN ModelCategory mc ON r.ModelCategoryId = mc.Id
-//	                    GROUP BY r.ModelClass, r.ModelCategoryId, r.AgeGroup
-//                    ORDER BY mc.DisplayOrder, r.ModelCategory, r.AgeGroup, r.ModelClass";
-//                using (SQLiteDataReader dr = cm.ExecuteReader()) {
-                    
-//                    int catId = -2;
-//                    String countSummary = "";
+                //Model count in class
+                cm.CommandText =
+                    @"SELECT r.ModelClass, r.ModelCategory, r.AgeGroup, COUNT(EntryId) AS cnt, r.ModelCategoryId, ct.CategoryTotal
+	                    FROM Registration r
+	                    LEFT JOIN ModelCategory mc ON r.ModelCategoryId = mc.Id
+	                    JOIN (SELECT ModelCategoryId, COUNT(EntryId) AS CategoryTotal FROM Registration GROUP BY ModelCategoryId) ct ON ct.ModelCategoryId = r.ModelCategoryId
+	                    GROUP BY r.ModelClass, r.ModelCategoryId, r.AgeGroup
+                    ORDER BY ct.CategoryTotal DESC, mc.DisplayOrder, r.ModelCategory, r.AgeGroup, r.ModelClass";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
 
-//                    while (dr.Read()) {
-//                        int currentCatId = dr.GetInt32(dr.GetOrdinal("ModelCategoryId"));
+                    int categoryId = -2;
 
-//                        if (catId != currentCatId) {
-//                            if (catId > -2) {
-//                                ret.Add(new KeyValuePair<string, string>(
-//                                String.Format("{0} {1}", dr["ModelClass"].ToString().ToUpper(), dr["ModelCategory"].ToString()),
-//                                dr["cnt"].ToString()));
-//                            }
-//                            countSummary = "";
-//                            catId = currentCatId;
-//                        }
-//                    }
-//                }
+                    while (dr.Read()) {
+                        int currentCatId = dr.GetInt32(dr.GetOrdinal("ModelCategoryId"));
+                        if (categoryId != currentCatId) {
+                            categoryTotal = 0;
+                            categoryId = currentCatId;
+                            ret.Add(new KeyValuePair<string, string>("*" + dr["ModelCategory"].ToString(), dr["CategoryTotal"].ToString()));
+                        }
+
+                        ret.Add(new KeyValuePair<string, string>(dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
+                    }
+                }
             }
 
             return ret;

@@ -122,6 +122,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>GlobalResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Utils\Options.cs" />
     <Compile Include="Data\Dao\PublisherDao.cs" />
     <Compile Include="Data\Dao\ResultDao.cs" />
@@ -176,6 +181,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <None Include="Resources\NewFile_6276.png" />
     <None Include="Resources\OpenFileDialog_692.png" />
     <None Include="Resources\Open_6529.png" />
@@ -199,6 +208,10 @@
     <None Include="Resources\certificate_16xLG.png" />
     <None Include="Resources\package_16xLG.png" />
     <None Include="Resources\list_16xLG.png" />
+    <None Include="Resources\PrintDocumentControl_697.png" />
+    <Content Include="Templates\posumowanie.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="x64\SQLite.Interop.dll" />
     <Content Include="x86\SQLite.Interop.dll" />
     <EmbeddedResource Include="frmAddResults.resx">

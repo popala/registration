@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmAddResults));
             this.label2 = new System.Windows.Forms.Label();
             this.cboModelCategory = new System.Windows.Forms.ComboBox();
             this.lvResults = new System.Windows.Forms.ListView();
@@ -255,12 +256,12 @@
             this.cmsAwardResultsRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cmsARCDelete});
             this.cmsAwardResultsRightClick.Name = "cmsResultsRightClick";
-            this.cmsAwardResultsRightClick.Size = new System.Drawing.Size(153, 48);
+            this.cmsAwardResultsRightClick.Size = new System.Drawing.Size(131, 26);
             // 
             // cmsARCDelete
             // 
             this.cmsARCDelete.Name = "cmsARCDelete";
-            this.cmsARCDelete.Size = new System.Drawing.Size(152, 22);
+            this.cmsARCDelete.Size = new System.Drawing.Size(130, 22);
             this.cmsARCDelete.Text = "Usuń Wpis";
             this.cmsARCDelete.Click += new System.EventHandler(this.cmsARCDelete_Click);
             // 
@@ -272,6 +273,7 @@
             this.ClientSize = new System.Drawing.Size(995, 573);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnClose);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmAddResults";
             this.Text = "Dodawanie Wyników";
             this.Load += new System.EventHandler(this.frmAddResults_Load);

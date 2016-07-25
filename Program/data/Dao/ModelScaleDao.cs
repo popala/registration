@@ -20,7 +20,7 @@ namespace Rejestracja.Data.Dao
                 {
                     while (dr.Read())
                         yield return new ModelScale(
-                            dr.GetInt64(0),
+                            dr.GetInt32(0),
                             dr.GetString(1),
                             dr.GetInt32(2)
                         );

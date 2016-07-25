@@ -121,12 +121,18 @@ namespace Rejestracja.Data.Dao
         public static void delete(long id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM ModelCategory WHERE Id = @Id", cn))
+            using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE EntryId IN(SELECT EntryId FROM Registration WHERE ModelCategoryId = @Id) AND Place IS NOT NULL", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-
+                    
                 cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.ExecuteNonQuery();
+
+                cm.CommandText = "UPDATE Registration SET ModelCategoryId = -1 WHERE ModelCategoryId = @Id";
+                cm.ExecuteNonQuery();
+
+                cm.CommandText = "DELETE FROM ModelCategory WHERE Id = @Id";
                 cm.ExecuteNonQuery();
             }
         }
