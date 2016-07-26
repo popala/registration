@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+﻿using Rejestracja.Data.Dao;
+using Rejestracja.Data.Objects;
+using Rejestracja.Utils;
+using System;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Rejestracja
@@ -31,8 +29,8 @@ namespace Rejestracja
             lvResults.Columns.Add("Wydawca");
             lvResults.Columns.Add("Miejsce");
 
-            foreach (ModelCategory category in ModelCategory.getList()) {
-                cboModelCategory.Items.Add(new ComboBoxItem(category.id, category.getFullName()));
+            foreach (ModelCategory category in ModelCategoryDao.getList()) {
+                cboModelCategory.Items.Add(new ComboBoxItem(category.id, category.fullName));
             }
             if (cboModelCategory.Items.Count > 0) {
                 cboModelCategory.SelectedIndex = 0;
@@ -50,7 +48,7 @@ namespace Rejestracja
             lvAwardResults.Columns.Add("Wydawca");
             lvAwardResults.Columns.Add("Nagroda");
 
-            foreach (Award award in Award.getList()) {
+            foreach (Award award in AwardDao.getList()) {
                 cboSpecialAward.Items.Add(new ComboBoxItem(award.id, award.title));
             }
             if (cboSpecialAward.Items.Count > 0) {
@@ -77,7 +75,7 @@ namespace Rejestracja
                 }
 
                 long catId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
-                RegistrationEntry[] entries = Results.getEntriesInCategory(ModelCategory.get(catId).getFullName()).ToArray();
+                RegistrationEntry[] entries = ResultDao.getCategoryResults(ModelCategoryDao.get(catId).fullName).ToArray();
 
                 String modelClass = "";
                 String ageGroup = "";
@@ -175,14 +173,14 @@ namespace Rejestracja
 
                 int nPlace;
                 if (int.TryParse(strPlace, out nPlace)) {
-                    Results.deleteResult(entryId, nPlace);
+                    ResultDao.deleteCategoryResult(entryId, nPlace);
                     item.SubItems[4].Text = "";
                     item.Font = new Font(item.Font, FontStyle.Regular);
                 }
 
                 if (place > 0) {
                     item.Font = new Font(item.Font, FontStyle.Bold);
-                    Results.addCategoryResult(entryId, place);
+                    ResultDao.addCategoryResult(entryId, place);
                     item.SubItems[4].Text = place.ToString();
 
                     //Adjust the column width after setting bold fond
@@ -234,7 +232,7 @@ namespace Rejestracja
             }
             
             //Check if the entry ID exists
-            RegistrationEntry entry = RegistrationEntry.get(entryId);
+            RegistrationEntry entry = RegistrationEntryDao.get(entryId);
             if(entry == null) {
                 MessageBox.Show("Numer modelu nie znaleziony w bazie", "Dodawanie Wyników", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
@@ -242,13 +240,13 @@ namespace Rejestracja
 
             long awardId = ((ComboBoxItem)cboSpecialAward.SelectedItem).id;
             //Check if it is already added to the award list
-            if (Results.awardEntryExists(entryId, awardId)) {
+            if (ResultDao.awardResultExists(entryId, awardId)) {
                 MessageBox.Show("Wpis istnieje", "Dodawanie Wyników", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
             //Add it
-            Results.addAwardWinner(entryId, awardId);
+            ResultDao.addAwardWinner(entryId, awardId);
             loadAwardResults();
             txtEntryId.SelectAll();
             txtEntryId.Focus();
@@ -270,9 +268,17 @@ namespace Rejestracja
 
         private void loadAwardResults() {
             lvAwardResults.Items.Clear();
-            foreach (String[] item in Results.getAwardResultList()) {
-                ListViewItem lvItem = new ListViewItem(item.Skip(1).ToArray());
-                lvItem.Tag = long.Parse(item[0]);
+            foreach (Result result in ResultDao.getAwardResults()) {
+                ListViewItem lvItem = new ListViewItem(
+                    new String[] {
+                        result.entry.entryId.ToString(),
+                        result.entry.modelName,
+                        result.entry.modelScale,
+                        result.entry.modelPublisher,
+                        result.award.title
+                    }
+                );
+                lvItem.Tag = result.resultId;
                 lvAwardResults.Items.Add(lvItem);
             }
             foreach (ColumnHeader header in lvAwardResults.Columns) {
@@ -284,8 +290,8 @@ namespace Rejestracja
             if (lvAwardResults.SelectedItems.Count == 0) {
                 return;
             }
-            long resultId = (Int64)lvAwardResults.SelectedItems[0].Tag;
-            Results.deleteResult(resultId);
+            int resultId = (int)lvAwardResults.SelectedItems[0].Tag;
+            ResultDao.delete(resultId);
             loadAwardResults();
         }
     }

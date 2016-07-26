@@ -1,35 +1,25 @@
-﻿using System;
+﻿using Rejestracja.Data.Objects;
+using Rejestracja.Utils;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Rejestracja
+namespace Rejestracja.Data.Dao
 {
-    class Publisher
+    class PublisherDao
     {
-        public long publisherId;
-        public String name;
-
-        public Publisher(long publisherId, String name)
-        {
-            this.publisherId = publisherId;
-            this.name = name;
-        }
-
         public static IEnumerable<Publisher> getList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT PublisherId, Name FROM Publisher ORDER BY Name ASC", cn))
+            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name FROM Publisher ORDER BY Name ASC", cn))
             {
                 cn.Open();
 
                 using (SQLiteDataReader dr = cm.ExecuteReader())
                 {
                     while (dr.Read())
-                        yield return new Publisher(dr.GetInt64(0), dr.GetString(1));
+                        yield return new Publisher(dr.GetInt32(0), dr.GetString(1));
                 }
             }
         }
@@ -52,7 +42,7 @@ namespace Rejestracja
         public static bool exists(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT PublisherId FROM Publisher WHERE Name = @Name", cn))
+            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM Publisher WHERE Name = @Name", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -78,15 +68,15 @@ namespace Rejestracja
             }
         }
 
-        public static void delete(long publisherId)
+        public static void delete(long id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Publisher WHERE PublisherId = @PublisherId", cn))
+            using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Publisher WHERE Id = @Id", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@PublisherId", System.Data.DbType.Int64).Value = publisherId;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
                 cm.ExecuteNonQuery();
             }
         }
@@ -96,7 +86,7 @@ namespace Rejestracja
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
                 @"CREATE TABLE Publisher(
-                    PublisherId INTEGER  PRIMARY KEY,
+                    Id INTEGER  PRIMARY KEY,
                     Name TEXT NOT NULL)", cn))
             {
                 cn.Open();

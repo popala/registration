@@ -1,4 +1,7 @@
 ﻿using Microsoft.VisualBasic.FileIO;
+using Rejestracja.Data.Dao;
+using Rejestracja.Data.Objects;
+using Rejestracja.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -19,10 +22,6 @@ namespace Rejestracja {
             Resources.setDataFile(newFilePath);
             this._connectionString = Resources.getConnectionString();
             initDataFile();
-        }
-
-        public void dropCurrentDataFile() {
-            System.IO.File.Delete(Resources.getDataFilePath());
         }
 
         private void initDataFile() {
@@ -50,58 +49,17 @@ namespace Rejestracja {
         }
 
         private void createTables(bool createAllTables) {
-            using (SQLiteConnection cn = new SQLiteConnection(_connectionString))
-            using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.CommandText =
-                    @"CREATE TABLE Registration(
-                        EntryId INTEGER PRIMARY KEY,
-                        TmStamp DATETIME NOT NULL,
-                        Email TEXT,
-                        FirstName TEXT NOT NULL,
-                        LastName TEXT NOT NULL,
-                        ClubName TEXT,
-                        AgeGroup TEXT NOT NULL, 
-                        ModelName TEXT NOT NULL,
-                        ModelCategory TEXT NOT NULL,
-                        ModelCategoryId NUMERIC NOT NULL DEFAULT -1,
-                        ModelScale TEXT NOT NULL,
-                        ModelPublisher TEXT,
-                        ModelClass TEXT NOT NULL,
-                        YearOfBirth NUMERIC NOT NULL,
-                        SkipErrorValidation INTEGER NOT NULL DEFAULT 0)";
-                cm.ExecuteNonQuery();
-                cm.CommandText = "CREATE INDEX Idx_Reg_Name ON Registration(LastName, FirstName)";
-                cm.ExecuteNonQuery();
-                cm.CommandText = "CREATE INDEX Idx_Reg_Email ON Registration(Email)";
-                cm.ExecuteNonQuery();
-                cm.CommandText = "CREATE INDEX Idx_Reg_ModelName ON Registration(ModelName)";
-                cm.ExecuteNonQuery();
-                cm.CommandText = "CREATE INDEX Idx_Reg_CatId ON Registration(ModelCategoryId)";
-                cm.ExecuteNonQuery();
-
-                if (createAllTables) {
-                    AgeGroup.createTable();
-                    Award.createTable();
-                    ModelCategory.createTable();
-                    ModelClass.createTable();
-                    ModelScale.createTable();
-                    Publisher.createTable();
-                    Options.createTable();                    
-                }
-
-                cm.CommandText =
-                    @"CREATE TABLE Results(
-                        ResultId INTEGER PRIMARY KEY,
-                        EntryId INTEGER NOT NULL REFERENCES Registration(EntryId),
-                        AwardId INTEGER NULL REFERENCES SpecialAwards(AwardId),
-                        Place INTEGER NULL)";
-                cm.ExecuteNonQuery();
-
-                cm.CommandText = "CREATE UNIQUE INDEX Idx_Res_Unique ON Results(EntryId,AwardId,Place)";
-                cm.ExecuteNonQuery();
+            RegistrationEntryDao.createTable();
+            if (createAllTables) {
+                AgeGroupDao.createTable();
+                AwardDao.createTable();
+                ModelCategoryDao.createTable();
+                ModelClassDao.createTable();
+                ModelScaleDao.createTable();
+                PublisherDao.createTable();
+                Options.createTable();                    
             }
+            ResultDao.createTable();
         }
 
         public void export(String outputFile, bool use2003Format) {
@@ -179,10 +137,10 @@ namespace Rejestracja {
         private IEnumerable<RegistrationEntry> parseCSVFile(String filePath, FileImportFieldMap fieldMap, bool hasHeaders) {
             
             TextInfo textInfo = new CultureInfo("pl-PL", false).TextInfo;
-            List<String> publishers = Publisher.getSimpleList().ToList<String>();
-            List<ModelCategory> modelCategories = ModelCategory.getList().ToList<ModelCategory>();
-            List<AgeGroup> ageGroups = AgeGroup.getList().ToList<AgeGroup>();
-            List<String> modelClasses = ModelClass.getSimpleList().ToList<String>();
+            List<String> publishers = PublisherDao.getSimpleList().ToList<String>();
+            List<ModelCategory> modelCategories = ModelCategoryDao.getList().ToList<ModelCategory>();
+            List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList<AgeGroup>();
+            List<String> modelClasses = ModelClassDao.getSimpleList().ToList<String>();
 
             using (TextFieldParser parser = new TextFieldParser(filePath)) {
                 parser.CommentTokens = new String[] { "#" };
@@ -254,9 +212,9 @@ namespace Rejestracja {
                     ModelCategory [] matchedModelCategory = null;
                     if (enteredModelCategory != null) {
                         //Try to match model category
-                        matchedModelCategory = modelCategories.Where(x => x.getFullName().ToLower().Equals(enteredModelCategory.ToLower())).ToArray<ModelCategory>();
+                        matchedModelCategory = modelCategories.Where(x => x.fullName.ToLower().Equals(enteredModelCategory.ToLower())).ToArray<ModelCategory>();
                         if (matchedModelCategory.Length > 0) {
-                            newRegistration.modelCategory = matchedModelCategory[0].getFullName();
+                            newRegistration.modelCategory = matchedModelCategory[0].fullName;
                             newRegistration.modelCategoryId = matchedModelCategory[0].id;
                             //Matched model category and so set the category if it should be derived from class
                             if (fieldMap.DeriveClassFromCategory) {
@@ -349,7 +307,7 @@ namespace Rejestracja {
             
             IEnumerable<RegistrationEntry> entries = parseCSVFile(filePath, fieldMap, hasHeaders);
             List<RegistrationEntry> failed = new List<RegistrationEntry>();
-            ModelCategory[] categories = ModelCategory.getList().ToArray();
+            ModelCategory[] categories = ModelCategoryDao.getList().ToArray();
             ModelCategory[] matchedCategory = null;
 
             using (SQLiteConnection cn = new SQLiteConnection(_connectionString))
@@ -375,12 +333,12 @@ namespace Rejestracja {
                 using (SQLiteTransaction t = cn.BeginTransaction()) {
                     foreach (RegistrationEntry entry in entries) {
 
-                        matchedCategory = categories.Where(x => x.getFullName().ToLower().Equals(entry.modelCategory.ToLower())).ToArray();
+                        matchedCategory = categories.Where(x => x.fullName.ToLower().Equals(entry.modelCategory.ToLower())).ToArray();
                         if (matchedCategory.Length > 0) {
                             cm.Parameters["@ModelCategoryId"].Value = matchedCategory[0].id;
                         }
                         else {
-                            cm.Parameters["@ModelCategoryId"].Value = 0;
+                            cm.Parameters["@ModelCategoryId"].Value = -1;
                         }
 
                         cm.Parameters["@TmStamp"].Value = entry.timeStamp;

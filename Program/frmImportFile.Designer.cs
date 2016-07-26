@@ -62,6 +62,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.chkDropExistingRecords = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -501,6 +502,17 @@
             this.panel1.Size = new System.Drawing.Size(920, 79);
             this.panel1.TabIndex = 30;
             // 
+            // chkDropExistingRecords
+            // 
+            this.chkDropExistingRecords.AutoSize = true;
+            this.chkDropExistingRecords.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkDropExistingRecords.Location = new System.Drawing.Point(440, 689);
+            this.chkDropExistingRecords.Name = "chkDropExistingRecords";
+            this.chkDropExistingRecords.Size = new System.Drawing.Size(289, 17);
+            this.chkDropExistingRecords.TabIndex = 5;
+            this.chkDropExistingRecords.Text = "Usuń instniejące rejestracje przed rozpoczęciem importu";
+            this.chkDropExistingRecords.UseVisualStyleBackColor = true;
+            // 
             // frmImportFile
             // 
             this.AcceptButton = this.btnImport;
@@ -508,6 +520,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(925, 720);
+            this.Controls.Add(this.chkDropExistingRecords);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnImport);
@@ -571,5 +584,6 @@
         private System.Windows.Forms.ComboBox cboModelClass;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.CheckBox chkDropExistingRecords;
     }
 }

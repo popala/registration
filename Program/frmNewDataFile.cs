@@ -1,18 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using Rejestracja.Utils;
+using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Rejestracja
 {
     public partial class frmNewDataFile : Form
     {
+        public void setSelectedTab(int selectedTab) {
+            if (selectedTab > 0) {
+                tabControl1.SelectedIndex = 1;
+            }
+            else {
+                tabControl1.SelectedIndex = 0;
+            }
+        }
+
         public frmNewDataFile()
         {
             InitializeComponent();
@@ -63,7 +66,6 @@ namespace Rejestracja
             
             btnOk.Enabled = false;
             lblError.Visible = false;
-            txtContestTitle.Focus();
         }
 
         private void checkNewFileName() {

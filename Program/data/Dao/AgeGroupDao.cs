@@ -1,46 +1,21 @@
-﻿using System;
+﻿using Rejestracja.Data.Objects;
+using Rejestracja.Utils;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Rejestracja
+namespace Rejestracja.Data.Dao
 {
-    class AgeGroup
+    class AgeGroupDao
     {
-        public long id;
-        public String name;
-        public int upperAge;
-        public int bottomAge;
-
-        public AgeGroup()
-        {
-        }
-
-        public AgeGroup(long id, String name, int upperAge)
-        {
-            this.id = id;
-            this.name = name;
-            this.upperAge = upperAge;
-        }
-
-        public AgeGroup(long id, String name, int upperAge, int bottomAge)
-        {
-            this.id = id;
-            this.name = name;
-            this.upperAge = upperAge;
-            this.bottomAge = bottomAge;
-        }
-
         public static bool exists(int upperAge) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM AgeGroup WHERE Age BETWEEN @Age1 AND @Age2", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-                cm.Parameters.Add("@Age1", DbType.String).Value = upperAge - 1;
-                cm.Parameters.Add("@Age2", DbType.String).Value = upperAge + 1;
+                cm.Parameters.Add("@Age1", DbType.Int32).Value = upperAge - 1;
+                cm.Parameters.Add("@Age2", DbType.Int32).Value = upperAge + 1;
 
                 object res = cm.ExecuteScalar();
                 return (res != null);
@@ -62,7 +37,7 @@ namespace Rejestracja
 		                ) m ON a.Age = m.Age", cn))
             {
                 cn.Open();
-                cm.Parameters.Add("@AgeGroupName", DbType.String).Value = ageGroupName;
+                cm.Parameters.Add("@AgeGroupName", DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = ageGroupName;
 
                 using (SQLiteDataReader dr = cm.ExecuteReader())
                 {
@@ -72,7 +47,7 @@ namespace Rejestracja
                         if (!dr.IsDBNull(dr.GetOrdinal("MinAge"))) {
                             bottomAge = dr.GetInt32(dr.GetOrdinal("MinAge")) + 1;
                         }
-                        ret = new AgeGroup(dr.GetInt64(0), dr.GetString(1), dr.GetInt32(2), bottomAge);
+                        ret = new AgeGroup(dr.GetInt32(0), dr.GetString(1), dr.GetInt32(2), bottomAge);
                     }
                 }
             }
@@ -93,7 +68,7 @@ namespace Rejestracja
                 {
                     while (dr.Read())
                     {
-                        AgeGroup ageGroup = new AgeGroup(dr.GetInt64(0), dr.GetString(1), dr.GetInt32(2), bottomAge);
+                        AgeGroup ageGroup = new AgeGroup(dr.GetInt32(0), dr.GetString(1), dr.GetInt32(2), bottomAge);
                         bottomAge = ageGroup.upperAge + 1;
                         ret.Add(ageGroup);
                     }
@@ -117,7 +92,7 @@ namespace Rejestracja
             }
         }
 
-        public static long add(String name, int age)
+        public static int add(String name, int age)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO AgeGroup(Name, Age) VALUES(@Name, @Age)", cn))
@@ -125,15 +100,15 @@ namespace Rejestracja
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Name", DbType.String, 64).Value = name;
+                cm.Parameters.Add("@Name", DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = name;
                 cm.Parameters.Add("@Age", DbType.Int32).Value = age;
                 cm.ExecuteNonQuery();
 
-                return cn.LastInsertRowId;
+                return (int)cn.LastInsertRowId;
             }
         }
 
-        public static void delete(long id)
+        public static void delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM AgeGroup WHERE Id = @Id", cn))

@@ -1,52 +1,14 @@
-﻿using System;
+﻿using Rejestracja.Data.Objects;
+using Rejestracja.Utils;
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Data.SQLite;
 
-namespace Rejestracja
+namespace Rejestracja.Data.Dao
 {
-    class Award
+    class AwardDao
     {
-        public long id;
-        public String title;
-        public long displayOrder;
-
-        public const int TITLE_MAX_LENGTH = 256;
-
-        public Award(String title, long displayOrder)
-        {
-            this.title = title;
-            this.displayOrder = displayOrder;
-        }
-
-        public Award(long id, String title, long displayOrder)
-        {
-            this.id = id;
-            this.title = title;
-            this.displayOrder = displayOrder;
-        }
-
-        public Award(long id)
-        {
-            Award award = get(id);
-            if (award == null)
-                return;
-
-            this.id = award.id;
-            this.title = award.title;
-            this.displayOrder = award.displayOrder;
-        }
-
-        public string[] toArray()
-        {
-            return new string[] {
-                this.id.ToString(),
-                this.title,
-                this.displayOrder.ToString()
-            };
-        }
-
-        public static Award get(long id)
+        public static Award get(int id)
         {
             Award ret = null;
 
@@ -55,16 +17,16 @@ namespace Rejestracja
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
 
                 using (SQLiteDataReader dr = cm.ExecuteReader())
                 {
                     if (dr.Read())
                     {
                         ret = new Award(
-                            dr.GetInt64(dr.GetOrdinal("Id")),
+                            dr.GetInt32(dr.GetOrdinal("Id")),
                             dr["Title"].ToString(),
-                            dr.GetInt64(dr.GetOrdinal("DisplayOrder"))
+                            dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
                         );
                     }
                 }
@@ -72,7 +34,7 @@ namespace Rejestracja
             return ret;
         }
 
-        public static long add(String title, long displayOrder)
+        public static int add(String title, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO SpecialAwards(Title, DisplayOrder) VALUES(@Title, @DisplayOrder)", cn))
@@ -80,50 +42,34 @@ namespace Rejestracja
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Title", System.Data.DbType.String, TITLE_MAX_LENGTH).Value = title;
+                cm.Parameters.Add("@Title", System.Data.DbType.String, Award.TITLE_MAX_LENGTH).Value = title;
                 cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int64).Value = displayOrder;
                 cm.ExecuteNonQuery();
 
-                return cn.LastInsertRowId;
+                return (int)cn.LastInsertRowId;
             }
         }
 
-        public void update()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"UPDATE SpecialAwards SET Title = @Title, DisplayOrder = @DisplayOrder WHERE Id = @Id", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-
-                cm.Parameters.Add("@Title", System.Data.DbType.String, TITLE_MAX_LENGTH).Value = this.title;
-                cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int64).Value = this.displayOrder;
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = this.id;
-
-                cm.ExecuteNonQuery();
-            }
-        }
-
-        public static void updateDisplayOrder(long id, int displayOrder) {
+        public static void updateDisplayOrder(int id, int displayOrder) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"UPDATE SpecialAwards SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
                 cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int32).Value = displayOrder;
                 cm.ExecuteNonQuery();
             }
         }
 
-        public static bool delete(long id)
+        public static bool delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Results WHERE AwardId = @Id", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
                 cm.ExecuteNonQuery();
 
                 cm.CommandText = @"DELETE FROM SpecialAwards WHERE Id = @Id";
@@ -170,9 +116,9 @@ namespace Rejestracja
                     {
                         yield return
                             new Award( 
-                                dr.GetInt64(dr.GetOrdinal("Id")),
+                                dr.GetInt32(dr.GetOrdinal("Id")),
                                 dr["Title"].ToString(),
-                                dr.GetInt64(dr.GetOrdinal("DisplayOrder"))
+                                dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
                             );
                     }
                 }

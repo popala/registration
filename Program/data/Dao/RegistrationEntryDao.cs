@@ -1,97 +1,14 @@
-﻿using System;
+﻿using Rejestracja.Data.Objects;
+using Rejestracja.Utils;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Text;
 
-namespace Rejestracja
+namespace Rejestracja.Data.Dao
 {
-    class RegistrationEntry
+    class RegistrationEntryDao
     {
-        public long entryId;
-        public DateTime timeStamp;
-        public String email;
-        public String firstName;
-        public String lastName;
-        public String clubName;
-        public String ageGroup;
-        public String modelName;
-        public String modelCategory;
-        public long modelCategoryId;
-        public String modelScale;
-        public String modelPublisher;
-        public String modelClass;
-        public int yearOfBirth;
-        public int place;
-
-        public RegistrationEntry() {
-
-        }
-
-        public RegistrationEntry(long entryId, DateTime timeStamp, String email, String firstName, String lastName, String clubName, String ageGroup,
-                                String modelName, String modelClass, String modelScale, String modelPublisher, String modelCategory, long modelCategoryId, int yearOfBirth)
-        {
-            this.entryId = entryId;
-            this.timeStamp = timeStamp;
-            this.email = email;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.clubName = clubName;
-            this.ageGroup = ageGroup;
-            this.modelName = modelName;
-            this.modelCategory = modelCategory;
-            this.modelCategoryId = modelCategoryId;
-            this.modelScale = modelScale;
-            this.modelPublisher = modelPublisher;
-            this.modelClass = modelClass;
-            this.yearOfBirth = yearOfBirth;
-        }
-
-        public RegistrationEntry(long entryId, String email, String firstName, String lastName, String clubName, String ageGroup, 
-                                String modelName, String modelClass, String modelScale, String modelPublisher, String modelCategory, long modelCategoryId, int yearOfBirth)
-        {
-            this.entryId = entryId;
-            this.email = email;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.clubName = clubName;
-            this.ageGroup = ageGroup;
-            this.modelName = modelName;
-            this.modelCategory = modelCategory;
-            this.modelCategoryId = modelCategoryId;
-            this.modelScale = modelScale;
-            this.modelPublisher = modelPublisher;
-            this.modelClass = modelClass;
-            this.yearOfBirth = yearOfBirth;
-        }
-
-        public RegistrationEntry(DateTime timeStamp, String email, String firstName, String lastName, String clubName, String ageGroup,
-                                String modelName, String modelClass, String modelScale, String modelPublisher, String modelCategory, long modelCategoryId, int yearOfBirth)
-        {
-            this.timeStamp = timeStamp;
-            this.email = email;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.clubName = clubName;
-            this.ageGroup = ageGroup;
-            this.modelName = modelName;
-            this.modelCategory = modelCategory;
-            this.modelCategoryId = modelCategoryId;
-            this.modelScale = modelScale;
-            this.modelPublisher = modelPublisher;
-            this.modelClass = modelClass;
-            this.yearOfBirth = yearOfBirth;
-        }
-
-        public RegistrationEntry(long entryId, String ageGroup, String modelName, String modelClass, String modelScale, String modelPublisher, int place) {
-            this.entryId = entryId;
-            this.ageGroup = ageGroup;
-            this.modelName = modelName;
-            this.modelClass = modelClass;
-            this.modelScale = modelScale;
-            this.modelPublisher = modelPublisher;
-            this.place = place;
-        }
-
         public static RegistrationEntry get(long entryId)
         {
             return get(entryId, null, null);
@@ -108,8 +25,10 @@ namespace Rejestracja
 
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.CommandText =
-                    @"SELECT EntryId, TmStamp, Email, FirstName, LastName, ClubName, AgeGroup,
-                        ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, COALESCE(ModelCategoryId, -1) AS ModelCategoryId, COALESCE(YearOfBirth,0) AS YearOfBirth 
+                    @"SELECT EntryId, TmStamp, Email, FirstName, LastName, ClubName, AgeGroup, 
+                        ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, 
+                        COALESCE(ModelCategoryId, -1) AS ModelCategoryId,
+                        COALESCE(YearOfBirth,0) AS YearOfBirth, COALESCE(SkipErrorValidation,0) AS SkipErrorValidation
                      FROM Registration ";
 
                 if (entryId.HasValue)
@@ -150,17 +69,13 @@ namespace Rejestracja
                             dr["ModelPublisher"].ToString(),
                             dr["ModelCategory"].ToString(),
                             dr.GetInt64(dr.GetOrdinal("ModelCategoryId")),
-                            dr.GetInt32(dr.GetOrdinal("YearOfBirth"))
+                            dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                            dr.GetBoolean(dr.GetOrdinal("SkipErrorValidation"))
                         );
                     }
                 }
             }
             return ret;
-        }
-
-        public static RegistrationEntry get(String email, String lastName)
-        {
-            return get((int?)null, email, lastName);
         }
 
         public static IEnumerable<String[]> getList(String searchValue, int sortField, bool sortAscending) {
@@ -312,7 +227,8 @@ namespace Rejestracja
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
                 @"SELECT EntryId, TmStamp, Email, FirstName, LastName, ClubName, AgeGroup,
-                        ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, COALESCE(ModelCategoryId, -1) AS ModelCategoryId, COALESCE(YearOfBirth,0) AS YearOfBirth 
+                        ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, COALESCE(ModelCategoryId, -1) AS ModelCategoryId,
+                        COALESCE(YearOfBirth,0) AS YearOfBirth, COALESCE(SkipErrorValidation,0) AS SkipErrorValidation
                     FROM Registration 
                     ORDER BY ModelCategory, AgeGroup, ModelClass, EntryId", cn))
             {
@@ -338,7 +254,8 @@ namespace Rejestracja
                                 dr["ModelPublisher"].ToString(),
                                 dr["ModelCategory"].ToString(),
                                 dr.GetInt64(dr.GetOrdinal("ModelCategoryId")),
-                                dr.GetInt32(dr.GetOrdinal("YearOfBirth"))
+                                dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                                dr.GetBoolean(dr.GetOrdinal("SkipErrorValidation"))
                         ));
                     }
                     return ret;
@@ -406,41 +323,52 @@ namespace Rejestracja
                 cm.ExecuteNonQuery();
             }
         }
-        
-        public void add()
-        {
-            if(this.entryId > 0)
-            {
-                throw new InvalidOperationException("EntryID populated");
-            }
 
+        public static void changeCategory(int entryId, int modelCategoryId, String modelCategory) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"INSERT INTO Registration(TmStamp,Email,FirstName,LastName,ClubName,AgeGroup,ModelName,ModelClass,ModelScale,ModelPublisher,ModelCategory,YearOfBirth)
-                  VALUES(@tmStamp,@email,@firstName,@lastName,@clubName,@ageGroup,@modelName,@modelClass,@modelScale,@modelPublisher,@modelCategory,@yearOfBirth)", cn))
+                @"UPDATE Registration SET ModelCategory = @ModelCategory, ModelCategoryId = @ModelCategoryId WHERE EntryId = @EntryId", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                cm.Parameters.Add("@modelCategory", System.Data.DbType.String).Value = modelCategory;
+                cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int32).Value = modelCategoryId;
+                cm.Parameters.Add("@entryId", System.Data.DbType.Int32).Value = entryId;
+
+                cm.ExecuteNonQuery();
+            }
+        }
+        
+        public static void add(RegistrationEntry entry)
+        {
+            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using (SQLiteCommand cm = new SQLiteCommand(
+                @"INSERT INTO Registration(TmStamp,Email,FirstName,LastName,ClubName,AgeGroup,ModelName,ModelClass,ModelScale,ModelPublisher,ModelCategory,ModelCategoryId,YearOfBirth)
+                  VALUES(@tmStamp,@email,@firstName,@lastName,@clubName,@ageGroup,@modelName,@modelClass,@modelScale,@modelPublisher,@modelCategory,@modelCategoryId,@yearOfBirth)", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@tmStamp", System.Data.DbType.DateTime).Value = this.timeStamp;
-                cm.Parameters.Add("@email", System.Data.DbType.String, 256).Value = this.email;
-                cm.Parameters.Add("@firstName", System.Data.DbType.String, 64).Value = this.firstName;
-                cm.Parameters.Add("@lastName", System.Data.DbType.String, 64).Value = this.lastName;
-                cm.Parameters.Add("@clubName", System.Data.DbType.String, 128).Value = this.clubName;
-                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, 16).Value = this.ageGroup;
-                cm.Parameters.Add("@modelName", System.Data.DbType.String, 256).Value = this.modelName;
-                cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = this.modelClass;
-                cm.Parameters.Add("@modelScale", System.Data.DbType.String, 8).Value = this.modelScale;
-                cm.Parameters.Add("@modelPublisher", System.Data.DbType.String, 64).Value = this.modelPublisher;
-                cm.Parameters.Add("@modelCategory", System.Data.DbType.String, 64).Value = this.modelCategory;
-                cm.Parameters.Add("@yearOfBirth", System.Data.DbType.Int32).Value = this.yearOfBirth;
+                cm.Parameters.Add("@tmStamp", System.Data.DbType.DateTime).Value = entry.timeStamp;
+                cm.Parameters.Add("@email", System.Data.DbType.String, 256).Value = entry.email;
+                cm.Parameters.Add("@firstName", System.Data.DbType.String, 64).Value = entry.firstName;
+                cm.Parameters.Add("@lastName", System.Data.DbType.String, 64).Value = entry.lastName;
+                cm.Parameters.Add("@clubName", System.Data.DbType.String, 128).Value = entry.clubName;
+                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = entry.ageGroup;
+                cm.Parameters.Add("@modelName", System.Data.DbType.String, 256).Value = entry.modelName;
+                cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = entry.modelClass;
+                cm.Parameters.Add("@modelScale", System.Data.DbType.String, 8).Value = entry.modelScale;
+                cm.Parameters.Add("@modelPublisher", System.Data.DbType.String, 64).Value = entry.modelPublisher;
+                cm.Parameters.Add("@modelCategory", System.Data.DbType.String, 64).Value = entry.modelCategory;
+                cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int32).Value = entry.modelCategoryId;
+                cm.Parameters.Add("@yearOfBirth", System.Data.DbType.Int32).Value = entry.yearOfBirth;
                 cm.ExecuteNonQuery();
 
-                this.entryId = cn.LastInsertRowId;
+                entry.entryId = cn.LastInsertRowId;
             }
         }
 
-        public void update()
+        public static void update(RegistrationEntry entry)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
@@ -452,19 +380,19 @@ namespace Rejestracja
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@email", System.Data.DbType.String, 256).Value = this.email;
-                cm.Parameters.Add("@firstName", System.Data.DbType.String, 64).Value = this.firstName;
-                cm.Parameters.Add("@lastName", System.Data.DbType.String, 64).Value = this.lastName;
-                cm.Parameters.Add("@clubName", System.Data.DbType.String, 128).Value = this.clubName;
-                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, 16).Value = this.ageGroup;
-                cm.Parameters.Add("@modelName", System.Data.DbType.String, 256).Value = this.modelName;
-                cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = this.modelClass;
-                cm.Parameters.Add("@modelScale", System.Data.DbType.String, 8).Value = this.modelScale;
-                cm.Parameters.Add("@modelPublisher", System.Data.DbType.String, 64).Value = this.modelPublisher;
-                cm.Parameters.Add("@modelCategory", System.Data.DbType.String, 64).Value = this.modelCategory;
-                cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int64).Value = this.modelCategoryId;
-                cm.Parameters.Add("@yearOfBirth", System.Data.DbType.Int32).Value = this.yearOfBirth;
-                cm.Parameters.Add("@entryId", System.Data.DbType.Int64).Value = this.entryId;
+                cm.Parameters.Add("@email", System.Data.DbType.String, 256).Value = entry.email;
+                cm.Parameters.Add("@firstName", System.Data.DbType.String, 64).Value = entry.firstName;
+                cm.Parameters.Add("@lastName", System.Data.DbType.String, 64).Value = entry.lastName;
+                cm.Parameters.Add("@clubName", System.Data.DbType.String, 128).Value = entry.clubName;
+                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = entry.ageGroup;
+                cm.Parameters.Add("@modelName", System.Data.DbType.String, 256).Value = entry.modelName;
+                cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = entry.modelClass;
+                cm.Parameters.Add("@modelScale", System.Data.DbType.String, 8).Value = entry.modelScale;
+                cm.Parameters.Add("@modelPublisher", System.Data.DbType.String, 64).Value = entry.modelPublisher;
+                cm.Parameters.Add("@modelCategory", System.Data.DbType.String, 64).Value = entry.modelCategory;
+                cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int64).Value = entry.modelCategoryId;
+                cm.Parameters.Add("@yearOfBirth", System.Data.DbType.Int32).Value = entry.yearOfBirth;
+                cm.Parameters.Add("@entryId", System.Data.DbType.Int64).Value = entry.entryId;
 
                 cm.ExecuteNonQuery();
             }
@@ -482,23 +410,162 @@ namespace Rejestracja
             }
         }
 
-        public string[] toArray()
-        {
-            return new string[] {
-                this.entryId.ToString(),
-                timeStamp.ToString(Resources.DateFormat),
-                this.email,
-                this.firstName,
-                this.lastName,
-                this.clubName,
-                this.ageGroup,
-                this.modelName,
-                this.modelCategory,
-                this.modelScale,
-                this.modelPublisher,
-                this.modelClass,
-                this.yearOfBirth.ToString()
-            };
+        public static List<KeyValuePair<string, string>> getRegistrationStats() {
+            List<KeyValuePair<string, string>> ret = new List<KeyValuePair<string, string>>();
+            int categoryTotal;
+            int i;
+            object result;
+
+            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                // --- Summary section ---
+                ret.Add(new KeyValuePair<string, string>("GROUP1", "Podsumowanie"));
+
+                //Modeler count
+                cm.CommandText = "SELECT COUNT(*) AS cnt FROM (SELECT DISTINCT LastName, FirstName, AgeGroup FROM Registration) x";
+                result = cm.ExecuteScalar();
+                categoryTotal = (result == null ? 0 : int.Parse(result.ToString()));
+                ret.Add(new KeyValuePair<string, string>("Liczba modelarzy", categoryTotal.ToString()));
+
+                //Model count
+                cm.CommandText = "SELECT COUNT(EntryId) FROM Registration";
+                result = cm.ExecuteScalar();
+                categoryTotal = (result == null ? 0 : int.Parse(result.ToString()));
+                ret.Add(new KeyValuePair<string, string>("Liczba modeli", categoryTotal.ToString()));
+
+                //Category count
+                cm.CommandText = "SELECT COUNT(*) FROM (SELECT DISTINCT ModelCategory FROM Registration) x";
+                result = cm.ExecuteScalar();
+                categoryTotal = (result == null ? 0 : int.Parse(result.ToString()));
+                ret.Add(new KeyValuePair<string, string>("Liczba kategorii", categoryTotal.ToString()));
+
+                // --- AGE GROUPS ---
+                //ret.Add(new KeyValuePair<string, string>("GROUP2", "Grupy wiekowe"));
+
+                //Modelers by age group
+                ret.Add(new KeyValuePair<string, string>("GROUP2", "Liczba modelarzy w grupach wiekowych"));
+                cm.CommandText = "SELECT AgeGroup, COUNT(LastName) AS cnt FROM (SELECT DISTINCT LastName, FirstName, AgeGroup FROM Registration) x GROUP BY AgeGroup";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    while (dr.Read()) {
+                        ret.Add(new KeyValuePair<string, string>(dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
+                    }
+                }
+
+                //Models by age group
+                ret.Add(new KeyValuePair<string, string>("GROUP3", "Liczba modeli w grupach wiekowych"));
+                cm.CommandText = "SELECT AgeGroup, COUNT(ModelName) AS cnt FROM Registration GROUP BY AgeGroup";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    while (dr.Read()) {
+                        ret.Add(new KeyValuePair<string, string>(dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
+                    }
+                }
+
+                // --- Youngest/Oldest ---
+                ret.Add(new KeyValuePair<string, string>("GROUP4", "Najmłodsi modelarze"));
+
+                cm.CommandText =
+                    @"SELECT DISTINCT FirstName, LastName, YearOfBirth FROM Registration 
+                        WHERE YearOfBirth IN (
+                            SELECT x.YearOfBirth FROM (SELECT DISTINCT YearOfBirth FROM Registration) x ORDER BY x.YearOfBirth DESC LIMIT 3
+                        )
+                        ORDER BY YearOfBirth DESC";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    while (dr.Read()) {
+                        ret.Add(new KeyValuePair<string, string>(dr["FirstName"].ToString() + " " + dr["LastName"].ToString(), dr["YearOfBirth"].ToString()));
+                    }
+                }
+
+                ret.Add(new KeyValuePair<string, string>("GROUP5", "Najstarsi modelarze"));
+
+                cm.CommandText =
+                    @"SELECT DISTINCT FirstName, LastName, YearOfBirth FROM Registration 
+                        WHERE YearOfBirth IN (
+                            SELECT x.YearOfBirth FROM (SELECT DISTINCT YearOfBirth FROM Registration) x ORDER BY x.YearOfBirth ASC LIMIT 3
+                        )
+                        ORDER BY YearOfBirth ASC";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    while (dr.Read()) {
+                        ret.Add(new KeyValuePair<string, string>(dr["FirstName"].ToString() + " " + dr["LastName"].ToString(), dr["YearOfBirth"].ToString()));
+                    }
+                }
+
+                // --- Model Class ---
+                ret.Add(new KeyValuePair<string, string>("GROUP6", "Modele w klasach"));
+
+                //Model count in class
+                cm.CommandText = "SELECT ModelClass, COUNT(ModelName) AS cnt FROM Registration GROUP BY ModelClass ORDER BY cnt DESC, ModelClass ASC";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    while (dr.Read()) {
+                        ret.Add(new KeyValuePair<string, string>(dr["ModelClass"].ToString(), dr["cnt"].ToString()));
+                    }
+                }
+
+                // --- Model Category ---
+                ret.Add(new KeyValuePair<string, string>("GROUP7", "Modele w kategoriach"));
+
+                //Model count in class
+                cm.CommandText =
+                    @"SELECT r.ModelClass, r.ModelCategory, r.AgeGroup, COUNT(EntryId) AS cnt, r.ModelCategoryId, ct.CategoryTotal
+	                    FROM Registration r
+	                    LEFT JOIN ModelCategory mc ON r.ModelCategoryId = mc.Id
+	                    JOIN (SELECT ModelCategoryId, COUNT(EntryId) AS CategoryTotal FROM Registration GROUP BY ModelCategoryId) ct ON ct.ModelCategoryId = r.ModelCategoryId
+	                    GROUP BY r.ModelClass, r.ModelCategoryId, r.AgeGroup
+                    ORDER BY ct.CategoryTotal DESC, mc.DisplayOrder, r.ModelCategory, r.AgeGroup, r.ModelClass";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+
+                    int categoryId = -2;
+
+                    while (dr.Read()) {
+                        int currentCatId = dr.GetInt32(dr.GetOrdinal("ModelCategoryId"));
+                        if (categoryId != currentCatId) {
+                            categoryTotal = 0;
+                            categoryId = currentCatId;
+                            ret.Add(new KeyValuePair<string, string>("*" + dr["ModelCategory"].ToString(), dr["CategoryTotal"].ToString()));
+                        }
+
+                        ret.Add(new KeyValuePair<string, string>(dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
+                    }
+                }
+            }
+
+            return ret;
+        }
+
+        public static void createTable() {
+            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+                cm.CommandText =
+                    @"CREATE TABLE Registration(
+                        EntryId INTEGER PRIMARY KEY,
+                        TmStamp DATETIME NOT NULL,
+                        Email TEXT,
+                        FirstName TEXT NOT NULL,
+                        LastName TEXT NOT NULL,
+                        ClubName TEXT,
+                        AgeGroup TEXT NOT NULL, 
+                        ModelName TEXT NOT NULL,
+                        ModelCategory TEXT NOT NULL,
+                        ModelCategoryId INTEGER NOT NULL DEFAULT -1,
+                        ModelScale TEXT NOT NULL,
+                        ModelPublisher TEXT,
+                        ModelClass TEXT NOT NULL,
+                        YearOfBirth INTEGER NOT NULL,
+                        SkipErrorValidation INTEGER NOT NULL DEFAULT 0)";
+                cm.ExecuteNonQuery();
+                cm.CommandText = "CREATE INDEX Idx_Reg_Name ON Registration(LastName, FirstName)";
+                cm.ExecuteNonQuery();
+                cm.CommandText = "CREATE INDEX Idx_Reg_Email ON Registration(Email)";
+                cm.ExecuteNonQuery();
+                cm.CommandText = "CREATE INDEX Idx_Reg_ModelName ON Registration(ModelName)";
+                cm.ExecuteNonQuery();
+                cm.CommandText = "CREATE INDEX Idx_Reg_CatId ON Registration(ModelCategoryId)";
+                cm.ExecuteNonQuery();
+            }
         }
     }
 }

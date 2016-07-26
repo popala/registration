@@ -1,30 +1,14 @@
-﻿using System;
+﻿using Rejestracja.Data.Objects;
+using Rejestracja.Utils;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Rejestracja
+namespace Rejestracja.Data.Dao
 {
-    class ModelClass
+    class ModelClassDao
     {
-        public long id;
-        public String name;
-        public const int MAX_NAME_LENGTH = 128;
-
-        public ModelClass(long id, String name)
-        {
-            this.id = id;
-            this.name = name;
-        }
-
-        public ModelClass(String name)
-        {
-            this.name = name;
-        }
-
         public static IEnumerable<ModelClass> getList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -65,7 +49,7 @@ namespace Rejestracja
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-                cm.Parameters.Add("@Name", DbType.String, MAX_NAME_LENGTH).Value = name;
+                cm.Parameters.Add("@Name", DbType.String, ModelClass.MAX_NAME_LENGTH).Value = name;
 
                 object res = cm.ExecuteScalar();
                 return (res != null);
@@ -80,20 +64,11 @@ namespace Rejestracja
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Name", System.Data.DbType.String, MAX_NAME_LENGTH).Value = name;
+                cm.Parameters.Add("@Name", System.Data.DbType.String, ModelClass.MAX_NAME_LENGTH).Value = name;
                 cm.ExecuteNonQuery();
 
                 return cn.LastInsertRowId;
             }
-        }
-
-        public void add()
-        {
-            if (this.id > 0)
-            {
-                throw new InvalidOperationException("Id populated");
-            }
-            this.id = add(this.name);
         }
 
         public static ModelClass get(long id)
@@ -129,14 +104,9 @@ namespace Rejestracja
                 cm.CommandType = System.Data.CommandType.Text;
 
                 cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
-                cm.Parameters.Add("@Name", System.Data.DbType.String, MAX_NAME_LENGTH).Value = name;
+                cm.Parameters.Add("@Name", System.Data.DbType.String, ModelClass.MAX_NAME_LENGTH).Value = name;
                 cm.ExecuteNonQuery();
             }
-        }
-
-        public void update()
-        {
-            update(this.id, this.name);
         }
 
         public static void delete(long id)
@@ -150,12 +120,6 @@ namespace Rejestracja
                 cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
                 cm.ExecuteNonQuery();
             }
-        }
-
-        public void delete()
-        {
-            delete(this.id);
-            this.id = -1;
         }
 
         public static void createTable()

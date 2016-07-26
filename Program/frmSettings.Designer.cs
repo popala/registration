@@ -31,6 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSettings));
             this.tcOptions = new System.Windows.Forms.TabControl();
             this.tpDocuments = new System.Windows.Forms.TabPage();
+            this.txtFooter = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.txtHeading = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tpAgeGroup = new System.Windows.Forms.TabPage();
@@ -69,6 +71,8 @@
             this.txtPublisherName = new System.Windows.Forms.TextBox();
             this.lvPublishers = new System.Windows.Forms.ListView();
             this.tpModelScale = new System.Windows.Forms.TabPage();
+            this.btnMoveUpScale = new System.Windows.Forms.Button();
+            this.btnMoveDownScale = new System.Windows.Forms.Button();
             this.btnAddModelScale = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.txtModelScale = new System.Windows.Forms.TextBox();
@@ -100,20 +104,43 @@
             this.tcOptions.Location = new System.Drawing.Point(0, 1);
             this.tcOptions.Name = "tcOptions";
             this.tcOptions.SelectedIndex = 0;
-            this.tcOptions.Size = new System.Drawing.Size(666, 388);
+            this.tcOptions.Size = new System.Drawing.Size(666, 384);
             this.tcOptions.TabIndex = 1;
             this.tcOptions.SelectedIndexChanged += new System.EventHandler(this.tcOptions_SelectedIndexChanged);
             // 
             // tpDocuments
             // 
+            this.tpDocuments.Controls.Add(this.txtFooter);
+            this.tpDocuments.Controls.Add(this.label7);
             this.tpDocuments.Controls.Add(this.txtHeading);
             this.tpDocuments.Controls.Add(this.label1);
             this.tpDocuments.Location = new System.Drawing.Point(4, 22);
             this.tpDocuments.Name = "tpDocuments";
-            this.tpDocuments.Size = new System.Drawing.Size(658, 362);
+            this.tpDocuments.Size = new System.Drawing.Size(658, 358);
             this.tpDocuments.TabIndex = 2;
             this.tpDocuments.Text = "Dokumenty";
             this.tpDocuments.UseVisualStyleBackColor = true;
+            // 
+            // txtFooter
+            // 
+            this.txtFooter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFooter.Location = new System.Drawing.Point(98, 153);
+            this.txtFooter.MaxLength = 1024;
+            this.txtFooter.Multiline = true;
+            this.txtFooter.Name = "txtFooter";
+            this.txtFooter.Size = new System.Drawing.Size(533, 126);
+            this.txtFooter.TabIndex = 1;
+            this.txtFooter.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(25, 153);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(71, 26);
+            this.label7.TabIndex = 2;
+            this.label7.Text = "Stopka\r\ndokumentów:";
             // 
             // txtHeading
             // 
@@ -146,7 +173,7 @@
             this.tpAgeGroup.Controls.Add(this.lvAgeGroup);
             this.tpAgeGroup.Location = new System.Drawing.Point(4, 22);
             this.tpAgeGroup.Name = "tpAgeGroup";
-            this.tpAgeGroup.Size = new System.Drawing.Size(658, 362);
+            this.tpAgeGroup.Size = new System.Drawing.Size(658, 358);
             this.tpAgeGroup.TabIndex = 3;
             this.tpAgeGroup.Text = "Grupy Wiekowe";
             this.tpAgeGroup.UseVisualStyleBackColor = true;
@@ -200,9 +227,9 @@
             this.lvAgeGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvAgeGroup.Location = new System.Drawing.Point(0, 36);
+            this.lvAgeGroup.Location = new System.Drawing.Point(0, 38);
             this.lvAgeGroup.Name = "lvAgeGroup";
-            this.lvAgeGroup.Size = new System.Drawing.Size(658, 326);
+            this.lvAgeGroup.Size = new System.Drawing.Size(658, 322);
             this.lvAgeGroup.TabIndex = 3;
             this.lvAgeGroup.UseCompatibleStateImageBehavior = false;
             // 
@@ -214,14 +241,14 @@
             this.tpModelClass.Controls.Add(this.lvModelClass);
             this.tpModelClass.Location = new System.Drawing.Point(4, 22);
             this.tpModelClass.Name = "tpModelClass";
-            this.tpModelClass.Size = new System.Drawing.Size(658, 362);
+            this.tpModelClass.Size = new System.Drawing.Size(658, 358);
             this.tpModelClass.TabIndex = 4;
             this.tpModelClass.Text = "Klasy";
             this.tpModelClass.UseVisualStyleBackColor = true;
             // 
             // btnAddModelClass
             // 
-            this.btnAddModelClass.Location = new System.Drawing.Point(494, 8);
+            this.btnAddModelClass.Location = new System.Drawing.Point(494, 7);
             this.btnAddModelClass.Name = "btnAddModelClass";
             this.btnAddModelClass.Size = new System.Drawing.Size(71, 23);
             this.btnAddModelClass.TabIndex = 12;
@@ -232,7 +259,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(16, 13);
+            this.label8.Location = new System.Drawing.Point(13, 13);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(43, 13);
             this.label8.TabIndex = 14;
@@ -240,7 +267,7 @@
             // 
             // txtModelClassName
             // 
-            this.txtModelClassName.Location = new System.Drawing.Point(62, 10);
+            this.txtModelClassName.Location = new System.Drawing.Point(62, 9);
             this.txtModelClassName.Name = "txtModelClassName";
             this.txtModelClassName.Size = new System.Drawing.Size(426, 20);
             this.txtModelClassName.TabIndex = 11;
@@ -250,9 +277,9 @@
             this.lvModelClass.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvModelClass.Location = new System.Drawing.Point(0, 41);
+            this.lvModelClass.Location = new System.Drawing.Point(0, 38);
             this.lvModelClass.Name = "lvModelClass";
-            this.lvModelClass.Size = new System.Drawing.Size(658, 320);
+            this.lvModelClass.Size = new System.Drawing.Size(658, 322);
             this.lvModelClass.TabIndex = 13;
             this.lvModelClass.UseCompatibleStateImageBehavior = false;
             // 
@@ -271,7 +298,7 @@
             this.tpModelCategory.Location = new System.Drawing.Point(4, 22);
             this.tpModelCategory.Name = "tpModelCategory";
             this.tpModelCategory.Padding = new System.Windows.Forms.Padding(3);
-            this.tpModelCategory.Size = new System.Drawing.Size(658, 362);
+            this.tpModelCategory.Size = new System.Drawing.Size(658, 358);
             this.tpModelCategory.TabIndex = 0;
             this.tpModelCategory.Text = "Kategorie";
             this.tpModelCategory.UseVisualStyleBackColor = true;
@@ -280,7 +307,7 @@
             // 
             this.cboModelClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboModelClass.FormattingEnabled = true;
-            this.cboModelClass.Location = new System.Drawing.Point(54, 41);
+            this.cboModelClass.Location = new System.Drawing.Point(54, 36);
             this.cboModelClass.Name = "cboModelClass";
             this.cboModelClass.Size = new System.Drawing.Size(354, 21);
             this.cboModelClass.TabIndex = 9;
@@ -288,7 +315,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(12, 44);
+            this.label9.Location = new System.Drawing.Point(12, 39);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(36, 13);
             this.label9.TabIndex = 8;
@@ -296,7 +323,7 @@
             // 
             // btnAddModelCategory
             // 
-            this.btnAddModelCategory.Location = new System.Drawing.Point(574, 10);
+            this.btnAddModelCategory.Location = new System.Drawing.Point(574, 7);
             this.btnAddModelCategory.Name = "btnAddModelCategory";
             this.btnAddModelCategory.Size = new System.Drawing.Size(71, 23);
             this.btnAddModelCategory.TabIndex = 2;
@@ -307,7 +334,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(151, 15);
+            this.label3.Location = new System.Drawing.Point(151, 12);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(43, 13);
             this.label3.TabIndex = 7;
@@ -315,7 +342,7 @@
             // 
             // txtCategoryName
             // 
-            this.txtCategoryName.Location = new System.Drawing.Point(200, 12);
+            this.txtCategoryName.Location = new System.Drawing.Point(200, 9);
             this.txtCategoryName.MaxLength = 256;
             this.txtCategoryName.Name = "txtCategoryName";
             this.txtCategoryName.Size = new System.Drawing.Size(368, 20);
@@ -324,7 +351,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 15);
+            this.label2.Location = new System.Drawing.Point(12, 12);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(29, 13);
             this.label2.TabIndex = 5;
@@ -332,7 +359,7 @@
             // 
             // txtCategoryCode
             // 
-            this.txtCategoryCode.Location = new System.Drawing.Point(41, 12);
+            this.txtCategoryCode.Location = new System.Drawing.Point(41, 9);
             this.txtCategoryCode.MaxLength = 8;
             this.txtCategoryCode.Name = "txtCategoryCode";
             this.txtCategoryCode.Size = new System.Drawing.Size(86, 20);
@@ -342,7 +369,7 @@
             // 
             this.btnMoveUpCategory.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.btnMoveUpCategory.Font = new System.Drawing.Font("Segoe UI Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMoveUpCategory.Location = new System.Drawing.Point(615, 142);
+            this.btnMoveUpCategory.Location = new System.Drawing.Point(615, 140);
             this.btnMoveUpCategory.Name = "btnMoveUpCategory";
             this.btnMoveUpCategory.Size = new System.Drawing.Size(34, 29);
             this.btnMoveUpCategory.TabIndex = 3;
@@ -355,7 +382,7 @@
             // 
             this.btnMoveDownCategory.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.btnMoveDownCategory.Font = new System.Drawing.Font("Segoe UI Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMoveDownCategory.Location = new System.Drawing.Point(615, 177);
+            this.btnMoveDownCategory.Location = new System.Drawing.Point(615, 175);
             this.btnMoveDownCategory.Name = "btnMoveDownCategory";
             this.btnMoveDownCategory.Size = new System.Drawing.Size(35, 29);
             this.btnMoveDownCategory.TabIndex = 2;
@@ -371,7 +398,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvModelCategory.Location = new System.Drawing.Point(0, 69);
             this.lvModelCategory.Name = "lvModelCategory";
-            this.lvModelCategory.Size = new System.Drawing.Size(610, 293);
+            this.lvModelCategory.Size = new System.Drawing.Size(610, 289);
             this.lvModelCategory.TabIndex = 3;
             this.lvModelCategory.UseCompatibleStateImageBehavior = false;
             this.lvModelCategory.SelectedIndexChanged += new System.EventHandler(this.lvModelClass_SelectedIndexChanged);
@@ -386,14 +413,14 @@
             this.tpSpecialAwards.Controls.Add(this.lvAwards);
             this.tpSpecialAwards.Location = new System.Drawing.Point(4, 22);
             this.tpSpecialAwards.Name = "tpSpecialAwards";
-            this.tpSpecialAwards.Size = new System.Drawing.Size(658, 362);
+            this.tpSpecialAwards.Size = new System.Drawing.Size(658, 358);
             this.tpSpecialAwards.TabIndex = 6;
             this.tpSpecialAwards.Text = "Nagrody";
             this.tpSpecialAwards.UseVisualStyleBackColor = true;
             // 
             // btnAddAward
             // 
-            this.btnAddAward.Location = new System.Drawing.Point(574, 10);
+            this.btnAddAward.Location = new System.Drawing.Point(574, 7);
             this.btnAddAward.Name = "btnAddAward";
             this.btnAddAward.Size = new System.Drawing.Size(71, 23);
             this.btnAddAward.TabIndex = 9;
@@ -404,7 +431,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 16);
+            this.label11.Location = new System.Drawing.Point(6, 12);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(43, 13);
             this.label11.TabIndex = 13;
@@ -412,7 +439,7 @@
             // 
             // txtAwardTitle
             // 
-            this.txtAwardTitle.Location = new System.Drawing.Point(55, 12);
+            this.txtAwardTitle.Location = new System.Drawing.Point(55, 9);
             this.txtAwardTitle.MaxLength = 256;
             this.txtAwardTitle.Name = "txtAwardTitle";
             this.txtAwardTitle.Size = new System.Drawing.Size(513, 20);
@@ -422,7 +449,7 @@
             // 
             this.btnMoveUpAward.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.btnMoveUpAward.Font = new System.Drawing.Font("Segoe UI Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMoveUpAward.Location = new System.Drawing.Point(615, 142);
+            this.btnMoveUpAward.Location = new System.Drawing.Point(615, 140);
             this.btnMoveUpAward.Name = "btnMoveUpAward";
             this.btnMoveUpAward.Size = new System.Drawing.Size(34, 29);
             this.btnMoveUpAward.TabIndex = 11;
@@ -435,7 +462,7 @@
             // 
             this.btnMoveDownAward.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.btnMoveDownAward.Font = new System.Drawing.Font("Segoe UI Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMoveDownAward.Location = new System.Drawing.Point(615, 177);
+            this.btnMoveDownAward.Location = new System.Drawing.Point(615, 175);
             this.btnMoveDownAward.Name = "btnMoveDownAward";
             this.btnMoveDownAward.Size = new System.Drawing.Size(35, 29);
             this.btnMoveDownAward.TabIndex = 10;
@@ -449,9 +476,9 @@
             this.lvAwards.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvAwards.Location = new System.Drawing.Point(0, 39);
+            this.lvAwards.Location = new System.Drawing.Point(0, 38);
             this.lvAwards.Name = "lvAwards";
-            this.lvAwards.Size = new System.Drawing.Size(610, 318);
+            this.lvAwards.Size = new System.Drawing.Size(608, 320);
             this.lvAwards.TabIndex = 12;
             this.lvAwards.UseCompatibleStateImageBehavior = false;
             // 
@@ -464,14 +491,14 @@
             this.tpPublisher.Location = new System.Drawing.Point(4, 22);
             this.tpPublisher.Name = "tpPublisher";
             this.tpPublisher.Padding = new System.Windows.Forms.Padding(3);
-            this.tpPublisher.Size = new System.Drawing.Size(658, 362);
+            this.tpPublisher.Size = new System.Drawing.Size(658, 358);
             this.tpPublisher.TabIndex = 1;
             this.tpPublisher.Text = "Wydawcy";
             this.tpPublisher.UseVisualStyleBackColor = true;
             // 
             // btnAddPublisher
             // 
-            this.btnAddPublisher.Location = new System.Drawing.Point(494, 9);
+            this.btnAddPublisher.Location = new System.Drawing.Point(494, 7);
             this.btnAddPublisher.Name = "btnAddPublisher";
             this.btnAddPublisher.Size = new System.Drawing.Size(71, 23);
             this.btnAddPublisher.TabIndex = 1;
@@ -482,7 +509,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(16, 14);
+            this.label4.Location = new System.Drawing.Point(13, 12);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(43, 13);
             this.label4.TabIndex = 10;
@@ -490,7 +517,7 @@
             // 
             // txtPublisherName
             // 
-            this.txtPublisherName.Location = new System.Drawing.Point(62, 11);
+            this.txtPublisherName.Location = new System.Drawing.Point(62, 9);
             this.txtPublisherName.Name = "txtPublisherName";
             this.txtPublisherName.Size = new System.Drawing.Size(426, 20);
             this.txtPublisherName.TabIndex = 0;
@@ -500,7 +527,7 @@
             this.lvPublishers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvPublishers.Location = new System.Drawing.Point(0, 42);
+            this.lvPublishers.Location = new System.Drawing.Point(0, 38);
             this.lvPublishers.Name = "lvPublishers";
             this.lvPublishers.Size = new System.Drawing.Size(658, 320);
             this.lvPublishers.TabIndex = 4;
@@ -508,20 +535,48 @@
             // 
             // tpModelScale
             // 
+            this.tpModelScale.Controls.Add(this.btnMoveUpScale);
+            this.tpModelScale.Controls.Add(this.btnMoveDownScale);
             this.tpModelScale.Controls.Add(this.btnAddModelScale);
             this.tpModelScale.Controls.Add(this.label10);
             this.tpModelScale.Controls.Add(this.txtModelScale);
             this.tpModelScale.Controls.Add(this.lvModelScales);
             this.tpModelScale.Location = new System.Drawing.Point(4, 22);
             this.tpModelScale.Name = "tpModelScale";
-            this.tpModelScale.Size = new System.Drawing.Size(658, 362);
+            this.tpModelScale.Size = new System.Drawing.Size(658, 358);
             this.tpModelScale.TabIndex = 5;
             this.tpModelScale.Text = "Skale";
             this.tpModelScale.UseVisualStyleBackColor = true;
             // 
+            // btnMoveUpScale
+            // 
+            this.btnMoveUpScale.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.btnMoveUpScale.Font = new System.Drawing.Font("Segoe UI Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMoveUpScale.Location = new System.Drawing.Point(615, 142);
+            this.btnMoveUpScale.Name = "btnMoveUpScale";
+            this.btnMoveUpScale.Size = new System.Drawing.Size(34, 29);
+            this.btnMoveUpScale.TabIndex = 16;
+            this.btnMoveUpScale.TabStop = false;
+            this.btnMoveUpScale.Text = "∧";
+            this.btnMoveUpScale.UseVisualStyleBackColor = true;
+            this.btnMoveUpScale.Click += new System.EventHandler(this.btnMoveUpScale_Click);
+            // 
+            // btnMoveDownScale
+            // 
+            this.btnMoveDownScale.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.btnMoveDownScale.Font = new System.Drawing.Font("Segoe UI Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMoveDownScale.Location = new System.Drawing.Point(615, 177);
+            this.btnMoveDownScale.Name = "btnMoveDownScale";
+            this.btnMoveDownScale.Size = new System.Drawing.Size(35, 29);
+            this.btnMoveDownScale.TabIndex = 15;
+            this.btnMoveDownScale.TabStop = false;
+            this.btnMoveDownScale.Text = "∨";
+            this.btnMoveDownScale.UseVisualStyleBackColor = true;
+            this.btnMoveDownScale.Click += new System.EventHandler(this.btnMoveDownScale_Click);
+            // 
             // btnAddModelScale
             // 
-            this.btnAddModelScale.Location = new System.Drawing.Point(494, 5);
+            this.btnAddModelScale.Location = new System.Drawing.Point(494, 7);
             this.btnAddModelScale.Name = "btnAddModelScale";
             this.btnAddModelScale.Size = new System.Drawing.Size(71, 23);
             this.btnAddModelScale.TabIndex = 12;
@@ -532,7 +587,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(16, 10);
+            this.label10.Location = new System.Drawing.Point(13, 12);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(43, 13);
             this.label10.TabIndex = 14;
@@ -540,7 +595,7 @@
             // 
             // txtModelScale
             // 
-            this.txtModelScale.Location = new System.Drawing.Point(62, 7);
+            this.txtModelScale.Location = new System.Drawing.Point(62, 9);
             this.txtModelScale.Name = "txtModelScale";
             this.txtModelScale.Size = new System.Drawing.Size(426, 20);
             this.txtModelScale.TabIndex = 11;
@@ -552,7 +607,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvModelScales.Location = new System.Drawing.Point(0, 38);
             this.lvModelScales.Name = "lvModelScales";
-            this.lvModelScales.Size = new System.Drawing.Size(658, 320);
+            this.lvModelScales.Size = new System.Drawing.Size(610, 320);
             this.lvModelScales.TabIndex = 13;
             this.lvModelScales.UseCompatibleStateImageBehavior = false;
             // 
@@ -575,7 +630,7 @@
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(106, 23);
             this.btnDelete.TabIndex = 2;
-            this.btnDelete.Text = "Usuń Wybrane";
+            this.btnDelete.Text = "Usuń Zaznaczone";
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
@@ -659,5 +714,9 @@
         private System.Windows.Forms.Button btnMoveUpAward;
         private System.Windows.Forms.Button btnMoveDownAward;
         private System.Windows.Forms.ListView lvAwards;
+        private System.Windows.Forms.TextBox txtFooter;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button btnMoveUpScale;
+        private System.Windows.Forms.Button btnMoveDownScale;
     }
 }

@@ -39,6 +39,7 @@
             this.tpOpenFile = new System.Windows.Forms.TabPage();
             this.lvFileList = new System.Windows.Forms.ListView();
             this.lblError = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tpNewFile.SuspendLayout();
             this.tpOpenFile.SuspendLayout();
@@ -78,6 +79,7 @@
             // 
             // tpNewFile
             // 
+            this.tpNewFile.Controls.Add(this.label2);
             this.tpNewFile.Controls.Add(this.label7);
             this.tpNewFile.Controls.Add(this.txtContestTitle);
             this.tpNewFile.Controls.Add(this.txtDataFileName);
@@ -87,13 +89,13 @@
             this.tpNewFile.Padding = new System.Windows.Forms.Padding(3);
             this.tpNewFile.Size = new System.Drawing.Size(528, 229);
             this.tpNewFile.TabIndex = 0;
-            this.tpNewFile.Text = "Nowy Konkurs";
+            this.tpNewFile.Text = "Stwórz Nowy Plik";
             this.tpNewFile.UseVisualStyleBackColor = true;
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(23, 33);
+            this.label7.Location = new System.Drawing.Point(21, 62);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(91, 13);
             this.label7.TabIndex = 17;
@@ -101,7 +103,7 @@
             // 
             // txtContestTitle
             // 
-            this.txtContestTitle.Location = new System.Drawing.Point(116, 30);
+            this.txtContestTitle.Location = new System.Drawing.Point(114, 59);
             this.txtContestTitle.MaxLength = 256;
             this.txtContestTitle.Name = "txtContestTitle";
             this.txtContestTitle.Size = new System.Drawing.Size(372, 20);
@@ -110,7 +112,7 @@
             // 
             // txtDataFileName
             // 
-            this.txtDataFileName.Location = new System.Drawing.Point(116, 56);
+            this.txtDataFileName.Location = new System.Drawing.Point(114, 85);
             this.txtDataFileName.MaxLength = 200;
             this.txtDataFileName.Name = "txtDataFileName";
             this.txtDataFileName.ReadOnly = true;
@@ -121,7 +123,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(42, 59);
+            this.label1.Location = new System.Drawing.Point(40, 88);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 2;
@@ -135,7 +137,7 @@
             this.tpOpenFile.Padding = new System.Windows.Forms.Padding(3);
             this.tpOpenFile.Size = new System.Drawing.Size(528, 229);
             this.tpOpenFile.TabIndex = 1;
-            this.tpOpenFile.Text = "Istniejący Plik";
+            this.tpOpenFile.Text = "Otwórz Istniejący Plik";
             this.tpOpenFile.UseVisualStyleBackColor = true;
             // 
             // lvFileList
@@ -158,6 +160,15 @@
             this.lblError.Size = new System.Drawing.Size(39, 13);
             this.lblError.TabIndex = 5;
             this.lblError.Text = "lblError";
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(22, 20);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(481, 32);
+            this.label2.TabIndex = 18;
+            this.label2.Text = "Program nie ma zapamiętanego pliku danych. Proszę wpisać nazwę z której utworzy n" +
+    "owy plik danych lub na panelu \"Otwórz Plik\" wybrać istniejący już plik.\r\n";
             // 
             // frmNewDataFile
             // 
@@ -196,5 +207,6 @@
         private System.Windows.Forms.TextBox txtContestTitle;
         private System.Windows.Forms.ListView lvFileList;
         private System.Windows.Forms.Label lblError;
+        private System.Windows.Forms.Label label2;
     }
 }

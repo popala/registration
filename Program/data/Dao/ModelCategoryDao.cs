@@ -1,45 +1,14 @@
-﻿using System;
+﻿using Rejestracja.Data.Objects;
+using Rejestracja.Utils;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Rejestracja
+namespace Rejestracja.Data.Dao
 {
-    class ModelCategory
+    class ModelCategoryDao
     {
-        public long id;
-        public String code;
-        public String name;
-        private String fullName;
-        public String modelClass;
-        public int displayOrder;
-
-        public ModelCategory(long id, String code, String name, String modelClass, int displayOrder)
-        {
-            this.id = id;
-            this.code = code;
-            this.name = name;
-            this.fullName = String.Format("{0} ({1})", name, code);
-            this.modelClass = modelClass;
-            this.displayOrder = displayOrder;
-        }
-
-        public ModelCategory(String code, String name, String modelClass, int displayOrder)
-        {
-            this.code = code;
-            this.name = name;
-            this.fullName = String.Format("{0} ({1})", name, code);
-            this.modelClass = modelClass;
-            this.displayOrder = displayOrder;
-        }
-
-        public String getFullName() {
-            return this.fullName;
-        }
-
         public static IEnumerable<ModelCategory> getList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -51,27 +20,12 @@ namespace Rejestracja
                 {
                     while (dr.Read())
                         yield return new ModelCategory(
-                            dr.GetInt64(0),
+                            dr.GetInt32(0),
                             dr.GetString(1),
                             dr.GetString(2),
                             dr.GetString(3),
                             dr.GetInt32(4)
                         );
-                }
-            }
-        }
-
-        public static IEnumerable<String> getSimpleList()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Name, Code FROM ModelCategory ORDER BY Name ASC", cn))
-            {
-                cn.Open();
-
-                using (SQLiteDataReader dr = cm.ExecuteReader())
-                {
-                    while (dr.Read())
-                        yield return String.Format("{0} ({1})", dr.GetString(0), dr.GetString(1));
                 }
             }
         }
@@ -108,15 +62,6 @@ namespace Rejestracja
             }
         }
 
-        public void add()
-        {
-            if (this.id > 0)
-            {
-                throw new InvalidOperationException("Id populated");
-            }
-            this.id = add(this.code, this.name, this.modelClass, this.displayOrder);
-        }
-
         public static int getNextSortFlag()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -148,7 +93,7 @@ namespace Rejestracja
                 {
                     if (dr.Read())
                         ret = new ModelCategory(
-                            dr.GetInt64(0),
+                            dr.GetInt32(0),
                             dr.GetString(1),
                             dr.GetString(2),
                             dr.GetString(3),
@@ -157,23 +102,6 @@ namespace Rejestracja
                 }
             }
             return ret;
-        }
-
-        public static void update(long id, String code, String name, String modelClass, int displayOrder)
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"UPDATE ModelCategory SET Code = @Code, Name = @Name, ModelClass = @ModelClass, DisplayOrder = @DisplayOrder WHERE Id = @Id", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
-                cm.Parameters.Add("@Code", System.Data.DbType.String, 16).Value = code;
-                cm.Parameters.Add("@Name", System.Data.DbType.String, 128).Value = name;
-                cm.Parameters.Add("@ModelClass", System.Data.DbType.String, 128).Value = modelClass;
-                cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int32).Value = displayOrder;
-                cm.ExecuteNonQuery();
-            }
         }
 
         public static void updateDisplayOrder(long id, int displayOrder)
@@ -190,28 +118,23 @@ namespace Rejestracja
             }
         }
 
-        public void update()
-        {
-            update(this.id, this.code, this.name, this.modelClass, this.displayOrder);
-        }
-
         public static void delete(long id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM ModelCategory WHERE Id = @Id", cn))
+            using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE EntryId IN(SELECT EntryId FROM Registration WHERE ModelCategoryId = @Id) AND Place IS NOT NULL", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-
+                    
                 cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
                 cm.ExecuteNonQuery();
-            }
-        }
 
-        public void delete()
-        {
-            delete(this.id);
-            this.id = -1;
+                cm.CommandText = "UPDATE Registration SET ModelCategoryId = -1 WHERE ModelCategoryId = @Id";
+                cm.ExecuteNonQuery();
+
+                cm.CommandText = "DELETE FROM ModelCategory WHERE Id = @Id";
+                cm.ExecuteNonQuery();
+            }
         }
 
         public static void createTable()

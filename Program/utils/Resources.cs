@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Linq;
 
-namespace Rejestracja {
+namespace Rejestracja.Utils {
     class Resources {
         public static String DateFormat = "yyyy-MM-dd HH:mm";
         public static Regex FileNameInvalidChars = new Regex(@"[\\/:*?""<>|]");
@@ -17,6 +16,31 @@ namespace Rejestracja {
         public static String TemplateFolder = Path.Combine(AppDataFolder, "templates"); 
         public static String ErrorLogPath = Path.Combine(AppDataFolder, "logs", "error.log");
         public static String OutputLogPath = Path.Combine(AppDataFolder, "logs", "output.log");
+
+        public static String ResultsTemplate =
+@"<html>
+    <head>
+        <META HTTP-EQUIV=""Content-type"" CONTENT=""text/html; charset=UTF-8"">
+        <title>Wyniki Konkursu</title>
+    </head>
+    <body>
+        [NAGLOWEK]
+        [KATEGORIE]
+        [NAGRODY]
+    </body>
+</html>";
+
+        public static String SummaryTemplate =
+@"<html>
+    <head>
+        <META HTTP-EQUIV=""Content-type"" CONTENT=""text/html; charset=UTF-8"">
+        <title>Wyniki Konkursu</title>
+    </head>
+    <body>
+        [NAGLOWEK]
+        [POSUMOWANIE]
+    </body>
+</html>";
 
         public static void setDataFile(String dataFilePath) {
 

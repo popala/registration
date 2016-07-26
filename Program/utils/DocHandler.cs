@@ -1,54 +1,62 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using Novacode;
+﻿using Novacode;
+using Rejestracja.Data.Dao;
+using Rejestracja.Data.Objects;
+using System;
 using System.Collections;
-using System.IO;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Text;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
-namespace Rejestracja
+namespace Rejestracja.Utils
 {
     class DocHandler
     {
-        public void generateDiploma(String templateFile, String outFile, WinningEntry entry)
+        public static void generateDiploma(String templateFile, String outFile, Result result)
         {
-            String documentHeader = Options.get("DocumentHeader");
+            String documentHeader = Options.get("DocumentHeader") ?? "";
+            String documentFooter = Options.get("DocumentFooter") ?? "";
 
             using (DocX template = DocX.Load(templateFile))
             {
                 template.ReplaceText("[Naglowek]", documentHeader, 
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Naglowek!]", documentHeader.ToUpper(),
+                template.ReplaceText("[Nagłówek]", documentHeader,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
 
-                template.ReplaceText("[Imie]", entry.firstName,
+
+                template.ReplaceText("[Imie]", result.entry.firstName,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Imię]", entry.firstName,
+                template.ReplaceText("[Imię]", result.entry.firstName,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Nazwisko]", entry.lastName,
+                template.ReplaceText("[Nazwisko]", result.entry.lastName,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
 
-                template.ReplaceText("[GrupaWiekowa]", entry.ageGroup,
+                template.ReplaceText("[GrupaWiekowa]", result.entry.ageGroup,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[NazwaModelu]", entry.modelName,
+                template.ReplaceText("[NazwaModelu]", result.entry.modelName,
+                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                template.ReplaceText("[KlasaModelu]", result.entry.modelClass,
+                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                template.ReplaceText("[KategoriaModelu]", result.entry.modelCategory,
+                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
 
+                template.ReplaceText("[Stopka]", documentFooter,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KlasaModelu]", entry.modelClass,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KategoriaModelu]", entry.modelCategory,
+                template.ReplaceText("[Stopka!]", documentFooter.ToUpper(),
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
 
-                if (entry.place.HasValue)
+                if (result.place > 0)
                 {
-                    template.ReplaceText("[Miejsce]", entry.place.ToString(),
+                    template.ReplaceText("[Miejsce]", result.place.ToString(),
                         false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 }
-                if (entry.awardId.HasValue)
+                if (result.award != null)
                 {
-                    template.ReplaceText("[Nagroda]", entry.awardTitle,
+                    template.ReplaceText("[Nagroda]", result.award.title,
                         false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 }
 
@@ -56,8 +64,10 @@ namespace Rejestracja
             }
         }
 
-        public void generateRegistrationCard(String templateFile, String outFile, RegistrationEntry entry)
+        public static void generateRegistrationCard(String templateFile, String outFile, RegistrationEntry entry)
         {
+            String documentFooter = Options.get("DocumentFooter");
+
             using (DocX template = DocX.Load(templateFile))
             {
                 template.ReplaceText("[DataRejestracji]", entry.timeStamp.ToString(Resources.DateFormat),
@@ -84,23 +94,27 @@ namespace Rejestracja
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[SkalaModelu]", entry.modelScale,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KlasaModelu]", entry.modelCategory,
+                template.ReplaceText("[KlasaModelu]", entry.modelClass,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[Wydawnictwo]", entry.modelPublisher,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KategoriaModelu]", entry.modelClass,
+                template.ReplaceText("[KategoriaModelu]", entry.modelCategory,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[RokUrodzenia]", entry.yearOfBirth.ToString(),
+                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                template.ReplaceText("[Stopka]", documentFooter,
+                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                template.ReplaceText("[Stopka!]", documentFooter.ToUpper(),
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
 
                 template.SaveAs(outFile);
             }
         }
 
-        public void generateJudgingForms(String template, String outFolder, frmMain parentForm)
+        public static void generateJudgingForms(String template, String outFolder, frmMain parentForm)
         {
-            List<RegistrationEntry> entries = RegistrationEntry.getListForJudging();
-            List<ModelCategory> categories = ModelCategory.getList().ToList();
+            List<RegistrationEntry> entries = RegistrationEntryDao.getListForJudging();
+            List<ModelCategory> categories = ModelCategoryDao.getList().ToList();
             Dictionary<String, Char> authors = new Dictionary<String, Char>();
             
             String authorKey;
@@ -135,7 +149,7 @@ namespace Rejestracja
                         }
 
                         //Match existing category
-                        category = categories.Where(x => x.getFullName().ToLower().Equals(entry.modelCategory.ToLower())).ToArray();
+                        category = categories.Where(x => x.fullName.ToLower().Equals(entry.modelCategory.ToLower())).ToArray();
 
                         outputFileName = 
                             String.Format("{0}\\{1}_{2}_{3}.docx", 
@@ -209,10 +223,10 @@ namespace Rejestracja
             Process.Start(outFolder);
         }
 
-        public void generateHtmlResults(String template, String outputFileName)
+        public static void generateHtmlResults(String template, String outputFileName)
         {
-            //DataSource ds = new DataSource();
             String htmlTemplate;
+            String docHeader = Options.get("DocumentHeader").Replace("\r\n", "<br/>");
 
             String[] headers = "L.p.,Imię i Nazwisko,Nr i Nazwa Modelu,MIEJSCE".Split(',');
 
@@ -223,99 +237,162 @@ namespace Rejestracja
             //Prep header or use a template with header
             if (String.IsNullOrWhiteSpace(template))
             {
-                htmlTemplate = 
-@"<html>
-    <head>
-        <META HTTP-EQUIV=""Content-type"" CONTENT=""text/html; charset=UTF-8"">
-        <title>Wyniki Konkursu</title>
-    </head>
-    <body>
-        [KATEGORIE]
-        <br/>
-        [NAGRODY]
-    </body>
-</html>";
+                htmlTemplate = Resources.ResultsTemplate;
             }
             else
             {
-                htmlTemplate = File.OpenText(template).ReadToEnd();
+                using(StreamReader sr = File.OpenText(template)) {
+                    htmlTemplate = sr.ReadToEnd();
+                }
             }
 
+            //Header
+            htmlTemplate = htmlTemplate.Replace("[NAGLOWEK]", String.Format("<h1>{0}</h1>", docHeader));
+            htmlTemplate = htmlTemplate.Replace("[NAGŁÓWEK]", String.Format("<h1>{0}</h1>", docHeader));
+
             //Category winners
-            IEnumerable<WinningEntry> entries = Results.getCategoryResults();
-            StringBuilder results = new StringBuilder();
+            IEnumerable<Result> results = ResultDao.getCategoryResults();
+            StringBuilder resultHtml = new StringBuilder();
             int lpCounter = 1;
 
-            foreach (WinningEntry entry in entries)
+            foreach (Result result in results)
             {
-                if (ageGroup != entry.ageGroup || modelCategory != entry.modelCategory)
+                if (ageGroup != result.entry.ageGroup || modelCategory != result.entry.modelCategory)
                 {
                     if(ageGroup != null)
                     {
-                        results.AppendLine(@"</table>");
+                        resultHtml.AppendLine(@"</table></div>");
                     }
-                    ageGroup = entry.ageGroup;
-                    modelCategory = entry.modelCategory;
+                    ageGroup = result.entry.ageGroup;
+                    modelCategory = result.entry.modelCategory;
                     modelClass = "";
 
-                    results.AppendFormat(@"<h1>Grupa Wiekowa <span class=""ageGroup"">{0}</span> - <span class=""modelCategory"">{1}</span></h1>", entry.ageGroup.ToUpper(), entry.modelCategory).AppendLine();
+                    resultHtml.AppendFormat(@"<div class=""tbl""><h2>Grupa Wiekowa <span class=""ageGroup"">{0}</span> - <span class=""modelCategory"">{1}</span></h2>",
+                        result.entry.ageGroup.ToUpper(), result.entry.modelCategory).AppendLine();
                 }
-                if (modelClass != entry.modelClass)
+                if (modelClass != result.entry.modelClass)
                 {
                     lpCounter = 1;
 
                     if(!String.IsNullOrWhiteSpace(modelClass))
                     {
-                        results.AppendLine(@"</table>");
+                        resultHtml.AppendLine(@"</table></div>");
                     }
 
-                    modelClass = entry.modelClass;
-                    results.AppendFormat(@"<h2>{0}</h2>", entry.modelClass).AppendLine();
-                    results.AppendLine(@"<table class=""category"">");
+                    modelClass = result.entry.modelClass;
+                    resultHtml.AppendFormat(@"<h3>{0}</h3>", result.entry.modelClass).AppendLine();
+                    resultHtml.AppendLine(@"<table class=""category"">");
                     //Insert headers
-                    results.AppendFormat(@"<tr><th class=""lp"">{0}</th><th class=""name"">{1}</th><th class=""modelName"" colspan=""2"">{2}</th><th class=""place"">{3}</th></tr>", headers).AppendLine();
+                    resultHtml.AppendFormat(@"<tr><th class=""lp"">{0}</th><th class=""name"">{1}</th><th class=""modelName"" colspan=""2"">{2}</th><th class=""place"">{3}</th></tr>", headers).AppendLine();
                 }
-                results.AppendFormat(@"<tr><td class=""lp"">{0}</td><td class=""name"">{1} {2}</td><td>{3}</td><td class=""modelName"">{4}</td><td class=""place"">{5}</td></tr>", lpCounter, entry.firstName, entry.lastName, entry.entryId, entry.modelName, entry.place).AppendLine();
+                resultHtml.AppendFormat(@"<tr><td class=""lp"">{0}</td><td class=""name"">{1} {2}</td><td class=""modelNumber"">{3}</td><td class=""modelName"">{4}</td><td class=""place"">{5}</td></tr>",
+                    lpCounter, result.entry.firstName, result.entry.lastName, result.entry.entryId, result.entry.modelName, result.place).AppendLine();
                 lpCounter++;
             }
             if(ageGroup != null)
             {
-                results.AppendLine(@"</table>");
+                resultHtml.AppendLine(@"</table></div>");
             }
 
-            htmlTemplate = htmlTemplate.Replace("[KATEGORIE]", results.ToString());
-            results.Clear();
+            htmlTemplate = htmlTemplate.Replace("[KATEGORIE]", resultHtml.ToString());
+            resultHtml.Clear();
 
 
             //SPECIAL AWARDS
             long awardId = -1;
-            entries = Results.getAwardResults();
+            results = ResultDao.getAwardResults();
 
-            results.AppendLine(@"<h1>Nagrody Specjalne</h1>");
+            resultHtml.AppendLine(@"<h2>Nagrody Specjalne</h2>");
 
-            foreach (WinningEntry entry in entries)
+            foreach (Result result in results)
             {
-                if (awardId != entry.awardId)
+                if (awardId != result.award.id)
                 {
                     if(awardId > -1)
                     {
-                        results.AppendLine(@"</table><br/><br/>");
+                        resultHtml.AppendLine(@"</table><br/><br/>");
                     }
-                    results.AppendFormat(@"<table class=""award""><tr><th colspan=""3"">{0}</th></tr>", entry.awardTitle).AppendLine();
+                    resultHtml.AppendFormat(@"<table class=""award""><tr><th colspan=""3"">{0}</th></tr>", result.award.title).AppendLine();
                 }
-                results.AppendFormat(@"<tr><td class=""name"">{0} {1}</td><td>{2}</td><td class=""modelName"">{3}</td></tr>", entry.firstName, entry.lastName, entry.entryId, entry.modelName).AppendLine();
-                awardId = entry.awardId.Value;
+                resultHtml.AppendFormat(@"<tr><td class=""name"">{0} {1}</td><td class=""modelNumber"">{2}</td><td class=""modelName"">{3}</td></tr>", 
+                    result.entry.firstName, result.entry.lastName, result.entry.entryId, result.entry.modelName).AppendLine();
+                awardId = result.award.id;
             }
             if (awardId > -1)
             {
-                results.AppendLine(@"</table>");
+                resultHtml.AppendLine(@"</table>");
             }
-            htmlTemplate = htmlTemplate.Replace("[NAGRODY]", results.ToString());
+            htmlTemplate = htmlTemplate.Replace("[NAGRODY]", resultHtml.ToString());
             
             File.WriteAllText(outputFileName, htmlTemplate);
         }
 
-        public void printWordDoc(String filePath)
+        public static void generateHtmlSummary(String template, String outputFileName) {
+            String htmlTemplate;
+            String docHeader = Options.get("DocumentHeader").Replace("\r\n", "<br/>");
+            StringBuilder sb = new StringBuilder();
+
+            //Prep header or use a template with header
+            if (String.IsNullOrWhiteSpace(template)) {
+                htmlTemplate = Resources.SummaryTemplate;
+            }
+            else {
+                using (StreamReader sr = File.OpenText(template)) {
+                    htmlTemplate = sr.ReadToEnd();
+                }
+            }
+
+            //Header
+            htmlTemplate = htmlTemplate.Replace("[NAGLOWEK]", String.Format("<h1>{0}</h1>", docHeader));
+            htmlTemplate = htmlTemplate.Replace("[NAGŁÓWEK]", String.Format("<h1>{0}</h1>", docHeader));
+            sb.Append("<h2>Posumowanie Konkursu</h2>").AppendLine();
+
+            //Summary stats
+            List<KeyValuePair<String, String>> stats = RegistrationEntryDao.getRegistrationStats();
+            sb.AppendLine(@"<div class=""stats"">").AppendLine();
+
+            foreach (KeyValuePair<String, String> stat in stats) {
+                if (stat.Key.StartsWith("GROUP")) {
+                    if (!stat.Key.Equals("GROUP1")) {
+                        sb.AppendLine("</table>");
+                    }
+                    sb.AppendLine("<table>").AppendFormat(@"<tr><th colspan=""2"">{0}</th></tr>", stat.Value).AppendLine();
+                }
+                else {
+                    if (stat.Key.StartsWith("*")) {
+                        sb.AppendFormat(@"<tr><td class=""lc b"">{0}</td><td class=""rc b"">{1}</td></tr>", stat.Key.Substring(1), stat.Value).AppendLine();
+                    }
+                    else {
+                        sb.AppendFormat(@"<tr><td class=""lc"">{0}</td><td class=""rc"">{1}</td></tr>", stat.Key, stat.Value).AppendLine();
+                    }
+                }
+            }
+            sb.AppendLine("</table>").AppendLine("</div>");
+
+            htmlTemplate = htmlTemplate.Replace("[PODSUMOWANIE]", sb.ToString());
+            File.WriteAllText(outputFileName, htmlTemplate);
+        }
+
+        public static void PrintHtmlDoc(String filePath) {
+            // Create a WebBrowser instance. 
+            WebBrowser webBrowserForPrinting = new WebBrowser();
+
+            // Add an event handler that prints the document after it loads.
+            webBrowserForPrinting.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(PrintDocument);
+
+            // Set the Url property to load the document.
+            webBrowserForPrinting.Url = new Uri(filePath);
+        }
+
+        private static void PrintDocument(object sender, WebBrowserDocumentCompletedEventArgs e) {
+            // Print the document now that it is fully loaded.
+            ((WebBrowser)sender).Print();
+
+            // Dispose the WebBrowser now that the task is complete. 
+            ((WebBrowser)sender).Dispose();
+        }
+
+        public static void printWordDoc(String filePath)
         {
             ProcessStartInfo psi = new ProcessStartInfo()
             {

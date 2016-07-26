@@ -1,11 +1,8 @@
-﻿using System;
+﻿using Rejestracja.Data.Objects;
+using Rejestracja.Utils;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Rejestracja {
@@ -97,6 +94,7 @@ namespace Rejestracja {
 
             lblFileName.Text = "";
             chkHasHeaders.Checked = true;
+            chkDropExistingRecords.Checked = true;
             btnImport.Enabled = false;
         }
 
@@ -161,32 +159,65 @@ namespace Rejestracja {
 
         private void btnImport_Click(object sender, EventArgs e) {
 
-            //TODO: build field map
-            FileImportFieldMap fieldMap = new FileImportFieldMap();
-            fieldMap.TimeStamp = cboTimeStamp.SelectedIndex - 1;
-            fieldMap.Email = cboEmail.SelectedIndex - 1;
-            
-            fieldMap.FirstName = cboFirstName.SelectedIndex - 1;
-            fieldMap.LastName = cboLastName.SelectedIndex - 1;
-            fieldMap.ClubName = cboClubName.SelectedIndex - 1;
-            
-            fieldMap.AgeGroup = cboAgeGroup.SelectedIndex - 2;
-            fieldMap.CalculateAgeGroup = (cboAgeGroup.SelectedIndex == 0);
-            fieldMap.YearOfBirth = cboYearOfBirth.SelectedIndex - 1;
+            if (chkDropExistingRecords.Checked) {
+                if (MessageBox.Show("Import usunie dane w lokalnej bazie i nadpisze je danymi z importowanego pliku", "Import Danych Rejestracji", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != System.Windows.Forms.DialogResult.OK)
+                    return;
+            }
+            else {
+                if (MessageBox.Show("Import doda dane z importowanego pliku bez usuwania istniejących wpisów", "Import Danych Rejestracji", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != System.Windows.Forms.DialogResult.OK)
+                    return;
+            }
 
-            fieldMap.ModelName = cboModelName.SelectedIndex - 1;
-            fieldMap.ModelCategory = new int[] { cboModelCategory1.SelectedIndex - 1, cboModelCategory2.SelectedIndex - 1, cboModelCategory3.SelectedIndex - 1 };
-            fieldMap.ModelScale = cboModelScale.SelectedIndex - 1;
-            fieldMap.ModelPublisher = cboModelPublisher.SelectedIndex - 1;
-            fieldMap.DeriveClassFromCategory = (cboModelClass.SelectedIndex == 0);
-            fieldMap.ModelClass = cboModelClass.SelectedIndex - 2;
+            Application.UseWaitCursor = true;
 
-            DataSource ds = new DataSource();
-            ds.dropRegistrationRecords();
-            ds.bulkLoadRegistration(lblFileName.Text, fieldMap, chkHasHeaders.Checked);
+            btnCancel.Enabled = false;
+            btnImport.Enabled = false;
+            btnSelectFile.Enabled = false;
+            chkHasHeaders.Enabled = false;
+            tabControl1.Enabled = false;
 
-            ((frmMain)this.Owner).populateUI();
-            this.Close();
+            try {
+                FileImportFieldMap fieldMap = new FileImportFieldMap();
+                fieldMap.TimeStamp = cboTimeStamp.SelectedIndex - 1;
+                fieldMap.Email = cboEmail.SelectedIndex - 1;
+
+                fieldMap.FirstName = cboFirstName.SelectedIndex - 1;
+                fieldMap.LastName = cboLastName.SelectedIndex - 1;
+                fieldMap.ClubName = cboClubName.SelectedIndex - 1;
+
+                fieldMap.AgeGroup = cboAgeGroup.SelectedIndex - 2;
+                fieldMap.CalculateAgeGroup = (cboAgeGroup.SelectedIndex == 0);
+                fieldMap.YearOfBirth = cboYearOfBirth.SelectedIndex - 1;
+
+                fieldMap.ModelName = cboModelName.SelectedIndex - 1;
+                fieldMap.ModelCategory = new int[] { cboModelCategory1.SelectedIndex - 1, cboModelCategory2.SelectedIndex - 1, cboModelCategory3.SelectedIndex - 1 };
+                fieldMap.ModelScale = cboModelScale.SelectedIndex - 1;
+                fieldMap.ModelPublisher = cboModelPublisher.SelectedIndex - 1;
+                fieldMap.DeriveClassFromCategory = (cboModelClass.SelectedIndex == 0);
+                fieldMap.ModelClass = cboModelClass.SelectedIndex - 2;
+
+                DataSource ds = new DataSource();
+                if (chkDropExistingRecords.Checked) {
+                    ds.dropRegistrationRecords();
+                }
+                ds.bulkLoadRegistration(lblFileName.Text, fieldMap, chkHasHeaders.Checked);
+
+                ((frmMain)this.Owner).populateUI();
+                this.Close();
+            }
+            catch (Exception err) {
+                LogWriter.error(err);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                btnCancel.Enabled = true;
+                btnImport.Enabled = true;
+                btnSelectFile.Enabled = true;
+                chkHasHeaders.Enabled = true;
+                tabControl1.Enabled = true;
+            }
+            finally {
+                Application.UseWaitCursor = false;
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e) {

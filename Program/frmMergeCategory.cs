@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Rejestracja.Data.Dao;
+using Rejestracja.Data.Objects;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Rejestracja {
@@ -39,7 +37,7 @@ namespace Rejestracja {
 
         private void lvCategories_ItemChecked(object sender, ItemCheckedEventArgs e) {
             if (e.Item.Checked) {
-                AgeGroup ag = AgeGroup.getOlderAgeGroup(e.Item.Text);
+                AgeGroup ag = AgeGroupDao.getOlderAgeGroup(e.Item.Text);
                 if (ag == null) {
                     e.Item.Checked = false;
                 }
@@ -59,8 +57,8 @@ namespace Rejestracja {
                 
                 lvCategories.Groups.Clear();
                 lvCategories.Items.Clear();
-                
-                List<String[]> categories = RegistrationEntry.getListForMergingCategories(maxCountInCategory).ToList();
+
+                List<String[]> categories = RegistrationEntryDao.getListForMergingCategories(maxCountInCategory).ToList();
                 long categoryId = -2;
                 ListViewGroup group = null;
 
@@ -108,7 +106,7 @@ namespace Rejestracja {
                     }
                     sourceAgeGroup = item.Text;
                     targetAgeGroup = lvCategories.Items[i + 1].Text;
-                    RegistrationEntry.mergeAgeGroupsInCategory(categoryId, sourceAgeGroup, targetAgeGroup);
+                    RegistrationEntryDao.mergeAgeGroupsInCategory(categoryId, sourceAgeGroup, targetAgeGroup);
                 }
             }
 

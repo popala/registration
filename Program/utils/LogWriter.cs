@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Rejestracja
+namespace Rejestracja.Utils
 {
     class LogWriter
     {
