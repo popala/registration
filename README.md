@@ -7,6 +7,6 @@ Do zrobienia:
 - Obsługa wzorów (template) innych niż MS Word.
 - Optymalizacja struktury danych.
 - Dodanie opcji nagradzania wyróżnień zamiast miejsc 1-3.
-- Drukowanie indywidualnych dyplomów z ekranu wyników.
-- Sortowanie skali.
-- Drukowanie podsumowania (statystyk).
+- ~~Drukowanie indywidualnych dyplomów z ekranu wyników.~~
+- ~~Sortowanie skali.~~
+- ~~Drukowanie podsumowania (statystyk).~~
