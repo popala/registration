@@ -84,13 +84,8 @@ namespace Rejestracja {
             _txtFilterTimer.Interval = 1000;
             _txtFilterTimer.Tick += new EventHandler(this.txtFilterTimer_Tick);
 
-            lblErrorCount.Visible = false;
-            lblErrorCount.ForeColor = System.Drawing.Color.Red;
-
-            mnuRVStandard.Checked = true;
-            mnuRVGroupped.Checked = false;
-            mnuRPrintSorted.Checked = true;
-            
+            initUi();
+           
             //Ensure that a data file exists
             String dataFile = Properties.Settings.Default.DataFile;
             if (String.IsNullOrWhiteSpace(dataFile) || !File.Exists(dataFile)) {
@@ -143,11 +138,16 @@ namespace Rejestracja {
             mnuResults.Enabled = isEnabled;
         }
 
-        public void populateUI() {
-
-            Application.UseWaitCursor = true;
-
+        private void initUi() {
             String[] headers;
+
+            lblErrorCount.Visible = false;
+            lblErrorCount.ForeColor = System.Drawing.Color.Red;
+
+            mnuRVStandard.Checked = true;
+            mnuRVGroupped.Checked = false;
+            mnuRPrintSorted.Checked = true;
+            mnuRSelected.Enabled = false;
 
             //REGISTRATION PANEL
             lvEntries.View = View.Details;
@@ -167,10 +167,6 @@ namespace Rejestracja {
             _registrationSortColumn = int.Parse(Options.get("RegistrationSortColumn"));
             _registrationSortAscending = !Options.get("RegistrationSortOrder").Equals("1");
 
-            loadRegistrationList(null);
-
-            mnuRSelected.Enabled = false;
-
             //RESULT ENTRY PANEL
             lvResults.View = View.Details;
             lvResults.GridLines = true;
@@ -184,20 +180,25 @@ namespace Rejestracja {
                 lvResults.Columns.Add(header.Trim());
             }
 
-            loadResultList();
-
-            //stats
+            //STATISTICAL SUMMARY PANEL
             lvStats.View = View.Details;
             lvStats.GridLines = true;
             lvStats.FullRowSelect = true;
             lvStats.HeaderStyle = ColumnHeaderStyle.Nonclickable;
-            
+
             lvStats.Columns.Clear();
             lvStats.Columns.Add("");
             lvStats.Columns.Add("Nazwa");
             lvStats.Columns.Add("Wartość");
             lvStats.Columns[1].TextAlign = HorizontalAlignment.Right;
+        }
 
+        public void populateUI() {
+
+            Application.UseWaitCursor = true;
+
+            loadRegistrationList(null);
+            loadResultList();
             loadStats();
 
             Application.UseWaitCursor = false;
@@ -251,6 +252,7 @@ namespace Rejestracja {
                 foreach (ColumnHeader header in lvResults.Columns) {
                     header.Width = -2;
                 }
+                lvResults.Columns[0].Width = 0;
             }
             catch (Exception err) {
                 LogWriter.error(err);
@@ -605,13 +607,10 @@ namespace Rejestracja {
         }
 
         private void mnuFImport_Click(object sender, EventArgs e) {
-
-            if (MessageBox.Show("Import usunie dane w lokalnej bazie i nadpisze je danymi z importowanego pliku", "Możliwa utrata danych", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != System.Windows.Forms.DialogResult.OK)
-                return;
-
             frmImportFile f = new frmImportFile();
             f.StartPosition = FormStartPosition.CenterParent;
-            f.Show(this);
+            f.ShowDialog(this);
+            tabControl1.SelectedIndex = 0;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
@@ -779,7 +778,7 @@ namespace Rejestracja {
                 toolStripProgressBar.Value++;
         }
 
-        private void mnuRResultList_Click(object sender, EventArgs e) {
+        private void mnuRsResultList_Click(object sender, EventArgs e) {
             DialogResult q = MessageBox.Show("Wydrukować wyniki po utworzeniu?", "Lista Wyników", MessageBoxButtons.YesNoCancel);
             if (q == System.Windows.Forms.DialogResult.Cancel) {
                 return;
@@ -1015,7 +1014,7 @@ namespace Rejestracja {
             mnuJAddResults_Click(sender, e);
         }
 
-        private void mnuRCategoryDiplomas_Click(object sender, EventArgs e) {
+        private void mnuRsCategoryDiplomas_Click(object sender, EventArgs e) {
             DialogResult q = MessageBox.Show("Wydrukować dokumenty po utworzeniu?", "Dyplomy - Druk", MessageBoxButtons.YesNoCancel);
             if (q == System.Windows.Forms.DialogResult.Cancel)
                 return;
@@ -1075,7 +1074,7 @@ namespace Rejestracja {
             loadResultList();
         }
 
-        private void mnuRAwardDiplomas_Click(object sender, EventArgs e) {
+        private void mnuRsAwardDiplomas_Click(object sender, EventArgs e) {
             DialogResult q = MessageBox.Show("Wydrukować dokumenty po utworzeniu?", "Dyplomy - Druk", MessageBoxButtons.YesNoCancel);
             if (q == System.Windows.Forms.DialogResult.Cancel)
                 return;
@@ -1298,6 +1297,42 @@ namespace Rejestracja {
 
             lvEntries.EndUpdate();
             Application.UseWaitCursor = false;
+        }
+
+        private void mnuRsSummary_Click(object sender, EventArgs e) {
+            DialogResult q = MessageBox.Show("Wydrukować dokument po utworzeniu?", "Podsumowanie Konkursu", MessageBoxButtons.YesNoCancel);
+            if (q == System.Windows.Forms.DialogResult.Cancel) {
+                return;
+            }
+
+            Application.UseWaitCursor = true;
+
+            try {
+                String outFile = String.Format("{0}\\{1}", Resources.resolvePath("folderDokumentów"), "podsumowanie.html");
+                String templateFile = Resources.resolvePath("templatePosumowania");
+
+                String directory = Path.GetDirectoryName(outFile);
+                if (!Directory.Exists(directory)) {
+                    Directory.CreateDirectory(directory);
+                }
+
+                if (File.Exists(outFile)) {
+                    File.Delete(outFile);
+                }
+
+                DocHandler.generateHtmlSummary(templateFile, outFile);
+                if (q == System.Windows.Forms.DialogResult.Yes) {
+                    DocHandler.PrintHtmlDoc(outFile);
+                }
+                System.Diagnostics.Process.Start(outFile);
+            }
+            catch (Exception err) {
+                LogWriter.error(err);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally {
+                Application.UseWaitCursor = false;
+            }
         }
     }
 }

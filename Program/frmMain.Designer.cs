@@ -64,9 +64,11 @@
             this.mnuJJudgingForms = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuJAddResults = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuResults = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuRResultList = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuRCategoryDiplomas = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuRAwardDiplomas = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRsResultList = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRsCategoryDiplomas = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRsAwardDiplomas = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
+            this.mnuRsSummary = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsEntryRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnuRCModifyRegistration = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRCDeleteRegistration = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,13 +91,13 @@
             this.btnAddResults = new System.Windows.Forms.Button();
             this.lvResults = new System.Windows.Forms.ListView();
             this.tpRegistration = new System.Windows.Forms.TabPage();
+            this.lblErrorCount = new System.Windows.Forms.LinkLabel();
             this.btnClearSearch = new System.Windows.Forms.Button();
             this.btnRegister = new System.Windows.Forms.Button();
             this.btnFilter = new System.Windows.Forms.Button();
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.lvEntries = new System.Windows.Forms.ListView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.lblErrorCount = new System.Windows.Forms.LinkLabel();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -302,14 +304,14 @@
             this.mnuRVStandard.Checked = true;
             this.mnuRVStandard.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mnuRVStandard.Name = "mnuRVStandard";
-            this.mnuRVStandard.Size = new System.Drawing.Size(152, 22);
+            this.mnuRVStandard.Size = new System.Drawing.Size(143, 22);
             this.mnuRVStandard.Text = "Standardowy";
             this.mnuRVStandard.Click += new System.EventHandler(this.mnuRVItem_Click);
             // 
             // mnuRVGroupped
             // 
             this.mnuRVGroupped.Name = "mnuRVGroupped";
-            this.mnuRVGroupped.Size = new System.Drawing.Size(152, 22);
+            this.mnuRVGroupped.Size = new System.Drawing.Size(143, 22);
             this.mnuRVGroupped.Text = "Grupowany";
             this.mnuRVGroupped.Click += new System.EventHandler(this.mnuRVItem_Click);
             // 
@@ -384,36 +386,50 @@
             // mnuResults
             // 
             this.mnuResults.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuRResultList,
-            this.mnuRCategoryDiplomas,
-            this.mnuRAwardDiplomas});
+            this.mnuRsResultList,
+            this.mnuRsCategoryDiplomas,
+            this.mnuRsAwardDiplomas,
+            this.toolStripSeparator9,
+            this.mnuRsSummary});
             this.mnuResults.Name = "mnuResults";
             this.mnuResults.Size = new System.Drawing.Size(112, 20);
             this.mnuResults.Text = "Wyniki i Dyplomy";
             // 
-            // mnuRResultList
+            // mnuRsResultList
             // 
-            this.mnuRResultList.Image = global::Rejestracja.Properties.GlobalResources.list_16xLG;
-            this.mnuRResultList.Name = "mnuRResultList";
-            this.mnuRResultList.Size = new System.Drawing.Size(182, 22);
-            this.mnuRResultList.Text = "Lista wyników";
-            this.mnuRResultList.Click += new System.EventHandler(this.mnuRResultList_Click);
+            this.mnuRsResultList.Image = global::Rejestracja.Properties.GlobalResources.list_16xLG;
+            this.mnuRsResultList.Name = "mnuRsResultList";
+            this.mnuRsResultList.Size = new System.Drawing.Size(208, 22);
+            this.mnuRsResultList.Text = "Lista wyników";
+            this.mnuRsResultList.Click += new System.EventHandler(this.mnuRsResultList_Click);
             // 
-            // mnuRCategoryDiplomas
+            // mnuRsCategoryDiplomas
             // 
-            this.mnuRCategoryDiplomas.Image = global::Rejestracja.Properties.GlobalResources.certificate_16xLG;
-            this.mnuRCategoryDiplomas.Name = "mnuRCategoryDiplomas";
-            this.mnuRCategoryDiplomas.Size = new System.Drawing.Size(182, 22);
-            this.mnuRCategoryDiplomas.Text = "Dyplomy - kategorie";
-            this.mnuRCategoryDiplomas.Click += new System.EventHandler(this.mnuRCategoryDiplomas_Click);
+            this.mnuRsCategoryDiplomas.Image = global::Rejestracja.Properties.GlobalResources.certificate_16xLG;
+            this.mnuRsCategoryDiplomas.Name = "mnuRsCategoryDiplomas";
+            this.mnuRsCategoryDiplomas.Size = new System.Drawing.Size(208, 22);
+            this.mnuRsCategoryDiplomas.Text = "Dyplomy - kategorie";
+            this.mnuRsCategoryDiplomas.Click += new System.EventHandler(this.mnuRsCategoryDiplomas_Click);
             // 
-            // mnuRAwardDiplomas
+            // mnuRsAwardDiplomas
             // 
-            this.mnuRAwardDiplomas.Image = global::Rejestracja.Properties.GlobalResources.package_16xLG;
-            this.mnuRAwardDiplomas.Name = "mnuRAwardDiplomas";
-            this.mnuRAwardDiplomas.Size = new System.Drawing.Size(182, 22);
-            this.mnuRAwardDiplomas.Text = "Dyplomy - nagrody";
-            this.mnuRAwardDiplomas.Click += new System.EventHandler(this.mnuRAwardDiplomas_Click);
+            this.mnuRsAwardDiplomas.Image = global::Rejestracja.Properties.GlobalResources.package_16xLG;
+            this.mnuRsAwardDiplomas.Name = "mnuRsAwardDiplomas";
+            this.mnuRsAwardDiplomas.Size = new System.Drawing.Size(208, 22);
+            this.mnuRsAwardDiplomas.Text = "Dyplomy - nagrody";
+            this.mnuRsAwardDiplomas.Click += new System.EventHandler(this.mnuRsAwardDiplomas_Click);
+            // 
+            // toolStripSeparator9
+            // 
+            this.toolStripSeparator9.Name = "toolStripSeparator9";
+            this.toolStripSeparator9.Size = new System.Drawing.Size(205, 6);
+            // 
+            // mnuRsSummary
+            // 
+            this.mnuRsSummary.Name = "mnuRsSummary";
+            this.mnuRsSummary.Size = new System.Drawing.Size(208, 22);
+            this.mnuRsSummary.Text = "Podsumowanie konkursu";
+            this.mnuRsSummary.Click += new System.EventHandler(this.mnuRsSummary_Click);
             // 
             // cmsEntryRightClick
             // 
@@ -608,6 +624,18 @@
             this.tpRegistration.Text = "Rejestracja";
             this.tpRegistration.UseVisualStyleBackColor = true;
             // 
+            // lblErrorCount
+            // 
+            this.lblErrorCount.AutoSize = true;
+            this.lblErrorCount.LinkColor = System.Drawing.Color.Red;
+            this.lblErrorCount.Location = new System.Drawing.Point(178, 11);
+            this.lblErrorCount.Name = "lblErrorCount";
+            this.lblErrorCount.Size = new System.Drawing.Size(67, 13);
+            this.lblErrorCount.TabIndex = 9;
+            this.lblErrorCount.TabStop = true;
+            this.lblErrorCount.Text = "lblErrorCount";
+            this.lblErrorCount.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblErrorCount_LinkClicked);
+            // 
             // btnClearSearch
             // 
             this.btnClearSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -686,18 +714,6 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1179, 675);
             this.tabControl1.TabIndex = 1;
-            // 
-            // lblErrorCount
-            // 
-            this.lblErrorCount.AutoSize = true;
-            this.lblErrorCount.LinkColor = System.Drawing.Color.Red;
-            this.lblErrorCount.Location = new System.Drawing.Point(178, 11);
-            this.lblErrorCount.Name = "lblErrorCount";
-            this.lblErrorCount.Size = new System.Drawing.Size(67, 13);
-            this.lblErrorCount.TabIndex = 9;
-            this.lblErrorCount.TabStop = true;
-            this.lblErrorCount.Text = "lblErrorCount";
-            this.lblErrorCount.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblErrorCount_LinkClicked);
             // 
             // frmMain
             // 
@@ -785,9 +801,9 @@
         private System.Windows.Forms.ListView lvEntries;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.ToolStripMenuItem mnuResults;
-        private System.Windows.Forms.ToolStripMenuItem mnuRResultList;
-        private System.Windows.Forms.ToolStripMenuItem mnuRCategoryDiplomas;
-        private System.Windows.Forms.ToolStripMenuItem mnuRAwardDiplomas;
+        private System.Windows.Forms.ToolStripMenuItem mnuRsResultList;
+        private System.Windows.Forms.ToolStripMenuItem mnuRsCategoryDiplomas;
+        private System.Windows.Forms.ToolStripMenuItem mnuRsAwardDiplomas;
         private System.Windows.Forms.ToolStripMenuItem mnuJMergeCategories;
         private System.Windows.Forms.ToolStripMenuItem mnuJAddResults;
         private System.Windows.Forms.ToolStripMenuItem mnuRCPrintDiploma;
@@ -800,6 +816,8 @@
         private System.Windows.Forms.ToolStripMenuItem mnuRSettings;
         private System.Windows.Forms.ToolStripMenuItem mnuRPrintAll;
         private System.Windows.Forms.LinkLabel lblErrorCount;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
+        private System.Windows.Forms.ToolStripMenuItem mnuRsSummary;
 
 
     }

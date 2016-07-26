@@ -17,6 +17,31 @@ namespace Rejestracja.Utils {
         public static String ErrorLogPath = Path.Combine(AppDataFolder, "logs", "error.log");
         public static String OutputLogPath = Path.Combine(AppDataFolder, "logs", "output.log");
 
+        public static String ResultsTemplate =
+@"<html>
+    <head>
+        <META HTTP-EQUIV=""Content-type"" CONTENT=""text/html; charset=UTF-8"">
+        <title>Wyniki Konkursu</title>
+    </head>
+    <body>
+        [NAGLOWEK]
+        [KATEGORIE]
+        [NAGRODY]
+    </body>
+</html>";
+
+        public static String SummaryTemplate =
+@"<html>
+    <head>
+        <META HTTP-EQUIV=""Content-type"" CONTENT=""text/html; charset=UTF-8"">
+        <title>Wyniki Konkursu</title>
+    </head>
+    <body>
+        [NAGLOWEK]
+        [POSUMOWANIE]
+    </body>
+</html>";
+
         public static void setDataFile(String dataFilePath) {
 
             if (dataFilePath.Contains(Path.PathSeparator)) {

@@ -225,7 +225,6 @@ namespace Rejestracja.Utils
 
         public static void generateHtmlResults(String template, String outputFileName)
         {
-            //DataSource ds = new DataSource();
             String htmlTemplate;
             String docHeader = Options.get("DocumentHeader").Replace("\r\n", "<br/>");
 
@@ -238,20 +237,7 @@ namespace Rejestracja.Utils
             //Prep header or use a template with header
             if (String.IsNullOrWhiteSpace(template))
             {
-                htmlTemplate = 
-@"<html>
-    <head>
-        <META HTTP-EQUIV=""Content-type"" CONTENT=""text/html; charset=UTF-8"">
-        <title>Wyniki Konkursu</title>
-    </head>
-    <body>
-        [NAGLOWEK]
-        <br/>
-        [KATEGORIE]
-        <br/>
-        [NAGRODY]
-    </body>
-</html>";
+                htmlTemplate = Resources.ResultsTemplate;
             }
             else
             {
@@ -338,6 +324,52 @@ namespace Rejestracja.Utils
             }
             htmlTemplate = htmlTemplate.Replace("[NAGRODY]", resultHtml.ToString());
             
+            File.WriteAllText(outputFileName, htmlTemplate);
+        }
+
+        public static void generateHtmlSummary(String template, String outputFileName) {
+            String htmlTemplate;
+            String docHeader = Options.get("DocumentHeader").Replace("\r\n", "<br/>");
+            StringBuilder sb = new StringBuilder();
+
+            //Prep header or use a template with header
+            if (String.IsNullOrWhiteSpace(template)) {
+                htmlTemplate = Resources.SummaryTemplate;
+            }
+            else {
+                using (StreamReader sr = File.OpenText(template)) {
+                    htmlTemplate = sr.ReadToEnd();
+                }
+            }
+
+            //Header
+            htmlTemplate = htmlTemplate.Replace("[NAGLOWEK]", String.Format("<h1>{0}</h1>", docHeader));
+            htmlTemplate = htmlTemplate.Replace("[NAGŁÓWEK]", String.Format("<h1>{0}</h1>", docHeader));
+            sb.Append("<h2>Posumowanie Konkursu</h2>").AppendLine();
+
+            //Summary stats
+            List<KeyValuePair<String, String>> stats = RegistrationEntryDao.getRegistrationStats();
+            sb.AppendLine(@"<div class=""stats"">").AppendLine();
+
+            foreach (KeyValuePair<String, String> stat in stats) {
+                if (stat.Key.StartsWith("GROUP")) {
+                    if (!stat.Key.Equals("GROUP1")) {
+                        sb.AppendLine("</table>");
+                    }
+                    sb.AppendLine("<table>").AppendFormat(@"<tr><th colspan=""2"">{0}</th></tr>", stat.Value).AppendLine();
+                }
+                else {
+                    if (stat.Key.StartsWith("*")) {
+                        sb.AppendFormat(@"<tr><td class=""lc b"">{0}</td><td class=""rc b"">{1}</td></tr>", stat.Key.Substring(1), stat.Value).AppendLine();
+                    }
+                    else {
+                        sb.AppendFormat(@"<tr><td class=""lc"">{0}</td><td class=""rc"">{1}</td></tr>", stat.Key, stat.Value).AppendLine();
+                    }
+                }
+            }
+            sb.AppendLine("</table>").AppendLine("</div>");
+
+            htmlTemplate = htmlTemplate.Replace("[PODSUMOWANIE]", sb.ToString());
             File.WriteAllText(outputFileName, htmlTemplate);
         }
 

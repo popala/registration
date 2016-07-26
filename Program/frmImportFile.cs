@@ -94,6 +94,7 @@ namespace Rejestracja {
 
             lblFileName.Text = "";
             chkHasHeaders.Checked = true;
+            chkDropExistingRecords.Checked = true;
             btnImport.Enabled = false;
         }
 
@@ -158,6 +159,15 @@ namespace Rejestracja {
 
         private void btnImport_Click(object sender, EventArgs e) {
 
+            if (chkDropExistingRecords.Checked) {
+                if (MessageBox.Show("Import usunie dane w lokalnej bazie i nadpisze je danymi z importowanego pliku", "Import Danych Rejestracji", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != System.Windows.Forms.DialogResult.OK)
+                    return;
+            }
+            else {
+                if (MessageBox.Show("Import doda dane z importowanego pliku bez usuwania istniejących wpisów", "Import Danych Rejestracji", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != System.Windows.Forms.DialogResult.OK)
+                    return;
+            }
+
             Application.UseWaitCursor = true;
 
             btnCancel.Enabled = false;
@@ -187,7 +197,9 @@ namespace Rejestracja {
                 fieldMap.ModelClass = cboModelClass.SelectedIndex - 2;
 
                 DataSource ds = new DataSource();
-                ds.dropRegistrationRecords();
+                if (chkDropExistingRecords.Checked) {
+                    ds.dropRegistrationRecords();
+                }
                 ds.bulkLoadRegistration(lblFileName.Text, fieldMap, chkHasHeaders.Checked);
 
                 ((frmMain)this.Owner).populateUI();

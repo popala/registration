@@ -443,32 +443,28 @@ namespace Rejestracja.Data.Dao
                 ret.Add(new KeyValuePair<string, string>("Liczba kategorii", categoryTotal.ToString()));
 
                 // --- AGE GROUPS ---
-                ret.Add(new KeyValuePair<string, string>("GROUP2", "Grupy wiekowe"));
+                //ret.Add(new KeyValuePair<string, string>("GROUP2", "Grupy wiekowe"));
 
                 //Modelers by age group
+                ret.Add(new KeyValuePair<string, string>("GROUP2", "Liczba modelarzy w grupach wiekowych"));
                 cm.CommandText = "SELECT AgeGroup, COUNT(LastName) AS cnt FROM (SELECT DISTINCT LastName, FirstName, AgeGroup FROM Registration) x GROUP BY AgeGroup";
                 using (SQLiteDataReader dr = cm.ExecuteReader()) {
-                    i = 0;
                     while (dr.Read()) {
-                        ret.Add(new KeyValuePair<string, string>(
-                            (i == 0 ? "Liczba modelarzy w groupie " : "") + dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
-                        i++;
+                        ret.Add(new KeyValuePair<string, string>(dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
                     }
                 }
 
                 //Models by age group
+                ret.Add(new KeyValuePair<string, string>("GROUP3", "Liczba modeli w grupach wiekowych"));
                 cm.CommandText = "SELECT AgeGroup, COUNT(ModelName) AS cnt FROM Registration GROUP BY AgeGroup";
                 using (SQLiteDataReader dr = cm.ExecuteReader()) {
-                    i = 0;
                     while (dr.Read()) {
-                        ret.Add(new KeyValuePair<string, string>(
-                            (i == 0 ? "Liczba modeli w groupie " : "") + dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
-                        i++;
+                        ret.Add(new KeyValuePair<string, string>(dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
                     }
                 }
 
                 // --- Youngest/Oldest ---
-                ret.Add(new KeyValuePair<string, string>("GROUP6", "Najmłodsi modelarze"));
+                ret.Add(new KeyValuePair<string, string>("GROUP4", "Najmłodsi modelarze"));
 
                 cm.CommandText =
                     @"SELECT DISTINCT FirstName, LastName, YearOfBirth FROM Registration 
@@ -482,7 +478,7 @@ namespace Rejestracja.Data.Dao
                     }
                 }
 
-                ret.Add(new KeyValuePair<string, string>("GROUP6", "Najstarsi modelarze"));
+                ret.Add(new KeyValuePair<string, string>("GROUP5", "Najstarsi modelarze"));
 
                 cm.CommandText =
                     @"SELECT DISTINCT FirstName, LastName, YearOfBirth FROM Registration 
@@ -497,7 +493,7 @@ namespace Rejestracja.Data.Dao
                 }
 
                 // --- Model Class ---
-                ret.Add(new KeyValuePair<string, string>("GROUP3", "Modele w klasach"));
+                ret.Add(new KeyValuePair<string, string>("GROUP6", "Modele w klasach"));
 
                 //Model count in class
                 cm.CommandText = "SELECT ModelClass, COUNT(ModelName) AS cnt FROM Registration GROUP BY ModelClass ORDER BY cnt DESC, ModelClass ASC";
@@ -508,7 +504,7 @@ namespace Rejestracja.Data.Dao
                 }
 
                 // --- Model Category ---
-                ret.Add(new KeyValuePair<string, string>("GROUP4", "Modele w kategoriach"));
+                ret.Add(new KeyValuePair<string, string>("GROUP7", "Modele w kategoriach"));
 
                 //Model count in class
                 cm.CommandText =
