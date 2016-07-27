@@ -100,14 +100,30 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tsBtnNewRegistration = new System.Windows.Forms.ToolStripButton();
-            this.tsBtnCheckedItems = new System.Windows.Forms.ToolStripDropDownButton();
-            this.tsBSChangeCategory = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsBSPrintRegistrationCards = new System.Windows.Forms.ToolStripMenuItem();
-            this.tsBSRemove = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
-            this.tsBtnView = new System.Windows.Forms.ToolStripDropDownButton();
+            this.tsBtnView = new System.Windows.Forms.ToolStripSplitButton();
             this.tsBVStandard = new System.Windows.Forms.ToolStripMenuItem();
             this.tsBVGroupped = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsBtnPrintSelected = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnChangeCategory = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnSettings = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnPrintAll = new System.Windows.Forms.ToolStripSplitButton();
+            this.tsBPAlphabetic = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsBPById = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+            this.tsBtnDeleteSelected = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnMergeCategories = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnJudgingForms = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnAddResults = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
+            this.tsBtnResults = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnCategoryDiplomas = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnAwardDiplomas = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnSummary = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -315,14 +331,14 @@
             this.mnuRVStandard.Checked = true;
             this.mnuRVStandard.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mnuRVStandard.Name = "mnuRVStandard";
-            this.mnuRVStandard.Size = new System.Drawing.Size(143, 22);
+            this.mnuRVStandard.Size = new System.Drawing.Size(152, 22);
             this.mnuRVStandard.Text = "Standardowy";
             this.mnuRVStandard.Click += new System.EventHandler(this.mnuRVItem_Click);
             // 
             // mnuRVGroupped
             // 
             this.mnuRVGroupped.Name = "mnuRVGroupped";
-            this.mnuRVGroupped.Size = new System.Drawing.Size(143, 22);
+            this.mnuRVGroupped.Size = new System.Drawing.Size(152, 22);
             this.mnuRVGroupped.Text = "Grupowany";
             this.mnuRVGroupped.Click += new System.EventHandler(this.mnuRVItem_Click);
             // 
@@ -437,6 +453,7 @@
             // 
             // mnuRsSummary
             // 
+            this.mnuRsSummary.Image = ((System.Drawing.Image)(resources.GetObject("mnuRsSummary.Image")));
             this.mnuRsSummary.Name = "mnuRsSummary";
             this.mnuRsSummary.Size = new System.Drawing.Size(208, 22);
             this.mnuRsSummary.Text = "Podsumowanie konkursu";
@@ -559,7 +576,7 @@
             this.tpStats.Controls.Add(this.lvStats);
             this.tpStats.Location = new System.Drawing.Point(4, 22);
             this.tpStats.Name = "tpStats";
-            this.tpStats.Size = new System.Drawing.Size(1171, 649);
+            this.tpStats.Size = new System.Drawing.Size(1171, 615);
             this.tpStats.TabIndex = 3;
             this.tpStats.Text = "Podsumowanie";
             this.tpStats.UseVisualStyleBackColor = true;
@@ -592,7 +609,7 @@
             this.tpResults.Controls.Add(this.lvResults);
             this.tpResults.Location = new System.Drawing.Point(4, 22);
             this.tpResults.Name = "tpResults";
-            this.tpResults.Size = new System.Drawing.Size(1171, 649);
+            this.tpResults.Size = new System.Drawing.Size(1171, 615);
             this.tpResults.TabIndex = 2;
             this.tpResults.Text = "Wyniki";
             this.tpResults.UseVisualStyleBackColor = true;
@@ -700,10 +717,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvEntries.FullRowSelect = true;
             this.lvEntries.HideSelection = false;
-            this.lvEntries.Location = new System.Drawing.Point(0, 34);
+            this.lvEntries.Location = new System.Drawing.Point(0, 35);
             this.lvEntries.MultiSelect = false;
             this.lvEntries.Name = "lvEntries";
-            this.lvEntries.Size = new System.Drawing.Size(1168, 560);
+            this.lvEntries.Size = new System.Drawing.Size(1168, 566);
             this.lvEntries.TabIndex = 2;
             this.lvEntries.UseCompatibleStateImageBehavior = false;
             this.lvEntries.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvEntries_ColumnClick);
@@ -720,7 +737,7 @@
             this.tabControl1.Controls.Add(this.tpRegistration);
             this.tabControl1.Controls.Add(this.tpResults);
             this.tabControl1.Controls.Add(this.tpStats);
-            this.tabControl1.Location = new System.Drawing.Point(3, 57);
+            this.tabControl1.Location = new System.Drawing.Point(0, 50);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1179, 641);
@@ -730,8 +747,26 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsBtnNewRegistration,
-            this.tsBtnCheckedItems,
-            this.tsBtnView});
+            this.toolStripSeparator11,
+            this.btnPrintAll,
+            this.tsBtnPrintSelected,
+            this.tsBtnChangeCategory,
+            this.tsBtnDeleteSelected,
+            this.toolStripSeparator10,
+            this.toolStripLabel2,
+            this.btnSettings,
+            this.tsBtnView,
+            this.toolStripSeparator12,
+            this.toolStripLabel1,
+            this.tsBtnMergeCategories,
+            this.tsBtnJudgingForms,
+            this.tsBtnAddResults,
+            this.toolStripSeparator13,
+            this.toolStripLabel3,
+            this.tsBtnResults,
+            this.tsBtnCategoryDiplomas,
+            this.tsBtnAwardDiplomas,
+            this.tsBtnSummary});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1182, 25);
@@ -740,52 +775,11 @@
             // 
             // tsBtnNewRegistration
             // 
-            this.tsBtnNewRegistration.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.tsBtnNewRegistration.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnNewRegistration.Image")));
             this.tsBtnNewRegistration.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsBtnNewRegistration.Name = "tsBtnNewRegistration";
-            this.tsBtnNewRegistration.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnNewRegistration.Size = new System.Drawing.Size(117, 22);
             this.tsBtnNewRegistration.Text = "Nowa Rejestracja";
-            // 
-            // tsBtnCheckedItems
-            // 
-            this.tsBtnCheckedItems.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tsBtnCheckedItems.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tsBSChangeCategory,
-            this.tsBSPrintRegistrationCards,
-            this.toolStripSeparator10,
-            this.tsBSRemove});
-            this.tsBtnCheckedItems.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnCheckedItems.Image")));
-            this.tsBtnCheckedItems.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsBtnCheckedItems.Name = "tsBtnCheckedItems";
-            this.tsBtnCheckedItems.Size = new System.Drawing.Size(29, 22);
-            this.tsBtnCheckedItems.Text = "Zaznaczone Wpisy";
-            // 
-            // tsBSChangeCategory
-            // 
-            this.tsBSChangeCategory.Image = ((System.Drawing.Image)(resources.GetObject("tsBSChangeCategory.Image")));
-            this.tsBSChangeCategory.Name = "tsBSChangeCategory";
-            this.tsBSChangeCategory.Size = new System.Drawing.Size(186, 22);
-            this.tsBSChangeCategory.Text = "Zmień kategorię";
-            // 
-            // tsBSPrintRegistrationCards
-            // 
-            this.tsBSPrintRegistrationCards.Image = ((System.Drawing.Image)(resources.GetObject("tsBSPrintRegistrationCards.Image")));
-            this.tsBSPrintRegistrationCards.Name = "tsBSPrintRegistrationCards";
-            this.tsBSPrintRegistrationCards.Size = new System.Drawing.Size(186, 22);
-            this.tsBSPrintRegistrationCards.Text = "Drukuj karty startowe";
-            // 
-            // tsBSRemove
-            // 
-            this.tsBSRemove.Image = ((System.Drawing.Image)(resources.GetObject("tsBSRemove.Image")));
-            this.tsBSRemove.Name = "tsBSRemove";
-            this.tsBSRemove.Size = new System.Drawing.Size(186, 22);
-            this.tsBSRemove.Text = "Usuń";
-            // 
-            // toolStripSeparator10
-            // 
-            this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(183, 6);
             // 
             // tsBtnView
             // 
@@ -796,7 +790,7 @@
             this.tsBtnView.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnView.Image")));
             this.tsBtnView.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsBtnView.Name = "tsBtnView";
-            this.tsBtnView.Size = new System.Drawing.Size(29, 22);
+            this.tsBtnView.Size = new System.Drawing.Size(32, 22);
             this.tsBtnView.Text = "Widok";
             // 
             // tsBVStandard
@@ -810,6 +804,167 @@
             this.tsBVGroupped.Name = "tsBVGroupped";
             this.tsBVGroupped.Size = new System.Drawing.Size(143, 22);
             this.tsBVGroupped.Text = "Grupowany";
+            // 
+            // toolStripSeparator11
+            // 
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsBtnPrintSelected
+            // 
+            this.tsBtnPrintSelected.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnPrintSelected.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnPrintSelected.Image")));
+            this.tsBtnPrintSelected.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnPrintSelected.Name = "tsBtnPrintSelected";
+            this.tsBtnPrintSelected.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnPrintSelected.Text = "Drukuj Zaznaczone Karty Startowe";
+            // 
+            // tsBtnChangeCategory
+            // 
+            this.tsBtnChangeCategory.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnChangeCategory.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnChangeCategory.Image")));
+            this.tsBtnChangeCategory.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnChangeCategory.Name = "tsBtnChangeCategory";
+            this.tsBtnChangeCategory.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnChangeCategory.Text = "Zmień Kategorię Zaznaczonych Rejestracji";
+            // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
+            // 
+            // btnSettings
+            // 
+            this.btnSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnSettings.Image = ((System.Drawing.Image)(resources.GetObject("btnSettings.Image")));
+            this.btnSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(23, 22);
+            this.btnSettings.Text = "Ustawienia Konkursu";
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(6, 25);
+            // 
+            // btnPrintAll
+            // 
+            this.btnPrintAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnPrintAll.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsBPAlphabetic,
+            this.tsBPById});
+            this.btnPrintAll.Image = ((System.Drawing.Image)(resources.GetObject("btnPrintAll.Image")));
+            this.btnPrintAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnPrintAll.Name = "btnPrintAll";
+            this.btnPrintAll.Size = new System.Drawing.Size(32, 22);
+            this.btnPrintAll.Text = "Drukuj Wszystkie Karty Startowe";
+            // 
+            // tsBPAlphabetic
+            // 
+            this.tsBPAlphabetic.Name = "tsBPAlphabetic";
+            this.tsBPAlphabetic.Size = new System.Drawing.Size(202, 22);
+            this.tsBPAlphabetic.Text = "Alfabetycznie";
+            // 
+            // tsBPById
+            // 
+            this.tsBPById.Name = "tsBPById";
+            this.tsBPById.Size = new System.Drawing.Size(202, 22);
+            this.tsBPById.Text = "Wg Numeru Startowego";
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(72, 22);
+            this.toolStripLabel1.Text = "Sędziowanie";
+            // 
+            // toolStripLabel2
+            // 
+            this.toolStripLabel2.Name = "toolStripLabel2";
+            this.toolStripLabel2.Size = new System.Drawing.Size(64, 22);
+            this.toolStripLabel2.Text = "Ustawienia";
+            // 
+            // tsBtnDeleteSelected
+            // 
+            this.tsBtnDeleteSelected.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnDeleteSelected.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnDeleteSelected.Image")));
+            this.tsBtnDeleteSelected.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnDeleteSelected.Name = "tsBtnDeleteSelected";
+            this.tsBtnDeleteSelected.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnDeleteSelected.Text = "Usuń Zaznaczone Rejestracje";
+            // 
+            // tsBtnMergeCategories
+            // 
+            this.tsBtnMergeCategories.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnMergeCategories.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnMergeCategories.Image")));
+            this.tsBtnMergeCategories.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnMergeCategories.Name = "tsBtnMergeCategories";
+            this.tsBtnMergeCategories.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnMergeCategories.Text = "Łączenie Kategorii";
+            // 
+            // tsBtnJudgingForms
+            // 
+            this.tsBtnJudgingForms.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnJudgingForms.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnJudgingForms.Image")));
+            this.tsBtnJudgingForms.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnJudgingForms.Name = "tsBtnJudgingForms";
+            this.tsBtnJudgingForms.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnJudgingForms.Text = "Karty Sędziowania";
+            // 
+            // tsBtnAddResults
+            // 
+            this.tsBtnAddResults.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnAddResults.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnAddResults.Image")));
+            this.tsBtnAddResults.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnAddResults.Name = "tsBtnAddResults";
+            this.tsBtnAddResults.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnAddResults.Text = "Dodawanie Wyników";
+            // 
+            // toolStripSeparator13
+            // 
+            this.toolStripSeparator13.Name = "toolStripSeparator13";
+            this.toolStripSeparator13.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel3
+            // 
+            this.toolStripLabel3.Name = "toolStripLabel3";
+            this.toolStripLabel3.Size = new System.Drawing.Size(43, 22);
+            this.toolStripLabel3.Text = "Wyniki";
+            // 
+            // tsBtnResults
+            // 
+            this.tsBtnResults.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnResults.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnResults.Image")));
+            this.tsBtnResults.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnResults.Name = "tsBtnResults";
+            this.tsBtnResults.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnResults.Text = "Lista Wyników";
+            // 
+            // tsBtnCategoryDiplomas
+            // 
+            this.tsBtnCategoryDiplomas.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnCategoryDiplomas.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnCategoryDiplomas.Image")));
+            this.tsBtnCategoryDiplomas.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnCategoryDiplomas.Name = "tsBtnCategoryDiplomas";
+            this.tsBtnCategoryDiplomas.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnCategoryDiplomas.Text = "Dyplomy - Kategorie";
+            // 
+            // tsBtnAwardDiplomas
+            // 
+            this.tsBtnAwardDiplomas.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnAwardDiplomas.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnAwardDiplomas.Image")));
+            this.tsBtnAwardDiplomas.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnAwardDiplomas.Name = "tsBtnAwardDiplomas";
+            this.tsBtnAwardDiplomas.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnAwardDiplomas.Text = "Dyplomy - Nagrody";
+            // 
+            // tsBtnSummary
+            // 
+            this.tsBtnSummary.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnSummary.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnSummary.Image")));
+            this.tsBtnSummary.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnSummary.Name = "tsBtnSummary";
+            this.tsBtnSummary.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnSummary.Text = "Podsumowanie Konkursu";
             // 
             // frmMain
             // 
@@ -919,14 +1074,30 @@
         private System.Windows.Forms.ToolStripMenuItem mnuRsSummary;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton tsBtnNewRegistration;
-        private System.Windows.Forms.ToolStripDropDownButton tsBtnCheckedItems;
-        private System.Windows.Forms.ToolStripMenuItem tsBSChangeCategory;
-        private System.Windows.Forms.ToolStripMenuItem tsBSPrintRegistrationCards;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
-        private System.Windows.Forms.ToolStripMenuItem tsBSRemove;
-        private System.Windows.Forms.ToolStripDropDownButton tsBtnView;
+        private System.Windows.Forms.ToolStripSplitButton tsBtnView;
         private System.Windows.Forms.ToolStripMenuItem tsBVStandard;
         private System.Windows.Forms.ToolStripMenuItem tsBVGroupped;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
+        private System.Windows.Forms.ToolStripSplitButton btnPrintAll;
+        private System.Windows.Forms.ToolStripMenuItem tsBPAlphabetic;
+        private System.Windows.Forms.ToolStripMenuItem tsBPById;
+        private System.Windows.Forms.ToolStripButton tsBtnPrintSelected;
+        private System.Windows.Forms.ToolStripButton tsBtnChangeCategory;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
+        private System.Windows.Forms.ToolStripButton btnSettings;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
+        private System.Windows.Forms.ToolStripButton tsBtnDeleteSelected;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel2;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripButton tsBtnMergeCategories;
+        private System.Windows.Forms.ToolStripButton tsBtnJudgingForms;
+        private System.Windows.Forms.ToolStripButton tsBtnAddResults;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel3;
+        private System.Windows.Forms.ToolStripButton tsBtnResults;
+        private System.Windows.Forms.ToolStripButton tsBtnCategoryDiplomas;
+        private System.Windows.Forms.ToolStripButton tsBtnAwardDiplomas;
+        private System.Windows.Forms.ToolStripButton tsBtnSummary;
 
 
     }
