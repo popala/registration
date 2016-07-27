@@ -98,6 +98,16 @@
             this.txtFilter = new System.Windows.Forms.TextBox();
             this.lvEntries = new System.Windows.Forms.ListView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.tsBtnNewRegistration = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnCheckedItems = new System.Windows.Forms.ToolStripDropDownButton();
+            this.tsBSChangeCategory = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsBSPrintRegistrationCards = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsBSRemove = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsBtnView = new System.Windows.Forms.ToolStripDropDownButton();
+            this.tsBVStandard = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsBVGroupped = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -106,6 +116,7 @@
             this.tpResults.SuspendLayout();
             this.tpRegistration.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -619,7 +630,7 @@
             this.tpRegistration.Location = new System.Drawing.Point(4, 22);
             this.tpRegistration.Name = "tpRegistration";
             this.tpRegistration.Padding = new System.Windows.Forms.Padding(3);
-            this.tpRegistration.Size = new System.Drawing.Size(1171, 649);
+            this.tpRegistration.Size = new System.Drawing.Size(1171, 615);
             this.tpRegistration.TabIndex = 0;
             this.tpRegistration.Text = "Rejestracja";
             this.tpRegistration.UseVisualStyleBackColor = true;
@@ -692,7 +703,7 @@
             this.lvEntries.Location = new System.Drawing.Point(0, 34);
             this.lvEntries.MultiSelect = false;
             this.lvEntries.Name = "lvEntries";
-            this.lvEntries.Size = new System.Drawing.Size(1168, 594);
+            this.lvEntries.Size = new System.Drawing.Size(1168, 560);
             this.lvEntries.TabIndex = 2;
             this.lvEntries.UseCompatibleStateImageBehavior = false;
             this.lvEntries.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvEntries_ColumnClick);
@@ -709,17 +720,103 @@
             this.tabControl1.Controls.Add(this.tpRegistration);
             this.tabControl1.Controls.Add(this.tpResults);
             this.tabControl1.Controls.Add(this.tpStats);
-            this.tabControl1.Location = new System.Drawing.Point(3, 23);
+            this.tabControl1.Location = new System.Drawing.Point(3, 57);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1179, 675);
+            this.tabControl1.Size = new System.Drawing.Size(1179, 641);
             this.tabControl1.TabIndex = 1;
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsBtnNewRegistration,
+            this.tsBtnCheckedItems,
+            this.tsBtnView});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(1182, 25);
+            this.toolStrip1.TabIndex = 12;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // tsBtnNewRegistration
+            // 
+            this.tsBtnNewRegistration.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnNewRegistration.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnNewRegistration.Image")));
+            this.tsBtnNewRegistration.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnNewRegistration.Name = "tsBtnNewRegistration";
+            this.tsBtnNewRegistration.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnNewRegistration.Text = "Nowa Rejestracja";
+            // 
+            // tsBtnCheckedItems
+            // 
+            this.tsBtnCheckedItems.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnCheckedItems.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsBSChangeCategory,
+            this.tsBSPrintRegistrationCards,
+            this.toolStripSeparator10,
+            this.tsBSRemove});
+            this.tsBtnCheckedItems.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnCheckedItems.Image")));
+            this.tsBtnCheckedItems.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnCheckedItems.Name = "tsBtnCheckedItems";
+            this.tsBtnCheckedItems.Size = new System.Drawing.Size(29, 22);
+            this.tsBtnCheckedItems.Text = "Zaznaczone Wpisy";
+            // 
+            // tsBSChangeCategory
+            // 
+            this.tsBSChangeCategory.Image = ((System.Drawing.Image)(resources.GetObject("tsBSChangeCategory.Image")));
+            this.tsBSChangeCategory.Name = "tsBSChangeCategory";
+            this.tsBSChangeCategory.Size = new System.Drawing.Size(186, 22);
+            this.tsBSChangeCategory.Text = "Zmień kategorię";
+            // 
+            // tsBSPrintRegistrationCards
+            // 
+            this.tsBSPrintRegistrationCards.Image = ((System.Drawing.Image)(resources.GetObject("tsBSPrintRegistrationCards.Image")));
+            this.tsBSPrintRegistrationCards.Name = "tsBSPrintRegistrationCards";
+            this.tsBSPrintRegistrationCards.Size = new System.Drawing.Size(186, 22);
+            this.tsBSPrintRegistrationCards.Text = "Drukuj karty startowe";
+            // 
+            // tsBSRemove
+            // 
+            this.tsBSRemove.Image = ((System.Drawing.Image)(resources.GetObject("tsBSRemove.Image")));
+            this.tsBSRemove.Name = "tsBSRemove";
+            this.tsBSRemove.Size = new System.Drawing.Size(186, 22);
+            this.tsBSRemove.Text = "Usuń";
+            // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(183, 6);
+            // 
+            // tsBtnView
+            // 
+            this.tsBtnView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsBVStandard,
+            this.tsBVGroupped});
+            this.tsBtnView.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnView.Image")));
+            this.tsBtnView.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnView.Name = "tsBtnView";
+            this.tsBtnView.Size = new System.Drawing.Size(29, 22);
+            this.tsBtnView.Text = "Widok";
+            // 
+            // tsBVStandard
+            // 
+            this.tsBVStandard.Name = "tsBVStandard";
+            this.tsBVStandard.Size = new System.Drawing.Size(143, 22);
+            this.tsBVStandard.Text = "Standardowy";
+            // 
+            // tsBVGroupped
+            // 
+            this.tsBVGroupped.Name = "tsBVGroupped";
+            this.tsBVGroupped.Size = new System.Drawing.Size(143, 22);
+            this.tsBVGroupped.Text = "Grupowany";
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 698);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusBar);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
@@ -743,6 +840,8 @@
             this.tpRegistration.ResumeLayout(false);
             this.tpRegistration.PerformLayout();
             this.tabControl1.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -818,6 +917,16 @@
         private System.Windows.Forms.LinkLabel lblErrorCount;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripMenuItem mnuRsSummary;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton tsBtnNewRegistration;
+        private System.Windows.Forms.ToolStripDropDownButton tsBtnCheckedItems;
+        private System.Windows.Forms.ToolStripMenuItem tsBSChangeCategory;
+        private System.Windows.Forms.ToolStripMenuItem tsBSPrintRegistrationCards;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
+        private System.Windows.Forms.ToolStripMenuItem tsBSRemove;
+        private System.Windows.Forms.ToolStripDropDownButton tsBtnView;
+        private System.Windows.Forms.ToolStripMenuItem tsBVStandard;
+        private System.Windows.Forms.ToolStripMenuItem tsBVGroupped;
 
 
     }
