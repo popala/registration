@@ -413,7 +413,7 @@ namespace Rejestracja.Data.Dao
         public static List<KeyValuePair<string, string>> getRegistrationStats() {
             List<KeyValuePair<string, string>> ret = new List<KeyValuePair<string, string>>();
             int categoryTotal;
-            int i;
+            //int i;
             object result;
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))

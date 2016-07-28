@@ -329,7 +329,8 @@ namespace Rejestracja.Utils
 
         public static void generateHtmlSummary(String template, String outputFileName) {
             String htmlTemplate;
-            String docHeader = Options.get("DocumentHeader").Replace("\r\n", "<br/>");
+            String docHeader = (Options.get("DocumentHeader") ?? "").Replace("\r\n", "<br/>");
+            String docFooter = (Options.get("DocumentFooter") ?? "").Replace("\r\n", "<br/>");
             StringBuilder sb = new StringBuilder();
 
             //Prep header or use a template with header
@@ -343,9 +344,8 @@ namespace Rejestracja.Utils
             }
 
             //Header
-            htmlTemplate = htmlTemplate.Replace("[NAGLOWEK]", String.Format("<h1>{0}</h1>", docHeader));
-            htmlTemplate = htmlTemplate.Replace("[NAGŁÓWEK]", String.Format("<h1>{0}</h1>", docHeader));
-            sb.Append("<h2>Posumowanie Konkursu</h2>").AppendLine();
+            htmlTemplate = htmlTemplate.Replace("[NAGLOWEK]", String.Format("{0}", docHeader));
+            htmlTemplate = htmlTemplate.Replace("[NAGŁÓWEK]", String.Format("{0}", docHeader));
 
             //Summary stats
             List<KeyValuePair<String, String>> stats = RegistrationEntryDao.getRegistrationStats();
@@ -370,6 +370,7 @@ namespace Rejestracja.Utils
             sb.AppendLine("</table>").AppendLine("</div>");
 
             htmlTemplate = htmlTemplate.Replace("[PODSUMOWANIE]", sb.ToString());
+            htmlTemplate = htmlTemplate.Replace("[STOPKA]", docFooter);
             File.WriteAllText(outputFileName, htmlTemplate);
         }
 
