@@ -44,7 +44,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static long add(String code, String name, String modelClass, int displayOrder)
+        public static int add(String code, String name, String modelClass, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO ModelCategory(Code, Name, ModelClass, DisplayOrder) VALUES(@Code, @Name, @ModelClass, @DisplayOrder)", cn))
@@ -58,7 +58,7 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int32).Value = displayOrder;
                 cm.ExecuteNonQuery();
 
-                return cn.LastInsertRowId;
+                return (int)cn.LastInsertRowId;
             }
         }
 
@@ -153,6 +153,8 @@ namespace Rejestracja.Data.Dao
                 cm.ExecuteNonQuery();
 
                 cm.CommandText = "CREATE INDEX Idx_MC_Code ON ModelCategory(Code)";
+                cm.ExecuteNonQuery();
+                cm.CommandText = "CREATE INDEX Idx_MC_Class ON ModelCategory(ModelClass)";
                 cm.ExecuteNonQuery();
             }
 

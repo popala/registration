@@ -86,5 +86,13 @@ namespace Rejestracja.Data.Objects {
             this.modelPublisher = modelPublisher;
             this.place = place;
         }
+
+        public String ToCsvString() {
+            String [] props = new String[] {
+                entryId.ToString(), timeStamp.ToString(), email, firstName, lastName, clubName, ageGroup, modelName, modelCategory, modelCategoryId.ToString(),
+                modelScale, modelPublisher, modelClass, yearOfBirth.ToString(), place.ToString(), skipErrorValidation.ToString()
+            };
+            return "\"" + String.Join("\",\"", props) + "\"";
+        }
     }
 }

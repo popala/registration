@@ -327,6 +327,97 @@ namespace Rejestracja.Utils
             File.WriteAllText(outputFileName, htmlTemplate);
         }
 
+        public static void generateHtmlResultsV2(String template, String outputFileName) {
+            String htmlTemplate;
+            String docHeader = String.Format("<h1>{0}</h1>", Options.get("DocumentHeader").Replace("\r\n", "<br/>"));
+            String docFooter = String.Format(@"<div class=""footer"">{0}</div>", Options.get("DocumentFooter").Replace("\r\n", "<br/>"));
+
+            String categoryTableHeader =
+@"<table class=""category"">
+    <tr><td colspan=""3"" class=""title""><span class=""lt"">{0}</span><span class=""rt"">{1}</span></td></tr>
+    <tr><th class=""place"">Miejsce</th><th class=""name"">Imię i Nazwisko</th><th class=""model"">Nr i Nazwa Modelu</th></tr>";
+            String categoryTableRow = @"    <tr><td>{0}</td><td>{1} {2}</td><td>{3} {4}</td></tr>";
+
+            String awardTableHeader =
+@"<table class=""category"">
+    <tr><td colspan=""2"" class=""title""><span class=""lt"">{0}</span></td></tr>
+    <tr><th class=""name"">Imię i Nazwisko</th><th class=""model"">Nr i Nazwa Modelu</th></tr>";
+            String awardTableRow = @"    <tr><td>{0} {1}</td><td>{2} {3}</td></tr>";
+
+            String ageGroup = null;
+            String modelClass = null;
+            String modelCategory = null;
+
+            //Prep header or use a template with header
+            if (String.IsNullOrWhiteSpace(template)) {
+                htmlTemplate = Resources.ResultsTemplate;
+            }
+            else {
+                using (StreamReader sr = File.OpenText(template)) {
+                    htmlTemplate = sr.ReadToEnd();
+                }
+            }
+
+            //Category winners
+            IEnumerable<Result> results = ResultDao.getCategoryResults();
+            StringBuilder sb = new StringBuilder();
+
+            foreach (Result result in results) {
+                
+                //Category, class or age group changed so close the table if age group is not empty
+                if (ageGroup != result.entry.ageGroup || modelClass != result.entry.modelClass || modelCategory != result.entry.modelCategory) {
+                    if (ageGroup != null) {
+                        sb.AppendLine("</table>");
+                    }
+                
+                    //If age group changed we need H1, H2
+                    if (ageGroup == null || !ageGroup.Equals(result.entry.ageGroup)) {
+                        if (ageGroup != null) {
+                            sb.AppendLine(docFooter);
+                        }
+                        sb.AppendLine(docHeader);
+                        sb.AppendFormat("<h2>Grupa Wiekowa {0}</h2>", result.entry.ageGroup).AppendLine();
+                        ageGroup = result.entry.ageGroup;
+                    }
+
+                    //Start a new table for diff class and/or category
+                    modelClass = result.entry.modelClass;
+                    modelCategory = result.entry.modelCategory;
+                    sb.AppendFormat(categoryTableHeader, result.entry.modelCategory, result.entry.modelClass).AppendLine();
+                }
+                sb.AppendFormat(categoryTableRow, result.place, result.entry.firstName, result.entry.lastName, result.entry.entryId, result.entry.modelName).AppendLine();
+            }
+            if (ageGroup != null) {
+                sb.AppendLine("</table>");
+                sb.AppendLine(docFooter);
+            }
+
+            //SPECIAL AWARDS
+            long awardId = -1;
+            results = ResultDao.getAwardResults();
+
+            sb.AppendLine(docHeader);
+            sb.AppendLine("<h2>Nagrody Specjalne</h2>");
+
+            foreach (Result result in results) {
+                if (awardId != result.award.id) {
+                    if (awardId > -1) {
+                        sb.AppendLine(@"</table>");
+                    }
+                    sb.AppendFormat(awardTableHeader, result.award.title).AppendLine();
+                }
+                sb.AppendFormat(awardTableRow, result.entry.firstName, result.entry.lastName, result.entry.entryId, result.entry.modelName).AppendLine();
+                awardId = result.award.id;
+            }
+            if (awardId > -1) {
+                sb.AppendLine(@"</table>");
+                sb.AppendLine(docFooter);
+            }
+
+            htmlTemplate = htmlTemplate.Replace("[WYNIKI]", sb.ToString());
+            File.WriteAllText(outputFileName, htmlTemplate);
+        }
+
         public static void generateHtmlSummary(String template, String outputFileName) {
             String htmlTemplate;
             String docHeader = (Options.get("DocumentHeader") ?? "").Replace("\r\n", "<br/>");

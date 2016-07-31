@@ -53,7 +53,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static long add(String name)
+        public static int add(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Publisher(Name) VALUES(@Name)", cn))
@@ -64,7 +64,7 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@Name", DbType.String, 64).Value = name;
                 cm.ExecuteNonQuery();
 
-                return cn.LastInsertRowId;
+                return (int)cn.LastInsertRowId;
             }
         }
 

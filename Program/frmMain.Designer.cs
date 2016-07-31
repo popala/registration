@@ -86,7 +86,6 @@
             this.cmsRCDeleteResult = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRCPrintDiploma = new System.Windows.Forms.ToolStripMenuItem();
             this.tpStats = new System.Windows.Forms.TabPage();
-            this.btnRefreshStats = new System.Windows.Forms.Button();
             this.lvStats = new System.Windows.Forms.ListView();
             this.tpResults = new System.Windows.Forms.TabPage();
             this.lvResults = new System.Windows.Forms.ListView();
@@ -581,7 +580,6 @@
             // 
             // tpStats
             // 
-            this.tpStats.Controls.Add(this.btnRefreshStats);
             this.tpStats.Controls.Add(this.lvStats);
             this.tpStats.Location = new System.Drawing.Point(4, 22);
             this.tpStats.Name = "tpStats";
@@ -590,25 +588,15 @@
             this.tpStats.Text = "Podsumowanie";
             this.tpStats.UseVisualStyleBackColor = true;
             // 
-            // btnRefreshStats
-            // 
-            this.btnRefreshStats.Location = new System.Drawing.Point(5, 5);
-            this.btnRefreshStats.Name = "btnRefreshStats";
-            this.btnRefreshStats.Size = new System.Drawing.Size(75, 25);
-            this.btnRefreshStats.TabIndex = 1;
-            this.btnRefreshStats.Text = "Odśwież";
-            this.btnRefreshStats.UseVisualStyleBackColor = true;
-            this.btnRefreshStats.Click += new System.EventHandler(this.btnRefreshStats_Click);
-            // 
             // lvStats
             // 
             this.lvStats.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvStats.Location = new System.Drawing.Point(0, 35);
+            this.lvStats.Location = new System.Drawing.Point(0, 0);
             this.lvStats.MultiSelect = false;
             this.lvStats.Name = "lvStats";
-            this.lvStats.Size = new System.Drawing.Size(1171, 562);
+            this.lvStats.Size = new System.Drawing.Size(1171, 597);
             this.lvStats.TabIndex = 0;
             this.lvStats.UseCompatibleStateImageBehavior = false;
             // 
@@ -1056,7 +1044,6 @@
         private System.Windows.Forms.ToolStripMenuItem mnuRVGroupped;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.TabPage tpStats;
-        private System.Windows.Forms.Button btnRefreshStats;
         private System.Windows.Forms.ListView lvStats;
         private System.Windows.Forms.TabPage tpResults;
         private System.Windows.Forms.ListView lvResults;

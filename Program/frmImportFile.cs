@@ -2,6 +2,8 @@
 using Rejestracja.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -200,7 +202,20 @@ namespace Rejestracja {
                 if (chkDropExistingRecords.Checked) {
                     ds.dropRegistrationRecords();
                 }
-                ds.bulkLoadRegistration(lblFileName.Text, fieldMap, chkHasHeaders.Checked);
+                
+                String badRecordFile = Path.Combine(Resources.DataFileFolder, String.Format("bledy-import_{0}.csv", DateTime.Now.ToString("yyyy-MM-dd_H-mm-ss")));
+                if (!Directory.Exists(badRecordFile)) {
+                    Directory.CreateDirectory(badRecordFile);
+                }
+                if (File.Exists(badRecordFile)) {
+                    File.Delete(badRecordFile);
+                }
+                
+                int badRecordCount = ds.bulkLoadRegistration(lblFileName.Text, fieldMap, chkHasHeaders.Checked, badRecordFile);
+                if (badRecordCount > 0) {
+                    MessageBox.Show("Wystąpiły błędy przy ładowaniu rejestracji. Dane których nie udało się importować zostały zapisane w pliku:\r\n" + badRecordFile, "Import Danych", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    Process.Start(Resources.DataFileFolder);
+                }
 
                 ((frmMain)this.Owner).populateUI();
                 this.Close();

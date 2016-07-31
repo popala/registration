@@ -57,7 +57,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static long add(String name, int displayOrder)
+        public static int add(String name, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO ModelScale(Name, DisplayOrder) VALUES(@Name, @DisplayOrder)", cn))
@@ -69,7 +69,7 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int32).Value = displayOrder;
                 cm.ExecuteNonQuery();
 
-                return cn.LastInsertRowId;
+                return (int)cn.LastInsertRowId;
             }
         }
 
@@ -88,7 +88,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static void updateDisplayOrder(long id, int displayOrder)
+        public static void updateDisplayOrder(int id, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"UPDATE ModelScale SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn))
@@ -96,13 +96,13 @@ namespace Rejestracja.Data.Dao
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
                 cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int32).Value = displayOrder;
                 cm.ExecuteNonQuery();
             }
         }
 
-        public static void delete(long id)
+        public static void delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM ModelScale WHERE Id = @Id", cn))
@@ -110,7 +110,7 @@ namespace Rejestracja.Data.Dao
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
                 cm.ExecuteNonQuery();
             }
         }

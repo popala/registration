@@ -2,11 +2,11 @@
 
 namespace Rejestracja.Data.Objects {
     class ModelClass {
-        public long id;
+        public int id;
         public String name;
         public const int MAX_NAME_LENGTH = 128;
 
-        public ModelClass(long id, String name) {
+        public ModelClass(int id, String name) {
             this.id = id;
             this.name = name;
         }

@@ -22,14 +22,11 @@ namespace Rejestracja
             txtCategoryCode.MaxLength = 16;
             txtCategoryName.MaxLength = 64;
 
-            btnMoveUpCategory.Enabled = false;
-            btnMoveDownCategory.Enabled = false;
-
             lvModelCategory.View = View.Details;
             lvModelCategory.FullRowSelect = true;
             lvModelCategory.Columns.Add("Kod");
             lvModelCategory.Columns.Add("Nazwa");
-            lvModelCategory.Columns.Add("Kategoria");
+            lvModelCategory.Columns.Add("Klasa");
             lvModelCategory.CheckBoxes = false;
             lvModelCategory.GridLines = true;
             lvModelCategory.MultiSelect = false;
@@ -118,25 +115,93 @@ namespace Rejestracja
             if (lvModelScales.Items.Count > 0)
                 lvModelScales.Items[0].Selected = true;
 
-            loadOptions();
+            loadGeneralOptions();
+            setButtons();
         }
 
-        private void loadOptions()
+        private void loadGeneralOptions()
         {
             txtHeading.Text = Options.get("DocumentHeader");
             txtFooter.Text = Options.get("DocumentFooter");
+            chkValidateAge.Checked = (Options.get("ValidateAgeGroup") == null || !Options.get("ValidateAgeGroup").Equals("false"));
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
             Options.set("DocumentHeader", txtHeading.Text);
             Options.set("DocumentFooter", txtFooter.Text);
+            Options.set("ValidateAgeGroup", chkValidateAge.Checked.ToString());
             this.Close();
         }
 
         private void tcOptions_SelectedIndexChanged(object sender, EventArgs e)
         {
-            btnDelete.Visible = (tcOptions.SelectedIndex != 0);
+            switch (tcOptions.SelectedIndex) {
+                case 1:
+                    txtAgeGroup.SelectAll();
+                    txtAgeGroup.Focus();
+                    break;
+                case 2:
+                    txtModelClassName.SelectAll();
+                    txtModelClassName.Focus();
+                    break;
+                case 3:
+                    txtCategoryCode.SelectAll();
+                    txtCategoryCode.Focus();
+                    break;
+                case 4:
+                    txtAwardTitle.SelectAll();
+                    txtAwardTitle.Focus();
+                    break;
+                case 5:
+                    txtPublisherName.SelectAll();
+                    txtPublisherName.Focus();
+                    break;
+                case 6:
+                    txtModelScale.SelectAll();
+                    txtModelScale.Focus();
+                    break;
+            }
+            setButtons();
+        }
+
+        private void setButtons() {
+            switch (tcOptions.SelectedIndex) {
+                case 0:
+                    btnDelete.Visible = false;
+                    break;
+                case 1:
+                    btnDelete.Visible = true;
+                    btnDelete.Enabled = (lvAgeGroup.CheckedItems.Count > 0);
+                    break;
+                case 2:
+                    btnDelete.Visible = true;
+                    btnDelete.Enabled = (lvModelClass.CheckedItems.Count > 0);
+                    break;
+                case 3:
+                    btnDelete.Visible = true;
+                    btnDelete.Enabled = (lvModelCategory.CheckedItems.Count > 0);
+                    btnMoveUpCategory.Enabled = btnMoveDownCategory.Enabled = (lvModelCategory.CheckedItems.Count == 1);
+                    break;
+                case 4:
+                    btnDelete.Visible = true;
+                    btnDelete.Enabled = (lvAwards.CheckedItems.Count > 0);
+                    btnMoveUpAward.Enabled = btnMoveDownAward.Enabled = (lvAwards.CheckedItems.Count == 1);
+                    break;
+                case 5:
+                    btnDelete.Visible = true;
+                    btnDelete.Enabled = (lvPublishers.CheckedItems.Count > 0);
+                    break;
+                case 6:
+                    btnDelete.Visible = true;
+                    btnDelete.Enabled = (lvModelScales.CheckedItems.Count > 0);
+                    btnMoveUpScale.Enabled = btnMoveDownScale.Enabled = (lvModelScales.CheckedItems.Count == 1);
+                    break;
+            }
+        }
+
+        private void anyListView_ItemChecked(object sender, ItemCheckedEventArgs e) {
+            setButtons();
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
@@ -147,63 +212,42 @@ namespace Rejestracja
                     if (lvAgeGroup.CheckedItems.Count < 1)
                         return;
                     deleteAgeGroups();
-                    loadAgeGroups();
                     break;
 
                 case 2:
                     if (lvModelClass.CheckedItems.Count < 1)
                         return;
                     deleteModelClasses();
-                    loadModelClasses();
                     break;
 
                 case 3:
                     if (lvModelCategory.CheckedItems.Count < 1)
                         return;
                     deleteModelCategories();
-                    loadModelCategories();
                     break;
 
                 case 4:
                     if (lvAwards.CheckedItems.Count < 1)
                         return;
-                    //AwardDao.delete((int)lvAwards.SelectedItems[0].Tag);
                     deleteAwards();
-                    loadAwards();
                     break;
 
                 case 5:
                     if (lvPublishers.CheckedItems.Count < 1)
                         return;
-                    //PublisherDao.delete((Int64)lvPublishers.SelectedItems[0].Tag);
                     deletePublishers();
-                    loadPublishers();
                     break;
 
                 case 6:
                     if (lvModelScales.CheckedItems.Count < 1)
                         return;
-                    //ModelScaleDao.delete((Int64)lvModelScales.SelectedItems[0].Tag);
                     deleteModelScales();
-                    loadModelScales();
                     break;
             }
+            setButtons();
         }
-        
-        private void lvModelClass_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (lvModelCategory.SelectedItems.Count > 0)
-            {
-                btnMoveUpCategory.Enabled = true;
-                btnMoveDownCategory.Enabled = true;
-                btnDelete.Enabled = true;
-                return;
-            }
 
-            btnMoveUpCategory.Enabled = false;
-            btnMoveDownCategory.Enabled = false;
-            btnDelete.Enabled = false;
-        }
+        #region ModelCategories
 
         private void loadModelCategories()
         {
@@ -227,48 +271,62 @@ namespace Rejestracja
             if (MessageBox.Show("Usunięcie kategorii jest nieodwracalne. Wpisy używające usuniętych kategorii muszą być poprawione.", "Kategorie", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Cancel) {
                 return;
             }
+
+            lvModelCategory.BeginUpdate();
             foreach (ListViewItem item in lvModelCategory.CheckedItems) {
                 int categoryId = (int)item.Tag;
                 ModelCategoryDao.delete(categoryId);
+                lvModelCategory.Items.Remove(item);
             }
+            lvModelCategory.EndUpdate();
         }
 
         private void btnMoveUpCategory_Click(object sender, EventArgs e)
         {
-            if (lvModelCategory.SelectedItems.Count < 1)
-                return;
+            ListViewItem item = lvModelCategory.CheckedItems[0];
+            int index = lvModelCategory.CheckedItems[0].Index;
 
-            if (lvModelCategory.SelectedItems[0].Index < 1)
+            if (index == 0) {
                 return;
+            }
 
-            ListViewItem item = lvModelCategory.SelectedItems[0];
-            int index = lvModelCategory.SelectedItems[0].Index;
+            lvModelCategory.BeginUpdate();
+            btnMoveUpCategory.Enabled = false;
 
             lvModelCategory.Items.Remove(item);
             lvModelCategory.Items.Insert(index - 1, item);
             lvModelCategory.Items[index - 1].Selected = true;
 
-            ModelCategoryDao.updateDisplayOrder((Int64)lvModelCategory.Items[index - 1].Tag, index - 1);
-            ModelCategoryDao.updateDisplayOrder((Int64)lvModelCategory.Items[index].Tag, index);
+            ModelCategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index - 1].Tag, index - 1);
+            ModelCategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index].Tag, index);
+
+            item.EnsureVisible();
+            lvModelCategory.EndUpdate();
+            btnMoveUpCategory.Enabled = true;
         }
 
         private void btnMoveDownCategory_Click(object sender, EventArgs e)
         {
-            if (lvModelCategory.SelectedItems.Count < 1)
-                return;
+            ListViewItem selectedItem = lvModelCategory.CheckedItems[0];
+            int index = lvModelCategory.CheckedItems[0].Index;
 
-            if (lvModelCategory.SelectedItems[0].Index >= (lvModelCategory.Items.Count - 1))
+            if (index == (lvModelCategory.Items.Count - 1)) {
                 return;
+            }
 
-            ListViewItem selectedItem = lvModelCategory.SelectedItems[0];
-            int index = lvModelCategory.SelectedItems[0].Index;
+            lvModelCategory.BeginUpdate();
+            btnMoveDownCategory.Enabled = false;
 
             lvModelCategory.Items.Remove(selectedItem);
             lvModelCategory.Items.Insert(index + 1, selectedItem);
             selectedItem.Selected = true;
 
-            ModelCategoryDao.updateDisplayOrder((Int64)lvModelCategory.Items[index].Tag, index);
-            ModelCategoryDao.updateDisplayOrder((Int64)lvModelCategory.Items[index + 1].Tag, index + 1);
+            ModelCategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index].Tag, index);
+            ModelCategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index + 1].Tag, index + 1);
+
+            selectedItem.EnsureVisible();
+            lvModelCategory.EndUpdate();
+            btnMoveDownCategory.Enabled = true;
         }
 
         private void btnAddCategory_Click(object sender, EventArgs e)
@@ -291,14 +349,24 @@ namespace Rejestracja
                 return;
             }
 
-            ModelCategoryDao.add(txtCategoryCode.Text, txtCategoryName.Text, cboModelClass.Text, ModelCategoryDao.getNextSortFlag());
+            int catId = ModelCategoryDao.add(txtCategoryCode.Text, txtCategoryName.Text, cboModelClass.Text, ModelCategoryDao.getNextSortFlag());
             loadModelCategories();
-            if(lvModelCategory.Items.Count > 0)
-                lvModelCategory.Items[lvModelCategory.Items.Count - 1].Selected = true;
+            setButtons();
+            foreach (ListViewItem item in lvModelCategory.Items) {
+                if ((int)item.Tag == catId) {
+                    item.EnsureVisible();
+                    item.Selected = true;
+                    break;
+                }
+            }
 
             txtCategoryCode.Focus();
             txtCategoryCode.SelectAll();
         }
+
+        #endregion
+
+        #region Publishers
 
         private void loadPublishers()
         {
@@ -320,37 +388,14 @@ namespace Rejestracja
             if (MessageBox.Show("Usunięcie wydawcy jest nieodwracalne. Wpisy używające usuniętych wydawców muszą być poprawione.", "Wydawcy", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Cancel) {
                 return;
             }
+
+            lvPublishers.BeginUpdate();
             foreach (ListViewItem item in lvPublishers.CheckedItems) {
                 int publisherId = (int)item.Tag;
                 PublisherDao.delete(publisherId);
+                lvPublishers.Items.Remove(item);
             }
-        }
-
-        private void loadAgeGroups()
-        {
-            lvAgeGroup.Items.Clear();
-
-            foreach (AgeGroup ageGroup in AgeGroupDao.getList())
-            {
-                ListViewItem li = new ListViewItem(new String[] { ageGroup.name, String.Format("{0} - {1}", ageGroup.bottomAge, ageGroup.upperAge) });
-                li.Tag = ageGroup.id;
-                lvAgeGroup.Items.Add(li);
-            }
-            lvAgeGroup.Columns[0].Width = -2;
-            lvAgeGroup.Columns[1].Width = -2;
-        }
-
-        private void deleteAgeGroups() {
-            if (lvAgeGroup.CheckedItems.Count == 0) {
-                return;
-            }
-            if (MessageBox.Show("Usunięcie group wiekowych jest nieodwracalne. Wpisy używające usuniętych group wiekowych muszą być poprawione.", "Grupy Wiekowe", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Cancel) {
-                return;
-            }
-            foreach (ListViewItem item in lvAgeGroup.CheckedItems) {
-                int ageGroupId = (int)item.Tag;
-                AgeGroupDao.delete(ageGroupId);
-            }
+            lvPublishers.EndUpdate();
         }
 
         private void btnAddPublisher_Click(object sender, EventArgs e)
@@ -371,14 +416,24 @@ namespace Rejestracja
                 return;
             }
 
-            PublisherDao.add(txtPublisherName.Text.Trim());
+            int pubId = PublisherDao.add(txtPublisherName.Text.Trim());
             loadPublishers();
-            if (lvPublishers.Items.Count > 0)
-                lvPublishers.Items[0].Selected = true;
+            setButtons();
+            foreach (ListViewItem item in lvPublishers.Items) {
+                if ((int)item.Tag == pubId) {
+                    item.EnsureVisible();
+                    item.Selected = true;
+                    break;
+                }
+            }
 
             txtPublisherName.Focus();
             txtPublisherName.SelectAll();
         }
+
+        #endregion
+
+        #region AgeGroup
 
         private void btnAddAgeGroup_Click(object sender, EventArgs e)
         {
@@ -393,8 +448,49 @@ namespace Rejestracja
                 txtAge.SelectAll();
                 return;
             }
-            AgeGroupDao.add(txtAgeGroup.Text, int.Parse(txtAge.Text));
+            int agId = AgeGroupDao.add(txtAgeGroup.Text, int.Parse(txtAge.Text));
             loadAgeGroups();
+            setButtons();
+
+            foreach (ListViewItem item in lvAgeGroup.Items) {
+                if ((int)item.Tag == agId) {
+                    item.EnsureVisible();
+                    item.Selected = true;
+                    break;
+                }
+            }
+
+            txtAgeGroup.Focus();
+            txtAgeGroup.SelectAll();
+        }
+
+        private void loadAgeGroups() {
+            lvAgeGroup.Items.Clear();
+
+            foreach (AgeGroup ageGroup in AgeGroupDao.getList()) {
+                ListViewItem li = new ListViewItem(new String[] { ageGroup.name, String.Format("{0} - {1}", ageGroup.bottomAge, ageGroup.upperAge) });
+                li.Tag = ageGroup.id;
+                lvAgeGroup.Items.Add(li);
+            }
+            lvAgeGroup.Columns[0].Width = -2;
+            lvAgeGroup.Columns[1].Width = -2;
+        }
+
+        private void deleteAgeGroups() {
+            if (lvAgeGroup.CheckedItems.Count == 0) {
+                return;
+            }
+            if (MessageBox.Show("Usunięcie group wiekowych jest nieodwracalne. Wpisy używające usuniętych group wiekowych muszą być poprawione.", "Grupy Wiekowe", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Cancel) {
+                return;
+            }
+
+            lvAgeGroup.BeginUpdate();
+            foreach (ListViewItem item in lvAgeGroup.CheckedItems) {
+                int ageGroupId = (int)item.Tag;
+                AgeGroupDao.delete(ageGroupId);
+                lvAgeGroup.Items.Remove(item);
+            }
+            lvAgeGroup.EndUpdate();
         }
 
         private void txtAge_KeyPress(object sender, KeyPressEventArgs e)
@@ -404,6 +500,10 @@ namespace Rejestracja
                 e.Handled = true;
             }
         }
+
+        #endregion
+
+        #region ModelClasses
 
         private void btnAddModelClass_Click(object sender, EventArgs e) {
             if (txtModelClassName.Text.Trim().Length < 1) {
@@ -420,10 +520,17 @@ namespace Rejestracja
                 return;
             }
 
-            ModelClassDao.add(txtModelClassName.Text.Trim());
+            int mcId = ModelClassDao.add(txtModelClassName.Text.Trim());
             loadModelClasses();
-            if (lvModelClass.Items.Count > 0)
-                lvModelClass.Items[0].Selected = true;
+            setButtons();
+            
+            foreach (ListViewItem item in lvModelClass.Items) {
+                if ((int)item.Tag == mcId) {
+                    item.EnsureVisible();
+                    item.Selected = true;
+                    break;
+                }
+            }
 
             txtModelClassName.Focus();
             txtModelClassName.SelectAll();
@@ -438,7 +545,7 @@ namespace Rejestracja
                 li.Tag = cls.id;
                 lvModelClass.Items.Add(li);
                 
-                cboModelClass.Items.Add(cls.name);
+                cboModelClass.Items.Add(new ComboBoxItem(cls.id, cls.name));
             }
             lvModelClass.Columns[0].Width = -2;
             if (cboModelClass.Items.Count > 0) {
@@ -450,14 +557,27 @@ namespace Rejestracja
             if (lvModelClass.CheckedItems.Count == 0) {
                 return;
             }
-            if (MessageBox.Show("Usunięcie klas jest nieodwracalne. Wpisy używające usuniętych klas muszą być poprawione.", "Klasy", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Cancel) {
+            if (MessageBox.Show("Usunięcie klas jest nieodwracalne. Usunięte zostaną również wszystkie kategorie przypisane do usuniętych klas.", "Klasy", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Cancel) {
                 return;
             }
+
+            lvModelClass.BeginUpdate();
+
+            //Here we cannot just remove because the ComboBox on category screen
+            //has to get reloaded as well
             foreach (ListViewItem item in lvModelClass.CheckedItems) {
-                int modelClassId = (int)item.Tag;
-                ModelClassDao.delete(modelClassId);
+                int clsId = (int)item.Tag;
+                ModelClassDao.delete(clsId);
             }
+            loadModelClasses();
+            loadModelCategories();
+            
+            lvModelClass.EndUpdate();
         }
+
+        #endregion
+
+        #region ModelScales
 
         private void loadModelScales() {
             lvModelScales.Items.Clear();
@@ -476,10 +596,60 @@ namespace Rejestracja
             if (MessageBox.Show("Usunięcie skali jest nieodwracalne. Wpisy używające usuniętych skali muszą być poprawione.", "Skale", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Cancel) {
                 return;
             }
+
+            lvModelScales.BeginUpdate();
             foreach (ListViewItem item in lvModelScales.CheckedItems) {
                 int scaleId = (int)item.Tag;
                 ModelScaleDao.delete(scaleId);
+                lvModelScales.Items.Remove(item);
             }
+            lvModelScales.EndUpdate();
+        }
+
+        private void btnMoveUpScale_Click(object sender, EventArgs e) {
+            if (lvModelScales.CheckedItems.Count < 1)
+                return;
+
+            if (lvModelScales.CheckedItems[0].Index < 1)
+                return;
+
+            lvModelScales.BeginUpdate();
+
+            ListViewItem item = lvModelScales.CheckedItems[0];
+            int index = lvModelScales.CheckedItems[0].Index;
+
+            lvModelScales.Items.Remove(item);
+            lvModelScales.Items.Insert(index - 1, item);
+            lvModelScales.Items[index - 1].Selected = true;
+
+            ModelScaleDao.updateDisplayOrder((int)lvModelScales.Items[index - 1].Tag, index - 1);
+            ModelScaleDao.updateDisplayOrder((int)lvModelScales.Items[index].Tag, index);
+
+            item.EnsureVisible();
+            lvModelScales.EndUpdate();
+        }
+
+        private void btnMoveDownScale_Click(object sender, EventArgs e) {
+            if (lvModelScales.CheckedItems.Count < 1)
+                return;
+
+            if (lvModelScales.CheckedItems[0].Index >= (lvModelScales.Items.Count - 1))
+                return;
+
+            lvModelScales.BeginUpdate();
+
+            ListViewItem item = lvModelScales.CheckedItems[0];
+            int index = lvModelScales.CheckedItems[0].Index;
+
+            lvModelScales.Items.Remove(item);
+            lvModelScales.Items.Insert(index + 1, item);
+            item.Selected = true;
+
+            ModelScaleDao.updateDisplayOrder((int)lvModelScales.Items[index].Tag, index);
+            ModelScaleDao.updateDisplayOrder((int)lvModelScales.Items[index + 1].Tag, index + 1);
+
+            item.EnsureVisible();
+            lvModelScales.EndUpdate();
         }
 
         private void btnAddModelScale_Click(object sender, EventArgs e) {
@@ -489,9 +659,26 @@ namespace Rejestracja
                 txtModelScale.SelectAll();
                 return;
             }
-            ModelScaleDao.add(txtModelScale.Text, ModelScaleDao.getNextSortFlag());
+            
+            int scaleId = ModelScaleDao.add(txtModelScale.Text, ModelScaleDao.getNextSortFlag());
             loadModelScales();
+            setButtons();
+
+            foreach (ListViewItem item in lvModelScales.Items) {
+                if ((int)item.Tag == scaleId) {
+                    item.EnsureVisible();
+                    item.Selected = true;
+                    break;
+                }
+            }
+
+            txtModelScale.Focus();
+            txtModelScale.SelectAll();
         }
+
+        #endregion
+
+        #region Awards
 
         private void loadAwards() {
             lvAwards.Items.Clear();
@@ -512,10 +699,14 @@ namespace Rejestracja
             if (MessageBox.Show("Usunięcie nagrody jest nieodwracalne. Unięte zostaną również wpisy w wynikach używające usuniętych nagród.", "Nagrody", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Cancel) {
                 return;
             }
+
+            lvAwards.BeginUpdate();
             foreach (ListViewItem item in lvAwards.CheckedItems) {
                 int awardId = (int)item.Tag;
                 AwardDao.delete(awardId);
+                lvAwards.Items.Remove(item);
             }
+            lvAwards.EndUpdate();
         }
 
         private void btnAddAward_Click(object sender, EventArgs e) {
@@ -530,21 +721,33 @@ namespace Rejestracja
                 return;
             }
 
-            AwardDao.add(awardTitle, AwardDao.getNextSortFlag());
+            int awardId = AwardDao.add(awardTitle, AwardDao.getNextSortFlag());
             loadAwards();
+            setButtons();
+
+            foreach (ListViewItem item in lvAwards.Items) {
+                if ((int)item.Tag == awardId) {
+                    item.EnsureVisible();
+                    item.Selected = true;
+                    break;
+                }
+            }
+
             txtAwardTitle.SelectAll();
             txtAwardTitle.Focus();
         }
 
         private void btnMoveUpAward_Click(object sender, EventArgs e) {
-            if (lvAwards.SelectedItems.Count < 1)
+            if (lvAwards.CheckedItems.Count < 1)
                 return;
 
-            if (lvAwards.SelectedItems[0].Index < 1)
+            if (lvAwards.CheckedItems[0].Index < 1)
                 return;
 
-            ListViewItem item = lvAwards.SelectedItems[0];
-            int index = lvAwards.SelectedItems[0].Index;
+            lvAwards.BeginUpdate();
+
+            ListViewItem item = lvAwards.CheckedItems[0];
+            int index = lvAwards.CheckedItems[0].Index;
 
             lvAwards.Items.Remove(item);
             lvAwards.Items.Insert(index - 1, item);
@@ -552,60 +755,34 @@ namespace Rejestracja
 
             AwardDao.updateDisplayOrder((int)lvAwards.Items[index - 1].Tag, index - 1);
             AwardDao.updateDisplayOrder((int)lvAwards.Items[index].Tag, index);
+
+            item.EnsureVisible();
+            lvAwards.EndUpdate();
         }
 
         private void btnMoveDownAward_Click(object sender, EventArgs e) {
-            if (lvAwards.SelectedItems.Count < 1)
+            if (lvAwards.CheckedItems.Count < 1)
                 return;
 
-            if (lvAwards.SelectedItems[0].Index >= (lvAwards.Items.Count - 1))
+            if (lvAwards.CheckedItems[0].Index >= (lvAwards.Items.Count - 1))
                 return;
 
-            ListViewItem selectedItem = lvAwards.SelectedItems[0];
-            int index = lvAwards.SelectedItems[0].Index;
+            lvAwards.BeginUpdate();
 
-            lvAwards.Items.Remove(selectedItem);
-            lvAwards.Items.Insert(index + 1, selectedItem);
-            selectedItem.Selected = true;
+            ListViewItem item = lvAwards.CheckedItems[0];
+            int index = lvAwards.CheckedItems[0].Index;
+
+            lvAwards.Items.Remove(item);
+            lvAwards.Items.Insert(index + 1, item);
+            item.Selected = true;
 
             AwardDao.updateDisplayOrder((int)lvAwards.Items[index].Tag, index);
             AwardDao.updateDisplayOrder((int)lvAwards.Items[index + 1].Tag, index + 1);
+
+            item.EnsureVisible();
+            lvAwards.EndUpdate();
         }
 
-        private void btnMoveUpScale_Click(object sender, EventArgs e) {
-            if (lvModelScales.SelectedItems.Count < 1)
-                return;
-
-            if (lvModelScales.SelectedItems[0].Index < 1)
-                return;
-
-            ListViewItem item = lvModelScales.SelectedItems[0];
-            int index = lvModelScales.SelectedItems[0].Index;
-
-            lvModelScales.Items.Remove(item);
-            lvModelScales.Items.Insert(index - 1, item);
-            lvModelScales.Items[index - 1].Selected = true;
-
-            ModelScaleDao.updateDisplayOrder((int)lvModelScales.Items[index - 1].Tag, index - 1);
-            ModelScaleDao.updateDisplayOrder((int)lvModelScales.Items[index].Tag, index);
-        }
-
-        private void btnMoveDownScale_Click(object sender, EventArgs e) {
-            if (lvModelScales.SelectedItems.Count < 1)
-                return;
-
-            if (lvModelScales.SelectedItems[0].Index >= (lvModelScales.Items.Count - 1))
-                return;
-
-            ListViewItem selectedItem = lvModelScales.SelectedItems[0];
-            int index = lvModelScales.SelectedItems[0].Index;
-
-            lvModelScales.Items.Remove(selectedItem);
-            lvModelScales.Items.Insert(index + 1, selectedItem);
-            selectedItem.Selected = true;
-
-            ModelScaleDao.updateDisplayOrder((int)lvModelScales.Items[index].Tag, index);
-            ModelScaleDao.updateDisplayOrder((int)lvModelScales.Items[index + 1].Tag, index + 1);
-        }
+        #endregion
     }
 }

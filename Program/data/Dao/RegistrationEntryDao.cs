@@ -324,16 +324,17 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static void changeCategory(int entryId, int modelCategoryId, String modelCategory) {
+        public static void changeCategory(int entryId, int modelCategoryId, String modelCategory, String modelClass) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"UPDATE Registration SET ModelCategory = @ModelCategory, ModelCategoryId = @ModelCategoryId WHERE EntryId = @EntryId", cn)) {
+                @"UPDATE Registration SET ModelCategory = @ModelCategory, ModelCategoryId = @ModelCategoryId, ModelClass = @ModelClass WHERE EntryId = @EntryId", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@modelCategory", System.Data.DbType.String).Value = modelCategory;
-                cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int32).Value = modelCategoryId;
-                cm.Parameters.Add("@entryId", System.Data.DbType.Int32).Value = entryId;
+                cm.Parameters.Add("@ModelCategory", System.Data.DbType.String).Value = modelCategory;
+                cm.Parameters.Add("@ModelCategoryId", System.Data.DbType.Int32).Value = modelCategoryId;
+                cm.Parameters.Add("@ModelClass", System.Data.DbType.String).Value = modelClass;
+                cm.Parameters.Add("@EntryId", System.Data.DbType.Int32).Value = entryId;
 
                 cm.ExecuteNonQuery();
             }

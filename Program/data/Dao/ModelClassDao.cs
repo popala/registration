@@ -20,7 +20,7 @@ namespace Rejestracja.Data.Dao
                 {
                     while (dr.Read())
                         yield return new ModelClass(
-                            dr.GetInt64(0),
+                            dr.GetInt32(0),
                             dr.GetString(1)
                         );
                 }
@@ -56,7 +56,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static long add(String name)
+        public static int add(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO ModelClass(Name) VALUES(@Name)", cn))
@@ -67,11 +67,11 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@Name", System.Data.DbType.String, ModelClass.MAX_NAME_LENGTH).Value = name;
                 cm.ExecuteNonQuery();
 
-                return cn.LastInsertRowId;
+                return (int)cn.LastInsertRowId;
             }
         }
 
-        public static ModelClass get(long id)
+        public static ModelClass get(int id)
         {
             ModelClass ret = null;
 
@@ -81,13 +81,13 @@ namespace Rejestracja.Data.Dao
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", DbType.Int32).Value = id;
 
                 using (SQLiteDataReader dr = cm.ExecuteReader())
                 {
                     if (dr.Read())
                         ret = new ModelClass(
-                            dr.GetInt64(0),
+                            dr.GetInt32(0),
                             dr.GetString(1)
                         );
                 }
@@ -95,7 +95,7 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public static void update(long id, String name)
+        public static void update(int id, String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"UPDATE ModelClass SET Name = @Name WHERE Id = @Id", cn))
@@ -103,21 +103,24 @@ namespace Rejestracja.Data.Dao
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
                 cm.Parameters.Add("@Name", System.Data.DbType.String, ModelClass.MAX_NAME_LENGTH).Value = name;
                 cm.ExecuteNonQuery();
             }
         }
 
-        public static void delete(long id)
+        public static void delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM ModelClass WHERE Id = @Id", cn))
+            using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM ModelCategory WHERE ModelClass = (SELECT Name FROM ModelClass WHERE Id = @Id)", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
+                cm.ExecuteNonQuery();
+
+                cm.CommandText = @"DELETE FROM ModelClass WHERE Id = @Id";
                 cm.ExecuteNonQuery();
             }
         }
