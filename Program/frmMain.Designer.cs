@@ -57,6 +57,7 @@
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuRPrintAll = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRPrintSorted = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRPrintById = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuRSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuJudging = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,19 +86,44 @@
             this.cmsRCDeleteResult = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRCPrintDiploma = new System.Windows.Forms.ToolStripMenuItem();
             this.tpStats = new System.Windows.Forms.TabPage();
-            this.btnRefreshStats = new System.Windows.Forms.Button();
             this.lvStats = new System.Windows.Forms.ListView();
             this.tpResults = new System.Windows.Forms.TabPage();
-            this.btnAddResults = new System.Windows.Forms.Button();
             this.lvResults = new System.Windows.Forms.ListView();
             this.tpRegistration = new System.Windows.Forms.TabPage();
-            this.lblErrorCount = new System.Windows.Forms.LinkLabel();
-            this.btnClearSearch = new System.Windows.Forms.Button();
-            this.btnRegister = new System.Windows.Forms.Button();
-            this.btnFilter = new System.Windows.Forms.Button();
-            this.txtFilter = new System.Windows.Forms.TextBox();
             this.lvEntries = new System.Windows.Forms.ListView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.tsBtnNewRegistration = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsTxtSearch = new System.Windows.Forms.ToolStripTextBox();
+            this.tsBtnClearFilter = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnRefresh = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator11 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnPrintAll = new System.Windows.Forms.ToolStripSplitButton();
+            this.tsBPAlphabetic = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsBPById = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsBtnPrintSelected = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnChangeCategory = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnDeleteSelected = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
+            this.btnSettings = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnView = new System.Windows.Forms.ToolStripSplitButton();
+            this.tsBVStandard = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsBVGroupped = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.tsBtnMergeCategories = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnJudgingForms = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnAddResults = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
+            this.tsBtnResults = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnCategoryDiplomas = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnAwardDiplomas = new System.Windows.Forms.ToolStripButton();
+            this.tsBtnSummary = new System.Windows.Forms.ToolStripButton();
+            this.tsErrorSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.tsBtnErrorCount = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -106,6 +132,7 @@
             this.tpResults.SuspendLayout();
             this.tpRegistration.SuspendLayout();
             this.tabControl1.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -234,6 +261,7 @@
             this.toolStripSeparator7,
             this.mnuRPrintAll,
             this.mnuRPrintSorted,
+            this.mnuRPrintById,
             this.toolStripSeparator5,
             this.mnuRSettings});
             this.mnuRegistration.Name = "mnuRegistration";
@@ -331,10 +359,17 @@
             // 
             // mnuRPrintSorted
             // 
-            this.mnuRPrintSorted.CheckOnClick = true;
             this.mnuRPrintSorted.Name = "mnuRPrintSorted";
             this.mnuRPrintSorted.Size = new System.Drawing.Size(279, 22);
             this.mnuRPrintSorted.Text = "Drukuj karty alfabetycznie";
+            this.mnuRPrintSorted.Click += new System.EventHandler(this.mnuRPrintSorted_Click);
+            // 
+            // mnuRPrintById
+            // 
+            this.mnuRPrintById.Name = "mnuRPrintById";
+            this.mnuRPrintById.Size = new System.Drawing.Size(279, 22);
+            this.mnuRPrintById.Text = "Drukuj karty wg numeru startowego";
+            this.mnuRPrintById.Click += new System.EventHandler(this.mnuRPrintById_Click);
             // 
             // toolStripSeparator5
             // 
@@ -426,6 +461,7 @@
             // 
             // mnuRsSummary
             // 
+            this.mnuRsSummary.Image = ((System.Drawing.Image)(resources.GetObject("mnuRsSummary.Image")));
             this.mnuRsSummary.Name = "mnuRsSummary";
             this.mnuRsSummary.Size = new System.Drawing.Size(208, 22);
             this.mnuRsSummary.Text = "Podsumowanie konkursu";
@@ -544,142 +580,58 @@
             // 
             // tpStats
             // 
-            this.tpStats.Controls.Add(this.btnRefreshStats);
             this.tpStats.Controls.Add(this.lvStats);
             this.tpStats.Location = new System.Drawing.Point(4, 22);
             this.tpStats.Name = "tpStats";
-            this.tpStats.Size = new System.Drawing.Size(1171, 649);
+            this.tpStats.Size = new System.Drawing.Size(1171, 597);
             this.tpStats.TabIndex = 3;
             this.tpStats.Text = "Podsumowanie";
             this.tpStats.UseVisualStyleBackColor = true;
-            // 
-            // btnRefreshStats
-            // 
-            this.btnRefreshStats.Location = new System.Drawing.Point(5, 5);
-            this.btnRefreshStats.Name = "btnRefreshStats";
-            this.btnRefreshStats.Size = new System.Drawing.Size(75, 25);
-            this.btnRefreshStats.TabIndex = 1;
-            this.btnRefreshStats.Text = "Odśwież";
-            this.btnRefreshStats.UseVisualStyleBackColor = true;
-            this.btnRefreshStats.Click += new System.EventHandler(this.btnRefreshStats_Click);
             // 
             // lvStats
             // 
             this.lvStats.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvStats.Location = new System.Drawing.Point(0, 35);
+            this.lvStats.Location = new System.Drawing.Point(0, 0);
             this.lvStats.MultiSelect = false;
             this.lvStats.Name = "lvStats";
-            this.lvStats.Size = new System.Drawing.Size(1171, 593);
+            this.lvStats.Size = new System.Drawing.Size(1171, 597);
             this.lvStats.TabIndex = 0;
             this.lvStats.UseCompatibleStateImageBehavior = false;
             // 
             // tpResults
             // 
-            this.tpResults.Controls.Add(this.btnAddResults);
             this.tpResults.Controls.Add(this.lvResults);
             this.tpResults.Location = new System.Drawing.Point(4, 22);
             this.tpResults.Name = "tpResults";
-            this.tpResults.Size = new System.Drawing.Size(1171, 649);
+            this.tpResults.Size = new System.Drawing.Size(1171, 597);
             this.tpResults.TabIndex = 2;
             this.tpResults.Text = "Wyniki";
             this.tpResults.UseVisualStyleBackColor = true;
-            // 
-            // btnAddResults
-            // 
-            this.btnAddResults.Location = new System.Drawing.Point(5, 5);
-            this.btnAddResults.Name = "btnAddResults";
-            this.btnAddResults.Size = new System.Drawing.Size(154, 25);
-            this.btnAddResults.TabIndex = 20;
-            this.btnAddResults.Text = "Dodaj Wyniki";
-            this.btnAddResults.UseVisualStyleBackColor = true;
-            this.btnAddResults.Click += new System.EventHandler(this.btnAddResults_Click);
             // 
             // lvResults
             // 
             this.lvResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvResults.Location = new System.Drawing.Point(0, 36);
+            this.lvResults.Location = new System.Drawing.Point(0, 0);
             this.lvResults.Name = "lvResults";
-            this.lvResults.Size = new System.Drawing.Size(1175, 592);
+            this.lvResults.Size = new System.Drawing.Size(1175, 597);
             this.lvResults.TabIndex = 19;
             this.lvResults.UseCompatibleStateImageBehavior = false;
             this.lvResults.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lvResults_MouseDown);
             // 
             // tpRegistration
             // 
-            this.tpRegistration.Controls.Add(this.lblErrorCount);
-            this.tpRegistration.Controls.Add(this.btnClearSearch);
-            this.tpRegistration.Controls.Add(this.btnRegister);
-            this.tpRegistration.Controls.Add(this.btnFilter);
-            this.tpRegistration.Controls.Add(this.txtFilter);
             this.tpRegistration.Controls.Add(this.lvEntries);
             this.tpRegistration.Location = new System.Drawing.Point(4, 22);
             this.tpRegistration.Name = "tpRegistration";
             this.tpRegistration.Padding = new System.Windows.Forms.Padding(3);
-            this.tpRegistration.Size = new System.Drawing.Size(1171, 649);
+            this.tpRegistration.Size = new System.Drawing.Size(1171, 597);
             this.tpRegistration.TabIndex = 0;
             this.tpRegistration.Text = "Rejestracja";
             this.tpRegistration.UseVisualStyleBackColor = true;
-            // 
-            // lblErrorCount
-            // 
-            this.lblErrorCount.AutoSize = true;
-            this.lblErrorCount.LinkColor = System.Drawing.Color.Red;
-            this.lblErrorCount.Location = new System.Drawing.Point(178, 11);
-            this.lblErrorCount.Name = "lblErrorCount";
-            this.lblErrorCount.Size = new System.Drawing.Size(67, 13);
-            this.lblErrorCount.TabIndex = 9;
-            this.lblErrorCount.TabStop = true;
-            this.lblErrorCount.Text = "lblErrorCount";
-            this.lblErrorCount.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lblErrorCount_LinkClicked);
-            // 
-            // btnClearSearch
-            // 
-            this.btnClearSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearSearch.Location = new System.Drawing.Point(1069, 5);
-            this.btnClearSearch.Name = "btnClearSearch";
-            this.btnClearSearch.Size = new System.Drawing.Size(92, 25);
-            this.btnClearSearch.TabIndex = 8;
-            this.btnClearSearch.TabStop = false;
-            this.btnClearSearch.Text = "Odśwież (F5)";
-            this.btnClearSearch.UseVisualStyleBackColor = true;
-            this.btnClearSearch.Click += new System.EventHandler(this.btnClearSearch_Click);
-            // 
-            // btnRegister
-            // 
-            this.btnRegister.Location = new System.Drawing.Point(5, 5);
-            this.btnRegister.Name = "btnRegister";
-            this.btnRegister.Size = new System.Drawing.Size(154, 25);
-            this.btnRegister.TabIndex = 0;
-            this.btnRegister.Text = "Nowa Rejestracja (Ctrl+N)";
-            this.btnRegister.UseVisualStyleBackColor = true;
-            this.btnRegister.Click += new System.EventHandler(this.btnRegister_Click);
-            // 
-            // btnFilter
-            // 
-            this.btnFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnFilter.Location = new System.Drawing.Point(978, 5);
-            this.btnFilter.Name = "btnFilter";
-            this.btnFilter.Size = new System.Drawing.Size(85, 25);
-            this.btnFilter.TabIndex = 4;
-            this.btnFilter.TabStop = false;
-            this.btnFilter.Text = "Szukaj (Ctrl+F)";
-            this.btnFilter.UseVisualStyleBackColor = true;
-            this.btnFilter.Click += new System.EventHandler(this.btnFilter_Click);
-            // 
-            // txtFilter
-            // 
-            this.txtFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFilter.Location = new System.Drawing.Point(801, 8);
-            this.txtFilter.Name = "txtFilter";
-            this.txtFilter.Size = new System.Drawing.Size(171, 20);
-            this.txtFilter.TabIndex = 3;
-            this.txtFilter.TabStop = false;
-            this.txtFilter.TextChanged += new System.EventHandler(this.txtFilter_TextChanged);
-            this.txtFilter.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtFilter_KeyUp);
             // 
             // lvEntries
             // 
@@ -689,10 +641,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvEntries.FullRowSelect = true;
             this.lvEntries.HideSelection = false;
-            this.lvEntries.Location = new System.Drawing.Point(0, 34);
+            this.lvEntries.Location = new System.Drawing.Point(0, 0);
             this.lvEntries.MultiSelect = false;
             this.lvEntries.Name = "lvEntries";
-            this.lvEntries.Size = new System.Drawing.Size(1168, 594);
+            this.lvEntries.Size = new System.Drawing.Size(1168, 597);
             this.lvEntries.TabIndex = 2;
             this.lvEntries.UseCompatibleStateImageBehavior = false;
             this.lvEntries.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvEntries_ColumnClick);
@@ -709,17 +661,320 @@
             this.tabControl1.Controls.Add(this.tpRegistration);
             this.tabControl1.Controls.Add(this.tpResults);
             this.tabControl1.Controls.Add(this.tpStats);
-            this.tabControl1.Location = new System.Drawing.Point(3, 23);
+            this.tabControl1.Location = new System.Drawing.Point(0, 50);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1179, 675);
+            this.tabControl1.Size = new System.Drawing.Size(1179, 623);
             this.tabControl1.TabIndex = 1;
+            // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsBtnNewRegistration,
+            this.toolStripSeparator14,
+            this.tsTxtSearch,
+            this.tsBtnClearFilter,
+            this.tsBtnRefresh,
+            this.toolStripSeparator11,
+            this.btnPrintAll,
+            this.tsBtnPrintSelected,
+            this.tsBtnChangeCategory,
+            this.tsBtnDeleteSelected,
+            this.toolStripSeparator10,
+            this.toolStripLabel2,
+            this.btnSettings,
+            this.tsBtnView,
+            this.toolStripSeparator12,
+            this.toolStripLabel1,
+            this.tsBtnMergeCategories,
+            this.tsBtnJudgingForms,
+            this.tsBtnAddResults,
+            this.toolStripSeparator13,
+            this.toolStripLabel3,
+            this.tsBtnResults,
+            this.tsBtnCategoryDiplomas,
+            this.tsBtnAwardDiplomas,
+            this.tsBtnSummary,
+            this.tsErrorSeparator,
+            this.tsBtnErrorCount});
+            this.toolStrip1.Location = new System.Drawing.Point(0, 24);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(1182, 25);
+            this.toolStrip1.TabIndex = 12;
+            this.toolStrip1.Text = "toolStrip1";
+            // 
+            // tsBtnNewRegistration
+            // 
+            this.tsBtnNewRegistration.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnNewRegistration.Image")));
+            this.tsBtnNewRegistration.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnNewRegistration.Name = "tsBtnNewRegistration";
+            this.tsBtnNewRegistration.Size = new System.Drawing.Size(117, 22);
+            this.tsBtnNewRegistration.Text = "Nowa Rejestracja";
+            this.tsBtnNewRegistration.ToolTipText = "Nowa Rejestracja (Ctrl + N)";
+            this.tsBtnNewRegistration.Click += new System.EventHandler(this.tsBtnNewRegistration_Click);
+            // 
+            // toolStripSeparator14
+            // 
+            this.toolStripSeparator14.Name = "toolStripSeparator14";
+            this.toolStripSeparator14.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsTxtSearch
+            // 
+            this.tsTxtSearch.Name = "tsTxtSearch";
+            this.tsTxtSearch.Size = new System.Drawing.Size(100, 25);
+            this.tsTxtSearch.ToolTipText = "Szukaj (Ctrl + F)";
+            this.tsTxtSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tsTxtSearch_KeyUp);
+            this.tsTxtSearch.TextChanged += new System.EventHandler(this.tsTxtSearch_TextChanged);
+            // 
+            // tsBtnClearFilter
+            // 
+            this.tsBtnClearFilter.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnClearFilter.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnClearFilter.Image")));
+            this.tsBtnClearFilter.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnClearFilter.Name = "tsBtnClearFilter";
+            this.tsBtnClearFilter.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnClearFilter.Text = "Wyczyść Filtr";
+            this.tsBtnClearFilter.Click += new System.EventHandler(this.tsBtnClearFilter_Click);
+            // 
+            // tsBtnRefresh
+            // 
+            this.tsBtnRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnRefresh.Image")));
+            this.tsBtnRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnRefresh.Name = "tsBtnRefresh";
+            this.tsBtnRefresh.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnRefresh.Text = "Odśwież";
+            this.tsBtnRefresh.Click += new System.EventHandler(this.tsBtnRefresh_Click);
+            // 
+            // toolStripSeparator11
+            // 
+            this.toolStripSeparator11.Name = "toolStripSeparator11";
+            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 25);
+            // 
+            // btnPrintAll
+            // 
+            this.btnPrintAll.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnPrintAll.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsBPAlphabetic,
+            this.tsBPById});
+            this.btnPrintAll.Image = ((System.Drawing.Image)(resources.GetObject("btnPrintAll.Image")));
+            this.btnPrintAll.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnPrintAll.Name = "btnPrintAll";
+            this.btnPrintAll.Size = new System.Drawing.Size(32, 22);
+            this.btnPrintAll.Text = "Drukuj Wszystkie Karty Startowe";
+            this.btnPrintAll.ToolTipText = "Drukuj Wszystkie Karty Startowe (Ctrl + P)";
+            this.btnPrintAll.ButtonClick += new System.EventHandler(this.btnPrintAll_ButtonClick);
+            // 
+            // tsBPAlphabetic
+            // 
+            this.tsBPAlphabetic.CheckOnClick = true;
+            this.tsBPAlphabetic.Name = "tsBPAlphabetic";
+            this.tsBPAlphabetic.Size = new System.Drawing.Size(202, 22);
+            this.tsBPAlphabetic.Text = "Alfabetycznie";
+            this.tsBPAlphabetic.Click += new System.EventHandler(this.tsBPAlphabetic_Click);
+            // 
+            // tsBPById
+            // 
+            this.tsBPById.CheckOnClick = true;
+            this.tsBPById.Name = "tsBPById";
+            this.tsBPById.Size = new System.Drawing.Size(202, 22);
+            this.tsBPById.Text = "Wg Numeru Startowego";
+            this.tsBPById.Click += new System.EventHandler(this.tsBPById_Click);
+            // 
+            // tsBtnPrintSelected
+            // 
+            this.tsBtnPrintSelected.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnPrintSelected.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnPrintSelected.Image")));
+            this.tsBtnPrintSelected.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnPrintSelected.Name = "tsBtnPrintSelected";
+            this.tsBtnPrintSelected.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnPrintSelected.Text = "Drukuj Zaznaczone Karty Startowe";
+            this.tsBtnPrintSelected.Click += new System.EventHandler(this.tsBtnPrintSelected_Click);
+            // 
+            // tsBtnChangeCategory
+            // 
+            this.tsBtnChangeCategory.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnChangeCategory.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnChangeCategory.Image")));
+            this.tsBtnChangeCategory.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnChangeCategory.Name = "tsBtnChangeCategory";
+            this.tsBtnChangeCategory.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnChangeCategory.Text = "Zmień Kategorię Zaznaczonych Rejestracji";
+            this.tsBtnChangeCategory.Click += new System.EventHandler(this.tsBtnChangeCategory_Click);
+            // 
+            // tsBtnDeleteSelected
+            // 
+            this.tsBtnDeleteSelected.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnDeleteSelected.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnDeleteSelected.Image")));
+            this.tsBtnDeleteSelected.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnDeleteSelected.Name = "tsBtnDeleteSelected";
+            this.tsBtnDeleteSelected.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnDeleteSelected.Text = "Usuń Zaznaczone Rejestracje";
+            this.tsBtnDeleteSelected.Click += new System.EventHandler(this.tsBtnDeleteSelected_Click);
+            // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel2
+            // 
+            this.toolStripLabel2.Name = "toolStripLabel2";
+            this.toolStripLabel2.Size = new System.Drawing.Size(64, 22);
+            this.toolStripLabel2.Text = "Ustawienia";
+            // 
+            // btnSettings
+            // 
+            this.btnSettings.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnSettings.Image = ((System.Drawing.Image)(resources.GetObject("btnSettings.Image")));
+            this.btnSettings.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnSettings.Name = "btnSettings";
+            this.btnSettings.Size = new System.Drawing.Size(23, 22);
+            this.btnSettings.Text = "Ustawienia Konkursu";
+            this.btnSettings.Click += new System.EventHandler(this.btnSettings_Click);
+            // 
+            // tsBtnView
+            // 
+            this.tsBtnView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsBVStandard,
+            this.tsBVGroupped});
+            this.tsBtnView.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnView.Image")));
+            this.tsBtnView.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnView.Name = "tsBtnView";
+            this.tsBtnView.Size = new System.Drawing.Size(32, 22);
+            this.tsBtnView.Text = "Widok";
+            this.tsBtnView.ButtonClick += new System.EventHandler(this.tsBtnView_ButtonClick);
+            // 
+            // tsBVStandard
+            // 
+            this.tsBVStandard.Name = "tsBVStandard";
+            this.tsBVStandard.Size = new System.Drawing.Size(143, 22);
+            this.tsBVStandard.Text = "Standardowy";
+            this.tsBVStandard.Click += new System.EventHandler(this.tsBVStandard_Click);
+            // 
+            // tsBVGroupped
+            // 
+            this.tsBVGroupped.Name = "tsBVGroupped";
+            this.tsBVGroupped.Size = new System.Drawing.Size(143, 22);
+            this.tsBVGroupped.Text = "Grupowany";
+            this.tsBVGroupped.Click += new System.EventHandler(this.tsBVGroupped_Click);
+            // 
+            // toolStripSeparator12
+            // 
+            this.toolStripSeparator12.Name = "toolStripSeparator12";
+            this.toolStripSeparator12.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(72, 22);
+            this.toolStripLabel1.Text = "Sędziowanie";
+            // 
+            // tsBtnMergeCategories
+            // 
+            this.tsBtnMergeCategories.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnMergeCategories.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnMergeCategories.Image")));
+            this.tsBtnMergeCategories.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnMergeCategories.Name = "tsBtnMergeCategories";
+            this.tsBtnMergeCategories.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnMergeCategories.Text = "Łączenie Kategorii";
+            this.tsBtnMergeCategories.Click += new System.EventHandler(this.tsBtnMergeCategories_Click);
+            // 
+            // tsBtnJudgingForms
+            // 
+            this.tsBtnJudgingForms.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnJudgingForms.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnJudgingForms.Image")));
+            this.tsBtnJudgingForms.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnJudgingForms.Name = "tsBtnJudgingForms";
+            this.tsBtnJudgingForms.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnJudgingForms.Text = "Karty Sędziowania";
+            this.tsBtnJudgingForms.Click += new System.EventHandler(this.tsBtnJudgingForms_Click);
+            // 
+            // tsBtnAddResults
+            // 
+            this.tsBtnAddResults.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnAddResults.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnAddResults.Image")));
+            this.tsBtnAddResults.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnAddResults.Name = "tsBtnAddResults";
+            this.tsBtnAddResults.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnAddResults.Text = "Dodawanie Wyników";
+            this.tsBtnAddResults.Click += new System.EventHandler(this.tsBtnAddResults_Click);
+            // 
+            // toolStripSeparator13
+            // 
+            this.toolStripSeparator13.Name = "toolStripSeparator13";
+            this.toolStripSeparator13.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabel3
+            // 
+            this.toolStripLabel3.Name = "toolStripLabel3";
+            this.toolStripLabel3.Size = new System.Drawing.Size(43, 22);
+            this.toolStripLabel3.Text = "Wyniki";
+            // 
+            // tsBtnResults
+            // 
+            this.tsBtnResults.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnResults.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnResults.Image")));
+            this.tsBtnResults.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnResults.Name = "tsBtnResults";
+            this.tsBtnResults.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnResults.Text = "Lista Wyników";
+            this.tsBtnResults.Click += new System.EventHandler(this.tsBtnResults_Click);
+            // 
+            // tsBtnCategoryDiplomas
+            // 
+            this.tsBtnCategoryDiplomas.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnCategoryDiplomas.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnCategoryDiplomas.Image")));
+            this.tsBtnCategoryDiplomas.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnCategoryDiplomas.Name = "tsBtnCategoryDiplomas";
+            this.tsBtnCategoryDiplomas.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnCategoryDiplomas.Text = "Dyplomy - Kategorie";
+            this.tsBtnCategoryDiplomas.Click += new System.EventHandler(this.tsBtnCategoryDiplomas_Click);
+            // 
+            // tsBtnAwardDiplomas
+            // 
+            this.tsBtnAwardDiplomas.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnAwardDiplomas.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnAwardDiplomas.Image")));
+            this.tsBtnAwardDiplomas.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnAwardDiplomas.Name = "tsBtnAwardDiplomas";
+            this.tsBtnAwardDiplomas.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnAwardDiplomas.Text = "Dyplomy - Nagrody";
+            this.tsBtnAwardDiplomas.Click += new System.EventHandler(this.tsBtnAwardDiplomas_Click);
+            // 
+            // tsBtnSummary
+            // 
+            this.tsBtnSummary.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tsBtnSummary.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnSummary.Image")));
+            this.tsBtnSummary.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnSummary.Name = "tsBtnSummary";
+            this.tsBtnSummary.Size = new System.Drawing.Size(23, 22);
+            this.tsBtnSummary.Text = "Podsumowanie Konkursu";
+            this.tsBtnSummary.Click += new System.EventHandler(this.tsBtnSummary_Click);
+            // 
+            // tsErrorSeparator
+            // 
+            this.tsErrorSeparator.Name = "tsErrorSeparator";
+            this.tsErrorSeparator.Size = new System.Drawing.Size(6, 25);
+            // 
+            // tsBtnErrorCount
+            // 
+            this.tsBtnErrorCount.CheckOnClick = true;
+            this.tsBtnErrorCount.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.tsBtnErrorCount.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.tsBtnErrorCount.ForeColor = System.Drawing.Color.Red;
+            this.tsBtnErrorCount.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnErrorCount.Image")));
+            this.tsBtnErrorCount.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsBtnErrorCount.Name = "tsBtnErrorCount";
+            this.tsBtnErrorCount.Size = new System.Drawing.Size(96, 22);
+            this.tsBtnErrorCount.Text = "Błędy Rejestracji";
+            this.tsBtnErrorCount.Click += new System.EventHandler(this.tsBtnErrorCount_Click);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1182, 698);
+            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusBar);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.menuStrip1);
@@ -730,7 +985,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.Shown += new System.EventHandler(this.frmMain_Shown);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMain_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.frmMain_KeyUp);
             this.Resize += new System.EventHandler(this.frmMain_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -741,8 +996,9 @@
             this.tpStats.ResumeLayout(false);
             this.tpResults.ResumeLayout(false);
             this.tpRegistration.ResumeLayout(false);
-            this.tpRegistration.PerformLayout();
             this.tabControl1.ResumeLayout(false);
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -788,16 +1044,10 @@
         private System.Windows.Forms.ToolStripMenuItem mnuRVGroupped;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.TabPage tpStats;
-        private System.Windows.Forms.Button btnRefreshStats;
         private System.Windows.Forms.ListView lvStats;
         private System.Windows.Forms.TabPage tpResults;
-        private System.Windows.Forms.Button btnAddResults;
         private System.Windows.Forms.ListView lvResults;
         private System.Windows.Forms.TabPage tpRegistration;
-        private System.Windows.Forms.Button btnClearSearch;
-        private System.Windows.Forms.Button btnRegister;
-        private System.Windows.Forms.Button btnFilter;
-        private System.Windows.Forms.TextBox txtFilter;
         private System.Windows.Forms.ListView lvEntries;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.ToolStripMenuItem mnuResults;
@@ -815,9 +1065,41 @@
         private System.Windows.Forms.ToolStripMenuItem mnuRSDelete;
         private System.Windows.Forms.ToolStripMenuItem mnuRSettings;
         private System.Windows.Forms.ToolStripMenuItem mnuRPrintAll;
-        private System.Windows.Forms.LinkLabel lblErrorCount;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripMenuItem mnuRsSummary;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton tsBtnNewRegistration;
+        private System.Windows.Forms.ToolStripSplitButton tsBtnView;
+        private System.Windows.Forms.ToolStripMenuItem tsBVStandard;
+        private System.Windows.Forms.ToolStripMenuItem tsBVGroupped;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator11;
+        private System.Windows.Forms.ToolStripSplitButton btnPrintAll;
+        private System.Windows.Forms.ToolStripMenuItem tsBPAlphabetic;
+        private System.Windows.Forms.ToolStripMenuItem tsBPById;
+        private System.Windows.Forms.ToolStripButton tsBtnPrintSelected;
+        private System.Windows.Forms.ToolStripButton tsBtnChangeCategory;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator10;
+        private System.Windows.Forms.ToolStripButton btnSettings;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator12;
+        private System.Windows.Forms.ToolStripButton tsBtnDeleteSelected;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel2;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripButton tsBtnMergeCategories;
+        private System.Windows.Forms.ToolStripButton tsBtnJudgingForms;
+        private System.Windows.Forms.ToolStripButton tsBtnAddResults;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel3;
+        private System.Windows.Forms.ToolStripButton tsBtnResults;
+        private System.Windows.Forms.ToolStripButton tsBtnCategoryDiplomas;
+        private System.Windows.Forms.ToolStripButton tsBtnAwardDiplomas;
+        private System.Windows.Forms.ToolStripButton tsBtnSummary;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
+        private System.Windows.Forms.ToolStripButton tsBtnRefresh;
+        private System.Windows.Forms.ToolStripTextBox tsTxtSearch;
+        private System.Windows.Forms.ToolStripSeparator tsErrorSeparator;
+        private System.Windows.Forms.ToolStripButton tsBtnErrorCount;
+        private System.Windows.Forms.ToolStripMenuItem mnuRPrintById;
+        private System.Windows.Forms.ToolStripButton tsBtnClearFilter;
 
 
     }

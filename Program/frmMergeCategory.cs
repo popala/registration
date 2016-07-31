@@ -1,5 +1,6 @@
 ﻿using Rejestracja.Data.Dao;
 using Rejestracja.Data.Objects;
+using Rejestracja.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -111,6 +112,7 @@ namespace Rejestracja {
             }
 
             loadSummary((int)cboMaxCount.SelectedItem);
+            Options.set("ValidateAgeGroup", "false");
             Application.UseWaitCursor = false;
         }
     }

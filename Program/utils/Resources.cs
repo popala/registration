@@ -30,6 +30,17 @@ namespace Rejestracja.Utils {
     </body>
 </html>";
 
+        public static String ResultsTemplateV2 =
+@"<html>
+    <head>
+        <META HTTP-EQUIV=""Content-type"" CONTENT=""text/html; charset=UTF-8"">
+        <title>Wyniki Konkursu</title>
+    </head>
+    <body>
+        [WYNIKI]
+    </body>
+</html>";
+
         public static String SummaryTemplate =
 @"<html>
     <head>

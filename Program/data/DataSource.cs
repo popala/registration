@@ -134,18 +134,23 @@ namespace Rejestracja {
             return String.Format("\"{0}\"", value);
         }
 
-        private IEnumerable<RegistrationEntry> parseCSVFile(String filePath, FileImportFieldMap fieldMap, bool hasHeaders) {
-            
+        private List<RegistrationEntry> parseCSVFile(String filePath, FileImportFieldMap fieldMap, bool hasHeaders, String badRecordFile, out int badRecordCount) {
+
+            List<RegistrationEntry> ret = new List<RegistrationEntry>();
+
             TextInfo textInfo = new CultureInfo("pl-PL", false).TextInfo;
             List<String> publishers = PublisherDao.getSimpleList().ToList<String>();
             List<ModelCategory> modelCategories = ModelCategoryDao.getList().ToList<ModelCategory>();
             List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList<AgeGroup>();
             List<String> modelClasses = ModelClassDao.getSimpleList().ToList<String>();
 
+            badRecordCount = 0;
+
             using (TextFieldParser parser = new TextFieldParser(filePath)) {
                 parser.CommentTokens = new String[] { "#" };
                 parser.SetDelimiters(new String[] { "," });
                 parser.HasFieldsEnclosedInQuotes = true;
+                StringBuilder badEntries = new StringBuilder();
 
                 //Skip headers
                 if(hasHeaders)
@@ -159,124 +164,145 @@ namespace Rejestracja {
 
                     String[] parsedEntry = parser.ReadFields();
 
-                    //Timestamp
-                    if (fieldMap.TimeStamp > -1) {
-                        newRegistration.timeStamp = DateTime.Parse(parsedEntry[fieldMap.TimeStamp]);
-                    }
-                    
-                    //Email
-                    if (fieldMap.Email > -1) {
-                        newRegistration.email = parsedEntry[fieldMap.Email].Trim();
-                    }
-                    
-                    //FirstName
-                    newRegistration.firstName = textInfo.ToTitleCase(parsedEntry[fieldMap.FirstName].Trim());
-                    
-                    //LastName
-                    newRegistration.lastName = textInfo.ToTitleCase(parsedEntry[fieldMap.LastName].Trim());
-                    
-                    //ClubName
-                    if (fieldMap.ClubName > -1) {
-                        newRegistration.clubName = parsedEntry[fieldMap.ClubName].Trim();
-                    }
-                    
-                    //YearOfBirth AND AgeGroup
-                    if(int.TryParse(parsedEntry[fieldMap.YearOfBirth], out yearOfBirth)) {
-                        newRegistration.yearOfBirth = yearOfBirth;
-                        if (fieldMap.CalculateAgeGroup) {
-                            age = DateTime.Now.Year - yearOfBirth;
-
-                            AgeGroup[] ag = ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray<AgeGroup>();
-                            if (ag.Length == 1) {
-                                newRegistration.ageGroup = ag[0].name;
-                            }
-                        }
-                        else if(fieldMap.AgeGroup > -1) {
-                            newRegistration.ageGroup = parsedEntry[fieldMap.AgeGroup];
-                        }
-                    }
-
-                    //ModelName
-                    newRegistration.modelName = parsedEntry[fieldMap.ModelName].Trim();
-
-                    //ModelCategory
-                    //Pick the first field with value
-                    String enteredModelCategory = null;
-                    foreach (int i in fieldMap.ModelCategory) {
-                        if(!String.IsNullOrWhiteSpace(parsedEntry[i])) {
-                            enteredModelCategory = parsedEntry[i];
-                            break;
-                        }
-                    }
-
-                    ModelCategory [] matchedModelCategory = null;
-                    if (enteredModelCategory != null) {
-                        //Try to match model category
-                        matchedModelCategory = modelCategories.Where(x => x.fullName.ToLower().Equals(enteredModelCategory.ToLower())).ToArray<ModelCategory>();
-                        if (matchedModelCategory.Length > 0) {
-                            newRegistration.modelCategory = matchedModelCategory[0].fullName;
-                            newRegistration.modelCategoryId = matchedModelCategory[0].id;
-                            //Matched model category and so set the category if it should be derived from class
-                            if (fieldMap.DeriveClassFromCategory) {
-                                newRegistration.modelClass = matchedModelCategory[0].modelClass;
+                    try {
+                        //Timestamp
+                        if (fieldMap.TimeStamp > -1) {
+                            if (!DateTime.TryParse(parsedEntry[fieldMap.TimeStamp], out newRegistration.timeStamp)) {
+                                if (!DateTime.TryParse(parsedEntry[fieldMap.TimeStamp].Substring(0, parsedEntry[fieldMap.TimeStamp].LastIndexOf(' ') + 1), out newRegistration.timeStamp)) {
+                                    newRegistration.timeStamp = DateTime.Now;
+                                }
                             }
                         }
                         else {
-                            //Did not match model class so see if we have category field mapped as well
-                            newRegistration.modelCategory = enteredModelCategory;
-                            if (fieldMap.ModelClass > -1) {
-                                newRegistration.modelClass = parsedEntry[fieldMap.ModelClass];
+                            newRegistration.timeStamp = DateTime.Now;
+                        }
+
+                        //Email
+                        if (fieldMap.Email > -1) {
+                            newRegistration.email = parsedEntry[fieldMap.Email].Trim();
+                        }
+
+                        //FirstName
+                        newRegistration.firstName = textInfo.ToTitleCase(parsedEntry[fieldMap.FirstName].Trim());
+
+                        //LastName
+                        newRegistration.lastName = textInfo.ToTitleCase(parsedEntry[fieldMap.LastName].Trim());
+
+                        //ClubName
+                        if (fieldMap.ClubName > -1) {
+                            newRegistration.clubName = parsedEntry[fieldMap.ClubName].Trim();
+                        }
+
+                        //YearOfBirth AND AgeGroup
+                        if (int.TryParse(parsedEntry[fieldMap.YearOfBirth], out yearOfBirth)) {
+                            newRegistration.yearOfBirth = yearOfBirth;
+                            if (fieldMap.CalculateAgeGroup) {
+                                age = DateTime.Now.Year - yearOfBirth;
+
+                                AgeGroup[] ag = ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray<AgeGroup>();
+                                if (ag.Length == 1) {
+                                    newRegistration.ageGroup = ag[0].name;
+                                }
+                            }
+                            else if (fieldMap.AgeGroup > -1) {
+                                newRegistration.ageGroup = parsedEntry[fieldMap.AgeGroup];
+                            }
+                        }
+
+                        //ModelName
+                        newRegistration.modelName = parsedEntry[fieldMap.ModelName].Trim();
+
+                        //ModelCategory
+                        //Pick the first field with value
+                        String enteredModelCategory = null;
+                        foreach (int i in fieldMap.ModelCategory) {
+                            if (!String.IsNullOrWhiteSpace(parsedEntry[i])) {
+                                enteredModelCategory = parsedEntry[i];
+                                break;
+                            }
+                        }
+
+                        ModelCategory[] matchedModelCategory = null;
+                        if (enteredModelCategory != null) {
+                            //Try to match model category
+                            matchedModelCategory = modelCategories.Where(x => x.fullName.ToLower().Equals(enteredModelCategory.ToLower())).ToArray<ModelCategory>();
+                            if (matchedModelCategory.Length > 0) {
+                                newRegistration.modelCategory = matchedModelCategory[0].fullName;
+                                newRegistration.modelCategoryId = matchedModelCategory[0].id;
+                                //Matched model category and so set the category if it should be derived from class
+                                if (fieldMap.DeriveClassFromCategory) {
+                                    newRegistration.modelClass = matchedModelCategory[0].modelClass;
+                                }
                             }
                             else {
-                                newRegistration.modelClass = modelClasses[0];
+                                //Did not match model class so see if we have category field mapped as well
+                                newRegistration.modelCategory = enteredModelCategory;
+                                if (fieldMap.ModelClass > -1) {
+                                    newRegistration.modelClass = parsedEntry[fieldMap.ModelClass];
+                                }
+                                else {
+                                    newRegistration.modelClass = modelClasses[0];
+                                }
+                            }
+                        }
+
+                        //ModelScale
+                        newRegistration.modelScale = parsedEntry[fieldMap.ModelScale].Trim();
+
+                        //ModelClass
+                        //Only populate if it should not be derived from model category
+                        if (!fieldMap.DeriveClassFromCategory) {
+                            String[] cat = modelClasses.Where(x => x.ToLower().Equals(parsedEntry[fieldMap.ModelClass].ToLower())).ToArray<String>();
+                            if (cat.Length == 1) {
+                                newRegistration.modelClass = cat[0];
+                            }
+                            else {
+                                newRegistration.modelClass = parsedEntry[fieldMap.ModelClass].Trim();
+                            }
+                        }
+
+                        //Publisher
+                        if (fieldMap.ModelPublisher > -1) {
+                            String[] pub = publishers.Where(x => x.ToLower().Equals(parsedEntry[fieldMap.ModelPublisher].ToLower())).ToArray<String>();
+                            //halinski vs. haliński
+                            if (pub.Length == 0)
+                                pub = publishers.Where(x => removeAccent(x.ToLower()).Equals(removeAccent(parsedEntry[fieldMap.ModelPublisher].ToLower()))).ToArray<String>();
+                            if (pub.Length > 0) {
+                                newRegistration.modelPublisher = pub[0].Trim();
                             }
                         }
                     }
-
-                    //ModelScale
-                    newRegistration.modelScale = parsedEntry[fieldMap.ModelScale].Trim();
-
-                    //ModelClass
-                    //Only populate if it should not be derived from model category
-                    if (!fieldMap.DeriveClassFromCategory) {
-                        String[] cat = modelClasses.Where(x => x.ToLower().Equals(parsedEntry[fieldMap.ModelClass].ToLower())).ToArray<String>();
-                        if (cat.Length == 1) {
-                            newRegistration.modelClass = cat[0];
-                        }
-                        else {
-                            newRegistration.modelClass = parsedEntry[fieldMap.ModelClass].Trim();
-                        }
+                    catch (Exception err) {
+                        newRegistration = null;
+                        badRecordCount++;
+                        badEntries.AppendLine(String.Join(",", parsedEntry));
                     }
 
-                    //Publisher
-                    if (fieldMap.ModelPublisher > -1) {
-                        String[] pub = publishers.Where(x => x.ToLower().Equals(parsedEntry[fieldMap.ModelPublisher].ToLower())).ToArray<String>();
-                        //halinski vs. haliński
-                        if (pub.Length == 0)
-                            pub = publishers.Where(x => removeAccent(x.ToLower()).Equals(removeAccent(parsedEntry[fieldMap.ModelPublisher].ToLower()))).ToArray<String>();
-                        if (pub.Length > 0) {
-                            newRegistration.modelPublisher = pub[0].Trim();
-                        }
-                    }
-
-                    yield return
-                        new RegistrationEntry(
-                            newRegistration.timeStamp,
-                            newRegistration.email,
-                            newRegistration.firstName,
-                            newRegistration.lastName,
-                            newRegistration.clubName,
-                            newRegistration.ageGroup,
-                            newRegistration.modelName,
-                            newRegistration.modelClass,
-                            newRegistration.modelScale,
-                            newRegistration.modelPublisher,
-                            newRegistration.modelCategory,
-                            newRegistration.modelCategoryId,
-                            yearOfBirth
+                    if (newRegistration != null) {
+                        ret.Add(
+                            new RegistrationEntry(
+                                newRegistration.timeStamp,
+                                newRegistration.email,
+                                newRegistration.firstName,
+                                newRegistration.lastName,
+                                newRegistration.clubName,
+                                newRegistration.ageGroup,
+                                newRegistration.modelName,
+                                newRegistration.modelClass,
+                                newRegistration.modelScale,
+                                newRegistration.modelPublisher,
+                                newRegistration.modelCategory,
+                                newRegistration.modelCategoryId,
+                                yearOfBirth
+                            )
                         );
+                    }
+                    if (badRecordCount > 0 && badRecordFile != null) {
+                        File.WriteAllText(badRecordFile, badEntries.ToString());
+                    }
                 }
             }
+            return ret;
         }
 
         public static List<String[]> getFileSample(String filePath, String commentToken, String delimiter, bool valuesInQuotes, int lineCount) {
@@ -303,12 +329,14 @@ namespace Rejestracja {
             }
         }
 
-        public List<RegistrationEntry> bulkLoadRegistration(String filePath, FileImportFieldMap fieldMap, bool hasHeaders) {
-            
-            IEnumerable<RegistrationEntry> entries = parseCSVFile(filePath, fieldMap, hasHeaders);
-            List<RegistrationEntry> failed = new List<RegistrationEntry>();
+        public int bulkLoadRegistration(String filePath, FileImportFieldMap fieldMap, bool hasHeaders, String badRecordFile) {
+
+            int badRecordCountParsing = 0;
+            int badRecordCountLoading = 0;
+            IEnumerable<RegistrationEntry> entries = parseCSVFile(filePath, fieldMap, hasHeaders, badRecordFile, out badRecordCountParsing);
             ModelCategory[] categories = ModelCategoryDao.getList().ToArray();
             ModelCategory[] matchedCategory = null;
+            StringBuilder sb = new StringBuilder();
 
             using (SQLiteConnection cn = new SQLiteConnection(_connectionString))
             using (SQLiteCommand cm = new SQLiteCommand(
@@ -358,13 +386,20 @@ namespace Rejestracja {
                         }
                         catch (Exception e) {
                             LogWriter.error(e);
-                            failed.Add(entry);
+                            badRecordCountLoading++;
+                            sb.AppendLine(entry.ToCsvString());
                         }
                     }
                     t.Commit();
                 }
             }
-            return failed;
+            if (badRecordCountLoading > 0) {
+                if (badRecordCountParsing > 0) {
+                    sb.AppendLine();
+                }
+                File.AppendAllText(badRecordFile, sb.ToString());
+            }
+            return badRecordCountParsing + badRecordCountLoading;
         }
 
         private string removeAccent(String input) {

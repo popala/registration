@@ -79,6 +79,7 @@
             this.lvModelScales = new System.Windows.Forms.ListView();
             this.btnClose = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
+            this.chkValidateAge = new System.Windows.Forms.CheckBox();
             this.tcOptions.SuspendLayout();
             this.tpDocuments.SuspendLayout();
             this.tpAgeGroup.SuspendLayout();
@@ -165,6 +166,7 @@
             // 
             // tpAgeGroup
             // 
+            this.tpAgeGroup.Controls.Add(this.chkValidateAge);
             this.tpAgeGroup.Controls.Add(this.label6);
             this.tpAgeGroup.Controls.Add(this.txtAge);
             this.tpAgeGroup.Controls.Add(this.btnAddAgeGroup);
@@ -229,9 +231,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvAgeGroup.Location = new System.Drawing.Point(0, 38);
             this.lvAgeGroup.Name = "lvAgeGroup";
-            this.lvAgeGroup.Size = new System.Drawing.Size(658, 322);
+            this.lvAgeGroup.Size = new System.Drawing.Size(658, 285);
             this.lvAgeGroup.TabIndex = 3;
             this.lvAgeGroup.UseCompatibleStateImageBehavior = false;
+            this.lvAgeGroup.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.anyListView_ItemChecked);
             // 
             // tpModelClass
             // 
@@ -282,6 +285,7 @@
             this.lvModelClass.Size = new System.Drawing.Size(658, 322);
             this.lvModelClass.TabIndex = 13;
             this.lvModelClass.UseCompatibleStateImageBehavior = false;
+            this.lvModelClass.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.anyListView_ItemChecked);
             // 
             // tpModelCategory
             // 
@@ -401,7 +405,7 @@
             this.lvModelCategory.Size = new System.Drawing.Size(610, 289);
             this.lvModelCategory.TabIndex = 3;
             this.lvModelCategory.UseCompatibleStateImageBehavior = false;
-            this.lvModelCategory.SelectedIndexChanged += new System.EventHandler(this.lvModelClass_SelectedIndexChanged);
+            this.lvModelCategory.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.anyListView_ItemChecked);
             // 
             // tpSpecialAwards
             // 
@@ -481,6 +485,7 @@
             this.lvAwards.Size = new System.Drawing.Size(608, 320);
             this.lvAwards.TabIndex = 12;
             this.lvAwards.UseCompatibleStateImageBehavior = false;
+            this.lvAwards.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.anyListView_ItemChecked);
             // 
             // tpPublisher
             // 
@@ -532,6 +537,7 @@
             this.lvPublishers.Size = new System.Drawing.Size(658, 320);
             this.lvPublishers.TabIndex = 4;
             this.lvPublishers.UseCompatibleStateImageBehavior = false;
+            this.lvPublishers.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.anyListView_ItemChecked);
             // 
             // tpModelScale
             // 
@@ -610,6 +616,7 @@
             this.lvModelScales.Size = new System.Drawing.Size(610, 320);
             this.lvModelScales.TabIndex = 13;
             this.lvModelScales.UseCompatibleStateImageBehavior = false;
+            this.lvModelScales.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.anyListView_ItemChecked);
             // 
             // btnClose
             // 
@@ -634,6 +641,18 @@
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
+            // chkValidateAge
+            // 
+            this.chkValidateAge.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkValidateAge.AutoSize = true;
+            this.chkValidateAge.Location = new System.Drawing.Point(14, 332);
+            this.chkValidateAge.Name = "chkValidateAge";
+            this.chkValidateAge.Size = new System.Drawing.Size(577, 17);
+            this.chkValidateAge.TabIndex = 16;
+            this.chkValidateAge.Text = "Sprawdzaj czy wiek uczestnika pasuje do wybranej grupy wiekowej (automatycznie wy" +
+    "łączane po łączeniu kategorii)";
+            this.chkValidateAge.UseVisualStyleBackColor = true;
+            // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -642,7 +661,6 @@
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.tcOptions);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmSettings";
             this.Text = "Ustawienia";
@@ -718,5 +736,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btnMoveUpScale;
         private System.Windows.Forms.Button btnMoveDownScale;
+        private System.Windows.Forms.CheckBox chkValidateAge;
     }
 }
