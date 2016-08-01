@@ -55,8 +55,7 @@
     <StartupObject>Rejestracja.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>Resources\plane.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
@@ -111,6 +110,12 @@
     <Compile Include="Data\Objects\Publisher.cs" />
     <Compile Include="Data\Objects\RegistrationEntry.cs" />
     <Compile Include="Data\Objects\Result.cs" />
+    <Compile Include="frmAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAbout.Designer.cs">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmChangeCategory.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -181,6 +186,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="frmAbout.resx">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -212,6 +220,7 @@
     <None Include="Resources\package_16xLG.png" />
     <None Include="Resources\list_16xLG.png" />
     <None Include="Resources\PrintDocumentControl_697.png" />
+    <Content Include="Resources\plane.ico" />
     <Content Include="Templates\posumowanie.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -247,6 +256,7 @@
     <EmbeddedResource Include="Properties\GlobalResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>GlobalResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="App.config">
       <SubType>Designer</SubType>

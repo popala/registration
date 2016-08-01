@@ -79,16 +79,21 @@ namespace Rejestracja {
         }
 
         private void frmMain_Load(object sender, EventArgs e) {
+
+            bool bHasValidFile = false;
+
             //devTasks();
             _txtFilterTimer = new Timer();
             _txtFilterTimer.Interval = 1000;
             _txtFilterTimer.Tick += new EventHandler(this.txtFilterTimer_Tick);
 
-            initUi();
-
             //Ensure that a data file exists
             String dataFile = Properties.Settings.Default.DataFile;
-            if (String.IsNullOrWhiteSpace(dataFile) || !File.Exists(dataFile)) {
+            bHasValidFile = !String.IsNullOrWhiteSpace(dataFile) && File.Exists(dataFile);
+
+            initUi(bHasValidFile);
+
+            if (!bHasValidFile) {
                 uiEnabled(false);
                 frmNewDataFile f = new frmNewDataFile();
                 f.StartPosition = FormStartPosition.CenterScreen;
@@ -109,14 +114,7 @@ namespace Rejestracja {
                     String[] pos = size.Split(',');
                     resizeScreen(int.Parse(pos[0]), int.Parse(pos[1]), int.Parse(pos[2]), int.Parse(pos[3]));
                 }
-
                 setViewMenus(!Options.get("RegistrationView").Equals("groupped"));
-                //if (Options.get("RegistrationView").Equals("groupped")) {
-                //    mnuRVStandard.Checked = false;
-                //    tsBVStandard.Checked = false;
-                //    mnuRVGroupped.Checked = true;
-                //    tsBVGroupped.Checked = true;
-                //}
             }
 
             try {
@@ -149,7 +147,7 @@ namespace Rejestracja {
             toolStrip1.Enabled = isEnabled;
         }
 
-        private void initUi() {
+        private void initUi(bool hasValidFile) {
             String[] headers;
 
             tsBtnErrorCount.Visible = false;
@@ -178,8 +176,14 @@ namespace Rejestracja {
                 lvEntries.Columns.Add(header.Trim());
             }
 
-            _registrationSortColumn = int.Parse(Options.get("RegistrationSortColumn"));
-            _registrationSortAscending = !Options.get("RegistrationSortOrder").Equals("1");
+            if (hasValidFile) {
+                _registrationSortColumn = int.Parse(Options.get("RegistrationSortColumn"));
+                _registrationSortAscending = !Options.get("RegistrationSortOrder").Equals("1");
+            }
+            else {
+                _registrationSortColumn = 0;
+                _registrationSortAscending = true;
+            }
 
             //RESULT ENTRY PANEL
             lvResults.View = View.Details;
@@ -1426,6 +1430,11 @@ namespace Rejestracja {
 
         private void tsBtnDeleteSelected_Click(object sender, EventArgs e) {
             mnuRSDelete_Click(sender, e);
+        }
+
+        private void mnuHAbout_Click(object sender, EventArgs e) {
+            frmAbout f = new frmAbout();
+            f.ShowDialog(this);
         }
     }
 }

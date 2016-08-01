@@ -124,6 +124,8 @@
             this.tsBtnSummary = new System.Windows.Forms.ToolStripButton();
             this.tsErrorSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.tsBtnErrorCount = new System.Windows.Forms.ToolStripButton();
+            this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuHAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -141,7 +143,8 @@
             this.mnuFile,
             this.mnuRegistration,
             this.mnuJudging,
-            this.mnuResults});
+            this.mnuResults,
+            this.mnuHelp});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1182, 24);
@@ -969,6 +972,21 @@
             this.tsBtnErrorCount.Text = "Błędy Rejestracji";
             this.tsBtnErrorCount.Click += new System.EventHandler(this.tsBtnErrorCount_Click);
             // 
+            // mnuHelp
+            // 
+            this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuHAbout});
+            this.mnuHelp.Name = "mnuHelp";
+            this.mnuHelp.Size = new System.Drawing.Size(57, 20);
+            this.mnuHelp.Text = "Pomoc";
+            // 
+            // mnuHAbout
+            // 
+            this.mnuHAbout.Name = "mnuHAbout";
+            this.mnuHAbout.Size = new System.Drawing.Size(152, 22);
+            this.mnuHAbout.Text = "O programie";
+            this.mnuHAbout.Click += new System.EventHandler(this.mnuHAbout_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1100,6 +1118,8 @@
         private System.Windows.Forms.ToolStripButton tsBtnErrorCount;
         private System.Windows.Forms.ToolStripMenuItem mnuRPrintById;
         private System.Windows.Forms.ToolStripButton tsBtnClearFilter;
+        private System.Windows.Forms.ToolStripMenuItem mnuHelp;
+        private System.Windows.Forms.ToolStripMenuItem mnuHAbout;
 
 
     }
