@@ -169,7 +169,7 @@
             // 
             // mnuFNewDataFile
             // 
-            this.mnuFNewDataFile.Image = global::Rejestracja.Properties.GlobalResources.NewFile_6276;
+            this.mnuFNewDataFile.Image = global::Rejestracja.Properties.Resources.NewFile_6276;
             this.mnuFNewDataFile.Name = "mnuFNewDataFile";
             this.mnuFNewDataFile.Size = new System.Drawing.Size(155, 22);
             this.mnuFNewDataFile.Text = "Nowy plik...";
@@ -177,7 +177,7 @@
             // 
             // mnuFOpenDataFile
             // 
-            this.mnuFOpenDataFile.Image = global::Rejestracja.Properties.GlobalResources.arrow_open_16xLG;
+            this.mnuFOpenDataFile.Image = global::Rejestracja.Properties.Resources.arrow_open_16xLG;
             this.mnuFOpenDataFile.Name = "mnuFOpenDataFile";
             this.mnuFOpenDataFile.Size = new System.Drawing.Size(155, 22);
             this.mnuFOpenDataFile.Text = "Otwórz plik...";
@@ -190,7 +190,7 @@
             // 
             // mnuFImport
             // 
-            this.mnuFImport.Image = global::Rejestracja.Properties.GlobalResources.WritetoDatabase_9889;
+            this.mnuFImport.Image = global::Rejestracja.Properties.Resources.WritetoDatabase_9889;
             this.mnuFImport.Name = "mnuFImport";
             this.mnuFImport.Size = new System.Drawing.Size(155, 22);
             this.mnuFImport.Text = "&Import danych";
@@ -214,14 +214,14 @@
             this.mnuFFDataFolder,
             this.mnuFFDocumentFolder,
             this.mnuFFTemplateFolder});
-            this.mnuFOpenFileFolder.Image = global::Rejestracja.Properties.GlobalResources.Open_6529;
+            this.mnuFOpenFileFolder.Image = global::Rejestracja.Properties.Resources.Open_6529;
             this.mnuFOpenFileFolder.Name = "mnuFOpenFileFolder";
             this.mnuFOpenFileFolder.Size = new System.Drawing.Size(155, 22);
             this.mnuFOpenFileFolder.Text = "Otwórz folder";
             // 
             // mnuFFDataFolder
             // 
-            this.mnuFFDataFolder.Image = global::Rejestracja.Properties.GlobalResources.database_16xLG;
+            this.mnuFFDataFolder.Image = global::Rejestracja.Properties.Resources.database_16xLG;
             this.mnuFFDataFolder.Name = "mnuFFDataFolder";
             this.mnuFFDataFolder.Size = new System.Drawing.Size(218, 22);
             this.mnuFFDataFolder.Text = "Plików danych";
@@ -229,7 +229,7 @@
             // 
             // mnuFFDocumentFolder
             // 
-            this.mnuFFDocumentFolder.Image = global::Rejestracja.Properties.GlobalResources.FileGroup_10135_16x;
+            this.mnuFFDocumentFolder.Image = global::Rejestracja.Properties.Resources.FileGroup_10135_16x;
             this.mnuFFDocumentFolder.Name = "mnuFFDocumentFolder";
             this.mnuFFDocumentFolder.Size = new System.Drawing.Size(218, 22);
             this.mnuFFDocumentFolder.Text = "Utworzonych dokumentów";
@@ -237,7 +237,7 @@
             // 
             // mnuFFTemplateFolder
             // 
-            this.mnuFFTemplateFolder.Image = global::Rejestracja.Properties.GlobalResources.library_16xLG;
+            this.mnuFFTemplateFolder.Image = global::Rejestracja.Properties.Resources.library_16xLG;
             this.mnuFFTemplateFolder.Name = "mnuFFTemplateFolder";
             this.mnuFFTemplateFolder.Size = new System.Drawing.Size(218, 22);
             this.mnuFFTemplateFolder.Text = "Wzorców dokumentów";
@@ -273,7 +273,7 @@
             // 
             // mnuRNewRegistration
             // 
-            this.mnuRNewRegistration.Image = global::Rejestracja.Properties.GlobalResources.NewBuildDefinition_8952;
+            this.mnuRNewRegistration.Image = global::Rejestracja.Properties.Resources.NewBuildDefinition_8952;
             this.mnuRNewRegistration.Name = "mnuRNewRegistration";
             this.mnuRNewRegistration.ShortcutKeyDisplayString = "";
             this.mnuRNewRegistration.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
@@ -294,7 +294,7 @@
             // 
             // mnuRSPrintChecked
             // 
-            this.mnuRSPrintChecked.Image = global::Rejestracja.Properties.GlobalResources.Print_11009;
+            this.mnuRSPrintChecked.Image = global::Rejestracja.Properties.Resources.Print_11009;
             this.mnuRSPrintChecked.Name = "mnuRSPrintChecked";
             this.mnuRSPrintChecked.Size = new System.Drawing.Size(186, 22);
             this.mnuRSPrintChecked.Text = "Drukuj karty startowe";
@@ -302,7 +302,7 @@
             // 
             // mnuRSChangeCategory
             // 
-            this.mnuRSChangeCategory.Image = global::Rejestracja.Properties.GlobalResources.WorkflowActivity_16xLG;
+            this.mnuRSChangeCategory.Image = global::Rejestracja.Properties.Resources.WorkflowActivity_16xLG;
             this.mnuRSChangeCategory.Name = "mnuRSChangeCategory";
             this.mnuRSChangeCategory.Size = new System.Drawing.Size(186, 22);
             this.mnuRSChangeCategory.Text = "Zmień kategorię";
@@ -315,7 +315,7 @@
             // 
             // mnuRSDelete
             // 
-            this.mnuRSDelete.Image = global::Rejestracja.Properties.GlobalResources.Clearallrequests_8816;
+            this.mnuRSDelete.Image = global::Rejestracja.Properties.Resources.Clearallrequests_8816;
             this.mnuRSDelete.Name = "mnuRSDelete";
             this.mnuRSDelete.Size = new System.Drawing.Size(186, 22);
             this.mnuRSDelete.Text = "Usuń";
@@ -381,7 +381,7 @@
             // 
             // mnuRSettings
             // 
-            this.mnuRSettings.Image = global::Rejestracja.Properties.GlobalResources.process_16xLG;
+            this.mnuRSettings.Image = global::Rejestracja.Properties.Resources.process_16xLG;
             this.mnuRSettings.Name = "mnuRSettings";
             this.mnuRSettings.Size = new System.Drawing.Size(279, 22);
             this.mnuRSettings.Text = "Ustawienia konkursu";
@@ -399,7 +399,7 @@
             // 
             // mnuJMergeCategories
             // 
-            this.mnuJMergeCategories.Image = global::Rejestracja.Properties.GlobalResources.arrow_merge_16xLG;
+            this.mnuJMergeCategories.Image = global::Rejestracja.Properties.Resources.arrow_merge_16xLG;
             this.mnuJMergeCategories.Name = "mnuJMergeCategories";
             this.mnuJMergeCategories.Size = new System.Drawing.Size(183, 22);
             this.mnuJMergeCategories.Text = "Łączenie kategorii";
@@ -407,7 +407,7 @@
             // 
             // mnuJJudgingForms
             // 
-            this.mnuJJudgingForms.Image = global::Rejestracja.Properties.GlobalResources.PencilAngled_16xLG_color;
+            this.mnuJJudgingForms.Image = global::Rejestracja.Properties.Resources.PencilAngled_16xLG_color;
             this.mnuJJudgingForms.Name = "mnuJJudgingForms";
             this.mnuJJudgingForms.Size = new System.Drawing.Size(183, 22);
             this.mnuJJudgingForms.Text = "Karty sędziowania";
@@ -415,7 +415,7 @@
             // 
             // mnuJAddResults
             // 
-            this.mnuJAddResults.Image = global::Rejestracja.Properties.GlobalResources.StatusAnnotations_Complete_and_ok_16xLG;
+            this.mnuJAddResults.Image = global::Rejestracja.Properties.Resources.StatusAnnotations_Complete_and_ok_16xLG;
             this.mnuJAddResults.Name = "mnuJAddResults";
             this.mnuJAddResults.Size = new System.Drawing.Size(183, 22);
             this.mnuJAddResults.Text = "Dodawanie wyników";
@@ -435,7 +435,7 @@
             // 
             // mnuRsResultList
             // 
-            this.mnuRsResultList.Image = global::Rejestracja.Properties.GlobalResources.list_16xLG;
+            this.mnuRsResultList.Image = global::Rejestracja.Properties.Resources.list_16xLG;
             this.mnuRsResultList.Name = "mnuRsResultList";
             this.mnuRsResultList.Size = new System.Drawing.Size(208, 22);
             this.mnuRsResultList.Text = "Lista wyników";
@@ -443,7 +443,7 @@
             // 
             // mnuRsCategoryDiplomas
             // 
-            this.mnuRsCategoryDiplomas.Image = global::Rejestracja.Properties.GlobalResources.certificate_16xLG;
+            this.mnuRsCategoryDiplomas.Image = global::Rejestracja.Properties.Resources.certificate_16xLG;
             this.mnuRsCategoryDiplomas.Name = "mnuRsCategoryDiplomas";
             this.mnuRsCategoryDiplomas.Size = new System.Drawing.Size(208, 22);
             this.mnuRsCategoryDiplomas.Text = "Dyplomy - kategorie";
@@ -451,7 +451,7 @@
             // 
             // mnuRsAwardDiplomas
             // 
-            this.mnuRsAwardDiplomas.Image = global::Rejestracja.Properties.GlobalResources.package_16xLG;
+            this.mnuRsAwardDiplomas.Image = global::Rejestracja.Properties.Resources.package_16xLG;
             this.mnuRsAwardDiplomas.Name = "mnuRsAwardDiplomas";
             this.mnuRsAwardDiplomas.Size = new System.Drawing.Size(208, 22);
             this.mnuRsAwardDiplomas.Text = "Dyplomy - nagrody";

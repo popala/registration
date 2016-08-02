@@ -1,4 +1,15 @@
-﻿using Rejestracja.Data.Dao;
+﻿/*
+ * Copyright (C) 2016 Paweł Opała https://github.com/popala/registration
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+ * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
+using Rejestracja.Data.Dao;
 using Rejestracja.Data.Objects;
 using Rejestracja.Utils;
 using System;
@@ -415,7 +426,7 @@ namespace Rejestracja {
             //int errorCount = 0;
             int badEntryCount = 0;
             int year = DateTime.Now.Year;
-            bool checkAgeGroupAge = (Options.get("ValidateAgeGroup") == null || !Options.get("ValidateAgeGroup").Equals("false"));
+            bool checkAgeGroupAge = (Options.get("ValidateAgeGroup") == null || !Options.get("ValidateAgeGroup").ToLower().Equals("false"));
 
             foreach (ListViewItem item in lvEntries.Items) {
 
