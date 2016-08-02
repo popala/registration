@@ -111,16 +111,17 @@
     <Compile Include="Data\Objects\Publisher.cs" />
     <Compile Include="Data\Objects\RegistrationEntry.cs" />
     <Compile Include="Data\Objects\Result.cs" />
+    <Compile Include="frmAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmAbout.Designer.cs">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmChangeCategory.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmChangeCategory.Designer.cs">
       <DependentUpon>frmChangeCategory.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\GlobalResources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GlobalResources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -181,34 +182,37 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="frmAbout.resx">
+      <DependentUpon>frmAbout.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="Resources\NewFile_6276.png" />
-    <None Include="Resources\OpenFileDialog_692.png" />
-    <None Include="Resources\Open_6529.png" />
-    <None Include="Resources\Files_7954.png" />
-    <None Include="Resources\DocumentsLibrary_9001.png" />
-    <None Include="Resources\WritetoDatabase_9889.png" />
-    <None Include="Resources\NewBuildDefinition_8952.png" />
-    <None Include="Resources\Print_11009.png" />
-    <None Include="Resources\Clearallrequests_8816.png" />
-    <None Include="Resources\dialog_16xMD.png" />
-    <None Include="Resources\dialog_16xLG.png" />
-    <None Include="Resources\WorkflowActivity_16xLG.png" />
-    <None Include="Resources\process_16xLG.png" />
-    <None Include="Resources\database_16xLG.png" />
-    <None Include="Resources\FileGroup_10135_16x.png" />
-    <None Include="Resources\library_16xLG.png" />
-    <None Include="Resources\arrow_open_16xLG.png" />
-    <None Include="Resources\arrow_merge_16xLG.png" />
-    <None Include="Resources\PencilAngled_16xLG_color.png" />
-    <None Include="Resources\StatusAnnotations_Complete_and_ok_16xLG.png" />
-    <None Include="Resources\certificate_16xLG.png" />
-    <None Include="Resources\package_16xLG.png" />
-    <None Include="Resources\list_16xLG.png" />
-    <None Include="Resources\PrintDocumentControl_697.png" />
+    <Resource Include="license.rtf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <None Include="Icons\NewFile_6276.png" />
+    <None Include="Icons\OpenFileDialog_692.png" />
+    <None Include="Icons\Open_6529.png" />
+    <None Include="Icons\Files_7954.png" />
+    <None Include="Icons\DocumentsLibrary_9001.png" />
+    <None Include="Icons\WritetoDatabase_9889.png" />
+    <None Include="Icons\NewBuildDefinition_8952.png" />
+    <None Include="Icons\Print_11009.png" />
+    <None Include="Icons\Clearallrequests_8816.png" />
+    <None Include="Icons\dialog_16xMD.png" />
+    <None Include="Icons\dialog_16xLG.png" />
+    <None Include="Icons\WorkflowActivity_16xLG.png" />
+    <None Include="Icons\process_16xLG.png" />
+    <None Include="Icons\database_16xLG.png" />
+    <None Include="Icons\FileGroup_10135_16x.png" />
+    <None Include="Icons\library_16xLG.png" />
+    <None Include="Icons\arrow_open_16xLG.png" />
+    <None Include="Icons\arrow_merge_16xLG.png" />
+    <None Include="Icons\PencilAngled_16xLG_color.png" />
+    <None Include="Icons\StatusAnnotations_Complete_and_ok_16xLG.png" />
+    <None Include="Icons\certificate_16xLG.png" />
+    <None Include="Icons\package_16xLG.png" />
+    <None Include="Icons\list_16xLG.png" />
+    <None Include="Icons\PrintDocumentControl_697.png" />
+    <None Include="Icons\plane.ico" />
     <Content Include="Templates\posumowanie.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -216,7 +220,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\SQLite.Interop.dll" />
-    <Content Include="x86\SQLite.Interop.dll" />
+    <None Include="x86\SQLite.Interop.dll" />
     <EmbeddedResource Include="frmAddResults.resx">
       <DependentUpon>frmAddResults.cs</DependentUpon>
     </EmbeddedResource>
@@ -241,9 +245,10 @@
     <EmbeddedResource Include="frmSettings.resx">
       <DependentUpon>frmSettings.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\GlobalResources.resx">
+    <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>GlobalResources.Designer.cs</LastGenOutput>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="App.config">
       <SubType>Designer</SubType>

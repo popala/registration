@@ -1,4 +1,15 @@
-﻿using Rejestracja.Data.Dao;
+﻿/*
+ * Copyright (C) 2016 Paweł Opała https://github.com/popala/registration
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+ * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
+using Rejestracja.Data.Dao;
 using Rejestracja.Data.Objects;
 using Rejestracja.Utils;
 using System;
@@ -79,16 +90,21 @@ namespace Rejestracja {
         }
 
         private void frmMain_Load(object sender, EventArgs e) {
+
+            bool bHasValidFile = false;
+
             //devTasks();
             _txtFilterTimer = new Timer();
             _txtFilterTimer.Interval = 1000;
             _txtFilterTimer.Tick += new EventHandler(this.txtFilterTimer_Tick);
 
-            initUi();
-
             //Ensure that a data file exists
             String dataFile = Properties.Settings.Default.DataFile;
-            if (String.IsNullOrWhiteSpace(dataFile) || !File.Exists(dataFile)) {
+            bHasValidFile = !String.IsNullOrWhiteSpace(dataFile) && File.Exists(dataFile);
+
+            initUi(bHasValidFile);
+
+            if (!bHasValidFile) {
                 uiEnabled(false);
                 frmNewDataFile f = new frmNewDataFile();
                 f.StartPosition = FormStartPosition.CenterScreen;
@@ -109,14 +125,7 @@ namespace Rejestracja {
                     String[] pos = size.Split(',');
                     resizeScreen(int.Parse(pos[0]), int.Parse(pos[1]), int.Parse(pos[2]), int.Parse(pos[3]));
                 }
-
                 setViewMenus(!Options.get("RegistrationView").Equals("groupped"));
-                //if (Options.get("RegistrationView").Equals("groupped")) {
-                //    mnuRVStandard.Checked = false;
-                //    tsBVStandard.Checked = false;
-                //    mnuRVGroupped.Checked = true;
-                //    tsBVGroupped.Checked = true;
-                //}
             }
 
             try {
@@ -149,7 +158,7 @@ namespace Rejestracja {
             toolStrip1.Enabled = isEnabled;
         }
 
-        private void initUi() {
+        private void initUi(bool hasValidFile) {
             String[] headers;
 
             tsBtnErrorCount.Visible = false;
@@ -178,8 +187,14 @@ namespace Rejestracja {
                 lvEntries.Columns.Add(header.Trim());
             }
 
-            _registrationSortColumn = int.Parse(Options.get("RegistrationSortColumn"));
-            _registrationSortAscending = !Options.get("RegistrationSortOrder").Equals("1");
+            if (hasValidFile) {
+                _registrationSortColumn = int.Parse(Options.get("RegistrationSortColumn"));
+                _registrationSortAscending = !Options.get("RegistrationSortOrder").Equals("1");
+            }
+            else {
+                _registrationSortColumn = 0;
+                _registrationSortAscending = true;
+            }
 
             //RESULT ENTRY PANEL
             lvResults.View = View.Details;
@@ -411,7 +426,7 @@ namespace Rejestracja {
             //int errorCount = 0;
             int badEntryCount = 0;
             int year = DateTime.Now.Year;
-            bool checkAgeGroupAge = (Options.get("ValidateAgeGroup") == null || !Options.get("ValidateAgeGroup").Equals("false"));
+            bool checkAgeGroupAge = (Options.get("ValidateAgeGroup") == null || !Options.get("ValidateAgeGroup").ToLower().Equals("false"));
 
             foreach (ListViewItem item in lvEntries.Items) {
 
@@ -1426,6 +1441,11 @@ namespace Rejestracja {
 
         private void tsBtnDeleteSelected_Click(object sender, EventArgs e) {
             mnuRSDelete_Click(sender, e);
+        }
+
+        private void mnuHAbout_Click(object sender, EventArgs e) {
+            frmAbout f = new frmAbout();
+            f.ShowDialog(this);
         }
     }
 }

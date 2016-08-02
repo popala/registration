@@ -118,7 +118,152 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="dialog_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\dialog_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Files_7954" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Files_7954.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Clearallrequests_8816" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Clearallrequests_8816.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NewFile_6276" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\NewFile_6276.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WritetoDatabase_9889" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\WritetoDatabase_9889.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="package_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\package_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="process_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\process_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OpenFileDialog_692" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\OpenFileDialog_692.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WorkflowActivity_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\WorkflowActivity_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PencilAngled_16xLG_color" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\PencilAngled_16xLG_color.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Print_11009" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Print_11009.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="database_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\database_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FileGroup_10135_16x" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\FileGroup_10135_16x.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Open_6529" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Open_6529.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NewBuildDefinition_8952" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\NewBuildDefinition_8952.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DocumentsLibrary_9001" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\DocumentsLibrary_9001.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StatusAnnotations_Complete_and_ok_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\StatusAnnotations_Complete_and_ok_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="library_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\library_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow_merge_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow_merge_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow_open_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow_open_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="certificate_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\certificate_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="list_16xLG" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\list_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ShortLicense" xml:space="preserve">
+    <value>Copyright (C) 2016 Paweł Opała
+https://github.com/popala/registration
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.</value>
+  </data>
+  <data name="arrow_merge_16xLG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow_merge_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="arrow_open_16xLG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\arrow_open_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="certificate_16xLG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\certificate_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Clearallrequests_88161" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Clearallrequests_8816.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="database_16xLG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\database_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="dialog_16xLG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\dialog_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="dialog_16xMD" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\dialog_16xMD.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DocumentsLibrary_90011" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\DocumentsLibrary_9001.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FileGroup_10135_16x1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\FileGroup_10135_16x.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Files_79541" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Files_7954.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="library_16xLG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\library_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="list_16xLG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\list_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NewBuildDefinition_89521" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\NewBuildDefinition_8952.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="NewFile_62761" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\NewFile_6276.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="OpenFileDialog_6921" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\OpenFileDialog_692.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Open_65291" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Open_6529.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="package_16xLG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\package_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PencilAngled_16xLG_color1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\PencilAngled_16xLG_color.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="PrintDocumentControl_697" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\PrintDocumentControl_697.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\Icons\PrintDocumentControl_697.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Print_110091" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\Print_11009.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="process_16xLG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\process_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StatusAnnotations_Complete_and_ok_16xLG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\StatusAnnotations_Complete_and_ok_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WorkflowActivity_16xLG1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\WorkflowActivity_16xLG.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WritetoDatabase_98891" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Icons\WritetoDatabase_9889.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
