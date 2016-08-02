@@ -215,9 +215,6 @@ namespace Rejestracja {
                 }
                 
                 String badRecordFile = Path.Combine(Resources.DataFileFolder, String.Format("bledy-import_{0}.csv", DateTime.Now.ToString("yyyy-MM-dd_H-mm-ss")));
-                if (!Directory.Exists(badRecordFile)) {
-                    Directory.CreateDirectory(badRecordFile);
-                }
                 if (File.Exists(badRecordFile)) {
                     File.Delete(badRecordFile);
                 }
