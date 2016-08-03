@@ -102,7 +102,7 @@
             // btnImport
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImport.Location = new System.Drawing.Point(748, 685);
+            this.btnImport.Location = new System.Drawing.Point(557, 685);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(75, 23);
             this.btnImport.TabIndex = 0;
@@ -114,7 +114,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(829, 685);
+            this.btnCancel.Location = new System.Drawing.Point(638, 685);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 1;
@@ -132,7 +132,7 @@
             this.tabControl1.Location = new System.Drawing.Point(3, 74);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(920, 605);
+            this.tabControl1.Size = new System.Drawing.Size(729, 605);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -191,7 +191,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(912, 579);
+            this.tabPage2.Size = new System.Drawing.Size(721, 579);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Mapowanie Pól";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -504,9 +504,10 @@
             // 
             // chkDropExistingRecords
             // 
+            this.chkDropExistingRecords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.chkDropExistingRecords.AutoSize = true;
             this.chkDropExistingRecords.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkDropExistingRecords.Location = new System.Drawing.Point(440, 689);
+            this.chkDropExistingRecords.Location = new System.Drawing.Point(262, 689);
             this.chkDropExistingRecords.Name = "chkDropExistingRecords";
             this.chkDropExistingRecords.Size = new System.Drawing.Size(289, 17);
             this.chkDropExistingRecords.TabIndex = 5;
@@ -519,7 +520,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(925, 720);
+            this.ClientSize = new System.Drawing.Size(734, 720);
             this.Controls.Add(this.chkDropExistingRecords);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnCancel);
@@ -527,7 +528,7 @@
             this.Controls.Add(this.chkHasHeaders);
             this.Controls.Add(this.lblFileName);
             this.Controls.Add(this.btnSelectFile);
-            this.MinimumSize = new System.Drawing.Size(941, 758);
+            this.MinimumSize = new System.Drawing.Size(750, 758);
             this.Name = "frmImportFile";
             this.Text = "Import Danych";
             this.Load += new System.EventHandler(this.frmImportFile_Load);
