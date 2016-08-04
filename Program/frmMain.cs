@@ -113,6 +113,7 @@ namespace Rejestracja {
                     frmSettings fs = new frmSettings();
                     fs.StartPosition = FormStartPosition.CenterScreen;
                     fs.ShowDialog(this);
+                    setViewMenus(!Options.get("RegistrationView").Equals("groupped"));
                     populateUI();
                     uiEnabled(true);
                     this._showSettingsForm = false;
