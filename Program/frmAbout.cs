@@ -21,7 +21,7 @@ namespace Rejestracja {
             this.labelProductName.Text = AssemblyProduct;
             this.labelVersion.Text = String.Format("Wersja {0}", AssemblyVersion);
             this.labelCopyright.Text = AssemblyCopyright;
-            this.labelCompanyName.Text = AssemblyCompany;
+            this.labelCompanyName.Text = "https://github.com/popala/registration/wiki";
             this.textBoxDescription.Text = AssemblyDescription;
         }
 
@@ -91,6 +91,10 @@ namespace Rejestracja {
             textBoxDescription.Text +=
                 Environment.NewLine +
                 Properties.Resources.ShortLicense;
+        }
+
+        private void labelCompanyName_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            System.Diagnostics.Process.Start(labelCompanyName.Text);
         }
     }
 }
