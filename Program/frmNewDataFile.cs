@@ -60,23 +60,49 @@ namespace Rejestracja
         }
 
         private void frmNewDataFile_Shown(object sender, EventArgs e) {
-            txtContestTitle.Focus();
+            if (tabControl1.SelectedIndex == 0) {
+                txtContestTitle.Focus();
+            }
+            else {
+                lvFileList.Focus();
+            }
         }
 
         private void frmNewDataFile_Load(object sender, EventArgs e)
         {
-            lvFileList.Columns.Add("Nazwa pliku");
-            lvFileList.Columns[0].Width = (int)Math.Ceiling(lvFileList.Width * .9);
+            lvFileList.Columns.Add("Nazwa");
+            lvFileList.Columns.Add("Ostatnia Zmiana");
+
+            //lvFileList.Columns[0].Width = (int)Math.Ceiling(lvFileList.Width * .9);
             lvFileList.HideSelection = false;
+            lvFileList.GridLines = true;
+            lvFileList.MultiSelect = false;
 
             String[] files = Directory.GetFiles(Resources.DataFileFolder, "*.sqlite");
             foreach(String fileName in files)
             {
-                lvFileList.Items.Add(new ListViewItem(fileName));
+                FileInfo f = new FileInfo(fileName);
+                lvFileList.Items.Add(new ListViewItem(new String[] { f.Name, f.LastWriteTime.ToString() }));
             }
+
+            lvFileList.Columns[0].Width = lvFileList.Width - 160;
+            lvFileList.Columns[1].Width = 150;
             
             btnOk.Enabled = false;
             lblError.Visible = false;
+        }
+
+        private void lvFileList_MouseDoubleClick(object sender, MouseEventArgs e) {
+            if (lvFileList.Items.Count == 0) {
+                return;
+            }
+
+            ListViewHitTestInfo hitTest = this.lvFileList.HitTest(e.X, e.Y);
+            if (hitTest.Item != null) {
+                ListViewItem item = hitTest.Item;
+                item.Selected = true;
+                btnOk_Click(sender, e);
+            }
         }
 
         private void checkNewFileName() {
