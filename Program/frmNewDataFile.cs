@@ -73,7 +73,6 @@ namespace Rejestracja
             lvFileList.Columns.Add("Nazwa");
             lvFileList.Columns.Add("Ostatnia Zmiana");
 
-            //lvFileList.Columns[0].Width = (int)Math.Ceiling(lvFileList.Width * .9);
             lvFileList.HideSelection = false;
             lvFileList.GridLines = true;
             lvFileList.MultiSelect = false;
