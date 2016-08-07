@@ -110,9 +110,10 @@ namespace Rejestracja {
                 f.StartPosition = FormStartPosition.CenterScreen;
                 f.ShowDialog(this);
                 if (_showSettingsForm) {
-                    frmSettings fs = new frmSettings();
+                    frmSettings fs = new frmSettings(); 
                     fs.StartPosition = FormStartPosition.CenterScreen;
                     fs.ShowDialog(this);
+                    setViewMenus(!Options.get("RegistrationView").Equals("groupped"));
                     populateUI();
                     uiEnabled(true);
                     this._showSettingsForm = false;
@@ -940,6 +941,12 @@ namespace Rejestracja {
             frmNewDataFile f = new frmNewDataFile();
             f.setSelectedTab(1);
             f.ShowDialog(this);
+
+            initUi(true);
+            setViewMenus(!Options.get("RegistrationView").Equals("groupped"));
+            populateUI();
+            uiEnabled(true);
+            this._showSettingsForm = false;
         }
 
         private void mnuFFDataFolder_Click(object sender, EventArgs e) {
@@ -1446,6 +1453,10 @@ namespace Rejestracja {
         private void mnuHAbout_Click(object sender, EventArgs e) {
             frmAbout f = new frmAbout();
             f.ShowDialog(this);
+        }
+
+        private void mnuHHelp_Click(object sender, EventArgs e) {
+            System.Diagnostics.Process.Start("https://github.com/popala/registration/wiki");
         }
     }
 }

@@ -54,9 +54,10 @@ namespace Rejestracja {
             SQLiteConnection.CreateFile(fileName);
             createTables(true);
             
-            Options.set("RegistrationView", "standard");
+            Options.set("RegistrationView", "groupped");
             Options.set("RegistrationSortColumn", "0");
             Options.set("RegistrationSortOrder", "0");
+            Options.set("ValidateAgeGroup", "true");
         }
 
         private void createTables(bool createAllTables) {
@@ -236,7 +237,10 @@ namespace Rejestracja {
                         ModelCategory[] matchedModelCategory = null;
                         if (enteredModelCategory != null) {
                             //Try to match model category
-                            matchedModelCategory = modelCategories.Where(x => x.fullName.ToLower().Equals(enteredModelCategory.ToLower())).ToArray<ModelCategory>();
+                            matchedModelCategory = modelCategories.Where(x => x.fullName.ToLower().Equals(enteredModelCategory.ToLower())).ToArray();
+                            if (matchedModelCategory.Length == 0) {
+                                matchedModelCategory = modelCategories.Where(x => enteredModelCategory.ToLower().Contains("(" + x.code + ")")).ToArray();
+                            }
                             if (matchedModelCategory.Length > 0) {
                                 newRegistration.modelCategory = matchedModelCategory[0].fullName;
                                 newRegistration.modelCategoryId = matchedModelCategory[0].id;

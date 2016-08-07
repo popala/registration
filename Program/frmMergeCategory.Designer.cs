@@ -106,7 +106,7 @@
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmMergeCategory";
-            this.Text = "frmMergeCategory";
+            this.Text = "Łączenie Kategorii";
             this.Load += new System.EventHandler(this.frmMergeCategory_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

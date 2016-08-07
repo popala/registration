@@ -139,7 +139,9 @@ namespace Rejestracja
 
             btnAddPrintModel.Visible = false;
             btnNewModel.Visible = false;
+            btnNewRegistration.Visible = false;
             btnSave.Visible = true;
+            chkPrintRegistrationCard.Visible = false;
 
             this._entry = entry;
             this.Text = "Szczegóły Rejestracji";
@@ -180,8 +182,9 @@ namespace Rejestracja
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!validateEntry())
+            if (!validateEntry() && (MessageBox.Show("Znaleziono błędy w rejestracji.  Na pewno zapisać zmiany?", "Błędy Rejestracji", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Cancel)) {
                 return;
+            }
             
             btnSave.Enabled = false;
 

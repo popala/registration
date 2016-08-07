@@ -70,6 +70,8 @@
             this.mnuRsAwardDiplomas = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuRsSummary = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuHAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsEntryRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnuRCModifyRegistration = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRCDeleteRegistration = new System.Windows.Forms.ToolStripMenuItem();
@@ -124,8 +126,7 @@
             this.tsBtnSummary = new System.Windows.Forms.ToolStripButton();
             this.tsErrorSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.tsBtnErrorCount = new System.Windows.Forms.ToolStripButton();
-            this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuHAbout = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuHHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -165,14 +166,14 @@
             this.exitToolStripMenuItem});
             this.mnuFile.Name = "mnuFile";
             this.mnuFile.Size = new System.Drawing.Size(65, 20);
-            this.mnuFile.Text = "Program";
+            this.mnuFile.Text = "&Program";
             // 
             // mnuFNewDataFile
             // 
             this.mnuFNewDataFile.Image = global::Rejestracja.Properties.Resources.NewFile_6276;
             this.mnuFNewDataFile.Name = "mnuFNewDataFile";
             this.mnuFNewDataFile.Size = new System.Drawing.Size(155, 22);
-            this.mnuFNewDataFile.Text = "Nowy plik...";
+            this.mnuFNewDataFile.Text = "&Nowy plik...";
             this.mnuFNewDataFile.Click += new System.EventHandler(this.mnuFNewDataFile_Click);
             // 
             // mnuFOpenDataFile
@@ -180,7 +181,7 @@
             this.mnuFOpenDataFile.Image = global::Rejestracja.Properties.Resources.arrow_open_16xLG;
             this.mnuFOpenDataFile.Name = "mnuFOpenDataFile";
             this.mnuFOpenDataFile.Size = new System.Drawing.Size(155, 22);
-            this.mnuFOpenDataFile.Text = "Otwórz plik...";
+            this.mnuFOpenDataFile.Text = "&Otwórz plik...";
             this.mnuFOpenDataFile.Click += new System.EventHandler(this.mnuFOpenDataFile_Click);
             // 
             // toolStripSeparator6
@@ -269,7 +270,7 @@
             this.mnuRSettings});
             this.mnuRegistration.Name = "mnuRegistration";
             this.mnuRegistration.Size = new System.Drawing.Size(75, 20);
-            this.mnuRegistration.Text = "Rejestracja";
+            this.mnuRegistration.Text = "&Rejestracja";
             // 
             // mnuRNewRegistration
             // 
@@ -278,7 +279,7 @@
             this.mnuRNewRegistration.ShortcutKeyDisplayString = "";
             this.mnuRNewRegistration.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.mnuRNewRegistration.Size = new System.Drawing.Size(279, 22);
-            this.mnuRNewRegistration.Text = "Nowa rejestracja";
+            this.mnuRNewRegistration.Text = "&Nowa rejestracja";
             this.mnuRNewRegistration.Click += new System.EventHandler(this.mnuRNewRegistration_Click);
             // 
             // mnuRSelected
@@ -290,7 +291,7 @@
             this.mnuRSDelete});
             this.mnuRSelected.Name = "mnuRSelected";
             this.mnuRSelected.Size = new System.Drawing.Size(279, 22);
-            this.mnuRSelected.Text = "Zaznaczone wpisy";
+            this.mnuRSelected.Text = "&Zaznaczone wpisy";
             // 
             // mnuRSPrintChecked
             // 
@@ -328,7 +329,7 @@
             this.mnuRVGroupped});
             this.mnuRView.Name = "mnuRView";
             this.mnuRView.Size = new System.Drawing.Size(279, 22);
-            this.mnuRView.Text = "Widok";
+            this.mnuRView.Text = "&Widok";
             // 
             // mnuRVStandard
             // 
@@ -357,7 +358,7 @@
             this.mnuRPrintAll.Name = "mnuRPrintAll";
             this.mnuRPrintAll.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
             this.mnuRPrintAll.Size = new System.Drawing.Size(279, 22);
-            this.mnuRPrintAll.Text = "Drukuj wszystkie karty startowe";
+            this.mnuRPrintAll.Text = "&Drukuj wszystkie karty startowe";
             this.mnuRPrintAll.Click += new System.EventHandler(this.mnuRPrintAll_Click);
             // 
             // mnuRPrintSorted
@@ -384,7 +385,7 @@
             this.mnuRSettings.Image = global::Rejestracja.Properties.Resources.process_16xLG;
             this.mnuRSettings.Name = "mnuRSettings";
             this.mnuRSettings.Size = new System.Drawing.Size(279, 22);
-            this.mnuRSettings.Text = "Ustawienia konkursu";
+            this.mnuRSettings.Text = "&Ustawienia konkursu";
             this.mnuRSettings.Click += new System.EventHandler(this.mnuRSettings_Click);
             // 
             // mnuJudging
@@ -395,14 +396,14 @@
             this.mnuJAddResults});
             this.mnuJudging.Name = "mnuJudging";
             this.mnuJudging.Size = new System.Drawing.Size(84, 20);
-            this.mnuJudging.Text = "Sędziowanie";
+            this.mnuJudging.Text = "&Sędziowanie";
             // 
             // mnuJMergeCategories
             // 
             this.mnuJMergeCategories.Image = global::Rejestracja.Properties.Resources.arrow_merge_16xLG;
             this.mnuJMergeCategories.Name = "mnuJMergeCategories";
             this.mnuJMergeCategories.Size = new System.Drawing.Size(183, 22);
-            this.mnuJMergeCategories.Text = "Łączenie kategorii";
+            this.mnuJMergeCategories.Text = "Łą&czenie kategorii";
             this.mnuJMergeCategories.Click += new System.EventHandler(this.mnuJMergeCategories_Click);
             // 
             // mnuJJudgingForms
@@ -410,7 +411,7 @@
             this.mnuJJudgingForms.Image = global::Rejestracja.Properties.Resources.PencilAngled_16xLG_color;
             this.mnuJJudgingForms.Name = "mnuJJudgingForms";
             this.mnuJJudgingForms.Size = new System.Drawing.Size(183, 22);
-            this.mnuJJudgingForms.Text = "Karty sędziowania";
+            this.mnuJJudgingForms.Text = "&Karty sędziowania";
             this.mnuJJudgingForms.Click += new System.EventHandler(this.mnuJJudgingForms_Click);
             // 
             // mnuJAddResults
@@ -418,7 +419,7 @@
             this.mnuJAddResults.Image = global::Rejestracja.Properties.Resources.StatusAnnotations_Complete_and_ok_16xLG;
             this.mnuJAddResults.Name = "mnuJAddResults";
             this.mnuJAddResults.Size = new System.Drawing.Size(183, 22);
-            this.mnuJAddResults.Text = "Dodawanie wyników";
+            this.mnuJAddResults.Text = "&Dodawanie wyników";
             this.mnuJAddResults.Click += new System.EventHandler(this.mnuJAddResults_Click);
             // 
             // mnuResults
@@ -431,14 +432,14 @@
             this.mnuRsSummary});
             this.mnuResults.Name = "mnuResults";
             this.mnuResults.Size = new System.Drawing.Size(112, 20);
-            this.mnuResults.Text = "Wyniki i Dyplomy";
+            this.mnuResults.Text = "&Wyniki i Dyplomy";
             // 
             // mnuRsResultList
             // 
             this.mnuRsResultList.Image = global::Rejestracja.Properties.Resources.list_16xLG;
             this.mnuRsResultList.Name = "mnuRsResultList";
             this.mnuRsResultList.Size = new System.Drawing.Size(208, 22);
-            this.mnuRsResultList.Text = "Lista wyników";
+            this.mnuRsResultList.Text = "&Lista wyników";
             this.mnuRsResultList.Click += new System.EventHandler(this.mnuRsResultList_Click);
             // 
             // mnuRsCategoryDiplomas
@@ -446,7 +447,7 @@
             this.mnuRsCategoryDiplomas.Image = global::Rejestracja.Properties.Resources.certificate_16xLG;
             this.mnuRsCategoryDiplomas.Name = "mnuRsCategoryDiplomas";
             this.mnuRsCategoryDiplomas.Size = new System.Drawing.Size(208, 22);
-            this.mnuRsCategoryDiplomas.Text = "Dyplomy - kategorie";
+            this.mnuRsCategoryDiplomas.Text = "Dyplomy - &kategorie";
             this.mnuRsCategoryDiplomas.Click += new System.EventHandler(this.mnuRsCategoryDiplomas_Click);
             // 
             // mnuRsAwardDiplomas
@@ -454,7 +455,7 @@
             this.mnuRsAwardDiplomas.Image = global::Rejestracja.Properties.Resources.package_16xLG;
             this.mnuRsAwardDiplomas.Name = "mnuRsAwardDiplomas";
             this.mnuRsAwardDiplomas.Size = new System.Drawing.Size(208, 22);
-            this.mnuRsAwardDiplomas.Text = "Dyplomy - nagrody";
+            this.mnuRsAwardDiplomas.Text = "Dyplomy - &nagrody";
             this.mnuRsAwardDiplomas.Click += new System.EventHandler(this.mnuRsAwardDiplomas_Click);
             // 
             // toolStripSeparator9
@@ -467,8 +468,24 @@
             this.mnuRsSummary.Image = ((System.Drawing.Image)(resources.GetObject("mnuRsSummary.Image")));
             this.mnuRsSummary.Name = "mnuRsSummary";
             this.mnuRsSummary.Size = new System.Drawing.Size(208, 22);
-            this.mnuRsSummary.Text = "Podsumowanie konkursu";
+            this.mnuRsSummary.Text = "&Podsumowanie konkursu";
             this.mnuRsSummary.Click += new System.EventHandler(this.mnuRsSummary_Click);
+            // 
+            // mnuHelp
+            // 
+            this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuHHelp,
+            this.mnuHAbout});
+            this.mnuHelp.Name = "mnuHelp";
+            this.mnuHelp.Size = new System.Drawing.Size(57, 20);
+            this.mnuHelp.Text = "P&omoc";
+            // 
+            // mnuHAbout
+            // 
+            this.mnuHAbout.Name = "mnuHAbout";
+            this.mnuHAbout.Size = new System.Drawing.Size(152, 22);
+            this.mnuHAbout.Text = "O programie";
+            this.mnuHAbout.Click += new System.EventHandler(this.mnuHAbout_Click);
             // 
             // cmsEntryRightClick
             // 
@@ -972,20 +989,13 @@
             this.tsBtnErrorCount.Text = "Błędy Rejestracji";
             this.tsBtnErrorCount.Click += new System.EventHandler(this.tsBtnErrorCount_Click);
             // 
-            // mnuHelp
+            // mnuHHelp
             // 
-            this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuHAbout});
-            this.mnuHelp.Name = "mnuHelp";
-            this.mnuHelp.Size = new System.Drawing.Size(57, 20);
-            this.mnuHelp.Text = "Pomoc";
-            // 
-            // mnuHAbout
-            // 
-            this.mnuHAbout.Name = "mnuHAbout";
-            this.mnuHAbout.Size = new System.Drawing.Size(152, 22);
-            this.mnuHAbout.Text = "O programie";
-            this.mnuHAbout.Click += new System.EventHandler(this.mnuHAbout_Click);
+            this.mnuHHelp.Image = global::Rejestracja.Properties.Resources.StatusAnnotations_Help_and_inconclusive_32xLG_color;
+            this.mnuHHelp.Name = "mnuHHelp";
+            this.mnuHHelp.Size = new System.Drawing.Size(152, 22);
+            this.mnuHHelp.Text = "Pomoc";
+            this.mnuHHelp.Click += new System.EventHandler(this.mnuHHelp_Click);
             // 
             // frmMain
             // 
@@ -1120,6 +1130,7 @@
         private System.Windows.Forms.ToolStripButton tsBtnClearFilter;
         private System.Windows.Forms.ToolStripMenuItem mnuHelp;
         private System.Windows.Forms.ToolStripMenuItem mnuHAbout;
+        private System.Windows.Forms.ToolStripMenuItem mnuHHelp;
 
 
     }
