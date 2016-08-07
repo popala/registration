@@ -1454,5 +1454,9 @@ namespace Rejestracja {
             frmAbout f = new frmAbout();
             f.ShowDialog(this);
         }
+
+        private void mnuHHelp_Click(object sender, EventArgs e) {
+            System.Diagnostics.Process.Start("https://github.com/popala/registration/wiki");
+        }
     }
 }

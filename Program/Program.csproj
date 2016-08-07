@@ -213,6 +213,7 @@
     <None Include="Icons\list_16xLG.png" />
     <None Include="Icons\PrintDocumentControl_697.png" />
     <None Include="Icons\plane.ico" />
+    <None Include="Resources\StatusAnnotations_Help_and_inconclusive_32xLG_color.png" />
     <Content Include="Templates\posumowanie.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

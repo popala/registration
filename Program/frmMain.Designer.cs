@@ -126,6 +126,7 @@
             this.tsBtnSummary = new System.Windows.Forms.ToolStripButton();
             this.tsErrorSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.tsBtnErrorCount = new System.Windows.Forms.ToolStripButton();
+            this.mnuHHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -335,14 +336,14 @@
             this.mnuRVStandard.Checked = true;
             this.mnuRVStandard.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mnuRVStandard.Name = "mnuRVStandard";
-            this.mnuRVStandard.Size = new System.Drawing.Size(152, 22);
+            this.mnuRVStandard.Size = new System.Drawing.Size(143, 22);
             this.mnuRVStandard.Text = "Standardowy";
             this.mnuRVStandard.Click += new System.EventHandler(this.mnuRVItem_Click);
             // 
             // mnuRVGroupped
             // 
             this.mnuRVGroupped.Name = "mnuRVGroupped";
-            this.mnuRVGroupped.Size = new System.Drawing.Size(152, 22);
+            this.mnuRVGroupped.Size = new System.Drawing.Size(143, 22);
             this.mnuRVGroupped.Text = "Grupowany";
             this.mnuRVGroupped.Click += new System.EventHandler(this.mnuRVItem_Click);
             // 
@@ -473,6 +474,7 @@
             // mnuHelp
             // 
             this.mnuHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuHHelp,
             this.mnuHAbout});
             this.mnuHelp.Name = "mnuHelp";
             this.mnuHelp.Size = new System.Drawing.Size(57, 20);
@@ -987,6 +989,14 @@
             this.tsBtnErrorCount.Text = "Błędy Rejestracji";
             this.tsBtnErrorCount.Click += new System.EventHandler(this.tsBtnErrorCount_Click);
             // 
+            // mnuHHelp
+            // 
+            this.mnuHHelp.Image = global::Rejestracja.Properties.Resources.StatusAnnotations_Help_and_inconclusive_32xLG_color;
+            this.mnuHHelp.Name = "mnuHHelp";
+            this.mnuHHelp.Size = new System.Drawing.Size(152, 22);
+            this.mnuHHelp.Text = "Pomoc";
+            this.mnuHHelp.Click += new System.EventHandler(this.mnuHHelp_Click);
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1120,6 +1130,7 @@
         private System.Windows.Forms.ToolStripButton tsBtnClearFilter;
         private System.Windows.Forms.ToolStripMenuItem mnuHelp;
         private System.Windows.Forms.ToolStripMenuItem mnuHAbout;
+        private System.Windows.Forms.ToolStripMenuItem mnuHHelp;
 
 
     }
