@@ -287,7 +287,7 @@ namespace Rejestracja {
                             }
                         }
                     }
-                    catch (Exception err) {
+                    catch (Exception) {
                         newRegistration = null;
                         badRecordCount++;
                         badEntries.AppendLine(String.Join(",", parsedEntry));

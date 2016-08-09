@@ -39,12 +39,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2E111610CEE44BF79617F824141DC7D0"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_42FE4659ABD25B067CC2D914711EB49C"
         "OwnerKey" = "8:_0F384CB3B181477899A68F7E713D35B5"
         "MsmSig" = "8:_UNDEFINED"
@@ -75,6 +69,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5F9C253A146249EDAC80E28F63444834"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_72951371B02B8C896D44F42A5EBCB166"
         "OwnerKey" = "8:_0F384CB3B181477899A68F7E713D35B5"
         "MsmSig" = "8:_UNDEFINED"
@@ -82,6 +82,12 @@
         "Entry"
         {
         "MsmKey" = "8:_8B115F00E25E4CF4B21CD08D9FC37589"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8EF022FFB77D443091FB8A7142AF3EA5"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -95,12 +101,6 @@
         {
         "MsmKey" = "8:_D66BE1640A737E8A3A0C377441A89815"
         "OwnerKey" = "8:_0F384CB3B181477899A68F7E713D35B5"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_28F72655C73FA8D40E8E914D570DBDE0"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -137,6 +137,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_72951371B02B8C896D44F42A5EBCB166"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_28F72655C73FA8D40E8E914D570DBDE0"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -265,26 +271,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2E111610CEE44BF79617F824141DC7D0"
-            {
-            "SourcePath" = "8:..\\Program\\x64\\SQLite.Interop.dll"
-            "TargetName" = "8:SQLite.Interop.dll"
-            "Tag" = "8:"
-            "Folder" = "8:_9056098591D8486EB7B8A14933A89A62"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_42FE4659ABD25B067CC2D914711EB49C"
             {
             "AssemblyRegister" = "3:1"
@@ -367,6 +353,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5F9C253A146249EDAC80E28F63444834"
+            {
+            "SourcePath" = "8:..\\Program\\x86\\SQLite.Interop.dll"
+            "TargetName" = "8:SQLite.Interop.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_A8A4CF696CEC40F2BFB53D2369FB7228"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_72951371B02B8C896D44F42A5EBCB166"
             {
             "AssemblyRegister" = "3:1"
@@ -404,6 +410,26 @@
             "TargetName" = "8:plane.ico"
             "Tag" = "8:"
             "Folder" = "8:_9056098591D8486EB7B8A14933A89A62"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8EF022FFB77D443091FB8A7142AF3EA5"
+            {
+            "SourcePath" = "8:..\\Program\\x64\\SQLite.Interop.dll"
+            "TargetName" = "8:SQLite.Interop.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_7094F4C275644F05BF84FCB88E1B9329"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -573,6 +599,28 @@
             "Property" = "8:TARGETDIR"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_7094F4C275644F05BF84FCB88E1B9329"
+                    {
+                    "Name" = "8:x64"
+                    "AlwaysCreate" = "11:TRUE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_553A8CF948734A01AE7C08C1F4916557"
+                        "Folders"
+                        {
+                        }
+                    }
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_A8A4CF696CEC40F2BFB53D2369FB7228"
+                    {
+                    "Name" = "8:x86"
+                    "AlwaysCreate" = "11:TRUE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_FD386A82C07448E0A67AA1FAFDDD4BC4"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
         }
@@ -592,7 +640,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Rejestrator Oszołomów"
         "ProductCode" = "8:{A0B1687D-ECC1-475F-AF8A-B3A1E0658633}"
-        "PackageCode" = "8:{1724FEF2-EA20-423D-B618-1353F8B787C4}"
+        "PackageCode" = "8:{F7C74306-C55D-4690-8C35-1925AF51BA70}"
         "UpgradeCode" = "8:{393535DE-8772-4280-AC85-396A15E2BE5B}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
