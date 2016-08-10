@@ -239,7 +239,11 @@ namespace Rejestracja {
                             //Try to match model category
                             matchedModelCategory = modelCategories.Where(x => x.fullName.ToLower().Equals(enteredModelCategory.ToLower())).ToArray();
                             if (matchedModelCategory.Length == 0) {
-                                matchedModelCategory = modelCategories.Where(x => enteredModelCategory.ToLower().Contains("(" + x.code + ")")).ToArray();
+                                matchedModelCategory = modelCategories.Where(
+                                    x => enteredModelCategory.ToLower().Contains("(" + x.code.ToLower() + ")") ||
+                                        enteredModelCategory.ToLower().StartsWith(x.code.ToLower() + " ") ||
+                                        enteredModelCategory.ToLower().EndsWith(" " + x.code.ToLower())
+                                        ).ToArray();
                             }
                             if (matchedModelCategory.Length > 0) {
                                 newRegistration.modelCategory = matchedModelCategory[0].fullName;
