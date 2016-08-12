@@ -15,6 +15,7 @@ using Rejestracja.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Rejestracja
@@ -182,8 +183,24 @@ namespace Rejestracja
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!validateEntry() && (MessageBox.Show("Znaleziono błędy w rejestracji.  Na pewno zapisać zmiany?", "Błędy Rejestracji", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) == System.Windows.Forms.DialogResult.Cancel)) {
+            if (!validateEntry()) {
                 return;
+            }
+
+            if (cboModelScale.SelectedIndex < 0) {
+                string scale = cboModelScale.Text.Trim();
+                if (MessageBox.Show("Dodać wpisaną skalę do bazy?", "Skala Nie Znaleziona", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
+                    ModelScaleDao.add(scale, ModelScaleDao.getNextSortFlag());
+                    //TODO: repopulate ddl and select
+                }
+            }
+
+            if (cboModelPublisher.SelectedIndex < 0) {
+                string publisher = cboModelPublisher.Text.Trim();
+                if (MessageBox.Show("Dodać wpisanego wydawcę do bazy?", "Wydawca Nie Znaleziony", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
+                    PublisherDao.add(publisher);
+                    //TODO: repopulate ddl and select
+                }
             }
             
             btnSave.Enabled = false;
@@ -223,21 +240,28 @@ namespace Rejestracja
 
         private bool validateEntry()
         {
-            if(txtFirstName.Text.Length == 0 || txtLastName.Text.Length ==0)
-            {
+            if (cboModelCategory.SelectedIndex < 0) {
+                MessageBox.Show("Kategoria modelu jest wymagana", "Wymagane pola", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            if (txtFirstName.Text.Length == 0 || txtLastName.Text.Length == 0) {
                 MessageBox.Show("Imię i nazwisko są wymagane", "Wymagane pola", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            if(txtModelName.Text.Length == 0 || String.IsNullOrWhiteSpace(cboModelPublisher.Text) || cboModelScale.SelectedIndex < 0)
-            {
-                MessageBox.Show("Nazwa, wydawca i skala modelu są wymagane", "Wymagane pola", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (txtModelName.Text.Length == 0) {
+                MessageBox.Show("Nazwa modelu jest wymagana", "Wymagane pola", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            if(cboModelCategory.SelectedIndex < 0)
-            {
-                MessageBox.Show("Kategoria modelu jest wymagana", "Wymagane pola", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (cboModelScale.Text.Length == 0) {
+                MessageBox.Show("Wpisz lub wybierz skalę", "Nowa Rejestracja", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return false;
+            }
+
+            if (cboModelPublisher.Text.Length == 0) {
+                MessageBox.Show("Wpisz lub wybierz wydawcę", "Nowa Rejestracja", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return false;
             }
 
@@ -298,6 +322,31 @@ namespace Rejestracja
             try {
                 if (!validateEntry()) {
                     return;
+                }
+
+                if (cboModelScale.SelectedIndex < 0) {
+                    string scale = cboModelScale.Text.Trim();
+                    if (MessageBox.Show("Dodać wpisaną skalę do bazy?", "Skala Nie Znaleziona", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
+                        ModelScaleDao.add(scale, ModelScaleDao.getNextSortFlag());
+
+                        cboModelScale.Items.Clear();
+                        foreach (String item in ModelScaleDao.getSimpleList())
+                            cboModelScale.Items.Add(item.Trim());
+                        cboModelScale.SelectedIndex = cboModelScale.FindString(scale);
+                    }
+                }
+
+                if (cboModelPublisher.SelectedIndex < 0) {
+                    string publisher = cboModelPublisher.Text.Trim();
+                    if (MessageBox.Show("Dodać wpisanego wydawcę do bazy?", "Wydawca Nie Znaleziony", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
+                        PublisherDao.add(publisher);
+                        
+                        cboModelPublisher.Items.Clear();
+                        foreach (String item in PublisherDao.getSimpleList())
+                            cboModelPublisher.Items.Add(item.Trim());
+                        cboModelPublisher.Sorted = true;
+                        cboModelPublisher.SelectedIndex = cboModelPublisher.FindString(publisher);
+                    }
                 }
 
                 long categoryId = -1;
