@@ -191,7 +191,11 @@ namespace Rejestracja
                 string scale = cboModelScale.Text.Trim();
                 if (MessageBox.Show("Dodać wpisaną skalę do bazy?", "Skala Nie Znaleziona", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
                     ModelScaleDao.add(scale, ModelScaleDao.getNextSortFlag());
-                    //TODO: repopulate ddl and select
+
+                    cboModelScale.Items.Clear();
+                    foreach (String item in ModelScaleDao.getSimpleList())
+                        cboModelScale.Items.Add(item.Trim());
+                    cboModelScale.SelectedIndex = cboModelScale.FindString(scale);
                 }
             }
 
@@ -199,7 +203,12 @@ namespace Rejestracja
                 string publisher = cboModelPublisher.Text.Trim();
                 if (MessageBox.Show("Dodać wpisanego wydawcę do bazy?", "Wydawca Nie Znaleziony", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
                     PublisherDao.add(publisher);
-                    //TODO: repopulate ddl and select
+
+                    cboModelPublisher.Items.Clear();
+                    foreach (String item in PublisherDao.getSimpleList())
+                        cboModelPublisher.Items.Add(item.Trim());
+                    cboModelPublisher.Sorted = true;
+                    cboModelPublisher.SelectedIndex = cboModelPublisher.FindString(publisher);
                 }
             }
             
