@@ -54,6 +54,8 @@
             this.mnuRView = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRVStandard = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRVGroupped = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
+            this.mnuRVAutoWidth = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuRPrintAll = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRPrintSorted = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,6 +73,7 @@
             this.toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuRsSummary = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHelp = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuHHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuHAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsEntryRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.mnuRCModifyRegistration = new System.Windows.Forms.ToolStripMenuItem();
@@ -126,7 +129,6 @@
             this.tsBtnSummary = new System.Windows.Forms.ToolStripButton();
             this.tsErrorSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.tsBtnErrorCount = new System.Windows.Forms.ToolStripButton();
-            this.mnuHHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -326,7 +328,9 @@
             // 
             this.mnuRView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mnuRVStandard,
-            this.mnuRVGroupped});
+            this.mnuRVGroupped,
+            this.toolStripSeparator15,
+            this.mnuRVAutoWidth});
             this.mnuRView.Name = "mnuRView";
             this.mnuRView.Size = new System.Drawing.Size(279, 22);
             this.mnuRView.Text = "&Widok";
@@ -336,16 +340,31 @@
             this.mnuRVStandard.Checked = true;
             this.mnuRVStandard.CheckState = System.Windows.Forms.CheckState.Checked;
             this.mnuRVStandard.Name = "mnuRVStandard";
-            this.mnuRVStandard.Size = new System.Drawing.Size(143, 22);
+            this.mnuRVStandard.Size = new System.Drawing.Size(249, 22);
             this.mnuRVStandard.Text = "Standardowy";
             this.mnuRVStandard.Click += new System.EventHandler(this.mnuRVItem_Click);
             // 
             // mnuRVGroupped
             // 
             this.mnuRVGroupped.Name = "mnuRVGroupped";
-            this.mnuRVGroupped.Size = new System.Drawing.Size(143, 22);
+            this.mnuRVGroupped.Size = new System.Drawing.Size(249, 22);
             this.mnuRVGroupped.Text = "Grupowany";
             this.mnuRVGroupped.Click += new System.EventHandler(this.mnuRVItem_Click);
+            // 
+            // toolStripSeparator15
+            // 
+            this.toolStripSeparator15.Name = "toolStripSeparator15";
+            this.toolStripSeparator15.Size = new System.Drawing.Size(246, 6);
+            // 
+            // mnuRVAutoWidth
+            // 
+            this.mnuRVAutoWidth.Checked = true;
+            this.mnuRVAutoWidth.CheckOnClick = true;
+            this.mnuRVAutoWidth.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.mnuRVAutoWidth.Name = "mnuRVAutoWidth";
+            this.mnuRVAutoWidth.Size = new System.Drawing.Size(249, 22);
+            this.mnuRVAutoWidth.Text = "Automatyczna szerokość kolumn";
+            this.mnuRVAutoWidth.Click += new System.EventHandler(this.mnuRVAutoWidth_Click);
             // 
             // toolStripSeparator7
             // 
@@ -480,10 +499,18 @@
             this.mnuHelp.Size = new System.Drawing.Size(57, 20);
             this.mnuHelp.Text = "P&omoc";
             // 
+            // mnuHHelp
+            // 
+            this.mnuHHelp.Image = global::Rejestracja.Properties.Resources.StatusAnnotations_Help_and_inconclusive_32xLG_color;
+            this.mnuHHelp.Name = "mnuHHelp";
+            this.mnuHHelp.Size = new System.Drawing.Size(141, 22);
+            this.mnuHHelp.Text = "Pomoc";
+            this.mnuHHelp.Click += new System.EventHandler(this.mnuHHelp_Click);
+            // 
             // mnuHAbout
             // 
             this.mnuHAbout.Name = "mnuHAbout";
-            this.mnuHAbout.Size = new System.Drawing.Size(152, 22);
+            this.mnuHAbout.Size = new System.Drawing.Size(141, 22);
             this.mnuHAbout.Text = "O programie";
             this.mnuHAbout.Click += new System.EventHandler(this.mnuHAbout_Click);
             // 
@@ -989,14 +1016,6 @@
             this.tsBtnErrorCount.Text = "Błędy Rejestracji";
             this.tsBtnErrorCount.Click += new System.EventHandler(this.tsBtnErrorCount_Click);
             // 
-            // mnuHHelp
-            // 
-            this.mnuHHelp.Image = global::Rejestracja.Properties.Resources.StatusAnnotations_Help_and_inconclusive_32xLG_color;
-            this.mnuHHelp.Name = "mnuHHelp";
-            this.mnuHHelp.Size = new System.Drawing.Size(152, 22);
-            this.mnuHHelp.Text = "Pomoc";
-            this.mnuHHelp.Click += new System.EventHandler(this.mnuHHelp_Click);
-            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1131,6 +1150,8 @@
         private System.Windows.Forms.ToolStripMenuItem mnuHelp;
         private System.Windows.Forms.ToolStripMenuItem mnuHAbout;
         private System.Windows.Forms.ToolStripMenuItem mnuHHelp;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
+        private System.Windows.Forms.ToolStripMenuItem mnuRVAutoWidth;
 
 
     }

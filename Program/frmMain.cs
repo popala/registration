@@ -126,7 +126,14 @@ namespace Rejestracja {
                     String[] pos = size.Split(',');
                     resizeScreen(int.Parse(pos[0]), int.Parse(pos[1]), int.Parse(pos[2]), int.Parse(pos[3]));
                 }
+                if (Options.get("RegistrationView") == null) {
+                    Options.set("RegistrationView", "groupped");
+                }
                 setViewMenus(!Options.get("RegistrationView").Equals("groupped"));
+                if (Options.get("ColumnWidth") == null) {
+                    Options.set("ColumnWidth", "auto");
+                }
+                mnuRVAutoWidth.Checked = Options.get("ColumnWidth").Equals("auto");
             }
 
             try {
@@ -309,8 +316,10 @@ namespace Rejestracja {
                 loadGrouppedRegistrationList(searchValue);
             }
 
-            foreach (ColumnHeader header in lvEntries.Columns) {
-                header.Width = -2;
+            if (mnuRVAutoWidth.Checked) {
+                foreach (ColumnHeader header in lvEntries.Columns) {
+                    header.Width = -2;
+                }
             }
 
             highlightInvalidRegistrationEntries();
@@ -421,6 +430,18 @@ namespace Rejestracja {
             }
         }
 
+        private void highlightErrorCell(ListViewItem item, int subitem) {
+
+            Color color = System.Drawing.Color.Red;
+
+            item.UseItemStyleForSubItems = false;
+            item.SubItems[0].ForeColor = color;
+            item.SubItems[0].Font = new Font(item.Font, FontStyle.Bold);
+
+            item.SubItems[subitem].ForeColor = color;
+            item.SubItems[subitem].Font = new Font(item.Font, FontStyle.Bold);
+        }
+
         private void highlightInvalidRegistrationEntries() {
             List<ModelCategory> modelCategories = ModelCategoryDao.getList().ToList();
             List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList();
@@ -434,32 +455,20 @@ namespace Rejestracja {
                 StringBuilder sb = new StringBuilder();
                 item.ToolTipText = "";
 
-                ////TODO: Make this an option
-                ////Only seniors are allowed in non-standard category
-                //if (item.SubItems[7].Text.ToLower() != "senior" && item.SubItems[10].Text.ToLower() != "standard") {
-                //    item.ForeColor = System.Drawing.Color.Red;
-                //    item.ToolTipText = "Tylko Senior może startować w kategorii Open.";
-                //    lvEntries.ShowItemToolTips = true;
-                //    errorCount++;
-                //    continue;
-                //}
-                //else {
-                //    item.ForeColor = System.Drawing.Color.Black;
-                //}
-
                 //Check if model category is listed in the resources
                 ModelCategory [] catFound = modelCategories.Where(x => x.fullName.ToLower().Equals(item.SubItems[9].Text.ToLower())).ToArray();
                 if (catFound.Length == 0) {
                     sb.Append("Kategoria modelu nie znaleziona w konfiguracji. ");
-                    //errorCount++;
                     badEntryCount++;
+                    highlightErrorCell(item, 9);
                 }
                 else if (!catFound[0].modelClass.ToLower().Equals(item.SubItems[10].Text.ToLower())) {
                     if (sb.Length == 0) {
                         badEntryCount++;
                     }
                     sb.Append("Kategoria i klasa modelu nie zgadzają się. ");
-                    //errorCount++;
+                    highlightErrorCell(item, 9);
+                    highlightErrorCell(item, 10);
                 }
 
                 AgeGroup [] agFound = ageGroups.Where(x => x.name.ToLower().Equals(item.SubItems[7].Text.ToLower())).ToArray();
@@ -468,7 +477,7 @@ namespace Rejestracja {
                         badEntryCount++;
                     }
                     sb.Append("Grupa wiekowa nie znaleziona. ");
-                    //errorCount++;
+                    highlightErrorCell(item, 7);
                 }
 
                 if (checkAgeGroupAge) {
@@ -478,12 +487,12 @@ namespace Rejestracja {
                             badEntryCount++;
                         }
                         sb.Append("Wiek modelarza wykracza poza wybraną grupę wiekową. ");
-                        //errorCount++;
+                        highlightErrorCell(item, 5);
+                        highlightErrorCell(item, 7);
                     }
                 }
 
                 if (sb.Length > 0) {
-                    item.ForeColor = System.Drawing.Color.Red;
                     item.ToolTipText = sb.ToString();
                 }
             }
@@ -943,7 +952,17 @@ namespace Rejestracja {
             f.ShowDialog(this);
 
             initUi(true);
+
+            if (Options.get("RegistrationView") == null) {
+                Options.set("RegistrationView", "groupped");
+            }
             setViewMenus(!Options.get("RegistrationView").Equals("groupped"));
+
+            if (Options.get("ColumnWidth") == null) {
+                Options.set("ColumnWidth", "auto");
+            }
+            mnuRVAutoWidth.Checked = Options.get("ColumnWidth").Equals("auto");
+
             populateUI();
             uiEnabled(true);
             this._showSettingsForm = false;
@@ -1457,6 +1476,15 @@ namespace Rejestracja {
 
         private void mnuHHelp_Click(object sender, EventArgs e) {
             System.Diagnostics.Process.Start("https://github.com/popala/registration/wiki");
+        }
+
+        private void mnuRVAutoWidth_Click(object sender, EventArgs e) {
+            if (mnuRVAutoWidth.Checked) {
+                Options.set("ColumnWidth", "auto");
+            }
+            else {
+                Options.set("ColumnWidth", "manual");
+            }
         }
     }
 }
