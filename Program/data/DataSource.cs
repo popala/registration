@@ -242,7 +242,8 @@ namespace Rejestracja {
                                 matchedModelCategory = modelCategories.Where(
                                     x => enteredModelCategory.ToLower().Contains("(" + x.code.ToLower() + ")") ||
                                         enteredModelCategory.ToLower().StartsWith(x.code.ToLower() + " ") ||
-                                        enteredModelCategory.ToLower().EndsWith(" " + x.code.ToLower())
+                                        enteredModelCategory.ToLower().EndsWith(" " + x.code.ToLower()) ||
+                                        enteredModelCategory.ToLower().Equals(x.code.ToLower())
                                         ).ToArray();
                             }
                             if (matchedModelCategory.Length > 0) {
