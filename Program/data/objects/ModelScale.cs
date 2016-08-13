@@ -1,4 +1,5 @@
-﻿/*
+﻿using Rejestracja.Utils;
+/*
  * Copyright (C) 2016 Paweł Opała https://github.com/popala/registration
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
@@ -10,6 +11,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 using System;
+using System.Text.RegularExpressions;
 
 namespace Rejestracja.Data.Objects {
     class ModelScale {
@@ -21,6 +23,23 @@ namespace Rejestracja.Data.Objects {
             this.id = id;
             this.name = name;
             this.displayOrder = displayOrder;
+        }
+
+        public static String parse(String newScale) {
+            String tmp = newScale.Replace(" ", "").Replace("\t", "");
+            if (Regex.IsMatch(tmp, "[0-9]:[0-9]{1,}")) {
+                string [] parts = tmp.Split(':');
+                try {
+                    return String.Format("{0}:{1}", int.Parse(parts[0]), int.Parse(parts[1]));
+                }
+                catch (Exception err) {
+                    LogWriter.error(String.Format("Error parsing scale: \"{0}\"", newScale), err);
+                    return newScale;
+                }
+            }
+            else {
+                return newScale;
+            }
         }
     }
 }

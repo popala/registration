@@ -108,6 +108,8 @@ namespace Rejestracja {
             lblFileName.Text = "";
             chkHasHeaders.Checked = true;
             chkDropExistingRecords.Checked = true;
+            chkAutoAddScales.Checked = true;
+            chkAutoAddPublisher.Checked = true;
             btnImport.Enabled = false;
         }
 
@@ -219,7 +221,7 @@ namespace Rejestracja {
                     File.Delete(badRecordFile);
                 }
                 
-                int badRecordCount = ds.bulkLoadRegistration(lblFileName.Text, fieldMap, chkHasHeaders.Checked, badRecordFile);
+                int badRecordCount = ds.bulkLoadRegistration(lblFileName.Text, fieldMap, chkHasHeaders.Checked, badRecordFile, chkAutoAddScales.Checked, chkAutoAddPublisher.Checked);
                 if (badRecordCount > 0) {
                     MessageBox.Show("Wystąpiły błędy przy ładowaniu rejestracji. Dane których nie udało się importować zostały zapisane w pliku:\r\n" + badRecordFile, "Import Danych", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     Process.Start(Resources.DataFileFolder);
