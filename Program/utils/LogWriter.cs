@@ -47,7 +47,16 @@ namespace Rejestracja.Utils
             verifyFile(logFile);
             File.WriteAllLines(
                 logFile,
-                new String[] { String.Format("{0} {1} {2}", DateTime.Now, e.Source, e.Message), e.StackTrace }
+                new String[] { String.Format("{0} error_source=\"{1}\" error_message=\"{2}\"", DateTime.Now, e.Source, e.Message), e.StackTrace }
+            );
+        }
+
+        public static void error(String message, Exception e) {
+            String logFile = Resources.ErrorLogPath;
+            verifyFile(logFile);
+            File.WriteAllLines(
+                logFile,
+                new String[] { String.Format("{0} message=\"{1}\" error_source=\"{2}\" error_message=\"{3}\"", DateTime.Now, message, e.Source, e.Message), e.StackTrace }
             );
         }
 

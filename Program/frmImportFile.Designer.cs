@@ -63,6 +63,8 @@
             this.label10 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.chkDropExistingRecords = new System.Windows.Forms.CheckBox();
+            this.chkAutoAddScales = new System.Windows.Forms.CheckBox();
+            this.chkAutoAddPublisher = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -102,7 +104,7 @@
             // btnImport
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImport.Location = new System.Drawing.Point(557, 685);
+            this.btnImport.Location = new System.Drawing.Point(557, 725);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(75, 23);
             this.btnImport.TabIndex = 0;
@@ -114,7 +116,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(638, 685);
+            this.btnCancel.Location = new System.Drawing.Point(638, 725);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 1;
@@ -132,7 +134,7 @@
             this.tabControl1.Location = new System.Drawing.Point(3, 74);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(729, 605);
+            this.tabControl1.Size = new System.Drawing.Size(729, 645);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -141,7 +143,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(912, 579);
+            this.tabPage1.Size = new System.Drawing.Size(721, 579);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Podgląd Pliku";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -160,6 +162,8 @@
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.chkAutoAddPublisher);
+            this.tabPage2.Controls.Add(this.chkAutoAddScales);
             this.tabPage2.Controls.Add(this.cboModelClass);
             this.tabPage2.Controls.Add(this.label13);
             this.tabPage2.Controls.Add(this.cboAgeGroup);
@@ -191,7 +195,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(721, 579);
+            this.tabPage2.Size = new System.Drawing.Size(721, 619);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Mapowanie Pól";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -281,7 +285,7 @@
             // 
             this.lblImportMessage.AutoSize = true;
             this.lblImportMessage.ForeColor = System.Drawing.Color.Red;
-            this.lblImportMessage.Location = new System.Drawing.Point(18, 549);
+            this.lblImportMessage.Location = new System.Drawing.Point(18, 587);
             this.lblImportMessage.Name = "lblImportMessage";
             this.lblImportMessage.Size = new System.Drawing.Size(89, 13);
             this.lblImportMessage.TabIndex = 24;
@@ -291,16 +295,16 @@
             // 
             this.cboModelPublisher.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboModelPublisher.FormattingEnabled = true;
-            this.cboModelPublisher.Location = new System.Drawing.Point(144, 502);
+            this.cboModelPublisher.Location = new System.Drawing.Point(144, 531);
             this.cboModelPublisher.Name = "cboModelPublisher";
             this.cboModelPublisher.Size = new System.Drawing.Size(527, 21);
-            this.cboModelPublisher.TabIndex = 13;
+            this.cboModelPublisher.TabIndex = 14;
             this.cboModelPublisher.SelectedIndexChanged += new System.EventHandler(this.cboField_SelectedIndexChanged);
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(42, 505);
+            this.label11.Location = new System.Drawing.Point(42, 534);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(96, 13);
             this.label11.TabIndex = 20;
@@ -507,12 +511,32 @@
             this.chkDropExistingRecords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.chkDropExistingRecords.AutoSize = true;
             this.chkDropExistingRecords.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkDropExistingRecords.Location = new System.Drawing.Point(262, 689);
+            this.chkDropExistingRecords.Location = new System.Drawing.Point(262, 729);
             this.chkDropExistingRecords.Name = "chkDropExistingRecords";
             this.chkDropExistingRecords.Size = new System.Drawing.Size(289, 17);
             this.chkDropExistingRecords.TabIndex = 5;
             this.chkDropExistingRecords.Text = "Usuń instniejące rejestracje przed rozpoczęciem importu";
             this.chkDropExistingRecords.UseVisualStyleBackColor = true;
+            // 
+            // chkAutoAddScales
+            // 
+            this.chkAutoAddScales.AutoSize = true;
+            this.chkAutoAddScales.Location = new System.Drawing.Point(144, 502);
+            this.chkAutoAddScales.Name = "chkAutoAddScales";
+            this.chkAutoAddScales.Size = new System.Drawing.Size(191, 17);
+            this.chkAutoAddScales.TabIndex = 13;
+            this.chkAutoAddScales.Text = "Dodaj skale nie znalezione w bazie";
+            this.chkAutoAddScales.UseVisualStyleBackColor = true;
+            // 
+            // chkAutoAddPublisher
+            // 
+            this.chkAutoAddPublisher.AutoSize = true;
+            this.chkAutoAddPublisher.Location = new System.Drawing.Point(144, 558);
+            this.chkAutoAddPublisher.Name = "chkAutoAddPublisher";
+            this.chkAutoAddPublisher.Size = new System.Drawing.Size(230, 17);
+            this.chkAutoAddPublisher.TabIndex = 15;
+            this.chkAutoAddPublisher.Text = "Dodaj wydawców nie znalezionych w bazie";
+            this.chkAutoAddPublisher.UseVisualStyleBackColor = true;
             // 
             // frmImportFile
             // 
@@ -520,7 +544,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(734, 720);
+            this.ClientSize = new System.Drawing.Size(734, 760);
             this.Controls.Add(this.chkDropExistingRecords);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnCancel);
@@ -586,5 +610,7 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.CheckBox chkDropExistingRecords;
+        private System.Windows.Forms.CheckBox chkAutoAddPublisher;
+        private System.Windows.Forms.CheckBox chkAutoAddScales;
     }
 }

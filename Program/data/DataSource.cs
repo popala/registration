@@ -146,15 +146,16 @@ namespace Rejestracja {
             return String.Format("\"{0}\"", value);
         }
 
-        private List<RegistrationEntry> parseCSVFile(String filePath, FileImportFieldMap fieldMap, bool hasHeaders, String badRecordFile, out int badRecordCount) {
+        private List<RegistrationEntry> parseCSVFile(String filePath, FileImportFieldMap fieldMap, bool hasHeaders, String badRecordFile, bool addScale, bool addPublisher, out int badRecordCount) {
 
             List<RegistrationEntry> ret = new List<RegistrationEntry>();
 
             TextInfo textInfo = new CultureInfo("pl-PL", false).TextInfo;
-            List<String> publishers = PublisherDao.getSimpleList().ToList<String>();
-            List<ModelCategory> modelCategories = ModelCategoryDao.getList().ToList<ModelCategory>();
-            List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList<AgeGroup>();
-            List<String> modelClasses = ModelClassDao.getSimpleList().ToList<String>();
+            List<String> publishers = PublisherDao.getSimpleList().ToList();
+            List<ModelCategory> modelCategories = ModelCategoryDao.getList().ToList();
+            List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList();
+            List<String> modelClasses = ModelClassDao.getSimpleList().ToList();
+            List<String> modelScales = ModelScaleDao.getSimpleList().ToList();
 
             badRecordCount = 0;
 
@@ -267,7 +268,14 @@ namespace Rejestracja {
                         }
 
                         //ModelScale
-                        newRegistration.modelScale = parsedEntry[fieldMap.ModelScale].Trim();
+                        newRegistration.modelScale = ModelScale.parse(parsedEntry[fieldMap.ModelScale].Trim());
+                        if (addScale) {
+                            String[] scale = modelScales.Where(x => x.ToLower().Equals(newRegistration.modelScale.ToLower())).ToArray<String>();
+                            if (scale.Length == 0) {
+                                ModelScaleDao.add(newRegistration.modelScale, ModelScaleDao.getNextSortFlag());
+                                modelScales = ModelScaleDao.getSimpleList().ToList();
+                            }
+                        }
 
                         //ModelClass
                         //Only populate if it should not be derived from model category
@@ -285,10 +293,16 @@ namespace Rejestracja {
                         if (fieldMap.ModelPublisher > -1) {
                             String[] pub = publishers.Where(x => x.ToLower().Equals(parsedEntry[fieldMap.ModelPublisher].ToLower())).ToArray<String>();
                             //halinski vs. haliński
-                            if (pub.Length == 0)
+                            if (pub.Length == 0) {
                                 pub = publishers.Where(x => removeAccent(x.ToLower()).Equals(removeAccent(parsedEntry[fieldMap.ModelPublisher].ToLower()))).ToArray<String>();
+                            }
                             if (pub.Length > 0) {
                                 newRegistration.modelPublisher = pub[0].Trim();
+                            }
+                            else if (addPublisher) {
+                                String newPublisher = parsedEntry[fieldMap.ModelPublisher].Trim();
+                                PublisherDao.add(newPublisher);
+                                publishers = PublisherDao.getSimpleList().ToList<String>();
                             }
                         }
                     }
@@ -349,11 +363,11 @@ namespace Rejestracja {
             }
         }
 
-        public int bulkLoadRegistration(String filePath, FileImportFieldMap fieldMap, bool hasHeaders, String badRecordFile) {
+        public int bulkLoadRegistration(String filePath, FileImportFieldMap fieldMap, bool hasHeaders, String badRecordFile, bool addScale, bool addPublisher) {
 
             int badRecordCountParsing = 0;
             int badRecordCountLoading = 0;
-            IEnumerable<RegistrationEntry> entries = parseCSVFile(filePath, fieldMap, hasHeaders, badRecordFile, out badRecordCountParsing);
+            IEnumerable<RegistrationEntry> entries = parseCSVFile(filePath, fieldMap, hasHeaders, badRecordFile, addScale, addPublisher, out badRecordCountParsing);
             ModelCategory[] categories = ModelCategoryDao.getList().ToArray();
             ModelCategory[] matchedCategory = null;
             StringBuilder sb = new StringBuilder();
