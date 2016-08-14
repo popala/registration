@@ -32,6 +32,8 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.lvFilePreview = new System.Windows.Forms.ListView();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.chkAutoAddPublisher = new System.Windows.Forms.CheckBox();
+            this.chkAutoAddScales = new System.Windows.Forms.CheckBox();
             this.cboModelClass = new System.Windows.Forms.ComboBox();
             this.label13 = new System.Windows.Forms.Label();
             this.cboAgeGroup = new System.Windows.Forms.ComboBox();
@@ -63,12 +65,11 @@
             this.label10 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.chkDropExistingRecords = new System.Windows.Forms.CheckBox();
-            this.chkAutoAddScales = new System.Windows.Forms.CheckBox();
-            this.chkAutoAddPublisher = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnSelectFile
@@ -93,7 +94,7 @@
             // chkHasHeaders
             // 
             this.chkHasHeaders.AutoSize = true;
-            this.chkHasHeaders.Location = new System.Drawing.Point(38, 51);
+            this.chkHasHeaders.Location = new System.Drawing.Point(45, 45);
             this.chkHasHeaders.Name = "chkHasHeaders";
             this.chkHasHeaders.Size = new System.Drawing.Size(107, 17);
             this.chkHasHeaders.TabIndex = 4;
@@ -104,7 +105,7 @@
             // btnImport
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImport.Location = new System.Drawing.Point(557, 725);
+            this.btnImport.Location = new System.Drawing.Point(572, 611);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(75, 23);
             this.btnImport.TabIndex = 0;
@@ -116,7 +117,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(638, 725);
+            this.btnCancel.Location = new System.Drawing.Point(653, 611);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 1;
@@ -131,10 +132,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(3, 74);
+            this.tabControl1.Location = new System.Drawing.Point(3, 70);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(729, 645);
+            this.tabControl1.Size = new System.Drawing.Size(729, 532);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -143,7 +144,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(721, 579);
+            this.tabPage1.Size = new System.Drawing.Size(721, 507);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Podgląd Pliku";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -156,7 +157,7 @@
             this.lvFilePreview.FullRowSelect = true;
             this.lvFilePreview.Location = new System.Drawing.Point(0, 0);
             this.lvFilePreview.Name = "lvFilePreview";
-            this.lvFilePreview.Size = new System.Drawing.Size(912, 579);
+            this.lvFilePreview.Size = new System.Drawing.Size(721, 507);
             this.lvFilePreview.TabIndex = 1;
             this.lvFilePreview.UseCompatibleStateImageBehavior = false;
             // 
@@ -164,12 +165,7 @@
             // 
             this.tabPage2.Controls.Add(this.chkAutoAddPublisher);
             this.tabPage2.Controls.Add(this.chkAutoAddScales);
-            this.tabPage2.Controls.Add(this.cboModelClass);
             this.tabPage2.Controls.Add(this.label13);
-            this.tabPage2.Controls.Add(this.cboAgeGroup);
-            this.tabPage2.Controls.Add(this.label6);
-            this.tabPage2.Controls.Add(this.cboYearOfBirth);
-            this.tabPage2.Controls.Add(this.label12);
             this.tabPage2.Controls.Add(this.cboModelCategory3);
             this.tabPage2.Controls.Add(this.cboModelCategory2);
             this.tabPage2.Controls.Add(this.lblImportMessage);
@@ -195,16 +191,36 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(721, 619);
+            this.tabPage2.Size = new System.Drawing.Size(721, 506);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Mapowanie Pól";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // chkAutoAddPublisher
+            // 
+            this.chkAutoAddPublisher.AutoSize = true;
+            this.chkAutoAddPublisher.Location = new System.Drawing.Point(550, 446);
+            this.chkAutoAddPublisher.Name = "chkAutoAddPublisher";
+            this.chkAutoAddPublisher.Size = new System.Drawing.Size(163, 17);
+            this.chkAutoAddPublisher.TabIndex = 15;
+            this.chkAutoAddPublisher.Text = "Dodaj nie znalezione w bazie";
+            this.chkAutoAddPublisher.UseVisualStyleBackColor = true;
+            // 
+            // chkAutoAddScales
+            // 
+            this.chkAutoAddScales.AutoSize = true;
+            this.chkAutoAddScales.Location = new System.Drawing.Point(550, 419);
+            this.chkAutoAddScales.Name = "chkAutoAddScales";
+            this.chkAutoAddScales.Size = new System.Drawing.Size(163, 17);
+            this.chkAutoAddScales.TabIndex = 13;
+            this.chkAutoAddScales.Text = "Dodaj nie znalezione w bazie";
+            this.chkAutoAddScales.UseVisualStyleBackColor = true;
             // 
             // cboModelClass
             // 
             this.cboModelClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboModelClass.FormattingEnabled = true;
-            this.cboModelClass.Location = new System.Drawing.Point(144, 427);
+            this.cboModelClass.Location = new System.Drawing.Point(130, 115);
             this.cboModelClass.Name = "cboModelClass";
             this.cboModelClass.Size = new System.Drawing.Size(527, 21);
             this.cboModelClass.TabIndex = 11;
@@ -213,7 +229,7 @@
             // 
             this.label13.AutoSize = true;
             this.label13.BackColor = System.Drawing.Color.Transparent;
-            this.label13.Location = new System.Drawing.Point(6, 402);
+            this.label13.Location = new System.Drawing.Point(6, 349);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(531, 13);
             this.label13.TabIndex = 34;
@@ -225,7 +241,7 @@
             // 
             this.cboAgeGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboAgeGroup.FormattingEnabled = true;
-            this.cboAgeGroup.Location = new System.Drawing.Point(144, 216);
+            this.cboAgeGroup.Location = new System.Drawing.Point(130, 38);
             this.cboAgeGroup.Name = "cboAgeGroup";
             this.cboAgeGroup.Size = new System.Drawing.Size(527, 21);
             this.cboAgeGroup.TabIndex = 6;
@@ -234,7 +250,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Location = new System.Drawing.Point(51, 219);
+            this.label6.Location = new System.Drawing.Point(37, 41);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(87, 13);
             this.label6.TabIndex = 27;
@@ -245,7 +261,7 @@
             // 
             this.cboYearOfBirth.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboYearOfBirth.FormattingEnabled = true;
-            this.cboYearOfBirth.Location = new System.Drawing.Point(144, 189);
+            this.cboYearOfBirth.Location = new System.Drawing.Point(130, 11);
             this.cboYearOfBirth.Name = "cboYearOfBirth";
             this.cboYearOfBirth.Size = new System.Drawing.Size(527, 21);
             this.cboYearOfBirth.TabIndex = 5;
@@ -255,7 +271,7 @@
             this.label12.AutoSize = true;
             this.label12.BackColor = System.Drawing.Color.Transparent;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label12.Location = new System.Drawing.Point(43, 192);
+            this.label12.Location = new System.Drawing.Point(29, 14);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(95, 13);
             this.label12.TabIndex = 28;
@@ -266,7 +282,7 @@
             // 
             this.cboModelCategory3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboModelCategory3.FormattingEnabled = true;
-            this.cboModelCategory3.Location = new System.Drawing.Point(144, 369);
+            this.cboModelCategory3.Location = new System.Drawing.Point(126, 320);
             this.cboModelCategory3.Name = "cboModelCategory3";
             this.cboModelCategory3.Size = new System.Drawing.Size(527, 21);
             this.cboModelCategory3.TabIndex = 10;
@@ -275,7 +291,7 @@
             // 
             this.cboModelCategory2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboModelCategory2.FormattingEnabled = true;
-            this.cboModelCategory2.Location = new System.Drawing.Point(144, 342);
+            this.cboModelCategory2.Location = new System.Drawing.Point(126, 293);
             this.cboModelCategory2.Name = "cboModelCategory2";
             this.cboModelCategory2.Size = new System.Drawing.Size(527, 21);
             this.cboModelCategory2.TabIndex = 9;
@@ -285,7 +301,7 @@
             // 
             this.lblImportMessage.AutoSize = true;
             this.lblImportMessage.ForeColor = System.Drawing.Color.Red;
-            this.lblImportMessage.Location = new System.Drawing.Point(18, 587);
+            this.lblImportMessage.Location = new System.Drawing.Point(18, 480);
             this.lblImportMessage.Name = "lblImportMessage";
             this.lblImportMessage.Size = new System.Drawing.Size(89, 13);
             this.lblImportMessage.TabIndex = 24;
@@ -295,16 +311,16 @@
             // 
             this.cboModelPublisher.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboModelPublisher.FormattingEnabled = true;
-            this.cboModelPublisher.Location = new System.Drawing.Point(144, 531);
+            this.cboModelPublisher.Location = new System.Drawing.Point(126, 444);
             this.cboModelPublisher.Name = "cboModelPublisher";
-            this.cboModelPublisher.Size = new System.Drawing.Size(527, 21);
+            this.cboModelPublisher.Size = new System.Drawing.Size(418, 21);
             this.cboModelPublisher.TabIndex = 14;
             this.cboModelPublisher.SelectedIndexChanged += new System.EventHandler(this.cboField_SelectedIndexChanged);
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(42, 534);
+            this.label11.Location = new System.Drawing.Point(24, 447);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(96, 13);
             this.label11.TabIndex = 20;
@@ -315,9 +331,9 @@
             // 
             this.cboModelScale.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboModelScale.FormattingEnabled = true;
-            this.cboModelScale.Location = new System.Drawing.Point(144, 475);
+            this.cboModelScale.Location = new System.Drawing.Point(126, 417);
             this.cboModelScale.Name = "cboModelScale";
-            this.cboModelScale.Size = new System.Drawing.Size(527, 21);
+            this.cboModelScale.Size = new System.Drawing.Size(418, 21);
             this.cboModelScale.TabIndex = 12;
             this.cboModelScale.SelectedIndexChanged += new System.EventHandler(this.cboField_SelectedIndexChanged);
             // 
@@ -325,7 +341,7 @@
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label9.Location = new System.Drawing.Point(50, 478);
+            this.label9.Location = new System.Drawing.Point(32, 420);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(88, 13);
             this.label9.TabIndex = 16;
@@ -336,7 +352,7 @@
             // 
             this.cboModelCategory1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboModelCategory1.FormattingEnabled = true;
-            this.cboModelCategory1.Location = new System.Drawing.Point(144, 315);
+            this.cboModelCategory1.Location = new System.Drawing.Point(126, 266);
             this.cboModelCategory1.Name = "cboModelCategory1";
             this.cboModelCategory1.Size = new System.Drawing.Size(527, 21);
             this.cboModelCategory1.TabIndex = 8;
@@ -346,7 +362,7 @@
             // 
             this.cboModelName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboModelName.FormattingEnabled = true;
-            this.cboModelName.Location = new System.Drawing.Point(144, 267);
+            this.cboModelName.Location = new System.Drawing.Point(126, 227);
             this.cboModelName.Name = "cboModelName";
             this.cboModelName.Size = new System.Drawing.Size(527, 21);
             this.cboModelName.TabIndex = 7;
@@ -356,7 +372,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label7.Location = new System.Drawing.Point(44, 270);
+            this.label7.Location = new System.Drawing.Point(26, 230);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(94, 13);
             this.label7.TabIndex = 12;
@@ -367,7 +383,7 @@
             // 
             this.cboClubName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboClubName.FormattingEnabled = true;
-            this.cboClubName.Location = new System.Drawing.Point(144, 137);
+            this.cboClubName.Location = new System.Drawing.Point(126, 120);
             this.cboClubName.Name = "cboClubName";
             this.cboClubName.Size = new System.Drawing.Size(527, 21);
             this.cboClubName.TabIndex = 4;
@@ -376,7 +392,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(107, 140);
+            this.label5.Location = new System.Drawing.Point(89, 123);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(31, 13);
             this.label5.TabIndex = 8;
@@ -387,7 +403,7 @@
             // 
             this.cboLastName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboLastName.FormattingEnabled = true;
-            this.cboLastName.Location = new System.Drawing.Point(144, 110);
+            this.cboLastName.Location = new System.Drawing.Point(126, 93);
             this.cboLastName.Name = "cboLastName";
             this.cboLastName.Size = new System.Drawing.Size(527, 21);
             this.cboLastName.TabIndex = 3;
@@ -397,7 +413,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label4.Location = new System.Drawing.Point(73, 113);
+            this.label4.Location = new System.Drawing.Point(55, 96);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(65, 13);
             this.label4.TabIndex = 6;
@@ -408,7 +424,7 @@
             // 
             this.cboFirstName.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboFirstName.FormattingEnabled = true;
-            this.cboFirstName.Location = new System.Drawing.Point(144, 83);
+            this.cboFirstName.Location = new System.Drawing.Point(126, 66);
             this.cboFirstName.Name = "cboFirstName";
             this.cboFirstName.Size = new System.Drawing.Size(527, 21);
             this.cboFirstName.TabIndex = 2;
@@ -418,7 +434,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label3.Location = new System.Drawing.Point(104, 86);
+            this.label3.Location = new System.Drawing.Point(86, 69);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(34, 13);
             this.label3.TabIndex = 4;
@@ -429,7 +445,7 @@
             // 
             this.cboEmail.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboEmail.FormattingEnabled = true;
-            this.cboEmail.Location = new System.Drawing.Point(144, 56);
+            this.cboEmail.Location = new System.Drawing.Point(126, 39);
             this.cboEmail.Name = "cboEmail";
             this.cboEmail.Size = new System.Drawing.Size(527, 21);
             this.cboEmail.TabIndex = 1;
@@ -438,7 +454,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(103, 59);
+            this.label2.Location = new System.Drawing.Point(85, 42);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(35, 13);
             this.label2.TabIndex = 2;
@@ -449,7 +465,7 @@
             // 
             this.cboTimeStamp.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboTimeStamp.FormattingEnabled = true;
-            this.cboTimeStamp.Location = new System.Drawing.Point(144, 29);
+            this.cboTimeStamp.Location = new System.Drawing.Point(126, 12);
             this.cboTimeStamp.Name = "cboTimeStamp";
             this.cboTimeStamp.Size = new System.Drawing.Size(527, 21);
             this.cboTimeStamp.TabIndex = 0;
@@ -458,7 +474,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(53, 32);
+            this.label1.Location = new System.Drawing.Point(35, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(85, 13);
             this.label1.TabIndex = 0;
@@ -470,9 +486,10 @@
             this.panel2.BackColor = System.Drawing.Color.AliceBlue;
             this.panel2.Controls.Add(this.label8);
             this.panel2.Controls.Add(this.label10);
-            this.panel2.Location = new System.Drawing.Point(-4, 304);
+            this.panel2.Controls.Add(this.cboModelClass);
+            this.panel2.Location = new System.Drawing.Point(-4, 256);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(920, 155);
+            this.panel2.Size = new System.Drawing.Size(725, 149);
             this.panel2.TabIndex = 8;
             // 
             // label8
@@ -480,7 +497,7 @@
             this.label8.AutoSize = true;
             this.label8.BackColor = System.Drawing.Color.Transparent;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label8.Location = new System.Drawing.Point(32, 14);
+            this.label8.Location = new System.Drawing.Point(14, 13);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(110, 13);
             this.label8.TabIndex = 14;
@@ -491,7 +508,7 @@
             // 
             this.label10.AutoSize = true;
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label10.Location = new System.Drawing.Point(68, 126);
+            this.label10.Location = new System.Drawing.Point(50, 118);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(74, 13);
             this.label10.TabIndex = 35;
@@ -501,9 +518,13 @@
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.AliceBlue;
-            this.panel1.Location = new System.Drawing.Point(-4, 172);
+            this.panel1.Controls.Add(this.cboYearOfBirth);
+            this.panel1.Controls.Add(this.label12);
+            this.panel1.Controls.Add(this.label6);
+            this.panel1.Controls.Add(this.cboAgeGroup);
+            this.panel1.Location = new System.Drawing.Point(-4, 151);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(920, 79);
+            this.panel1.Size = new System.Drawing.Size(725, 68);
             this.panel1.TabIndex = 30;
             // 
             // chkDropExistingRecords
@@ -511,32 +532,12 @@
             this.chkDropExistingRecords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.chkDropExistingRecords.AutoSize = true;
             this.chkDropExistingRecords.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkDropExistingRecords.Location = new System.Drawing.Point(262, 729);
+            this.chkDropExistingRecords.Location = new System.Drawing.Point(254, 615);
             this.chkDropExistingRecords.Name = "chkDropExistingRecords";
             this.chkDropExistingRecords.Size = new System.Drawing.Size(289, 17);
             this.chkDropExistingRecords.TabIndex = 5;
             this.chkDropExistingRecords.Text = "Usuń instniejące rejestracje przed rozpoczęciem importu";
             this.chkDropExistingRecords.UseVisualStyleBackColor = true;
-            // 
-            // chkAutoAddScales
-            // 
-            this.chkAutoAddScales.AutoSize = true;
-            this.chkAutoAddScales.Location = new System.Drawing.Point(144, 502);
-            this.chkAutoAddScales.Name = "chkAutoAddScales";
-            this.chkAutoAddScales.Size = new System.Drawing.Size(191, 17);
-            this.chkAutoAddScales.TabIndex = 13;
-            this.chkAutoAddScales.Text = "Dodaj skale nie znalezione w bazie";
-            this.chkAutoAddScales.UseVisualStyleBackColor = true;
-            // 
-            // chkAutoAddPublisher
-            // 
-            this.chkAutoAddPublisher.AutoSize = true;
-            this.chkAutoAddPublisher.Location = new System.Drawing.Point(144, 558);
-            this.chkAutoAddPublisher.Name = "chkAutoAddPublisher";
-            this.chkAutoAddPublisher.Size = new System.Drawing.Size(230, 17);
-            this.chkAutoAddPublisher.TabIndex = 15;
-            this.chkAutoAddPublisher.Text = "Dodaj wydawców nie znalezionych w bazie";
-            this.chkAutoAddPublisher.UseVisualStyleBackColor = true;
             // 
             // frmImportFile
             // 
@@ -544,7 +545,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(734, 760);
+            this.ClientSize = new System.Drawing.Size(734, 646);
             this.Controls.Add(this.chkDropExistingRecords);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnCancel);
@@ -552,7 +553,7 @@
             this.Controls.Add(this.chkHasHeaders);
             this.Controls.Add(this.lblFileName);
             this.Controls.Add(this.btnSelectFile);
-            this.MinimumSize = new System.Drawing.Size(750, 758);
+            this.MinimumSize = new System.Drawing.Size(750, 684);
             this.Name = "frmImportFile";
             this.Text = "Import Danych";
             this.Load += new System.EventHandler(this.frmImportFile_Load);
@@ -563,6 +564,8 @@
             this.tabPage2.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
