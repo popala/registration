@@ -164,10 +164,10 @@ namespace Rejestracja.Utils
 
                         outputFileName = 
                             String.Format("{0}\\{1}_{2}_{3}.docx", 
-                            outFolder, 
-                            entry.ageGroup.ToUpper(),
-                            Resources.FileNameInvalidChars.Replace(entry.modelClass, "").ToUpper(), 
-                            Resources.FileNameInvalidChars.Replace(entry.modelCategory, ""));
+                            outFolder,
+                            Resources.FileNameInvalidChars.Replace(entry.ageGroup, "-").ToUpper(),
+                            Resources.FileNameInvalidChars.Replace(entry.modelClass, "-").ToUpper(), 
+                            Resources.FileNameInvalidChars.Replace(entry.modelCategory, "-"));
 
                         File.Copy(template, outputFileName);
 
@@ -507,6 +507,12 @@ namespace Rejestracja.Utils
             };
             Process process = Process.Start(psi);
             process.WaitForExit();
+        }
+
+        private static String sanitizeFileName(String fileName) {
+            var regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            var r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
+            return r.Replace(fileName, "_");
         }
     }
 }
