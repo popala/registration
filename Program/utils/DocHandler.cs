@@ -150,7 +150,9 @@ namespace Rejestracja.Utils
                 {
                     authorKey = String.Format("{0}_{1}_{2}", entry.firstName, entry.lastName, entry.yearOfBirth);
 
-                    if (ageGroup != entry.ageGroup || modelClass != entry.modelCategory || modelCategory != entry.modelClass)
+                    if(!ageGroup.Equals(entry.ageGroup, StringComparison.CurrentCultureIgnoreCase) ||
+                        !modelClass.Equals(entry.modelClass, StringComparison.CurrentCultureIgnoreCase) ||
+                        !modelCategory.Equals(entry.modelCategory, StringComparison.CurrentCultureIgnoreCase))
                     {
                         if (doc != null)
                         {
@@ -160,7 +162,7 @@ namespace Rejestracja.Utils
                         }
 
                         //Match existing category
-                        category = categories.Where(x => x.fullName.ToLower().Equals(entry.modelCategory.ToLower())).ToArray();
+                        category = categories.Where(x => x.fullName.Equals(entry.modelCategory, StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
                         outputFileName = 
                             String.Format("{0}\\{1}_{2}_{3}.docx", 
@@ -192,8 +194,8 @@ namespace Rejestracja.Utils
                         tbl = doc.Tables[1];
 
                         ageGroup = entry.ageGroup;
-                        modelClass = entry.modelCategory;
-                        modelCategory = entry.modelClass;
+                        modelClass = entry.modelClass;
+                        modelCategory = entry.modelCategory;
 
                         row = tbl.Rows[1];
 

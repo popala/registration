@@ -192,7 +192,7 @@ namespace Rejestracja {
 
                         //Email
                         if (fieldMap.Email > -1) {
-                            newRegistration.email = parsedEntry[fieldMap.Email].Trim();
+                            newRegistration.email = parsedEntry[fieldMap.Email].Trim().ToLower();
                         }
 
                         //FirstName
@@ -269,7 +269,10 @@ namespace Rejestracja {
 
                         //ModelScale
                         newRegistration.modelScale = ModelScale.parse(parsedEntry[fieldMap.ModelScale].Trim());
-                        if (addScale) {
+                        if(String.IsNullOrWhiteSpace(newRegistration.modelScale)) {
+                            newRegistration.modelScale = "Inna";
+                        }
+                        else if (addScale) {
                             String[] scale = modelScales.Where(x => x.ToLower().Equals(newRegistration.modelScale.ToLower())).ToArray<String>();
                             if (scale.Length == 0) {
                                 ModelScaleDao.add(newRegistration.modelScale, ModelScaleDao.getNextSortFlag());
@@ -291,17 +294,19 @@ namespace Rejestracja {
 
                         //Publisher
                         if (fieldMap.ModelPublisher > -1) {
-                            String[] pub = publishers.Where(x => x.ToLower().Equals(parsedEntry[fieldMap.ModelPublisher].ToLower())).ToArray<String>();
+                            String parsedPublisher = parsedEntry[fieldMap.ModelPublisher].Trim();
+                            String[] pub = publishers.Where(x => x.Equals(parsedPublisher, StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
+                            
                             //halinski vs. haliński
-                            if (pub.Length == 0) {
-                                pub = publishers.Where(x => removeAccent(x.ToLower()).Equals(removeAccent(parsedEntry[fieldMap.ModelPublisher].ToLower()))).ToArray<String>();
+                            if(pub.Length == 0) {
+                                pub = publishers.Where(x => removeAccent(x).Equals(removeAccent(parsedPublisher), StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
                             }
-                            if (pub.Length > 0) {
-                                newRegistration.modelPublisher = pub[0].Trim();
+                            
+                            if(pub.Length > 0) {
+                                newRegistration.modelPublisher = pub[0];
                             }
-                            else if (addPublisher) {
-                                String newPublisher = parsedEntry[fieldMap.ModelPublisher].Trim();
-                                PublisherDao.add(newPublisher);
+                            else if(addPublisher) {
+                                PublisherDao.add(parsedPublisher);
                                 publishers = PublisherDao.getSimpleList().ToList<String>();
                             }
                         }
