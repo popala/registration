@@ -69,19 +69,19 @@ namespace Rejestracja
             cboModelPublisher.Sorted = true;
 
             cboModelScale.Items.Clear();
-            foreach (String item in ModelScaleDao.getSimpleList())
+            foreach (String item in ScaleDao.getSimpleList())
                 cboModelScale.Items.Add(item.Trim());
             cboModelScale.SelectedIndex = cboModelScale.FindString("1:33");
 
             cboModelCategory.Items.Clear();
-            foreach (ModelCategory item in ModelCategoryDao.getList())
+            foreach (Category item in CategoryDao.getList())
                 cboModelCategory.Items.Add(new ComboBoxItem(item.id, item.fullName));
             if (cboModelCategory.Items.Count > 0) {
                 cboModelCategory.SelectedIndex = 0;
             }
 
             cboModelClass.Items.Clear();
-            foreach (String item in ModelClassDao.getSimpleList())
+            foreach (String item in ClassDao.getSimpleList())
                 cboModelClass.Items.Add(item.Trim());
             cboModelClass.SelectedIndex = cboModelClass.FindString("standard");
             cboModelClass.Enabled = false;
@@ -128,8 +128,8 @@ namespace Rejestracja
             txtEmail.Text = entry.email;
             txtModelClub.Text = entry.clubName;
             cboYearOfBirth.SelectedIndex = cboYearOfBirth.FindString(entry.yearOfBirth.ToString());
-            cboAgeGroup.SelectedIndex = cboAgeGroup.FindString(entry.ageGroup);
-            txtEntryId.Text = entry.entryId.ToString();
+            cboAgeGroup.SelectedIndex = cboAgeGroup.FindString(entry.ageGroupName);
+            txtEntryId.Text = entry.registrationId.ToString();
             txtModelName.Text = entry.modelName;
             cboModelPublisher.SelectedIndex = cboModelPublisher.FindString(entry.modelPublisher.ToLower());
             if (cboModelPublisher.SelectedIndex < 0)
@@ -152,7 +152,7 @@ namespace Rejestracja
 
         private void validateExistingEntry()
         {
-            IEnumerable<ModelCategory> modelCategories = ModelCategoryDao.getList();
+            IEnumerable<Category> modelCategories = CategoryDao.getList();
             String selectedCategory = cboModelCategory.Text.ToLower();
             bool bFound = false;
 
@@ -166,7 +166,7 @@ namespace Rejestracja
             //    lblErrors.Visible = true;
             //}
 
-            foreach (ModelCategory category in modelCategories)
+            foreach (Category category in modelCategories)
             {
                 if (category.fullName.ToLower().Equals(selectedCategory))
                 {
@@ -190,10 +190,10 @@ namespace Rejestracja
             if (cboModelScale.SelectedIndex < 0) {
                 string scale = cboModelScale.Text.Trim();
                 if (MessageBox.Show("Dodać wpisaną skalę do bazy?", "Skala Nie Znaleziona", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
-                    ModelScaleDao.add(scale, ModelScaleDao.getNextSortFlag());
+                    ScaleDao.add(scale, ScaleDao.getNextSortFlag());
 
                     cboModelScale.Items.Clear();
-                    foreach (String item in ModelScaleDao.getSimpleList())
+                    foreach (String item in ScaleDao.getSimpleList())
                         cboModelScale.Items.Add(item.Trim());
                     cboModelScale.SelectedIndex = cboModelScale.FindString(scale);
                 }
@@ -336,10 +336,10 @@ namespace Rejestracja
                 if (cboModelScale.SelectedIndex < 0) {
                     string scale = cboModelScale.Text.Trim();
                     if (MessageBox.Show("Dodać wpisaną skalę do bazy?", "Skala Nie Znaleziona", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
-                        ModelScaleDao.add(scale, ModelScaleDao.getNextSortFlag());
+                        ScaleDao.add(scale, ScaleDao.getNextSortFlag());
 
                         cboModelScale.Items.Clear();
-                        foreach (String item in ModelScaleDao.getSimpleList())
+                        foreach (String item in ScaleDao.getSimpleList())
                             cboModelScale.Items.Add(item.Trim());
                         cboModelScale.SelectedIndex = cboModelScale.FindString(scale);
                     }
@@ -386,10 +386,10 @@ namespace Rejestracja
                 btnClose.Enabled = false;
 
                 RegistrationEntryDao.add(entry);
-                txtEntryId.Text = entry.entryId.ToString();
+                txtEntryId.Text = entry.registrationId.ToString();
 
                 if (!chkPrintRegistrationCard.Checked) {
-                    this._parentForm.printRegistrationCard(entry.entryId);
+                    this._parentForm.printRegistrationCard(entry.registrationId);
                 }
 
                 txtEntryId.Text = "";
@@ -422,8 +422,8 @@ namespace Rejestracja
 
             if (cboModelCategory.SelectedIndex > -1) {
                 long catId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
-                ModelCategory cat = ModelCategoryDao.get(catId);
-                cboModelClass.SelectedIndex = cboModelClass.FindString(cat.modelClass);
+                Category cat = CategoryDao.get(catId);
+                cboModelClass.SelectedIndex = cboModelClass.FindString(cat.className);
             }
             else {
                 cboModelClass.SelectedIndex = -1;

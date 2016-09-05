@@ -18,19 +18,19 @@ using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao
 {
-    class ModelCategoryDao
+    class CategoryDao
     {
-        public static IEnumerable<ModelCategory> getList()
+        public static IEnumerable<Category> getList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Code, Name, ModelClass, DisplayOrder FROM ModelCategory ORDER BY DisplayOrder ASC", cn))
+            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Code, Name, ModelClass, DisplayOrder FROM Categories ORDER BY DisplayOrder ASC", cn))
             {
                 cn.Open();
 
                 using(SQLiteDataReader dr = cm.ExecuteReader())
                 {
                     while (dr.Read())
-                        yield return new ModelCategory(
+                        yield return new Category(
                             dr.GetInt32(0),
                             dr.GetString(1),
                             dr.GetString(2),
@@ -44,7 +44,7 @@ namespace Rejestracja.Data.Dao
         public static bool codeExists(String code)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM ModelCategory WHERE Code = @Code", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM Categories WHERE Code = @Code", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -58,7 +58,7 @@ namespace Rejestracja.Data.Dao
         public static int add(String code, String name, String modelClass, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO ModelCategory(Code, Name, ModelClass, DisplayOrder) VALUES(@Code, @Name, @ModelClass, @DisplayOrder)", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Categories(Code, Name, ModelClass, DisplayOrder) VALUES(@Code, @Name, @ModelClass, @DisplayOrder)", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -76,7 +76,7 @@ namespace Rejestracja.Data.Dao
         public static int getNextSortFlag()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT MAX(DisplayOrder) AS displayOrder FROM ModelCategory", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"SELECT MAX(DisplayOrder) AS displayOrder FROM Categories", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -88,12 +88,12 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static ModelCategory get(long id)
+        public static Category get(long id)
         {
-            ModelCategory ret = null;
+            Category ret = null;
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Code, Name, ModelClass, DisplayOrder FROM ModelCategory WHERE Id = @Id", cn))
+            using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, Code, Name, ModelClass, DisplayOrder FROM Categories WHERE Id = @Id", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -103,7 +103,7 @@ namespace Rejestracja.Data.Dao
                 using (SQLiteDataReader dr = cm.ExecuteReader())
                 {
                     if (dr.Read())
-                        ret = new ModelCategory(
+                        ret = new Category(
                             dr.GetInt32(0),
                             dr.GetString(1),
                             dr.GetString(2),
@@ -118,7 +118,7 @@ namespace Rejestracja.Data.Dao
         public static void updateDisplayOrder(long id, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"UPDATE ModelCategory SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"UPDATE Categories SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -143,7 +143,7 @@ namespace Rejestracja.Data.Dao
                 cm.CommandText = "UPDATE Registration SET ModelCategoryId = -1 WHERE ModelCategoryId = @Id";
                 cm.ExecuteNonQuery();
 
-                cm.CommandText = "DELETE FROM ModelCategory WHERE Id = @Id";
+                cm.CommandText = "DELETE FROM Categories WHERE Id = @Id";
                 cm.ExecuteNonQuery();
             }
         }
@@ -152,7 +152,7 @@ namespace Rejestracja.Data.Dao
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"CREATE TABLE ModelCategory(
+                @"CREATE TABLE Categories(
                     Id INTEGER PRIMARY KEY,
                     Code TEXT NOT NULL,
                     Name TEXT,
@@ -163,9 +163,9 @@ namespace Rejestracja.Data.Dao
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.ExecuteNonQuery();
 
-                cm.CommandText = "CREATE INDEX Idx_MC_Code ON ModelCategory(Code)";
+                cm.CommandText = "CREATE INDEX Idx_MC_Code ON Categories(Code)";
                 cm.ExecuteNonQuery();
-                cm.CommandText = "CREATE INDEX Idx_MC_Class ON ModelCategory(ModelClass)";
+                cm.CommandText = "CREATE INDEX Idx_MC_Class ON Categories(ModelClass)";
                 cm.ExecuteNonQuery();
             }
 

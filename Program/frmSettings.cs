@@ -80,7 +80,7 @@ namespace Rejestracja
                 lvAgeGroup.Items[0].Selected = true;
 
             /** ModelCategory **/
-            txtModelClassName.MaxLength = ModelClass.MAX_NAME_LENGTH;
+            txtModelClassName.MaxLength = Class.MAX_NAME_LENGTH;
 
             lvModelClass.View = View.Details;
             lvModelClass.FullRowSelect = true;
@@ -264,9 +264,9 @@ namespace Rejestracja
         {
             lvModelCategory.Items.Clear();
 
-            foreach (ModelCategory mc in ModelCategoryDao.getList())
+            foreach (Category mc in CategoryDao.getList())
             {
-                ListViewItem li = new ListViewItem(new String[] { mc.code, mc.name, mc.modelClass });
+                ListViewItem li = new ListViewItem(new String[] { mc.code, mc.name, mc.className });
                 li.Tag = mc.id;
                 lvModelCategory.Items.Add(li);
             }
@@ -286,7 +286,7 @@ namespace Rejestracja
             lvModelCategory.BeginUpdate();
             foreach (ListViewItem item in lvModelCategory.CheckedItems) {
                 int categoryId = (int)item.Tag;
-                ModelCategoryDao.delete(categoryId);
+                CategoryDao.delete(categoryId);
                 lvModelCategory.Items.Remove(item);
             }
             lvModelCategory.EndUpdate();
@@ -308,8 +308,8 @@ namespace Rejestracja
             lvModelCategory.Items.Insert(index - 1, item);
             lvModelCategory.Items[index - 1].Selected = true;
 
-            ModelCategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index - 1].Tag, index - 1);
-            ModelCategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index].Tag, index);
+            CategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index - 1].Tag, index - 1);
+            CategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index].Tag, index);
 
             item.EnsureVisible();
             lvModelCategory.EndUpdate();
@@ -332,8 +332,8 @@ namespace Rejestracja
             lvModelCategory.Items.Insert(index + 1, selectedItem);
             selectedItem.Selected = true;
 
-            ModelCategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index].Tag, index);
-            ModelCategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index + 1].Tag, index + 1);
+            CategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index].Tag, index);
+            CategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index + 1].Tag, index + 1);
 
             selectedItem.EnsureVisible();
             lvModelCategory.EndUpdate();
@@ -352,7 +352,7 @@ namespace Rejestracja
                 return;
             }
 
-            if (ModelCategoryDao.codeExists(txtCategoryCode.Text.Trim()))
+            if (CategoryDao.codeExists(txtCategoryCode.Text.Trim()))
             {
                 MessageBox.Show("Kod kategorii jest już wykorzystany", "Nowa kategoria", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtCategoryCode.Focus();
@@ -360,7 +360,7 @@ namespace Rejestracja
                 return;
             }
 
-            int catId = ModelCategoryDao.add(txtCategoryCode.Text, txtCategoryName.Text, cboModelClass.Text, ModelCategoryDao.getNextSortFlag());
+            int catId = CategoryDao.add(txtCategoryCode.Text, txtCategoryName.Text, cboModelClass.Text, CategoryDao.getNextSortFlag());
             loadModelCategories();
             setButtons();
             foreach (ListViewItem item in lvModelCategory.Items) {
@@ -524,14 +524,14 @@ namespace Rejestracja
                 return;
             }
 
-            if (ModelClassDao.exists(txtModelClassName.Text.Trim())) {
+            if (ClassDao.exists(txtModelClassName.Text.Trim())) {
                 MessageBox.Show("Klasa istnieje", "Nowa klasa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtModelClassName.Focus();
                 txtModelClassName.SelectAll();
                 return;
             }
 
-            int mcId = ModelClassDao.add(txtModelClassName.Text.Trim());
+            int mcId = ClassDao.add(txtModelClassName.Text.Trim());
             loadModelClasses();
             setButtons();
             
@@ -551,7 +551,7 @@ namespace Rejestracja
             lvModelClass.Items.Clear();
             cboModelClass.Items.Clear();
 
-            foreach (ModelClass cls in ModelClassDao.getList()) {
+            foreach (Class cls in ClassDao.getList()) {
                 ListViewItem li = new ListViewItem(new String[] { cls.name });
                 li.Tag = cls.id;
                 lvModelClass.Items.Add(li);
@@ -578,7 +578,7 @@ namespace Rejestracja
             //has to get reloaded as well
             foreach (ListViewItem item in lvModelClass.CheckedItems) {
                 int clsId = (int)item.Tag;
-                ModelClassDao.delete(clsId);
+                ClassDao.delete(clsId);
             }
             loadModelClasses();
             loadModelCategories();
@@ -592,7 +592,7 @@ namespace Rejestracja
 
         private void loadModelScales() {
             lvModelScales.Items.Clear();
-            foreach (ModelScale scale in ModelScaleDao.getList()) {
+            foreach (ModelScale scale in ScaleDao.getList()) {
                 ListViewItem li = new ListViewItem(new String[] { scale.name });
                 li.Tag = scale.id;
                 lvModelScales.Items.Add(li);
@@ -611,7 +611,7 @@ namespace Rejestracja
             lvModelScales.BeginUpdate();
             foreach (ListViewItem item in lvModelScales.CheckedItems) {
                 int scaleId = (int)item.Tag;
-                ModelScaleDao.delete(scaleId);
+                ScaleDao.delete(scaleId);
                 lvModelScales.Items.Remove(item);
             }
             lvModelScales.EndUpdate();
@@ -633,8 +633,8 @@ namespace Rejestracja
             lvModelScales.Items.Insert(index - 1, item);
             lvModelScales.Items[index - 1].Selected = true;
 
-            ModelScaleDao.updateDisplayOrder((int)lvModelScales.Items[index - 1].Tag, index - 1);
-            ModelScaleDao.updateDisplayOrder((int)lvModelScales.Items[index].Tag, index);
+            ScaleDao.updateDisplayOrder((int)lvModelScales.Items[index - 1].Tag, index - 1);
+            ScaleDao.updateDisplayOrder((int)lvModelScales.Items[index].Tag, index);
 
             item.EnsureVisible();
             lvModelScales.EndUpdate();
@@ -656,22 +656,22 @@ namespace Rejestracja
             lvModelScales.Items.Insert(index + 1, item);
             item.Selected = true;
 
-            ModelScaleDao.updateDisplayOrder((int)lvModelScales.Items[index].Tag, index);
-            ModelScaleDao.updateDisplayOrder((int)lvModelScales.Items[index + 1].Tag, index + 1);
+            ScaleDao.updateDisplayOrder((int)lvModelScales.Items[index].Tag, index);
+            ScaleDao.updateDisplayOrder((int)lvModelScales.Items[index + 1].Tag, index + 1);
 
             item.EnsureVisible();
             lvModelScales.EndUpdate();
         }
 
         private void btnAddModelScale_Click(object sender, EventArgs e) {
-            if (ModelScaleDao.exists(txtModelScale.Text)) {
+            if (ScaleDao.exists(txtModelScale.Text)) {
                 MessageBox.Show("Skala już istnieje", "Nowa skala", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtModelScale.Focus();
                 txtModelScale.SelectAll();
                 return;
             }
             
-            int scaleId = ModelScaleDao.add(txtModelScale.Text, ModelScaleDao.getNextSortFlag());
+            int scaleId = ScaleDao.add(txtModelScale.Text, ScaleDao.getNextSortFlag());
             loadModelScales();
             setButtons();
 

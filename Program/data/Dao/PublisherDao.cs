@@ -23,7 +23,7 @@ namespace Rejestracja.Data.Dao
         public static IEnumerable<Publisher> getList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name FROM Publisher ORDER BY Name ASC", cn))
+            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name FROM Publishers ORDER BY Name ASC", cn))
             {
                 cn.Open();
 
@@ -38,7 +38,7 @@ namespace Rejestracja.Data.Dao
         public static IEnumerable<String> getSimpleList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Name FROM Publisher ORDER BY Name ASC", cn))
+            using(SQLiteCommand cm = new SQLiteCommand("SELECT Name FROM Publishers ORDER BY Name ASC", cn))
             {
                 cn.Open();
 
@@ -53,7 +53,7 @@ namespace Rejestracja.Data.Dao
         public static bool exists(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM Publisher WHERE Name = @Name", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM Publishers WHERE Name = @Name", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -67,7 +67,7 @@ namespace Rejestracja.Data.Dao
         public static int add(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Publisher(Name) VALUES(@Name)", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Publishers(Name) VALUES(@Name)", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -82,7 +82,7 @@ namespace Rejestracja.Data.Dao
         public static void delete(long id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Publisher WHERE Id = @Id", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Publishers WHERE Id = @Id", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -96,7 +96,7 @@ namespace Rejestracja.Data.Dao
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"CREATE TABLE Publisher(
+                @"CREATE TABLE Publishers(
                     Id INTEGER  PRIMARY KEY,
                     Name TEXT NOT NULL)", cn))
             {
@@ -104,7 +104,7 @@ namespace Rejestracja.Data.Dao
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.ExecuteNonQuery();
 
-                cm.CommandText = "CREATE INDEX Idx_Pub_Name ON Publisher(Name)";
+                cm.CommandText = "CREATE INDEX Idx_Pub_Name ON Publishers(Name)";
                 cm.ExecuteNonQuery();
             }
 

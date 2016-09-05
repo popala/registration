@@ -100,14 +100,17 @@
   <ItemGroup>
     <Compile Include="Data\Dao\AgeGroupDao.cs" />
     <Compile Include="Data\Dao\AwardDao.cs" />
-    <Compile Include="Data\Dao\ModelClassDao.cs" />
-    <Compile Include="Data\Dao\ModelScaleDao.cs" />
-    <Compile Include="Data\Dao\ModelCategoryDao.cs" />
+    <Compile Include="Data\Dao\ClassDao.cs" />
+    <Compile Include="Data\Dao\ScaleDao.cs" />
+    <Compile Include="Data\Dao\CategoryDao.cs" />
+    <Compile Include="Data\DataFileConversion.cs" />
     <Compile Include="Data\Objects\AgeGroup.cs" />
     <Compile Include="Data\Objects\Award.cs" />
-    <Compile Include="Data\Objects\ModelCategory.cs" />
-    <Compile Include="Data\Objects\ModelClass.cs" />
-    <Compile Include="Data\Objects\ModelScale.cs" />
+    <Compile Include="Data\Objects\Category.cs" />
+    <Compile Include="Data\Objects\Class.cs" />
+    <Compile Include="Data\Objects\Model.cs" />
+    <Compile Include="Data\Objects\Modeler.cs" />
+    <Compile Include="Data\Objects\Scale.cs" />
     <Compile Include="Data\Objects\Publisher.cs" />
     <Compile Include="Data\Objects\RegistrationEntry.cs" />
     <Compile Include="Data\Objects\Result.cs" />

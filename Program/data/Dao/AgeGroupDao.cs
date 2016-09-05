@@ -22,7 +22,7 @@ namespace Rejestracja.Data.Dao
     {
         public static bool exists(int upperAge) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM AgeGroup WHERE Age BETWEEN @Age1 AND @Age2", cn)) {
+            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM AgeGroups WHERE Age BETWEEN @Age1 AND @Age2", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.Parameters.Add("@Age1", DbType.Int32).Value = upperAge - 1;
@@ -39,12 +39,12 @@ namespace Rejestracja.Data.Dao
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT a.Id, a.Name, a.Age, (SELECT MAX(Age) AS Age FROM AgeGroup WHERE Age < a.Age) AS MinAge
-	                FROM AgeGroup a
+                @"SELECT a.Id, a.Name, a.Age, (SELECT MAX(Age) AS Age FROM AgeGroups WHERE Age < a.Age) AS MinAge
+	                FROM AgeGroups a
 	                JOIN (
 		                SELECT MIN(Age) AS Age 
-			                FROM AgeGroup 
-			                WHERE Age > (SELECT Age FROM AgeGroup WHERE Name = @AgeGroupName)
+			                FROM AgeGroups 
+			                WHERE Age > (SELECT Age FROM AgeGroups WHERE Name = @AgeGroupName)
 		                ) m ON a.Age = m.Age", cn))
             {
                 cn.Open();
@@ -71,7 +71,7 @@ namespace Rejestracja.Data.Dao
             int bottomAge = 0;
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name, Age FROM AgeGroup ORDER BY Age ASC", cn))
+            using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name, Age FROM AgeGroups ORDER BY Age ASC", cn))
             {
                 cn.Open();
 
@@ -91,7 +91,7 @@ namespace Rejestracja.Data.Dao
         public static IEnumerable<String> getSimpleList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Name FROM AgeGroup ORDER BY Name ASC", cn))
+            using(SQLiteCommand cm = new SQLiteCommand("SELECT Name FROM AgeGroups ORDER BY Name ASC", cn))
             {
                 cn.Open();
 
@@ -106,7 +106,7 @@ namespace Rejestracja.Data.Dao
         public static int add(String name, int age)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO AgeGroup(Name, Age) VALUES(@Name, @Age)", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO AgeGroups(Name, Age) VALUES(@Name, @Age)", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -122,7 +122,7 @@ namespace Rejestracja.Data.Dao
         public static void delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM AgeGroup WHERE Id = @Id", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM AgeGroups WHERE Id = @Id", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -136,7 +136,7 @@ namespace Rejestracja.Data.Dao
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"CREATE TABLE AgeGroup(
+                @"CREATE TABLE AgeGroups(
                     Id INTEGER PRIMARY KEY,
                     Name TEXT NOT NULL,
                     Age INTEGER NOT NULL)", cn))
@@ -145,7 +145,7 @@ namespace Rejestracja.Data.Dao
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.ExecuteNonQuery();
 
-                cm.CommandText = "CREATE UNIQUE INDEX Idx_AgeGroup_Name ON AgeGroup(Name)";
+                cm.CommandText = "CREATE UNIQUE INDEX Idx_AgeGroup_Name ON AgeGroups(Name)";
                 cm.ExecuteNonQuery();
             }
 

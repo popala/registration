@@ -40,7 +40,7 @@ namespace Rejestracja
             lvResults.Columns.Add("Wydawca");
             lvResults.Columns.Add("Miejsce");
 
-            foreach (ModelCategory category in ModelCategoryDao.getList()) {
+            foreach (Category category in CategoryDao.getList()) {
                 cboModelCategory.Items.Add(new ComboBoxItem(category.id, category.fullName));
             }
             if (cboModelCategory.Items.Count > 0) {
@@ -86,22 +86,22 @@ namespace Rejestracja
                 }
 
                 long catId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
-                RegistrationEntry[] entries = ResultDao.getCategoryResults(ModelCategoryDao.get(catId).fullName).ToArray();
+                RegistrationEntry[] entries = ResultDao.getCategoryResults(CategoryDao.get(catId).fullName).ToArray();
 
                 String modelClass = "";
                 String ageGroup = "";
                 ListViewGroup group = new ListViewGroup("");
 
                 foreach (RegistrationEntry entry in entries) {
-                    if (!modelClass.Equals(entry.modelClass) || !ageGroup.Equals(entry.ageGroup)) {
+                    if (!modelClass.Equals(entry.modelClass) || !ageGroup.Equals(entry.ageGroupName)) {
                         modelClass = entry.modelClass;
-                        ageGroup = entry.ageGroup;
+                        ageGroup = entry.ageGroupName;
                         group = new ListViewGroup(String.Format("{0} - {1}", ageGroup, modelClass.ToUpper()));
                         lvResults.Groups.Add(group);
                     }
                     ListViewItem item =
                         new ListViewItem(
-                            new String[] { entry.entryId.ToString(), entry.modelName, entry.modelScale, entry.modelPublisher, (entry.place == 0 ? "" : entry.place.ToString()) },
+                            new String[] { entry.registrationId.ToString(), entry.modelName, entry.modelScale, entry.modelPublisher, (entry.place == 0 ? "" : entry.place.ToString()) },
                             group
                         );
                     if (entry.place > 0) {
@@ -282,7 +282,7 @@ namespace Rejestracja
             foreach (Result result in ResultDao.getAwardResults()) {
                 ListViewItem lvItem = new ListViewItem(
                     new String[] {
-                        result.entry.entryId.ToString(),
+                        result.entry.registrationId.ToString(),
                         result.entry.modelName,
                         result.entry.modelScale,
                         result.entry.modelPublisher,

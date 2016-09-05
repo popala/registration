@@ -65,9 +65,9 @@ namespace Rejestracja {
             if (createAllTables) {
                 AgeGroupDao.createTable();
                 AwardDao.createTable();
-                ModelCategoryDao.createTable();
-                ModelClassDao.createTable();
-                ModelScaleDao.createTable();
+                CategoryDao.createTable();
+                ClassDao.createTable();
+                ScaleDao.createTable();
                 PublisherDao.createTable();
                 Options.createTable();                    
             }
@@ -152,10 +152,10 @@ namespace Rejestracja {
 
             TextInfo textInfo = new CultureInfo("pl-PL", false).TextInfo;
             List<String> publishers = PublisherDao.getSimpleList().ToList();
-            List<ModelCategory> modelCategories = ModelCategoryDao.getList().ToList();
+            List<Category> modelCategories = CategoryDao.getList().ToList();
             List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList();
-            List<String> modelClasses = ModelClassDao.getSimpleList().ToList();
-            List<String> modelScales = ModelScaleDao.getSimpleList().ToList();
+            List<String> modelClasses = ClassDao.getSimpleList().ToList();
+            List<String> modelScales = ScaleDao.getSimpleList().ToList();
 
             badRecordCount = 0;
 
@@ -214,11 +214,11 @@ namespace Rejestracja {
 
                                 AgeGroup[] ag = ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray<AgeGroup>();
                                 if (ag.Length == 1) {
-                                    newRegistration.ageGroup = ag[0].name;
+                                    newRegistration.ageGroupName = ag[0].name;
                                 }
                             }
                             else if (fieldMap.AgeGroup > -1) {
-                                newRegistration.ageGroup = parsedEntry[fieldMap.AgeGroup];
+                                newRegistration.ageGroupName = parsedEntry[fieldMap.AgeGroup];
                             }
                         }
 
@@ -235,7 +235,7 @@ namespace Rejestracja {
                             }
                         }
 
-                        ModelCategory[] matchedModelCategory = null;
+                        Category[] matchedModelCategory = null;
                         if (enteredModelCategory != null) {
                             //Try to match model category
                             matchedModelCategory = modelCategories.Where(x => x.fullName.ToLower().Equals(enteredModelCategory.ToLower())).ToArray();
@@ -252,7 +252,7 @@ namespace Rejestracja {
                                 newRegistration.modelCategoryId = matchedModelCategory[0].id;
                                 //Matched model category and so set the category if it should be derived from class
                                 if (fieldMap.DeriveClassFromCategory) {
-                                    newRegistration.modelClass = matchedModelCategory[0].modelClass;
+                                    newRegistration.modelClass = matchedModelCategory[0].className;
                                 }
                             }
                             else {
@@ -275,8 +275,8 @@ namespace Rejestracja {
                         else if (addScale) {
                             String[] scale = modelScales.Where(x => x.ToLower().Equals(newRegistration.modelScale.ToLower())).ToArray<String>();
                             if (scale.Length == 0) {
-                                ModelScaleDao.add(newRegistration.modelScale, ModelScaleDao.getNextSortFlag());
-                                modelScales = ModelScaleDao.getSimpleList().ToList();
+                                ScaleDao.add(newRegistration.modelScale, ScaleDao.getNextSortFlag());
+                                modelScales = ScaleDao.getSimpleList().ToList();
                             }
                         }
 
@@ -325,7 +325,7 @@ namespace Rejestracja {
                                 newRegistration.firstName,
                                 newRegistration.lastName,
                                 newRegistration.clubName,
-                                newRegistration.ageGroup,
+                                newRegistration.ageGroupName,
                                 newRegistration.modelName,
                                 newRegistration.modelClass,
                                 newRegistration.modelScale,
@@ -373,8 +373,8 @@ namespace Rejestracja {
             int badRecordCountParsing = 0;
             int badRecordCountLoading = 0;
             IEnumerable<RegistrationEntry> entries = parseCSVFile(filePath, fieldMap, hasHeaders, badRecordFile, addScale, addPublisher, out badRecordCountParsing);
-            ModelCategory[] categories = ModelCategoryDao.getList().ToArray();
-            ModelCategory[] matchedCategory = null;
+            Category[] categories = CategoryDao.getList().ToArray();
+            Category[] matchedCategory = null;
             StringBuilder sb = new StringBuilder();
 
             using (SQLiteConnection cn = new SQLiteConnection(_connectionString))
@@ -413,7 +413,7 @@ namespace Rejestracja {
                         cm.Parameters["@FirstName"].Value = entry.firstName;
                         cm.Parameters["@LastName"].Value = entry.lastName;
                         cm.Parameters["@ClubName"].Value = entry.clubName;
-                        cm.Parameters["@AgeGroup"].Value = entry.ageGroup;
+                        cm.Parameters["@AgeGroup"].Value = entry.ageGroupName;
                         cm.Parameters["@ModelName"].Value = entry.modelName;
                         cm.Parameters["@ModelClass"].Value = entry.modelClass;
                         cm.Parameters["@ModelScale"].Value = entry.modelScale;

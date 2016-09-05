@@ -46,7 +46,7 @@ namespace Rejestracja.Utils
                 template.ReplaceText("[Nazwisko]", result.entry.lastName,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
 
-                template.ReplaceText("[GrupaWiekowa]", result.entry.ageGroup,
+                template.ReplaceText("[GrupaWiekowa]", result.entry.ageGroupName,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[NazwaModelu]", result.entry.modelName,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
@@ -83,9 +83,9 @@ namespace Rejestracja.Utils
             {
                 template.ReplaceText("[DataRejestracji]", entry.timeStamp.ToString(Resources.DateFormat),
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[NumerStartowy]", entry.entryId.ToString(),
+                template.ReplaceText("[NumerStartowy]", entry.registrationId.ToString(),
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[NS]", entry.entryId.ToString(),
+                template.ReplaceText("[NS]", entry.registrationId.ToString(),
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[Email]", entry.email,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
@@ -99,7 +99,7 @@ namespace Rejestracja.Utils
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[KlubModelarski]", entry.clubName,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[GrupaWiekowa]", entry.ageGroup,
+                template.ReplaceText("[GrupaWiekowa]", entry.ageGroupName,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[NazwaModelu]", entry.modelName,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
@@ -125,7 +125,7 @@ namespace Rejestracja.Utils
         public static void generateJudgingForms(String template, String outFolder, frmMain parentForm)
         {
             List<RegistrationEntry> entries = RegistrationEntryDao.getListForJudging();
-            List<ModelCategory> categories = ModelCategoryDao.getList().ToList();
+            List<Category> categories = CategoryDao.getList().ToList();
             Dictionary<String, Char> authors = new Dictionary<String, Char>();
             
             String authorKey;
@@ -135,7 +135,7 @@ namespace Rejestracja.Utils
             String ageGroup = null;
             String modelClass = null;
             String modelCategory = null;
-            ModelCategory [] category = null;
+            Category [] category = null;
 
             String outputFileName = null;
             DocX doc = null;
@@ -150,7 +150,7 @@ namespace Rejestracja.Utils
                 {
                     authorKey = String.Format("{0}_{1}_{2}", entry.firstName, entry.lastName, entry.yearOfBirth);
 
-                    if(!ageGroup.Equals(entry.ageGroup, StringComparison.CurrentCultureIgnoreCase) ||
+                    if(!ageGroup.Equals(entry.ageGroupName, StringComparison.CurrentCultureIgnoreCase) ||
                         !modelClass.Equals(entry.modelClass, StringComparison.CurrentCultureIgnoreCase) ||
                         !modelCategory.Equals(entry.modelCategory, StringComparison.CurrentCultureIgnoreCase))
                     {
@@ -167,7 +167,7 @@ namespace Rejestracja.Utils
                         outputFileName = 
                             String.Format("{0}\\{1}_{2}_{3}.docx", 
                             outFolder,
-                            Resources.FileNameInvalidChars.Replace(entry.ageGroup, "-").ToUpper(),
+                            Resources.FileNameInvalidChars.Replace(entry.ageGroupName, "-").ToUpper(),
                             Resources.FileNameInvalidChars.Replace(entry.modelClass, "-").ToUpper(), 
                             Resources.FileNameInvalidChars.Replace(entry.modelCategory, "-"));
 
@@ -176,8 +176,8 @@ namespace Rejestracja.Utils
                         doc = DocX.Load(outputFileName);
                         doc.ReplaceText("[Naglowek]", documentHeader, false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                         doc.ReplaceText("[Naglowek!]", documentHeader.ToUpper(), false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                        doc.ReplaceText("[GrupaWiekowa]", entry.ageGroup, false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                        doc.ReplaceText("[GrupaWiekowa!]", entry.ageGroup.ToUpper(), false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                        doc.ReplaceText("[GrupaWiekowa]", entry.ageGroupName, false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                        doc.ReplaceText("[GrupaWiekowa!]", entry.ageGroupName.ToUpper(), false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                         doc.ReplaceText("[Klasa]", entry.modelClass, false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                         doc.ReplaceText("[Klasa!]", entry.modelClass.ToUpper(), false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                         doc.ReplaceText("[Kategoria]", entry.modelCategory, false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
@@ -193,7 +193,7 @@ namespace Rejestracja.Utils
 
                         tbl = doc.Tables[1];
 
-                        ageGroup = entry.ageGroup;
+                        ageGroup = entry.ageGroupName;
                         modelClass = entry.modelClass;
                         modelCategory = entry.modelCategory;
 
@@ -213,7 +213,7 @@ namespace Rejestracja.Utils
                         authorMarker++;
                     }
 
-                    row.Cells[0].Paragraphs[0].InsertText(entry.entryId.ToString());
+                    row.Cells[0].Paragraphs[0].InsertText(entry.registrationId.ToString());
                     row.Cells[1].Paragraphs[0].InsertText(authors[authorKey].ToString());
                     row.Cells[2].Paragraphs[0].InsertText(entry.modelName);
 
@@ -270,18 +270,18 @@ namespace Rejestracja.Utils
 
             foreach (Result result in results)
             {
-                if (ageGroup != result.entry.ageGroup || modelCategory != result.entry.modelCategory)
+                if (ageGroup != result.entry.ageGroupName || modelCategory != result.entry.modelCategory)
                 {
                     if(ageGroup != null)
                     {
                         resultHtml.AppendLine(@"</table></div>");
                     }
-                    ageGroup = result.entry.ageGroup;
+                    ageGroup = result.entry.ageGroupName;
                     modelCategory = result.entry.modelCategory;
                     modelClass = "";
 
                     resultHtml.AppendFormat(@"<div class=""tbl""><h2>Grupa Wiekowa <span class=""ageGroup"">{0}</span> - <span class=""modelCategory"">{1}</span></h2>",
-                        result.entry.ageGroup.ToUpper(), result.entry.modelCategory).AppendLine();
+                        result.entry.ageGroupName.ToUpper(), result.entry.modelCategory).AppendLine();
                 }
                 if (modelClass != result.entry.modelClass)
                 {
@@ -299,7 +299,7 @@ namespace Rejestracja.Utils
                     resultHtml.AppendFormat(@"<tr><th class=""lp"">{0}</th><th class=""name"">{1}</th><th class=""modelName"" colspan=""2"">{2}</th><th class=""place"">{3}</th></tr>", headers).AppendLine();
                 }
                 resultHtml.AppendFormat(@"<tr><td class=""lp"">{0}</td><td class=""name"">{1} {2}</td><td class=""modelNumber"">{3}</td><td class=""modelName"">{4}</td><td class=""place"">{5}</td></tr>",
-                    lpCounter, result.entry.firstName, result.entry.lastName, result.entry.entryId, result.entry.modelName, result.place).AppendLine();
+                    lpCounter, result.entry.firstName, result.entry.lastName, result.entry.registrationId, result.entry.modelName, result.place).AppendLine();
                 lpCounter++;
             }
             if(ageGroup != null)
@@ -328,7 +328,7 @@ namespace Rejestracja.Utils
                     resultHtml.AppendFormat(@"<table class=""award""><tr><th colspan=""3"">{0}</th></tr>", result.award.title).AppendLine();
                 }
                 resultHtml.AppendFormat(@"<tr><td class=""name"">{0} {1}</td><td class=""modelNumber"">{2}</td><td class=""modelName"">{3}</td></tr>", 
-                    result.entry.firstName, result.entry.lastName, result.entry.entryId, result.entry.modelName).AppendLine();
+                    result.entry.firstName, result.entry.lastName, result.entry.registrationId, result.entry.modelName).AppendLine();
                 awardId = result.award.id;
             }
             if (awardId > -1)
@@ -378,19 +378,19 @@ namespace Rejestracja.Utils
             foreach (Result result in results) {
                 
                 //Category, class or age group changed so close the table if age group is not empty
-                if (ageGroup != result.entry.ageGroup || modelClass != result.entry.modelClass || modelCategory != result.entry.modelCategory) {
+                if (ageGroup != result.entry.ageGroupName || modelClass != result.entry.modelClass || modelCategory != result.entry.modelCategory) {
                     if (ageGroup != null) {
                         sb.AppendLine("</table>");
                     }
                 
                     //If age group changed we need H1, H2
-                    if (ageGroup == null || !ageGroup.Equals(result.entry.ageGroup)) {
+                    if (ageGroup == null || !ageGroup.Equals(result.entry.ageGroupName)) {
                         if (ageGroup != null) {
                             sb.AppendLine(docFooter);
                         }
                         sb.AppendLine(docHeader);
-                        sb.AppendFormat("<h2>Grupa Wiekowa {0}</h2>", result.entry.ageGroup).AppendLine();
-                        ageGroup = result.entry.ageGroup;
+                        sb.AppendFormat("<h2>Grupa Wiekowa {0}</h2>", result.entry.ageGroupName).AppendLine();
+                        ageGroup = result.entry.ageGroupName;
                     }
 
                     //Start a new table for diff class and/or category
@@ -398,7 +398,7 @@ namespace Rejestracja.Utils
                     modelCategory = result.entry.modelCategory;
                     sb.AppendFormat(categoryTableHeader, result.entry.modelCategory, result.entry.modelClass).AppendLine();
                 }
-                sb.AppendFormat(categoryTableRow, result.place, result.entry.firstName, result.entry.lastName, result.entry.entryId, result.entry.modelName).AppendLine();
+                sb.AppendFormat(categoryTableRow, result.place, result.entry.firstName, result.entry.lastName, result.entry.registrationId, result.entry.modelName).AppendLine();
             }
             if (ageGroup != null) {
                 sb.AppendLine("</table>");
@@ -419,7 +419,7 @@ namespace Rejestracja.Utils
                     }
                     sb.AppendFormat(awardTableHeader, result.award.title).AppendLine();
                 }
-                sb.AppendFormat(awardTableRow, result.entry.firstName, result.entry.lastName, result.entry.entryId, result.entry.modelName).AppendLine();
+                sb.AppendFormat(awardTableRow, result.entry.firstName, result.entry.lastName, result.entry.registrationId, result.entry.modelName).AppendLine();
                 awardId = result.award.id;
             }
             if (awardId > -1) {

@@ -32,14 +32,14 @@ namespace Rejestracja {
         private bool _refreshList = false;
 
         public void changeCategoryInSelected(int categoryId) {
-            ModelCategory category = ModelCategoryDao.get(categoryId);
+            Category category = CategoryDao.get(categoryId);
             if (category == null) {
                 return;
             }
 
             foreach(ListViewItem item in lvEntries.Items) {
                 if (item.Checked) {
-                    RegistrationEntryDao.changeCategory((int)item.Tag, category.id, category.fullName, category.modelClass);
+                    RegistrationEntryDao.changeCategory((int)item.Tag, category.id, category.fullName, category.className);
                 }
             }
 
@@ -51,8 +51,6 @@ namespace Rejestracja {
         }
 
         public frmMain() {
-            //System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
-            //System.Threading.Thread.CurrentThread.CurrentUICulture = new CultureInfo("pl");
             InitializeComponent();
         }
 
@@ -413,7 +411,7 @@ namespace Rejestracja {
                 item.SubItems[4].Text = entry.lastName;
                 item.SubItems[5].Text = entry.yearOfBirth.ToString();
                 item.SubItems[6].Text = entry.clubName;
-                item.SubItems[7].Text = entry.ageGroup;
+                item.SubItems[7].Text = entry.ageGroupName;
                 item.SubItems[8].Text = entry.modelName;
                 item.SubItems[9].Text = entry.modelCategory;
                 item.SubItems[10].Text = entry.modelClass;
@@ -443,7 +441,7 @@ namespace Rejestracja {
         }
 
         private void highlightInvalidRegistrationEntries() {
-            List<ModelCategory> modelCategories = ModelCategoryDao.getList().ToList();
+            List<Category> modelCategories = CategoryDao.getList().ToList();
             List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList();
             //int errorCount = 0;
             int badEntryCount = 0;
@@ -456,13 +454,13 @@ namespace Rejestracja {
                 item.ToolTipText = "";
 
                 //Check if model category is listed in the resources
-                ModelCategory [] catFound = modelCategories.Where(x => x.fullName.ToLower().Equals(item.SubItems[9].Text.ToLower())).ToArray();
+                Category [] catFound = modelCategories.Where(x => x.fullName.ToLower().Equals(item.SubItems[9].Text.ToLower())).ToArray();
                 if (catFound.Length == 0) {
                     sb.Append("Kategoria modelu nie znaleziona w konfiguracji. ");
                     badEntryCount++;
                     highlightErrorCell(item, 9);
                 }
-                else if (!catFound[0].modelClass.ToLower().Equals(item.SubItems[10].Text.ToLower())) {
+                else if (!catFound[0].className.ToLower().Equals(item.SubItems[10].Text.ToLower())) {
                     if (sb.Length == 0) {
                         badEntryCount++;
                     }
@@ -666,7 +664,7 @@ namespace Rejestracja {
                     Directory.CreateDirectory(directory);
                 }
 
-                string outFile = String.Format("{0}\\rejestracja_{1}.docx", directory, entry.entryId);
+                string outFile = String.Format("{0}\\rejestracja_{1}.docx", directory, entry.registrationId);
                 File.Delete(outFile);
 
                 DocHandler.generateRegistrationCard(Resources.resolvePath("templateKartyModelu"), outFile, entry);

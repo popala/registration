@@ -12,21 +12,18 @@
 using System;
 
 namespace Rejestracja.Data.Objects {
-    class ModelCategory {
+    class Class {
         public int id;
-        public String code;
         public String name;
-        public String fullName;
-        public String modelClass;
-        public int displayOrder;
+        public const int MAX_NAME_LENGTH = 128;
 
-        public ModelCategory(int id, String code, String name, String modelClass, int displayOrder) {
+        public Class(int id, String name) {
             this.id = id;
-            this.code = code;
             this.name = name;
-            this.fullName = String.Format("{0} ({1})", name, code);
-            this.modelClass = modelClass;
-            this.displayOrder = displayOrder;
+        }
+
+        public Class(String name) {
+            this.name = name;
         }
     }
 }

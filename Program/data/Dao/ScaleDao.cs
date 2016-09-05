@@ -18,12 +18,12 @@ using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao
 {
-    class ModelScaleDao
+    class ScaleDao
     {
         public static IEnumerable<ModelScale> getList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name, DisplayOrder FROM ModelScale ORDER BY DisplayOrder ASC", cn))
+            using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name, DisplayOrder FROM Scales ORDER BY DisplayOrder ASC", cn))
             {
                 cn.Open();
 
@@ -42,7 +42,7 @@ namespace Rejestracja.Data.Dao
         public static IEnumerable<String> getSimpleList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Name FROM ModelScale ORDER BY DisplayOrder ASC", cn))
+            using(SQLiteCommand cm = new SQLiteCommand("SELECT Name FROM Scales ORDER BY DisplayOrder ASC", cn))
             {
                 cn.Open();
 
@@ -57,7 +57,7 @@ namespace Rejestracja.Data.Dao
         public static bool exists(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM ModelScale WHERE Name = @Name", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM Scales WHERE Name = @Name", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -71,7 +71,7 @@ namespace Rejestracja.Data.Dao
         public static int add(String name, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO ModelScale(Name, DisplayOrder) VALUES(@Name, @DisplayOrder)", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Scales(Name, DisplayOrder) VALUES(@Name, @DisplayOrder)", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -87,7 +87,7 @@ namespace Rejestracja.Data.Dao
         public static int getNextSortFlag()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT MAX(DisplayOrder) AS displayOrder FROM ModelScale", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"SELECT MAX(DisplayOrder) AS displayOrder FROM Scales", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -102,7 +102,7 @@ namespace Rejestracja.Data.Dao
         public static void updateDisplayOrder(int id, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"UPDATE ModelScale SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"UPDATE Scales SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -116,7 +116,7 @@ namespace Rejestracja.Data.Dao
         public static void delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM ModelScale WHERE Id = @Id", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Scales WHERE Id = @Id", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -130,7 +130,7 @@ namespace Rejestracja.Data.Dao
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"CREATE TABLE ModelScale(
+                @"CREATE TABLE Scales(
                     Id INTEGER PRIMARY KEY,
                     Name TEXT NOT NULL,
                     DisplayOrder INTEGER NOT NULL)", cn))
@@ -139,7 +139,7 @@ namespace Rejestracja.Data.Dao
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.ExecuteNonQuery();
 
-                cm.CommandText = "CREATE UNIQUE INDEX Idx_MS_Name ON ModelScale(Name)";
+                cm.CommandText = "CREATE UNIQUE INDEX Idx_MS_Name ON Scales(Name)";
                 cm.ExecuteNonQuery();
             }
 

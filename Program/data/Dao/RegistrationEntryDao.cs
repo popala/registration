@@ -366,7 +366,7 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@firstName", System.Data.DbType.String, 64).Value = entry.firstName;
                 cm.Parameters.Add("@lastName", System.Data.DbType.String, 64).Value = entry.lastName;
                 cm.Parameters.Add("@clubName", System.Data.DbType.String, 128).Value = entry.clubName;
-                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = entry.ageGroup;
+                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = entry.ageGroupName;
                 cm.Parameters.Add("@modelName", System.Data.DbType.String, 256).Value = entry.modelName;
                 cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = entry.modelClass;
                 cm.Parameters.Add("@modelScale", System.Data.DbType.String, 8).Value = entry.modelScale;
@@ -376,7 +376,7 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@yearOfBirth", System.Data.DbType.Int32).Value = entry.yearOfBirth;
                 cm.ExecuteNonQuery();
 
-                entry.entryId = cn.LastInsertRowId;
+                entry.registrationId = cn.LastInsertRowId;
             }
         }
 
@@ -396,7 +396,7 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@firstName", System.Data.DbType.String, 64).Value = entry.firstName;
                 cm.Parameters.Add("@lastName", System.Data.DbType.String, 64).Value = entry.lastName;
                 cm.Parameters.Add("@clubName", System.Data.DbType.String, 128).Value = entry.clubName;
-                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = entry.ageGroup;
+                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = entry.ageGroupName;
                 cm.Parameters.Add("@modelName", System.Data.DbType.String, 256).Value = entry.modelName;
                 cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = entry.modelClass;
                 cm.Parameters.Add("@modelScale", System.Data.DbType.String, 8).Value = entry.modelScale;
@@ -404,7 +404,7 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@modelCategory", System.Data.DbType.String, 64).Value = entry.modelCategory;
                 cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int64).Value = entry.modelCategoryId;
                 cm.Parameters.Add("@yearOfBirth", System.Data.DbType.Int32).Value = entry.yearOfBirth;
-                cm.Parameters.Add("@entryId", System.Data.DbType.Int64).Value = entry.entryId;
+                cm.Parameters.Add("@entryId", System.Data.DbType.Int64).Value = entry.registrationId;
 
                 cm.ExecuteNonQuery();
             }

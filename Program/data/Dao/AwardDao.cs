@@ -24,7 +24,7 @@ namespace Rejestracja.Data.Dao
             Award ret = null;
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Title, DisplayOrder FROM SpecialAwards WHERE Id = @Id", cn))
+            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Title, DisplayOrder FROM Awards WHERE Id = @Id", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -48,7 +48,7 @@ namespace Rejestracja.Data.Dao
         public static int add(String title, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO SpecialAwards(Title, DisplayOrder) VALUES(@Title, @DisplayOrder)", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Awards(Title, DisplayOrder) VALUES(@Title, @DisplayOrder)", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -63,7 +63,7 @@ namespace Rejestracja.Data.Dao
 
         public static void updateDisplayOrder(int id, int displayOrder) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"UPDATE SpecialAwards SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn)) {
+            using(SQLiteCommand cm = new SQLiteCommand(@"UPDATE Awards SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
@@ -83,14 +83,14 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
                 cm.ExecuteNonQuery();
 
-                cm.CommandText = @"DELETE FROM SpecialAwards WHERE Id = @Id";
+                cm.CommandText = @"DELETE FROM Awards WHERE Id = @Id";
                 return (cm.ExecuteNonQuery() == 1);
             }
         }
 
         public static bool exists(String title) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM SpecialAwards WHERE UPPER(Title) = UPPER(@Title)", cn)) {
+            using(SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM Awards WHERE UPPER(Title) = UPPER(@Title)", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.Parameters.Add("@Title", System.Data.DbType.String).Value = title;
@@ -102,7 +102,7 @@ namespace Rejestracja.Data.Dao
 
         public static int getNextSortFlag() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT MAX(DisplayOrder) AS displayOrder FROM SpecialAwards", cn)) {
+            using(SQLiteCommand cm = new SQLiteCommand(@"SELECT MAX(DisplayOrder) AS displayOrder FROM Awards", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
                 object res = cm.ExecuteScalar();
@@ -116,7 +116,7 @@ namespace Rejestracja.Data.Dao
         public static IEnumerable<Award> getList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Title, DisplayOrder FROM SpecialAwards ORDER BY DisplayOrder ASC", cn))
+            using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, Title, DisplayOrder FROM Awards ORDER BY DisplayOrder ASC", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -140,7 +140,7 @@ namespace Rejestracja.Data.Dao
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"CREATE TABLE SpecialAwards(
+                @"CREATE TABLE Awards(
                     Id INTEGER PRIMARY KEY,
                     Title TEXT NOT NULL,
                     DisplayOrder INTEGER NOT NULL)", cn))
@@ -149,7 +149,7 @@ namespace Rejestracja.Data.Dao
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.ExecuteNonQuery();
 
-                cm.CommandText = "CREATE INDEX Idx_Aw_Title ON SpecialAwards(Title)";
+                cm.CommandText = "CREATE INDEX Idx_Aw_Title ON Awards(Title)";
                 cm.ExecuteNonQuery();
             }
         }
