@@ -10,6 +10,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 using Microsoft.VisualBasic.FileIO;
+using Rejestracja.Data;
 using Rejestracja.Data.Dao;
 using Rejestracja.Data.Objects;
 using Rejestracja.Utils;
@@ -248,27 +249,27 @@ namespace Rejestracja {
                                         ).ToArray();
                             }
                             if (matchedModelCategory.Length > 0) {
-                                newRegistration.modelCategory = matchedModelCategory[0].fullName;
-                                newRegistration.modelCategoryId = matchedModelCategory[0].id;
+                                newRegistration.categoryName = matchedModelCategory[0].fullName;
+                                newRegistration.categoryId = matchedModelCategory[0].id;
                                 //Matched model category and so set the category if it should be derived from class
                                 if (fieldMap.DeriveClassFromCategory) {
-                                    newRegistration.modelClass = matchedModelCategory[0].className;
+                                    newRegistration.className = matchedModelCategory[0].className;
                                 }
                             }
                             else {
                                 //Did not match model class so see if we have category field mapped as well
-                                newRegistration.modelCategory = enteredModelCategory;
+                                newRegistration.categoryName = enteredModelCategory;
                                 if (fieldMap.ModelClass > -1) {
-                                    newRegistration.modelClass = parsedEntry[fieldMap.ModelClass];
+                                    newRegistration.className = parsedEntry[fieldMap.ModelClass];
                                 }
                                 else {
-                                    newRegistration.modelClass = modelClasses[0];
+                                    newRegistration.className = modelClasses[0];
                                 }
                             }
                         }
 
                         //ModelScale
-                        newRegistration.modelScale = ModelScale.parse(parsedEntry[fieldMap.ModelScale].Trim());
+                        newRegistration.modelScale = Scale.parse(parsedEntry[fieldMap.ModelScale].Trim());
                         if(String.IsNullOrWhiteSpace(newRegistration.modelScale)) {
                             newRegistration.modelScale = "Inna";
                         }
@@ -285,10 +286,10 @@ namespace Rejestracja {
                         if (!fieldMap.DeriveClassFromCategory) {
                             String[] cat = modelClasses.Where(x => x.ToLower().Equals(parsedEntry[fieldMap.ModelClass].ToLower())).ToArray<String>();
                             if (cat.Length == 1) {
-                                newRegistration.modelClass = cat[0];
+                                newRegistration.className = cat[0];
                             }
                             else {
-                                newRegistration.modelClass = parsedEntry[fieldMap.ModelClass].Trim();
+                                newRegistration.className = parsedEntry[fieldMap.ModelClass].Trim();
                             }
                         }
 
@@ -327,11 +328,11 @@ namespace Rejestracja {
                                 newRegistration.clubName,
                                 newRegistration.ageGroupName,
                                 newRegistration.modelName,
-                                newRegistration.modelClass,
+                                newRegistration.className,
                                 newRegistration.modelScale,
                                 newRegistration.modelPublisher,
-                                newRegistration.modelCategory,
-                                newRegistration.modelCategoryId,
+                                newRegistration.categoryName,
+                                newRegistration.categoryId,
                                 yearOfBirth
                             )
                         );
@@ -400,7 +401,7 @@ namespace Rejestracja {
                 using (SQLiteTransaction t = cn.BeginTransaction()) {
                     foreach (RegistrationEntry entry in entries) {
 
-                        matchedCategory = categories.Where(x => x.fullName.ToLower().Equals(entry.modelCategory.ToLower())).ToArray();
+                        matchedCategory = categories.Where(x => x.fullName.ToLower().Equals(entry.categoryName.ToLower())).ToArray();
                         if (matchedCategory.Length > 0) {
                             cm.Parameters["@ModelCategoryId"].Value = matchedCategory[0].id;
                         }
@@ -415,10 +416,10 @@ namespace Rejestracja {
                         cm.Parameters["@ClubName"].Value = entry.clubName;
                         cm.Parameters["@AgeGroup"].Value = entry.ageGroupName;
                         cm.Parameters["@ModelName"].Value = entry.modelName;
-                        cm.Parameters["@ModelClass"].Value = entry.modelClass;
+                        cm.Parameters["@ModelClass"].Value = entry.className;
                         cm.Parameters["@ModelScale"].Value = entry.modelScale;
                         cm.Parameters["@ModelPublisher"].Value = entry.modelPublisher;
-                        cm.Parameters["@ModelCategory"].Value = entry.modelCategory;
+                        cm.Parameters["@ModelCategory"].Value = entry.categoryName;
                         cm.Parameters["@YearOfBirth"].Value = entry.yearOfBirth;
                         try {
                             cm.ExecuteNonQuery();
@@ -462,5 +463,49 @@ namespace Rejestracja {
 
             createTables(false);
         }
+
+        public float getFileVersion() {
+            using(SQLiteConnection cn = new SQLiteConnection(_connectionString))
+            using(SQLiteCommand cm = new SQLiteCommand("SELECT COUNT(name) AS cnt FROM sqlite_master WHERE type='table' AND name='Version'", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                int cnt = (int)cm.ExecuteScalar();
+                if(cnt == 0) {
+                    return 0.931F;
+                }
+
+                cm.CommandText = "SELECT MAX(Version) FROM Version";
+                return (float)cm.ExecuteScalar();
+            }
+        }
+
+        public void upgradeDataFile() {
+
+            float ver = getFileVersion();
+            
+            if(ver < .941) {
+
+                //Generate backup file name
+                string dataFileName = Resources.getDataFilePath();
+                string backupFileName = null;
+
+                if(!File.Exists(dataFileName.Replace(".sqlite", ".BACKUP.sqlite"))) {
+                    backupFileName = dataFileName.Replace(".sqlite", ".BACKUP.sqlite");
+                }
+                else {
+                    int i = 1;
+                    do {
+                        backupFileName = dataFileName.Replace(".sqlite", string.Format(".BACKUP{0}.sqlite", i));
+                    } while(File.Exists(backupFileName));
+                }
+
+                //Create backup file
+                File.Copy(dataFileName, backupFileName, false);
+
+                //Populate it
+                DataFileConversion.convertTo941();
+            }
+        }       
     }
 }

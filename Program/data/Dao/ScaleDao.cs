@@ -20,7 +20,7 @@ namespace Rejestracja.Data.Dao
 {
     class ScaleDao
     {
-        public static IEnumerable<ModelScale> getList()
+        public static IEnumerable<Scale> getList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name, DisplayOrder FROM Scales ORDER BY DisplayOrder ASC", cn))
@@ -30,7 +30,7 @@ namespace Rejestracja.Data.Dao
                 using(SQLiteDataReader dr = cm.ExecuteReader())
                 {
                     while (dr.Read())
-                        yield return new ModelScale(
+                        yield return new Scale(
                             dr.GetInt32(0),
                             dr.GetString(1),
                             dr.GetInt32(2)

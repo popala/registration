@@ -392,7 +392,7 @@ namespace Rejestracja {
 
             RegistrationEntry entry = RegistrationEntryDao.get(entryId);
             //Check if category changed in Groupped View
-            if (mnuRVGroupped.Checked && !entry.modelCategory.Equals(item.SubItems[9].Text)) {
+            if (mnuRVGroupped.Checked && !entry.categoryName.Equals(item.SubItems[9].Text)) {
                 String cat = item.Group.Header;
                 loadRegistrationList(tsTxtSearch.Text);
                 foreach(ListViewGroup group in lvEntries.Groups) {
@@ -413,8 +413,8 @@ namespace Rejestracja {
                 item.SubItems[6].Text = entry.clubName;
                 item.SubItems[7].Text = entry.ageGroupName;
                 item.SubItems[8].Text = entry.modelName;
-                item.SubItems[9].Text = entry.modelCategory;
-                item.SubItems[10].Text = entry.modelClass;
+                item.SubItems[9].Text = entry.categoryName;
+                item.SubItems[10].Text = entry.className;
                 item.SubItems[11].Text = entry.modelScale;
                 item.SubItems[12].Text = entry.modelPublisher;
             }

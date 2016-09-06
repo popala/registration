@@ -20,68 +20,53 @@ namespace Rejestracja.Data.Dao
 {
     class RegistrationEntryDao
     {
-        public static RegistrationEntry get(long entryId)
-        {
-            return get(entryId, null, null);
-        }
+        private const String BASE_QUERY =
+            @"SELECT 
+	            r.Id AS RegistrationId, r.TmStamp, r.AgeGroupName,
+	            r.CategoryId, COALESCE(c.Name, r.CategoryName) AS CategoryName, c.ModelClass, CASE WHEN c.DisplayOrder IS NULL THEN -1 ELSE c.DisplayOrder END AS DisplayOrder,
+	            mr.Id AS ModelerId, mr.FirstName, mr.LastName, mr.ClubName, mr.YearOfBirth, mr.Email,
+	            ml.Id AS ModelId, ml.Name AS ModelName, ml.Publisher, ml.Scale
+            FROM Registration r
+	            JOIN Models ml ON r.ModelId = ml.Id
+	            JOIN Modelers mr ON ml.ModelerId = mr.Id
+	            LEFT JOIN Categories c ON r.CategoryId = c.Id ";
 
-        private static RegistrationEntry get(long? entryId, String email, String lastName)
+        public static RegistrationEntry get(int entryId)
         {
             RegistrationEntry ret = null;
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("", cn))
+            using (SQLiteCommand cm = new SQLiteCommand(BASE_QUERY + " WHERE r.Id = @Id", cn))
             {
                 cn.Open();
-
                 cm.CommandType = System.Data.CommandType.Text;
-                cm.CommandText =
-                    @"SELECT EntryId, TmStamp, Email, FirstName, LastName, ClubName, AgeGroup, 
-                        ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, 
-                        COALESCE(ModelCategoryId, -1) AS ModelCategoryId,
-                        COALESCE(YearOfBirth,0) AS YearOfBirth, COALESCE(SkipErrorValidation,0) AS SkipErrorValidation
-                     FROM Registration ";
 
-                if (entryId.HasValue)
-                {
-                    cm.CommandText += "WHERE EntryId = @EntryId";
-                    cm.Parameters.Add("@EntryId", System.Data.DbType.Int32).Value = entryId;
-                }
-                else if (email != null)
-                {
-                    cm.CommandText += "WHERE email = @email";
-                    cm.Parameters.Add("@email", System.Data.DbType.String, 256).Value = email;
-                }
-                else if (lastName != null)
-                {
-                    cm.CommandText += "WHERE lastName = @lastName";
-                    cm.Parameters.Add("@lastName", System.Data.DbType.String, 64).Value = lastName;
-                }
-                else
-                {
-                    throw new ArgumentNullException("EntryId, Email or LastName have to be provided!");
-                }
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = entryId;
 
                 using (SQLiteDataReader dr = cm.ExecuteReader())
                 {
                     if (dr.Read())
                     {
                         ret = new RegistrationEntry(
-                            dr.GetInt64(dr.GetOrdinal("EntryId")),
+                            dr.GetInt32(dr.GetOrdinal("RegistrationId")),
                             (DateTime)dr["TmStamp"],
-                            dr["Email"].ToString(),
+                            dr["AgeGroupName"].ToString(),
+
+                            dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                            dr["CategoryName"].ToString(),
+                            dr["ModelClass"].ToString(),
+
+                            dr.GetInt32(dr.GetOrdinal("ModelerId")),
                             dr["FirstName"].ToString(),
                             dr["LastName"].ToString(),
                             dr["ClubName"].ToString(),
-                            dr["AgeGroup"].ToString(),
-                            dr["ModelName"].ToString(),
-                            dr["ModelClass"].ToString(),
-                            dr["ModelScale"].ToString(),
-                            dr["ModelPublisher"].ToString(),
-                            dr["ModelCategory"].ToString(),
-                            dr.GetInt64(dr.GetOrdinal("ModelCategoryId")),
                             dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
-                            dr.GetBoolean(dr.GetOrdinal("SkipErrorValidation"))
+                            dr["Email"].ToString(),
+
+                            dr.GetInt32(dr.GetOrdinal("ModelId")),
+                            dr["ModelName"].ToString(),
+                            dr["Publisher"].ToString(),
+                            dr["Scale"].ToString()
                         );
                     }
                 }
@@ -94,22 +79,21 @@ namespace Rejestracja.Data.Dao
             string sortFieldName;
 
             switch (sortField) { 
-                case 0: sortFieldName = "EntryId"; break;
+                case 0: sortFieldName = "RegistrationId"; break;
                 case 1: sortFieldName = "TmStamp"; break;
                 case 2: sortFieldName = "Email"; break;
                 case 3: sortFieldName = "FirstName"; break;
                 case 4: sortFieldName = "LastName"; break;
                 case 5: sortFieldName = "YearOfBirth"; break;
                 case 6: sortFieldName = "ClubName"; break;
-                case 7: sortFieldName = "AgeGroup"; break;
+                case 7: sortFieldName = "AgeGroupName"; break;
                 case 8: sortFieldName = "ModelName"; break;
-                case 9: sortFieldName = "ModelCategory"; break;
+                case 9: sortFieldName = "CategoryName"; break;
                 case 10: sortFieldName = "ModelClass"; break;
-                case 11: sortFieldName = "ModelScale"; break;
-                case 12: sortFieldName = "ModelPublisher"; break;
-                default: sortFieldName = "EntryId"; break;
+                case 11: sortFieldName = "Scale"; break;
+                case 12: sortFieldName = "Publisher"; break;
+                default: sortFieldName = "RegistrationId"; break;
             }
-
             return getList(searchValue, sortFieldName, sortAscending);
         }
 
@@ -118,10 +102,7 @@ namespace Rejestracja.Data.Dao
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("", cn))
             {
-                StringBuilder query = new StringBuilder(
-                    @"SELECT EntryId, TmStamp, Email, FirstName, LastName, ClubName, AgeGroup,
-                    ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, COALESCE(YearOfBirth,0) AS YearOfBirth 
-                 FROM Registration ");
+                StringBuilder query = new StringBuilder(BASE_QUERY);
 
                 if (!String.IsNullOrEmpty(searchValue))
                 {
@@ -130,11 +111,10 @@ namespace Rejestracja.Data.Dao
                     int n;
                     if (Int32.TryParse(searchValue, out n))
                     {
-                        query.Append(" EntryId = @EntryId AND ");
-                        cm.Parameters.Add("@EntryId", System.Data.DbType.Int32).Value = n;
+                        query.Append(" r.Id = @Id AND ");
+                        cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = n;
                     }
-
-                    query.Append(" Email LIKE @SearchValue OR FirstName LIKE @SearchValue OR LastName LIKE @SearchValue OR ModelName LIKE @SearchValue ");
+                    query.Append(" mr.Email LIKE @SearchValue OR mr.FirstName LIKE @SearchValue OR mr.LastName LIKE @SearchValue OR ml.Name LIKE @SearchValue ");
                     cm.Parameters.Add("@SearchValue", System.Data.DbType.String, 64).Value = "%" + searchValue + "%";
                 }
                 query.Append(" ORDER BY ").Append(sortField).Append(sortAscending ? " ASC" : " DESC");
@@ -153,19 +133,19 @@ namespace Rejestracja.Data.Dao
                         yield return
                             new String[] 
                             {
-                                dr["EntryId"].ToString(),
+                                dr["RegistrationId"].ToString(),
                                 ((DateTime)dr["TmStamp"]).ToString(Resources.DateFormat),
                                 dr["Email"].ToString(),
                                 dr["FirstName"].ToString(),
                                 dr["LastName"].ToString(),
                                 yearOfBirth.ToString(),
                                 dr["ClubName"].ToString(),
-                                dr["AgeGroup"].ToString(),
+                                dr["AgeGroupName"].ToString(),
                                 dr["ModelName"].ToString(),
-                                dr["ModelCategory"].ToString(),
-                                dr["ModelClass"].ToString(),
-                                dr["ModelScale"].ToString(),
-                                dr["ModelPublisher"].ToString()
+                                dr["CategoryName"].ToString(),
+                                dr["ClassName"].ToString(),
+                                dr["Scale"].ToString(),
+                                dr["Publisher"].ToString()
                             };
                     }
                 }
@@ -179,26 +159,21 @@ namespace Rejestracja.Data.Dao
         public static IEnumerable<String[]> getGrouppedList(String searchValue) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
-                StringBuilder query = new StringBuilder(
-                    @"SELECT r.EntryId, r.TmStamp, r.Email, r.FirstName, r.LastName, r.ClubName, r.AgeGroup,
-                        r.ModelName, r.ModelClass, r.ModelScale, r.ModelPublisher, r.ModelCategory, COALESCE(r.YearOfBirth,0) AS YearOfBirth,
-                        CASE WHEN m.DisplayOrder IS NULL THEN -1 ELSE m.DisplayOrder END AS DisplayOrder
-                    FROM Registration r
-                        LEFT JOIN ModelCategory m ON m.Id = r.ModelCategoryId");
+                StringBuilder query = new StringBuilder(BASE_QUERY);
 
                 if (!String.IsNullOrEmpty(searchValue)) {
                     query.Append(" WHERE ");
 
                     int n;
                     if (Int32.TryParse(searchValue, out n)) {
-                        query.Append(" EntryId = @EntryId AND ");
-                        cm.Parameters.Add("@EntryId", System.Data.DbType.Int32).Value = n;
+                        query.Append(" r.RegistrationId = @Id AND ");
+                        cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = n;
                     }
 
-                    query.Append(" Email LIKE @SearchValue OR FirstName LIKE @SearchValue OR LastName LIKE @SearchValue OR ModelName LIKE @SearchValue ");
+                    query.Append(" mr.Email LIKE @SearchValue OR mr.FirstName LIKE @SearchValue OR mr.LastName LIKE @SearchValue OR ml.Name LIKE @SearchValue ");
                     cm.Parameters.Add("@SearchValue", System.Data.DbType.String, 64).Value = "%" + searchValue + "%";
                 }
-                query.Append(" ORDER BY DisplayOrder, r.ModelCategory, r.AgeGroup, r.ModelClass, r.EntryId");
+                query.Append(" ORDER BY DisplayOrder, r.CategoryName, r.AgeGroupName, r.ClassName, r.RegistrationId");
 
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -212,19 +187,19 @@ namespace Rejestracja.Data.Dao
                         yield return
                             new String[] 
                             {
-                                dr["EntryId"].ToString(),
+                                dr["RegistrationId"].ToString(),
                                 ((DateTime)dr["TmStamp"]).ToString(Resources.DateFormat),
                                 dr["Email"].ToString(),
                                 dr["FirstName"].ToString(),
                                 dr["LastName"].ToString(),
                                 yearOfBirth.ToString(),
                                 dr["ClubName"].ToString(),
-                                dr["AgeGroup"].ToString(),
+                                dr["AgeGroupName"].ToString(),
                                 dr["ModelName"].ToString(),
-                                dr["ModelCategory"].ToString(),
-                                dr["ModelClass"].ToString(),
-                                dr["ModelScale"].ToString(),
-                                dr["ModelPublisher"].ToString()
+                                dr["CategoryName"].ToString(),
+                                dr["ClassName"].ToString(),
+                                dr["Scale"].ToString(),
+                                dr["Publisher"].ToString()
                             };
                     }
                 }
@@ -237,11 +212,9 @@ namespace Rejestracja.Data.Dao
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT EntryId, TmStamp, Email, FirstName, LastName, ClubName, AgeGroup,
-                        ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, COALESCE(ModelCategoryId, -1) AS ModelCategoryId,
-                        COALESCE(YearOfBirth,0) AS YearOfBirth, COALESCE(SkipErrorValidation,0) AS SkipErrorValidation
-                    FROM Registration 
-                    ORDER BY ModelCategory, AgeGroup, ModelClass, EntryId", cn))
+                BASE_QUERY + 
+                " WHERE r.CategoryId > -1 " +
+                " ORDER BY CategoryName, AgeGroupName, ClassName, RegistrationId", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -252,21 +225,25 @@ namespace Rejestracja.Data.Dao
                     {
                         ret.Add(
                             new RegistrationEntry(
-                                dr.GetInt64(dr.GetOrdinal("EntryId")),
-                                dr.GetDateTime(dr.GetOrdinal("TmStamp")),
-                                dr["Email"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("RegistrationId")),
+                                (DateTime)dr["TmStamp"],
+                                dr["AgeGroupName"].ToString(),
+
+                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                                dr["CategoryName"].ToString(),
+                                dr["ModelClass"].ToString(),
+
+                                dr.GetInt32(dr.GetOrdinal("ModelerId")),
                                 dr["FirstName"].ToString(),
                                 dr["LastName"].ToString(),
                                 dr["ClubName"].ToString(),
-                                dr["AgeGroup"].ToString(),
-                                dr["ModelName"].ToString(),
-                                dr["ModelClass"].ToString(),
-                                dr["ModelScale"].ToString(),
-                                dr["ModelPublisher"].ToString(),
-                                dr["ModelCategory"].ToString(),
-                                dr.GetInt64(dr.GetOrdinal("ModelCategoryId")),
                                 dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
-                                dr.GetBoolean(dr.GetOrdinal("SkipErrorValidation"))
+                                dr["Email"].ToString(),
+
+                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+                                dr["ModelName"].ToString(),
+                                dr["Publisher"].ToString(),
+                                dr["Scale"].ToString()
                         ));
                     }
                     return ret;
@@ -277,21 +254,21 @@ namespace Rejestracja.Data.Dao
         public static IEnumerable<String[]> getListForMergingCategories(int maxEntryCount) {
 
             String query =
-                @"SELECT r.AgeGroup, r.ModelClass, r.ModelCategory, COALESCE(r.ModelCategoryId, -1) AS ModelCategoryId, COUNT(r.EntryId) AS EntryCount, CASE m.DisplayOrder WHEN NULL THEN 0 ELSE m.DisplayOrder END AS DisplayOrder
+                @"SELECT r.AgeGroupName, c.ModelClass, c.Id AS CategoryId, c.Name AS CategoryName, COUNT(r.Id) AS EntryCount, CASE c.DisplayOrder WHEN NULL THEN -1 ELSE c.DisplayOrder END AS DisplayOrder
                     FROM Registration r
-	                    LEFT JOIN ModelCategory m ON m.Id = r.ModelCategoryId
-	                    LEFT JOIN AgeGroup ag ON r.AgeGroup = ag.Name
+	                    LEFT JOIN Categories c ON c.Id = r.CategoryId
+	                    LEFT JOIN AgeGroups ag ON r.AgeGroupName = ag.Name
 	                    JOIN (
-		                    SELECT DISTINCT ModelCategoryId
-			                    FROM (
-				                    SELECT ModelCategoryId, AgeGroup, COUNT(EntryId) AS EntryCount 
-					                    FROM Registration 
-					                    WHERE ModelCategoryId > -1
-					                    GROUP BY ModelCategoryId, AgeGroup
-					                    HAVING EntryCount < @MaxCount)
-			                    ) sm ON r.ModelCategoryId = sm.ModelCategoryId
-                    GROUP BY r.AgeGroup, r.ModelClass, r.ModelCategoryId
-                    ORDER BY m.DisplayOrder, r.ModelCategory, ag.Age, r.ModelClass";
+		                    SELECT DISTINCT CategoryId
+		                    FROM (
+			                    SELECT CategoryId, AgeGroupName, COUNT(Id) AS EntryCount 
+				                    FROM Registration 
+				                    WHERE CategoryId > -1
+				                    GROUP BY CategoryId, AgeGroupName
+				                    HAVING EntryCount < @MaxCount)
+	                    ) sm ON r.CategoryId = sm.CategoryId
+                    GROUP BY r.AgeGroupName, c.ModelClass, r.CategoryId
+                    ORDER BY c.DisplayOrder, c.Name, ag.Age, c.ModelClass";
 
             if (maxEntryCount < 1) {
                 yield break;
@@ -306,10 +283,10 @@ namespace Rejestracja.Data.Dao
                 using (SQLiteDataReader dr = cm.ExecuteReader()) {
                     while (dr.Read()) {
                         yield return new String[] {
-                            dr["AgeGroup"].ToString(),
+                            dr["AgeGroupName"].ToString(),
                             dr["ModelClass"].ToString(),
-                            dr["ModelCategory"].ToString(),
-                            dr["ModelCategoryId"].ToString(),
+                            dr["CategoryName"].ToString(),
+                            dr["CategoryId"].ToString(),
                             dr["EntryCount"].ToString()
                         };
                     }
@@ -317,6 +294,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
+        //TODO: RESTART HERE
         public static void mergeAgeGroupsInCategory(long modelCategoryId, String sourceAgeGroup, String targetAgeGroup) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
@@ -368,15 +346,15 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@clubName", System.Data.DbType.String, 128).Value = entry.clubName;
                 cm.Parameters.Add("@ageGroup", System.Data.DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = entry.ageGroupName;
                 cm.Parameters.Add("@modelName", System.Data.DbType.String, 256).Value = entry.modelName;
-                cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = entry.modelClass;
+                cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = entry.className;
                 cm.Parameters.Add("@modelScale", System.Data.DbType.String, 8).Value = entry.modelScale;
                 cm.Parameters.Add("@modelPublisher", System.Data.DbType.String, 64).Value = entry.modelPublisher;
-                cm.Parameters.Add("@modelCategory", System.Data.DbType.String, 64).Value = entry.modelCategory;
-                cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int32).Value = entry.modelCategoryId;
+                cm.Parameters.Add("@modelCategory", System.Data.DbType.String, 64).Value = entry.categoryName;
+                cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int32).Value = entry.categoryId;
                 cm.Parameters.Add("@yearOfBirth", System.Data.DbType.Int32).Value = entry.yearOfBirth;
                 cm.ExecuteNonQuery();
 
-                entry.registrationId = cn.LastInsertRowId;
+                entry.registrationId = (int)cn.LastInsertRowId;
             }
         }
 
@@ -398,11 +376,11 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@clubName", System.Data.DbType.String, 128).Value = entry.clubName;
                 cm.Parameters.Add("@ageGroup", System.Data.DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = entry.ageGroupName;
                 cm.Parameters.Add("@modelName", System.Data.DbType.String, 256).Value = entry.modelName;
-                cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = entry.modelClass;
+                cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = entry.className;
                 cm.Parameters.Add("@modelScale", System.Data.DbType.String, 8).Value = entry.modelScale;
                 cm.Parameters.Add("@modelPublisher", System.Data.DbType.String, 64).Value = entry.modelPublisher;
-                cm.Parameters.Add("@modelCategory", System.Data.DbType.String, 64).Value = entry.modelCategory;
-                cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int64).Value = entry.modelCategoryId;
+                cm.Parameters.Add("@modelCategory", System.Data.DbType.String, 64).Value = entry.categoryName;
+                cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int64).Value = entry.categoryId;
                 cm.Parameters.Add("@yearOfBirth", System.Data.DbType.Int32).Value = entry.yearOfBirth;
                 cm.Parameters.Add("@entryId", System.Data.DbType.Int64).Value = entry.registrationId;
 

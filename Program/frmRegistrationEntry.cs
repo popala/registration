@@ -135,8 +135,8 @@ namespace Rejestracja
             if (cboModelPublisher.SelectedIndex < 0)
                 cboModelPublisher.Text = entry.modelPublisher;
             cboModelScale.SelectedIndex = cboModelScale.FindString(entry.modelScale);
-            cboModelCategory.SelectedIndex = cboModelCategory.FindString(entry.modelCategory);
-            cboModelClass.SelectedIndex = cboModelClass.FindString(entry.modelClass);
+            cboModelCategory.SelectedIndex = cboModelCategory.FindString(entry.categoryName);
+            cboModelClass.SelectedIndex = cboModelClass.FindString(entry.className);
 
             btnAddPrintModel.Visible = false;
             btnNewModel.Visible = false;

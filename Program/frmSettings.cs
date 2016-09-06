@@ -592,7 +592,7 @@ namespace Rejestracja
 
         private void loadModelScales() {
             lvModelScales.Items.Clear();
-            foreach (ModelScale scale in ScaleDao.getList()) {
+            foreach (Scale scale in ScaleDao.getList()) {
                 ListViewItem li = new ListViewItem(new String[] { scale.name });
                 li.Tag = scale.id;
                 lvModelScales.Items.Add(li);

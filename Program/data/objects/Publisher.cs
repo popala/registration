@@ -16,6 +16,8 @@ namespace Rejestracja.Data.Objects {
         public int id;
         public String name;
 
+        public const int MAX_NAME_LENGTH = 256;
+
         public Publisher(int id, String name) {
             this.id = id;
             this.name = name;

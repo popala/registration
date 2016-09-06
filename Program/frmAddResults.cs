@@ -93,8 +93,8 @@ namespace Rejestracja
                 ListViewGroup group = new ListViewGroup("");
 
                 foreach (RegistrationEntry entry in entries) {
-                    if (!modelClass.Equals(entry.modelClass) || !ageGroup.Equals(entry.ageGroupName)) {
-                        modelClass = entry.modelClass;
+                    if (!modelClass.Equals(entry.className) || !ageGroup.Equals(entry.ageGroupName)) {
+                        modelClass = entry.className;
                         ageGroup = entry.ageGroupName;
                         group = new ListViewGroup(String.Format("{0} - {1}", ageGroup, modelClass.ToUpper()));
                         lvResults.Groups.Add(group);

@@ -13,86 +13,58 @@ using System;
 
 namespace Rejestracja.Data.Objects {
     class RegistrationEntry {
-        public long registrationId;
+        public int registrationId;
         public DateTime timeStamp;
-        public String email;
+        public String ageGroupName;
+
+        public int categoryId;
+        public String categoryName;
+        public String className;
+
+        public int modelerId;
         public String firstName;
         public String lastName;
         public String clubName;
-        public String ageGroupName;
-        public String modelName;
-        public String modelCategory;
-        public long modelCategoryId;
-        public String modelScale;
-        public String modelPublisher;
-        public String modelClass;
         public int yearOfBirth;
+        public String email;
+
+        public int modelId;
+        public String modelName;
+        public String modelPublisher;
+        public String modelScale;
+        
         public int place;
-        public bool skipErrorValidation;
 
         public RegistrationEntry() {
-
         }
 
-        public RegistrationEntry(long registrationId, DateTime timeStamp, String email, String firstName, String lastName, String clubName, String ageGroup,
-                                String modelName, String modelClass, String modelScale, String modelPublisher, String modelCategory, long modelCategoryId,
-                                int yearOfBirth, bool skipErrorValidation) {
+        public RegistrationEntry(
+                int registrationId, DateTime timeStamp, String ageGroupName,
+                int categoryId, String categoryName, String className,
+                int modelerId, String firstName, String lastName, String clubName, int yearOfBirth, String email,  
+                int modelId, String modelName, String modelPublisher, String modelScale) {
+
             this.registrationId = registrationId;
             this.timeStamp = timeStamp;
             this.email = email;
             this.firstName = firstName;
             this.lastName = lastName;
             this.clubName = clubName;
-            this.ageGroupName = ageGroup;
+            this.ageGroupName = ageGroupName;
             this.modelName = modelName;
-            this.modelCategory = modelCategory;
-            this.modelCategoryId = modelCategoryId;
+            this.categoryName = categoryName;
+            this.categoryId = categoryId;
             this.modelScale = modelScale;
             this.modelPublisher = modelPublisher;
-            this.modelClass = modelClass;
+            this.className = className;
             this.yearOfBirth = yearOfBirth;
-            this.skipErrorValidation = skipErrorValidation;
         }
 
-        public RegistrationEntry(long registrationId, String email, String firstName, String lastName, String clubName, String ageGroup,
-                                String modelName, String modelClass, String modelScale, String modelPublisher, String modelCategory, long modelCategoryId, int yearOfBirth) {
+        public RegistrationEntry(int registrationId, String ageGroupName, String modelName, String className, String modelScale, String modelPublisher, int place) {
             this.registrationId = registrationId;
-            this.email = email;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.clubName = clubName;
-            this.ageGroupName = ageGroup;
+            this.ageGroupName = ageGroupName;
             this.modelName = modelName;
-            this.modelCategory = modelCategory;
-            this.modelCategoryId = modelCategoryId;
-            this.modelScale = modelScale;
-            this.modelPublisher = modelPublisher;
-            this.modelClass = modelClass;
-            this.yearOfBirth = yearOfBirth;
-        }
-
-        public RegistrationEntry(DateTime timeStamp, String email, String firstName, String lastName, String clubName, String ageGroup,
-                                String modelName, String modelClass, String modelScale, String modelPublisher, String modelCategory, long modelCategoryId, int yearOfBirth) {
-            this.timeStamp = timeStamp;
-            this.email = email;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.clubName = clubName;
-            this.ageGroupName = ageGroup;
-            this.modelName = modelName;
-            this.modelCategory = modelCategory;
-            this.modelCategoryId = modelCategoryId;
-            this.modelScale = modelScale;
-            this.modelPublisher = modelPublisher;
-            this.modelClass = modelClass;
-            this.yearOfBirth = yearOfBirth;
-        }
-
-        public RegistrationEntry(long registrationId, String ageGroup, String modelName, String modelClass, String modelScale, String modelPublisher, int place) {
-            this.registrationId = registrationId;
-            this.ageGroupName = ageGroup;
-            this.modelName = modelName;
-            this.modelClass = modelClass;
+            this.className = className;
             this.modelScale = modelScale;
             this.modelPublisher = modelPublisher;
             this.place = place;
@@ -100,8 +72,8 @@ namespace Rejestracja.Data.Objects {
 
         public String ToCsvString() {
             String [] props = new String[] {
-                registrationId.ToString(), timeStamp.ToString(), email, firstName, lastName, clubName, ageGroupName, modelName, modelCategory, modelCategoryId.ToString(),
-                modelScale, modelPublisher, modelClass, yearOfBirth.ToString(), place.ToString(), skipErrorValidation.ToString()
+                registrationId.ToString(), timeStamp.ToString(), email, firstName, lastName, clubName, ageGroupName, modelName, categoryName, categoryId.ToString(),
+                modelScale, modelPublisher, className, yearOfBirth.ToString(), place.ToString()
             };
             return "\"" + String.Join("\",\"", props) + "\"";
         }

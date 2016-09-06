@@ -208,7 +208,7 @@ namespace Rejestracja.Data.Dao {
                     while (dr.Read()) {
                         yield return
                             new RegistrationEntry(
-                                dr.GetInt64(dr.GetOrdinal("EntryId")),
+                                dr.GetInt32(dr.GetOrdinal("EntryId")),
                                 dr["AgeGroup"].ToString(),
                                 dr["ModelName"].ToString(),
                                 dr["ModelClass"].ToString(),
