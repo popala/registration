@@ -140,6 +140,9 @@ Help/
 #Todo list
 todo.txt
 
+#Dev resources
+dev_resources/
+
 # Click-Once directory
 publish/
 
