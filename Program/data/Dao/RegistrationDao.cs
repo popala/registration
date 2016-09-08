@@ -21,12 +21,38 @@ namespace Rejestracja.Data.Dao {
                 using(SQLiteDataReader dr = cm.ExecuteReader()) {
                     while(dr.Read())
                         yield return new Registration(
-                            dr.GetInt32(0),
-                            dr.GetDateTime(1),
-                            dr.GetInt32(2),
-                            dr.GetInt32(3),
-                            dr.GetString(4),
-                            dr.GetString(3)
+                            dr.GetInt32(dr.GetOrdinal("Id")),
+                            (DateTime)dr["TmStamp"],
+                            dr.GetInt32(dr.GetOrdinal("ModelId")),
+                            dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                            dr["CategoryName"].ToString(),
+                            dr["AgeGroupName"].ToString()
+                        );
+                }
+            }
+        }
+
+        public static IEnumerable<Registration> getList(int modelId) {
+
+            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using(SQLiteCommand cm = new SQLiteCommand(
+                @"SELECT r.Id, r.TmStamp, r.ModelId, r.CategoryId, COALESCE(c.Name, r.CategoryName) AS CategoryName, r.AgeGroupName
+                    FROM Registration r 
+                LEFT JOIN Categories c ON r.CategoryId = c.Id
+                WHERE r.ModelId = @Id", cn)) {
+
+                cn.Open();
+                cm.Parameters.Add("@Id", DbType.Int32).Value = modelId;
+
+                using(SQLiteDataReader dr = cm.ExecuteReader()) {
+                    while(dr.Read())
+                        yield return new Registration(
+                            dr.GetInt32(dr.GetOrdinal("Id")),
+                            (DateTime)dr["TmStamp"],
+                            dr.GetInt32(dr.GetOrdinal("ModelId")),
+                            dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                            dr["CategoryName"].ToString(),
+                            dr["AgeGroupName"].ToString()
                         );
                 }
             }
@@ -67,7 +93,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static Registration get(int id) {
+        public static Registration get(int registrationId) {
             Registration ret = null;
 
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -75,17 +101,17 @@ namespace Rejestracja.Data.Dao {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", DbType.Int32).Value = id;
+                cm.Parameters.Add("@Id", DbType.Int32).Value = registrationId;
 
                 using(SQLiteDataReader dr = cm.ExecuteReader()) {
                     if(dr.Read())
                         ret = new Registration(
-                            dr.GetInt32(0),
-                            dr.GetDateTime(1),
-                            dr.GetInt32(2),
-                            dr.GetInt32(3),
-                            dr.GetString(4),
-                            dr.GetString(5)
+                            dr.GetInt32(dr.GetOrdinal("Id")),
+                            (DateTime)dr["TmStamp"],
+                            dr.GetInt32(dr.GetOrdinal("ModelId")),
+                            dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                            dr["CategoryName"].ToString(),
+                            dr["AgeGroupName"].ToString()
                         );
                 }
             }
@@ -108,13 +134,14 @@ namespace Rejestracja.Data.Dao {
         public static void createTable() {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(
-                    @"CREATE TABLE Models(
+                    @"CREATE TABLE Registration(
                         Id INTEGER PRIMARY KEY,
-                        Name TEXT,
-                        Publisher TEXT,
-                        Scale TEXT,
-                        ModelerId INTEGER NOT NULL REFERENCES Modelers(Id));
-                    CREATE INDEX Idx_Models_MdlrId ON Models(ModelerId);", cn)) {
+                        TmStamp DATETIME NOT NULL,
+                        ModelId INTEGER NOT NULL REFERENCES Models(Id),
+                        CategoryId INTEGER NOT NULL DEFAULT -1,
+                        CategoryName TEXT NULL,
+                        AgeGroupName TEXT NULL REFERENCES AgeGroup(Name));
+                    CREATE UNIQUE INDEX Idx_Reg_ModelCat ON Registration(ModelId, CategoryId);", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.ExecuteNonQuery();

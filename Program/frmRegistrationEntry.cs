@@ -1,4 +1,5 @@
-﻿/*
+﻿using Rejestracja.Controls;
+/*
  * Copyright (C) 2016 Paweł Opała https://github.com/popala/registration
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
@@ -14,6 +15,7 @@ using Rejestracja.Data.Objects;
 using Rejestracja.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -22,9 +24,10 @@ namespace Rejestracja
 {
     public partial class frmRegistrationEntry : Form
     {
-        private RegistrationEntry _entry;
         public frmMain _parentForm;
         private List<AgeGroup> _ageGroups;
+        private List<Category> _categories;
+        private List<Class> _classes;
 
         public void setParent(frmMain parentForm) {
             this._parentForm = parentForm;
@@ -46,23 +49,34 @@ namespace Rejestracja
                 }
             }
 
+            lvCategories.DoubleClickDoesCheck = false;
             resetControls();
         }
 
         private void resetControls() {
 
+            //General
+            this._ageGroups = AgeGroupDao.getList().ToList();
+            this._categories = CategoryDao.getList(true).ToList();
+            this._classes = ClassDao.getList().ToList();
+            this.Text = "Nowa Rejestracja";
+
+            //Modeler
+            txtModelerId.Text = "";
+            txtEmail.Text = "";
+            txtFirstName.Text = "";
+            txtLastName.Text = "";
             txtModelClub.Text = "Indywidualnie";
-
-            _ageGroups = AgeGroupDao.getList().ToList();
-            cboAgeGroup.Items.Clear();
-            foreach(AgeGroup item in _ageGroups)
-                cboAgeGroup.Items.Add(new ComboBoxItem(item.id, item.name));
-
+            
             cboYearOfBirth.Items.Clear();
-            for (int i = 1900; i < 2015; i++)
-                cboYearOfBirth.Items.Add(i.ToString());
-            cboYearOfBirth.SelectedIndex = cboYearOfBirth.FindString("1970");
+            for (int i = 1900; i < DateTime.Now.Year; i++)
+                cboYearOfBirth.Items.Add(new ComboBoxItem(i, i.ToString()));
+            cboYearOfBirth.SelectedIndex = cboYearOfBirth.FindString("1980");
 
+            btnNewRegistration.Visible = true;
+            btnAddModeler.Visible = true;
+
+            //Model
             cboModelPublisher.Items.Clear();
             foreach (String item in PublisherDao.getSimpleList())
                 cboModelPublisher.Items.Add(item.Trim());
@@ -73,24 +87,58 @@ namespace Rejestracja
                 cboModelScale.Items.Add(item.Trim());
             cboModelScale.SelectedIndex = cboModelScale.FindString("1:33");
 
-            cboModelCategory.Items.Clear();
-            foreach (Category item in CategoryDao.getList())
-                cboModelCategory.Items.Add(new ComboBoxItem(item.id, item.fullName));
-            if (cboModelCategory.Items.Count > 0) {
-                cboModelCategory.SelectedIndex = 0;
+            //Categories broken up by class
+            lvCategories.Clear();
+            lvCategories.Columns.Add("Kod");
+            lvCategories.Columns.Add("Kategoria");
+            lvCategories.Columns.Add("Grupa Wiekowa");
+
+            lvCategories.View = View.Details;
+            lvCategories.GridLines = true;
+            lvCategories.FullRowSelect = true;
+            lvCategories.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            lvCategories.CheckBoxes = true;
+
+            //Load classes plus extra one for imported categories that were not in the system
+            foreach(Class c in _classes) {
+                ListViewGroup group = new ListViewGroup(c.name, c.name);
+                group.Tag = c.id;
+                lvCategories.Groups.Add(group);
+            }
+            ListViewGroup importedCatGroup = new ListViewGroup("Kategorie z importu");
+            importedCatGroup.Tag = -1;
+            lvCategories.Groups.Add(importedCatGroup);
+            
+            //Load categories to each class
+            foreach(Category c in _categories) {
+                ListViewGroup group = null;
+                if(String.IsNullOrWhiteSpace(c.className)) {
+                    group = lvCategories.Groups[lvCategories.Groups.Count - 1];
+                }
+                else {
+                    foreach(ListViewGroup g in lvCategories.Groups) {
+                        if(g.Header.Equals(c.className, StringComparison.CurrentCultureIgnoreCase)) {
+                            group = g;
+                        }
+                    }
+                }
+
+                ListViewItem item = new ListViewItem(new String[] { c.code, c.name, "" }, group);
+                item.Name = c.name;
+                lvCategories.Items.Add(item);
             }
 
-            cboModelClass.Items.Clear();
-            foreach (String item in ClassDao.getSimpleList())
-                cboModelClass.Items.Add(item.Trim());
-            cboModelClass.SelectedIndex = cboModelClass.FindString("standard");
-            cboModelClass.Enabled = false;
+            //Remove class for imported categories if there are none
+            if(lvCategories.Groups[lvCategories.Groups.Count - 1].Items.Count == 0) {
+                lvCategories.Groups.RemoveAt(lvCategories.Groups.Count - 1);
+            }
 
-            btnAddPrintModel.Visible = true;
+            foreach(ColumnHeader header in lvCategories.Columns) {
+                header.Width = -2;
+            }
+
             btnNewModel.Visible = true;
-            btnSave.Visible = false;
-
-            this.Text = "Nowa Rejestracja";
+            btnAddPrintModel.Visible = true;            
         }
 
         private void clear()
@@ -100,85 +148,122 @@ namespace Rejestracja
             txtEmail.Text = "";
             txtModelClub.Text = "";
             cboYearOfBirth.SelectedIndex = cboYearOfBirth.FindString("1970");
-            cboAgeGroup.SelectedIndex = cboAgeGroup.FindString("senior");
-            txtEntryId.Text = "";
+            //txtEntryId.Text = "";
+            cboEntryId.Items.Clear();
             txtModelName.Text = "";
             cboModelPublisher.SelectedIndex = -1;
             cboModelScale.SelectedIndex = cboModelScale.FindString("1:33");
-            if (cboModelCategory.Items.Count > 0) {
-                cboModelCategory.SelectedIndex = 0;
-            }
-            cboModelClass.SelectedIndex = cboModelClass.FindString("standard");
         }
 
-        public void loadEntry(int entryId)
+        public void loadModel(int registrationId, int modelId)
         {
             clear();
 
-            RegistrationEntry entry = RegistrationEntryDao.get(entryId);
+            Model model = null;
 
-            if(entry == null)
+            if(modelId > -1) {
+                model = ModelDao.get(modelId);
+            }
+            else {
+                Registration reg = RegistrationDao.get(registrationId);
+                if(reg != null) {
+                    model = ModelDao.get(reg.modelId);
+                }
+            }
+
+            if(model == null)
             {
-                MessageBox.Show("Numer startowy nie figuruje w bazie!");
+                MessageBox.Show("Model/rejestracja nie znaleziona!");
                 this.Close();
             }
 
-            txtFirstName.Text = entry.firstName;
-            txtLastName.Text = entry.lastName;
-            txtEmail.Text = entry.email;
-            txtModelClub.Text = entry.clubName;
-            cboYearOfBirth.SelectedIndex = cboYearOfBirth.FindString(entry.yearOfBirth.ToString());
-            cboAgeGroup.SelectedIndex = cboAgeGroup.FindString(entry.ageGroupName);
-            txtEntryId.Text = entry.registrationId.ToString();
-            txtModelName.Text = entry.modelName;
-            cboModelPublisher.SelectedIndex = cboModelPublisher.FindString(entry.modelPublisher.ToLower());
-            if (cboModelPublisher.SelectedIndex < 0)
-                cboModelPublisher.Text = entry.modelPublisher;
-            cboModelScale.SelectedIndex = cboModelScale.FindString(entry.modelScale);
-            cboModelCategory.SelectedIndex = cboModelCategory.FindString(entry.categoryName);
-            cboModelClass.SelectedIndex = cboModelClass.FindString(entry.className);
+            //Model info
+            Modeler modeler = ModelerDao.get(model.modelerId);
+            foreach(Model m in ModelDao.getList(model.modelerId)) {
+                cboEntryId.Items.Add(new ComboBoxItem(m.id, m.id.ToString()));
+                if(m.id == model.id) {
+                    cboEntryId.SelectedIndex = cboEntryId.Items.Count - 1;
+                    txtModelName.Text = m.name;
+                    cboModelPublisher.SelectedIndex = cboModelPublisher.FindString(m.publisher.ToLower());
+                    if(cboModelPublisher.SelectedIndex < 0)
+                        cboModelPublisher.Text = m.publisher;
+                    cboModelScale.SelectedIndex = cboModelScale.FindString(m.scale);
+                }
+            }
 
+            //Modeler info
+            txtModelerId.Text = modeler.id.ToString();
+            txtFirstName.Text = modeler.firstName;
+            txtLastName.Text = modeler.lastName;
+            txtEmail.Text = modeler.email;
+            txtModelClub.Text = modeler.clubName;
+            cboYearOfBirth.SelectedIndex = cboYearOfBirth.FindString(modeler.yearOfBirth.ToString());
+
+            //Registration
+            foreach(ListViewItem item in lvCategories.CheckedItems) {
+                item.Checked = false;
+                item.SubItems[2].Text = "";
+            }
+
+            //Check the assigned categories
+            //If model is not assigned to an imported category, not in the system, then hide the entire class
+            bool removeImported = true;
+
+            List<Registration> regList = RegistrationDao.getList(model.id).ToList();
+            foreach(Registration reg in regList) {
+                ListViewItem item = lvCategories.Items[lvCategories.Items.IndexOfKey(reg.categoryName)];
+                item.Checked = true;
+                item.SubItems[2].Text = reg.ageGroupName;
+                if((int)item.Group.Tag < 0) {
+                    removeImported = false;
+                }
+            }
+            
+            //Remove imported categories if they're not selected
+            if(removeImported) {
+                foreach(ListViewGroup group in lvCategories.Groups) {
+                    if((int)group.Tag < 0) {
+                        List<ListViewItem> itemsToRemove = new List<ListViewItem>();
+                        foreach(ListViewItem item in group.Items) {
+                            itemsToRemove.Add(item);
+                        }
+                        foreach(ListViewItem item in itemsToRemove) {
+                            lvCategories.Items.Remove(item);
+                        }
+                    }
+                }
+            }
+            
             btnAddPrintModel.Visible = false;
             btnNewModel.Visible = false;
             btnNewRegistration.Visible = false;
-            btnSave.Visible = true;
             chkPrintRegistrationCard.Visible = false;
 
-            this._entry = entry;
             this.Text = "Szczegóły Rejestracji";
-
             validateExistingEntry();
         }
 
         private void validateExistingEntry()
         {
             IEnumerable<Category> modelCategories = CategoryDao.getList();
-            String selectedCategory = cboModelCategory.Text.ToLower();
             bool bFound = false;
 
             lblErrors.Text = "";
             lblErrors.Visible = false;
 
-            ////Only seniors are allowed in non-standard category
-            //if (cboAgeGroup.Text.ToLower() != "senior" && cboModelClass.Text.ToLower() != "standard")
+            //foreach (Category category in modelCategories)
             //{
-            //    lblErrors.Text = "Tylko Senior powinien startować w kategorii Open.\n";
+            //    if (category.fullName.ToLower().Equals(selectedCategory))
+            //    {
+            //        bFound = true;
+            //        break;
+            //    }
+            //}
+            //if (!bFound)
+            //{
+            //    lblErrors.Text += "Kategoria modelu nie znaleziona w konfiguracji\n";
             //    lblErrors.Visible = true;
             //}
-
-            foreach (Category category in modelCategories)
-            {
-                if (category.fullName.ToLower().Equals(selectedCategory))
-                {
-                    bFound = true;
-                    break;
-                }
-            }
-            if (!bFound)
-            {
-                lblErrors.Text += "Kategoria modelu nie znaleziona w konfiguracji\n";
-                lblErrors.Visible = true;
-            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -212,32 +297,27 @@ namespace Rejestracja
                 }
             }
             
-            btnSave.Enabled = false;
-
             long categoryId = -1;
-            if (cboModelCategory.SelectedIndex > -1) {
-                categoryId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
-            }
+            //if (cboModelCategory.SelectedIndex > -1) {
+            //    categoryId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
+            //}
 
             try
             {
-                RegistrationEntry entry =
-                    new RegistrationEntry(
-                        long.Parse(txtEntryId.Text),
-                        txtEmail.Text,
-                        txtFirstName.Text,
-                        txtLastName.Text,
-                        txtModelClub.Text,
-                        cboAgeGroup.Text,
-                        txtModelName.Text,
-                        cboModelClass.Text,
-                        cboModelScale.Text,
-                        cboModelPublisher.Text,
-                        cboModelCategory.Text,
-                        categoryId,
-                        int.Parse(cboYearOfBirth.Text));
+                //RegistrationEntry entry =
+                //    new RegistrationEntry(
+                //        long.Parse(txtEntryId.Text),
+                //        txtEmail.Text,
+                //        txtFirstName.Text,
+                //        txtLastName.Text,
+                //        txtModelClub.Text,
+                //        txtModelName.Text,
+                //        cboModelScale.Text,
+                //        cboModelPublisher.Text,
+                //        categoryId,
+                //        int.Parse(cboYearOfBirth.Text));
 
-                RegistrationEntryDao.update(entry);
+                //RegistrationEntryDao.update(entry);
                 this.Close();
             }
             catch(Exception err)
@@ -249,10 +329,10 @@ namespace Rejestracja
 
         private bool validateEntry()
         {
-            if (cboModelCategory.SelectedIndex < 0) {
-                MessageBox.Show("Kategoria modelu jest wymagana", "Wymagane pola", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
+            //if (cboModelCategory.SelectedIndex < 0) {
+            //    MessageBox.Show("Kategoria modelu jest wymagana", "Wymagane pola", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //    return false;
+            //}
 
             if (txtFirstName.Text.Length == 0 || txtLastName.Text.Length == 0) {
                 MessageBox.Show("Imię i nazwisko są wymagane", "Wymagane pola", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -306,7 +386,7 @@ namespace Rejestracja
 
             if(!int.TryParse(cboYearOfBirth.Text, out yearOfBirth))
             {
-                cboAgeGroup.SelectedIndex = -1;
+                //cboAgeGroup.SelectedIndex = -1;
                 return;
             }
 
@@ -320,10 +400,10 @@ namespace Rejestracja
                 return;
             }
 
-            AgeGroup[] selectedAgeGroup = this._ageGroups.Where(x => x.upperAge >= age && x.bottomAge <= age).ToArray<AgeGroup>();
-            if (selectedAgeGroup.Length > 0) {
-                cboAgeGroup.SelectedIndex = cboAgeGroup.FindString(selectedAgeGroup[0].name);
-            }
+            //AgeGroup[] selectedAgeGroup = this._ageGroups.Where(x => x.upperAge >= age && x.bottomAge <= age).ToArray<AgeGroup>();
+            //if (selectedAgeGroup.Length > 0) {
+            //    cboAgeGroup.SelectedIndex = cboAgeGroup.FindString(selectedAgeGroup[0].name);
+            //}
         }
 
         private void btnAddPrintModel_Click(object sender, EventArgs e)
@@ -358,41 +438,41 @@ namespace Rejestracja
                     }
                 }
 
-                long categoryId = -1;
-                if (cboModelCategory.SelectedIndex > -1) {
-                    categoryId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
-                }
+                //long categoryId = -1;
+                //if (cboModelCategory.SelectedIndex > -1) {
+                //    categoryId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
+                //}
 
-                RegistrationEntry entry =
-                    new RegistrationEntry(
-                        DateTime.Now,
-                        txtEmail.Text,
-                        txtFirstName.Text,
-                        txtLastName.Text,
-                        txtModelClub.Text,
-                        cboAgeGroup.Text,
-                        txtModelName.Text,
-                        cboModelClass.Text,
-                        cboModelScale.Text,
-                        cboModelPublisher.Text,
-                        cboModelCategory.Text,
-                        categoryId,
-                        int.Parse(cboYearOfBirth.Text)
-                    );
+                //RegistrationEntry entry =
+                //    new RegistrationEntry(
+                //        DateTime.Now,
+                //        txtEmail.Text,
+                //        txtFirstName.Text,
+                //        txtLastName.Text,
+                //        txtModelClub.Text,
+                //        cboAgeGroup.Text,
+                //        txtModelName.Text,
+                //        cboModelClass.Text,
+                //        cboModelScale.Text,
+                //        cboModelPublisher.Text,
+                //        cboModelCategory.Text,
+                //        categoryId,
+                //        int.Parse(cboYearOfBirth.Text)
+                //    );
 
                 btnAddPrintModel.Enabled = false;
                 btnNewModel.Enabled = false;
                 btnNewRegistration.Enabled = false;
                 btnClose.Enabled = false;
 
-                RegistrationEntryDao.add(entry);
-                txtEntryId.Text = entry.registrationId.ToString();
+                //RegistrationEntryDao.add(entry);
+                //txtEntryId.Text = entry.registrationId.ToString();
 
-                if (!chkPrintRegistrationCard.Checked) {
-                    this._parentForm.printRegistrationCard(entry.registrationId);
-                }
+                //if (!chkPrintRegistrationCard.Checked) {
+                //    this._parentForm.printRegistrationCard(entry.registrationId);
+                //}
 
-                txtEntryId.Text = "";
+                cboEntryId.SelectedIndex = -1;
                 txtModelName.Text = "";
                 cboModelPublisher.SelectedIndex = -1;
                 btnAddPrintModel.Enabled = true;
@@ -412,27 +492,89 @@ namespace Rejestracja
 
         private void btnNewModel_Click(object sender, EventArgs e)
         {
-            txtEntryId.Text = "";
+            cboEntryId.SelectedIndex = -1;
             txtModelName.Text = "";
             cboModelPublisher.SelectedIndex = -1;
             btnAddPrintModel.Enabled = true;
         }
 
-        private void cboModelCategory_SelectedIndexChanged(object sender, EventArgs e) {
-
-            if (cboModelCategory.SelectedIndex > -1) {
-                long catId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
-                Category cat = CategoryDao.get(catId);
-                cboModelClass.SelectedIndex = cboModelClass.FindString(cat.className);
-            }
-            else {
-                cboModelClass.SelectedIndex = -1;
-            }
-        }
-
         private void btnNewRegistration_Click(object sender, EventArgs e) {
             resetControls();
             txtEmail.Focus();
+        }
+
+        private void lvCategories_ItemCheck(object sender, ItemCheckEventArgs e) {
+            
+            ListViewItem checkedItem = lvCategories.Items[e.Index];
+
+            if(checkedItem.ForeColor == System.Drawing.Color.LightGray) {
+                e.NewValue = CheckState.Unchecked;
+                return;
+            }
+
+            ListViewGroup group = checkedItem.Group;
+            Modeler modeler = ModelerDao.get(int.Parse(txtModelerId.Text));
+            int age = DateTime.Now.Year - modeler.yearOfBirth;
+
+            String ageGroupName = _ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
+
+            if(!checkedItem.Checked) {
+                checkedItem.BackColor = System.Drawing.Color.AliceBlue;
+                checkedItem.SubItems[2].Text = ageGroupName;
+
+                foreach(ListViewItem item in group.Items) {
+                    if(item != checkedItem) {
+                        item.ForeColor = System.Drawing.Color.LightGray;
+                    }
+                }
+            }
+            else {
+                checkedItem.BackColor = System.Drawing.Color.White;
+                checkedItem.SubItems[2].Text = "";
+
+                foreach(ListViewItem item in group.Items) {
+                    if(item != checkedItem) {
+                        item.ForeColor = System.Drawing.Color.Black;
+                    }
+                }
+            }
+        }
+
+        private void lvCategories_MouseDoubleClick(object sender, MouseEventArgs e) {
+            ListViewHitTestInfo hitTest = this.lvCategories.HitTest(e.X, e.Y);
+            if(hitTest.Item != null) {
+                ListViewItem item = hitTest.Item;
+
+                if(item.ForeColor == System.Drawing.Color.LightGray) {
+                    return;
+                }
+
+                try {
+                    lvCategories.BeginUpdate();
+
+                    int index = item.Index;
+                    if(item.SubItems[2].Text.Length > 0) {
+                        String ageGroup = item.SubItems[2].Text;
+                        int idx = this._ageGroups.FindIndex(x => x.name.Equals(ageGroup, StringComparison.CurrentCultureIgnoreCase));
+                        if(idx < 0 || (idx + 1) == this._ageGroups.Count) {
+                            item.SubItems[2].Text = this._ageGroups[0].name;
+                        }
+                        else {
+                            item.SubItems[2].Text = this._ageGroups[++idx].name;
+                        }
+                    }
+                    else if(this._ageGroups.Count > 0) {
+                        item.SubItems[2].Text = this._ageGroups[0].name;
+                    }
+                }
+                catch(Exception err) {
+                    LogWriter.error(err);
+                    MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally {
+                    lvCategories.EndUpdate();
+                }
+            }
         }
     }
 }

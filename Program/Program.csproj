@@ -35,10 +35,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -98,6 +99,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\CustListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Data\Dao\AgeGroupDao.cs" />
     <Compile Include="Data\Dao\AwardDao.cs" />
     <Compile Include="Data\Dao\ClassDao.cs" />
@@ -162,7 +166,7 @@
     <Compile Include="frmNewDataFile.Designer.cs">
       <DependentUpon>frmNewDataFile.cs</DependentUpon>
     </Compile>
-    <Compile Include="Utils\ComboBoxItem.cs" />
+    <Compile Include="Controls\ComboBoxItem.cs" />
     <Compile Include="Data\DataSource.cs" />
     <Compile Include="Utils\DocHandler.cs" />
     <Compile Include="Data\Objects\FileImportFieldMap.cs" />

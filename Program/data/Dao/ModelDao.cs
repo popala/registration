@@ -11,18 +11,25 @@ using System.Threading.Tasks;
 namespace Rejestracja.Data.Dao {
     class ModelDao {
         public static IEnumerable<Model> getList() {
-            return getList(null);
+            return getList(null, -1);
         }
 
         public static IEnumerable<Model> search(String value) {
-            return getList(value);
+            return getList(value, -1);
         }
 
-        private static IEnumerable<Model> getList(String searchValue) {
+        public static IEnumerable<Model> getList(int modelerId) {
+            return getList(null, modelerId);
+        }
+
+        private static IEnumerable<Model> getList(String searchValue, int modelerId) {
 
             StringBuilder query = new StringBuilder("SELECT Id, Name, Publisher, Scale, ModelerId FROM Models ");
             if(!String.IsNullOrWhiteSpace(searchValue)) {
                 query.Append(" WHERE Name LIKE @SearchValue ");
+            }
+            else if(modelerId > -1) {
+                query.Append(" WHERE ModelerId = @ModelerId ");
             }
             query.Append(" ORDER BY Id ");
 
@@ -33,15 +40,18 @@ namespace Rejestracja.Data.Dao {
                 if(!String.IsNullOrWhiteSpace(searchValue)) {
                     cm.Parameters.Add("@SearchValue", DbType.String).Value = "%" + searchValue + "%";
                 }
+                else if(modelerId > -1) {
+                    cm.Parameters.Add("@ModelerId", DbType.Int32).Value = modelerId;
+                }
 
                 using(SQLiteDataReader dr = cm.ExecuteReader()) {
                     while(dr.Read())
                         yield return new Model(
-                            dr.GetInt32(0),
-                            dr.GetString(1),
-                            dr.GetString(2),
-                            dr.GetString(3),
-                            dr.GetInt32(4)
+                            dr.GetInt32(dr.GetOrdinal("Id")),
+                            dr["Name"].ToString(),
+                            dr["Publisher"].ToString(),
+                            dr["Scale"].ToString(),
+                            dr.GetInt32(dr.GetOrdinal("ModelerId"))
                         );
                 }
             }
@@ -92,11 +102,11 @@ namespace Rejestracja.Data.Dao {
                 using(SQLiteDataReader dr = cm.ExecuteReader()) {
                     if(dr.Read())
                         ret = new Model(
-                            dr.GetInt32(0),
-                            dr.GetString(1),
-                            dr.GetString(2),
-                            dr.GetString(3),
-                            dr.GetInt32(4)
+                            dr.GetInt32(dr.GetOrdinal("Id")),
+                            dr["Name"].ToString(),
+                            dr["Publisher"].ToString(),
+                            dr["Scale"].ToString(),
+                            dr.GetInt32(dr.GetOrdinal("ModelerId"))
                         );
                 }
             }

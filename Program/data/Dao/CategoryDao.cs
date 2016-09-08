@@ -20,10 +20,23 @@ namespace Rejestracja.Data.Dao
 {
     class CategoryDao
     {
-        public static IEnumerable<Category> getList()
+        public static IEnumerable<Category> getList() {
+            return getList(false);
+        }
+
+        public static IEnumerable<Category> getList(bool includeImported)
         {
+            String query = "SELECT Id, Code, Name, ModelClass, DisplayOrder FROM Categories ORDER BY DisplayOrder, Name ASC";
+            if(includeImported) {
+                query =
+                    @"SELECT Id, Code, Name, ModelClass, DisplayOrder FROM Categories
+                        UNION
+                        SELECT -1 AS Id, NULL AS Code, CategoryName AS Name, NULL AS ModelClass, -1 AS DisplayOrder FROM Registration WHERE CategoryId < 0
+                        ORDER BY DisplayOrder, Name ASC";
+            }
+
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Code, Name, ModelClass, DisplayOrder FROM Categories ORDER BY DisplayOrder ASC", cn))
+            using (SQLiteCommand cm = new SQLiteCommand(query, cn))
             {
                 cn.Open();
 
@@ -31,11 +44,11 @@ namespace Rejestracja.Data.Dao
                 {
                     while (dr.Read())
                         yield return new Category(
-                            dr.GetInt32(0),
-                            dr.GetString(1),
-                            dr.GetString(2),
-                            dr.GetString(3),
-                            dr.GetInt32(4)
+                            dr.GetInt32(dr.GetOrdinal("Id")),
+                            dr["Code"].ToString(),
+                            dr["Name"].ToString(),
+                            dr["ModelClass"].ToString(),
+                            dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
                         );
                 }
             }

@@ -1,4 +1,5 @@
-﻿/*
+﻿using Rejestracja.Controls;
+/*
  * Copyright (C) 2016 Paweł Opała https://github.com/popala/registration
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 

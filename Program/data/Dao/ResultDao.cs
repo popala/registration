@@ -57,14 +57,19 @@ namespace Rejestracja.Data.Dao {
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT e.EntryId, e.TmStamp, e.Email, e.FirstName, e.LastName, e.ClubName, e.AgeGroup, 
-                        e.ModelName, e.ModelCategory, COALESCE(e.ModelCategoryId, -1) AS ModelCategoryId,
-                        e.ModelScale, e.ModelPublisher, e.ModelClass, e.YearOfBirth, COALESCE(e.SkipErrorValidation, 0) AS SkipErrorValidation,
-                        r.ResultId, r.Place, a.Id AS AwardId, a.Title, a.DisplayOrder
-                    FROM Results r
-                        JOIN Registration e ON r.EntryId = e.EntryId
-                        LEFT JOIN SpecialAwards a ON r.AwardId = a.Id
-                    WHERE r.ResultId = @ResultId", cn)) {
+                    @"SELECT 
+	                    r.Id AS RegistrationId, r.TmStamp, r.AgeGroupName,
+	                    r.CategoryId, c.Code, COALESCE(c.Name, r.CategoryName) AS CategoryName, c.ModelClass, CASE WHEN c.DisplayOrder IS NULL THEN -1 ELSE c.DisplayOrder END AS DisplayOrder,
+	                    mr.Id AS ModelerId, mr.FirstName, mr.LastName, mr.ClubName, mr.YearOfBirth, mr.Email,
+	                    ml.Id AS ModelId, ml.Name AS ModelName, ml.Publisher, ml.Scale,
+	                    res.ResultId, res.Place, res.AwardId, a.Title, a.DisplayOrder
+                    FROM Registration r
+	                    JOIN Models ml ON r.ModelId = ml.Id
+	                    JOIN Modelers mr ON ml.ModelerId = mr.Id
+	                    JOIN Categories c ON r.CategoryId = c.Id
+	                    JOIN Results res ON res.RegistrationId = r.Id
+	                    LEFT JOIN Awards a ON res.AwardId = a.Id
+                    WHERE ResultId =  @ResultId", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.Parameters.Add("@ResultId", System.Data.DbType.Int32).Value = resultId;
@@ -73,21 +78,29 @@ namespace Rejestracja.Data.Dao {
                     if (dr.Read()) {
 
                         RegistrationEntry entry = new RegistrationEntry(
-                            dr.GetInt64(dr.GetOrdinal("EntryId")),
+                            dr.GetInt32(dr.GetOrdinal("RegistrationId")),
                             (DateTime)dr["TmStamp"],
-                            dr["Email"].ToString(),
+                            dr["AgeGroupName"].ToString(),
+
+                            new Category(
+                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                                dr["Code"].ToString(),
+                                dr["CategoryName"].ToString(),
+                                dr["ModelClass"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
+                            ),
+
+                            dr.GetInt32(dr.GetOrdinal("ModelerId")),
                             dr["FirstName"].ToString(),
                             dr["LastName"].ToString(),
                             dr["ClubName"].ToString(),
-                            dr["AgeGroup"].ToString(),
-                            dr["ModelName"].ToString(),
-                            dr["ModelClass"].ToString(),
-                            dr["ModelScale"].ToString(),
-                            dr["ModelPublisher"].ToString(),
-                            dr["ModelCategory"].ToString(),
-                            dr.GetInt64(dr.GetOrdinal("ModelCategoryId")),
                             dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
-                            dr.GetBoolean(dr.GetOrdinal("SkipErrorValidation"))
+                            dr["Email"].ToString(),
+
+                            dr.GetInt32(dr.GetOrdinal("ModelId")),
+                            dr["ModelName"].ToString(),
+                            dr["Publisher"].ToString(),
+                            dr["Scale"].ToString()
                         );
 
                         if (!dr.IsDBNull(dr.GetOrdinal("Place"))) {
@@ -158,14 +171,15 @@ namespace Rejestracja.Data.Dao {
         public static IEnumerable<String[]> getCategoryResultList() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT r.ResultId, e.EntryId, e.AgeGroup, e.ModelClass, e.ModelCategory, e.ModelName, r.Place, a.Age,
-                    CASE WHEN mc.DisplayOrder IS NULL THEN -1 ELSE mc.DisplayOrder END AS DisplayOrder
-                FROM Results r 
-	                JOIN Registration e ON r.EntryId = e.EntryId
-	                JOIN AgeGroup a ON e.AgeGroup = a.Name
-                    LEFT JOIN ModelCategory mc ON mc.Id = e.ModelCategoryId
-                WHERE r.AwardId IS NULL
-                ORDER BY a.Age, DisplayOrder, e.ModelCategory, e.ModelClass, r.Place", cn)) {
+                @"SELECT res.ResultId, r.Id AS RegistrationId, r.AgeGroupName, c.ModelClass, c.Name AS CategoryName, m.Name AS ModelName, res.Place, a.Age,
+                    CASE WHEN c.DisplayOrder IS NULL THEN -1 ELSE c.DisplayOrder END AS DisplayOrder
+                FROM Results res 
+	                JOIN Registration r ON res.RegistrationId = r.Id
+                    JOIN Models m ON r.ModelId = m.Id
+	                JOIN AgeGroups a ON r.AgeGroupName = a.Name
+                    LEFT JOIN Categories c ON c.Id = r.CategoryId
+                WHERE res.AwardId IS NULL
+                ORDER BY Age, DisplayOrder, CategoryName, ModelClass, Place", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
@@ -175,10 +189,10 @@ namespace Rejestracja.Data.Dao {
                             new String[] 
                             {
                                 dr["ResultId"].ToString(),
-                                dr["AgeGroup"].ToString(),
+                                dr["AgeGroupName"].ToString(),
                                 dr["ModelClass"].ToString(),
-                                dr["ModelCategory"].ToString(),
-                                dr["EntryId"].ToString(),
+                                dr["CategoryName"].ToString(),
+                                dr["RegistrationId"].ToString(),
                                 dr["ModelName"].ToString(),
                                 dr["Place"].ToString()
                             };
@@ -224,17 +238,20 @@ namespace Rejestracja.Data.Dao {
         public static IEnumerable<Result> getCategoryResults() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT e.EntryId, e.TmStamp, e.Email, e.FirstName, e.LastName, e.ClubName, e.AgeGroup, 
-                        e.ModelName, e.ModelCategory, COALESCE(e.ModelCategoryId, -1) AS ModelCategoryId,
-                        e.ModelScale, e.ModelPublisher, e.ModelClass, e.YearOfBirth, COALESCE(e.SkipErrorValidation, 0) AS SkipErrorValidation,
-                        r.ResultId, r.Place, ag.Age,
-                    CASE WHEN mc.DisplayOrder IS NULL THEN -1 ELSE mc.DisplayOrder END AS DisplayOrder
-                FROM Results r 
-                    JOIN Registration e ON r.EntryId = e.EntryId
-                    JOIN AgeGroup ag ON e.AgeGroup = ag.Name
-                    LEFT JOIN ModelCategory mc ON mc.Id = e.ModelCategoryId
-                WHERE r.Place IS NOT NULL
-                    ORDER BY ag.Age ASC, mc.DisplayOrder, e.ModelCategory, e.ModelClass, r.Place", cn)) {
+                    @"SELECT 
+	                    r.Id AS RegistrationId, r.TmStamp, r.AgeGroupName,
+	                    r.CategoryId, c.Code, COALESCE(c.Name, r.CategoryName) AS CategoryName, c.ModelClass, CASE WHEN c.DisplayOrder IS NULL THEN -1 ELSE c.DisplayOrder END AS DisplayOrder,
+	                    mr.Id AS ModelerId, mr.FirstName, mr.LastName, mr.ClubName, mr.YearOfBirth, mr.Email,
+	                    ml.Id AS ModelId, ml.Name AS ModelName, ml.Publisher, ml.Scale,
+	                    res.ResultId, res.Place, ag.Age
+                    FROM Registration r
+	                    JOIN Models ml ON r.ModelId = ml.Id
+	                    JOIN Modelers mr ON ml.ModelerId = mr.Id
+	                    JOIN Categories c ON r.CategoryId = c.Id
+	                    JOIN Results res ON res.RegistrationId = r.Id
+	                    JOIN AgeGroups ag ON ag.Name = r.AgeGroupName
+                    WHERE res.Place IS NOT NULL
+	                    ORDER BY ag.Age ASC, DisplayOrder, CategoryName, ModelClass, Place", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
@@ -242,21 +259,29 @@ namespace Rejestracja.Data.Dao {
                     while (dr.Read()) {
 
                         RegistrationEntry entry = new RegistrationEntry(
-                            dr.GetInt64(dr.GetOrdinal("EntryId")),
+                            dr.GetInt32(dr.GetOrdinal("RegistrationId")),
                             (DateTime)dr["TmStamp"],
-                            dr["Email"].ToString(),
+                            dr["AgeGroupName"].ToString(),
+
+                            new Category(
+                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                                dr["Code"].ToString(),
+                                dr["CategoryName"].ToString(),
+                                dr["ModelClass"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
+                            ),
+
+                            dr.GetInt32(dr.GetOrdinal("ModelerId")),
                             dr["FirstName"].ToString(),
                             dr["LastName"].ToString(),
                             dr["ClubName"].ToString(),
-                            dr["AgeGroup"].ToString(),
-                            dr["ModelName"].ToString(),
-                            dr["ModelClass"].ToString(),
-                            dr["ModelScale"].ToString(),
-                            dr["ModelPublisher"].ToString(),
-                            dr["ModelCategory"].ToString(),
-                            dr.GetInt64(dr.GetOrdinal("ModelCategoryId")),
                             dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
-                            dr.GetBoolean(dr.GetOrdinal("SkipErrorValidation"))
+                            dr["Email"].ToString(),
+
+                            dr.GetInt32(dr.GetOrdinal("ModelId")),
+                            dr["ModelName"].ToString(),
+                            dr["Publisher"].ToString(),
+                            dr["Scale"].ToString()
                         );
                         
                         yield return
@@ -273,12 +298,13 @@ namespace Rejestracja.Data.Dao {
         public static IEnumerable<String[]> getAwardResultList() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT r.ResultId, a.Title, e.EntryId, e.ModelName
-                    FROM Results r 
-                    JOIN Registration e ON r.EntryId = e.EntryId
-                    JOIN SpecialAwards a ON r.AwardId = a.Id
-                WHERE r.AwardId IS NOT NULL
-                    ORDER BY a.Id", cn)) {
+                @"SELECT res.ResultId, a.Title, a.DisplayOrder, res.AwardId, r.Id AS RegistrationId, m.Name AS ModelName
+                    FROM Results res
+                    JOIN Registration r ON res.RegistrationId = r.Id
+                    JOIN Models m ON r.ModelId = m.Id
+                    JOIN Awards a ON res.AwardId = a.Id
+                WHERE res.AwardId IS NOT NULL
+                    ORDER BY DisplayOrder, AwardId, RegistrationId", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
@@ -291,7 +317,7 @@ namespace Rejestracja.Data.Dao {
                                 "",
                                 "",
                                 dr["Title"].ToString(),
-                                dr["EntryId"].ToString(),
+                                dr["RegistrationId"].ToString(),
                                 dr["ModelName"].ToString(),
                                 ""
                             };
@@ -303,15 +329,18 @@ namespace Rejestracja.Data.Dao {
         public static IEnumerable<Result> getAwardResults() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT e.EntryId, e.TmStamp, e.Email, e.FirstName, e.LastName, e.ClubName, e.AgeGroup, 
-                        e.ModelName, e.ModelCategory, COALESCE(e.ModelCategoryId, -1) AS ModelCategoryId,
-                        e.ModelScale, e.ModelPublisher, e.ModelClass, e.YearOfBirth, COALESCE(e.SkipErrorValidation, 0) AS SkipErrorValidation,
-                        r.ResultId, a.Id AS AwardId, a.Title, a.DisplayOrder
-                    FROM Results r
-                        JOIN Registration e ON r.EntryId = e.EntryId
-                        JOIN SpecialAwards a ON r.AwardId = a.Id
-                    WHERE r.AwardId IS NOT NULL
-                        ORDER BY a.DisplayOrder, a.Id, r.ResultId", cn)) {
+                    @"SELECT 
+	                    r.Id AS RegistrationId, r.TmStamp, 
+	                    mr.Id AS ModelerId, mr.FirstName, mr.LastName, mr.ClubName, mr.YearOfBirth, mr.Email,
+	                    ml.Id AS ModelId, ml.Name AS ModelName, ml.Publisher, ml.Scale,
+	                    res.ResultId, res.AwardId, a.Title, a.DisplayOrder
+                    FROM Registration r
+	                    JOIN Models ml ON r.ModelId = ml.Id
+	                    JOIN Modelers mr ON ml.ModelerId = mr.Id
+	                    JOIN Results res ON res.RegistrationId = r.Id
+	                    JOIN Awards a ON res.AwardId = a.Id
+                    WHERE res.AwardId IS NOT NULL
+	                    ORDER BY DisplayOrder, a.Id, res.ResultId", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
@@ -319,21 +348,23 @@ namespace Rejestracja.Data.Dao {
                     while (dr.Read()) {
 
                         RegistrationEntry entry = new RegistrationEntry(
-                            dr.GetInt64(dr.GetOrdinal("EntryId")),
+                            dr.GetInt32(dr.GetOrdinal("RegistrationId")),
                             (DateTime)dr["TmStamp"],
-                            dr["Email"].ToString(),
+                            null,
+
+                            null,
+
+                            dr.GetInt32(dr.GetOrdinal("ModelerId")),
                             dr["FirstName"].ToString(),
                             dr["LastName"].ToString(),
                             dr["ClubName"].ToString(),
-                            dr["AgeGroup"].ToString(),
-                            dr["ModelName"].ToString(),
-                            dr["ModelClass"].ToString(),
-                            dr["ModelScale"].ToString(),
-                            dr["ModelPublisher"].ToString(),
-                            dr["ModelCategory"].ToString(),
-                            dr.GetInt64(dr.GetOrdinal("ModelCategoryId")),
                             dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
-                            dr.GetBoolean(dr.GetOrdinal("SkipErrorValidation"))
+                            dr["Email"].ToString(),
+
+                            dr.GetInt32(dr.GetOrdinal("ModelId")),
+                            dr["ModelName"].ToString(),
+                            dr["Publisher"].ToString(),
+                            dr["Scale"].ToString()
                         );
 
                         Award award = new Award(

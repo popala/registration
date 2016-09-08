@@ -1,4 +1,5 @@
-﻿/*
+﻿using Rejestracja.Controls;
+/*
  * Copyright (C) 2016 Paweł Opała https://github.com/popala/registration
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
@@ -235,9 +236,9 @@ namespace Rejestracja
 
         private void btaAddAwardWinner_Click(object sender, EventArgs e) {
            
-            long entryId;
+            int entryId;
             
-            if(!long.TryParse(txtEntryId.Text, out entryId)) {
+            if(!int.TryParse(txtEntryId.Text, out entryId)) {
                 MessageBox.Show("Wpisz poprawny numer modelu", "Dodawanie Wyników", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }

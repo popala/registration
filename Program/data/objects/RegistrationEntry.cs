@@ -17,8 +17,9 @@ namespace Rejestracja.Data.Objects {
         public DateTime timeStamp;
         public String ageGroupName;
 
-        public int categoryId;
-        public String categoryName;
+        public Category category;
+        //public int categoryId;
+        //public String categoryName;
         public String className;
 
         public int modelerId;
@@ -40,7 +41,7 @@ namespace Rejestracja.Data.Objects {
 
         public RegistrationEntry(
                 int registrationId, DateTime timeStamp, String ageGroupName,
-                int categoryId, String categoryName, String className,
+                Category category,
                 int modelerId, String firstName, String lastName, String clubName, int yearOfBirth, String email,  
                 int modelId, String modelName, String modelPublisher, String modelScale) {
 
@@ -52,11 +53,12 @@ namespace Rejestracja.Data.Objects {
             this.clubName = clubName;
             this.ageGroupName = ageGroupName;
             this.modelName = modelName;
-            this.categoryName = categoryName;
-            this.categoryId = categoryId;
+            this.category = category;
+            //this.categoryName = categoryName;
+            //this.categoryId = categoryId;
             this.modelScale = modelScale;
             this.modelPublisher = modelPublisher;
-            this.className = className;
+            //this.className = className;
             this.yearOfBirth = yearOfBirth;
         }
 
@@ -72,7 +74,7 @@ namespace Rejestracja.Data.Objects {
 
         public String ToCsvString() {
             String [] props = new String[] {
-                registrationId.ToString(), timeStamp.ToString(), email, firstName, lastName, clubName, ageGroupName, modelName, categoryName, categoryId.ToString(),
+                registrationId.ToString(), timeStamp.ToString(), email, firstName, lastName, clubName, ageGroupName, modelName, category.name, category.id.ToString(),
                 modelScale, modelPublisher, className, yearOfBirth.ToString(), place.ToString()
             };
             return "\"" + String.Join("\",\"", props) + "\"";

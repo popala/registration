@@ -95,7 +95,7 @@
             this.tpResults = new System.Windows.Forms.TabPage();
             this.lvResults = new System.Windows.Forms.ListView();
             this.tpRegistration = new System.Windows.Forms.TabPage();
-            this.lvEntries = new System.Windows.Forms.ListView();
+            this.lvEntries = new Rejestracja.Controls.CustListView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.tsBtnNewRegistration = new System.Windows.Forms.ToolStripButton();
@@ -129,6 +129,8 @@
             this.tsBtnSummary = new System.Windows.Forms.ToolStripButton();
             this.tsErrorSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.tsBtnErrorCount = new System.Windows.Forms.ToolStripButton();
+            this.tpModelers = new System.Windows.Forms.TabPage();
+            this.Modele = new System.Windows.Forms.TabPage();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -706,6 +708,8 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tpRegistration);
+            this.tabControl1.Controls.Add(this.tpModelers);
+            this.tabControl1.Controls.Add(this.Modele);
             this.tabControl1.Controls.Add(this.tpResults);
             this.tabControl1.Controls.Add(this.tpStats);
             this.tabControl1.Location = new System.Drawing.Point(0, 50);
@@ -1016,6 +1020,24 @@
             this.tsBtnErrorCount.Text = "Błędy Rejestracji";
             this.tsBtnErrorCount.Click += new System.EventHandler(this.tsBtnErrorCount_Click);
             // 
+            // tpModelers
+            // 
+            this.tpModelers.Location = new System.Drawing.Point(4, 22);
+            this.tpModelers.Name = "tpModelers";
+            this.tpModelers.Size = new System.Drawing.Size(1171, 597);
+            this.tpModelers.TabIndex = 4;
+            this.tpModelers.Text = "Modelarze";
+            this.tpModelers.UseVisualStyleBackColor = true;
+            // 
+            // Modele
+            // 
+            this.Modele.Location = new System.Drawing.Point(4, 22);
+            this.Modele.Name = "Modele";
+            this.Modele.Size = new System.Drawing.Size(1171, 597);
+            this.Modele.TabIndex = 5;
+            this.Modele.Text = "Modele";
+            this.Modele.UseVisualStyleBackColor = true;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1095,7 +1117,7 @@
         private System.Windows.Forms.TabPage tpResults;
         private System.Windows.Forms.ListView lvResults;
         private System.Windows.Forms.TabPage tpRegistration;
-        private System.Windows.Forms.ListView lvEntries;
+        private Rejestracja.Controls.CustListView lvEntries;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.ToolStripMenuItem mnuResults;
         private System.Windows.Forms.ToolStripMenuItem mnuRsResultList;
@@ -1152,6 +1174,8 @@
         private System.Windows.Forms.ToolStripMenuItem mnuHHelp;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
         private System.Windows.Forms.ToolStripMenuItem mnuRVAutoWidth;
+        private System.Windows.Forms.TabPage tpModelers;
+        private System.Windows.Forms.TabPage Modele;
 
 
     }

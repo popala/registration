@@ -39,7 +39,7 @@ namespace Rejestracja {
 
             foreach(ListViewItem item in lvEntries.Items) {
                 if (item.Checked) {
-                    RegistrationEntryDao.changeCategory((int)item.Tag, category.id, category.fullName, category.className);
+                    RegistrationEntryDao.changeCategory((int)item.Tag, category.id);
                 }
             }
 
@@ -52,6 +52,7 @@ namespace Rejestracja {
 
         public frmMain() {
             InitializeComponent();
+            lvEntries.DoubleClickDoesCheck = false;
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e) {
@@ -188,7 +189,7 @@ namespace Rejestracja {
             lvEntries.ShowItemToolTips = true;
 
             lvEntries.Columns.Clear();
-            headers = new String[] { "Nr Rej.", "Dodane", "Email", "Imię", "Nazwisko", "Rok Ur.", "Klub", "Grupa Wiekowa", "Nazwa Modelu", "Kategoria", "Klasa", "Skala", "Wydawnictwo" };
+            headers = new String[] { "Nr Rej.", "Dodane", "Email", "Imię", "Nazwisko", "Rok Ur.", "Klub", "Grupa Wiekowa", "KK", "Kategoria", "Klasa", "Nazwa Modelu", "Skala", "Wydawnictwo" };
             foreach (String header in headers) {
                 lvEntries.Columns.Add(header.Trim());
             }
@@ -387,44 +388,55 @@ namespace Rejestracja {
 
             frmRegistrationEntry f = new frmRegistrationEntry();
             f.StartPosition = FormStartPosition.CenterParent;
-            f.loadEntry(entryId);
+            f.loadModel(entryId, -1);
             f.ShowDialog(this);
 
-            RegistrationEntry entry = RegistrationEntryDao.get(entryId);
-            //Check if category changed in Groupped View
-            if (mnuRVGroupped.Checked && !entry.categoryName.Equals(item.SubItems[9].Text)) {
-                String cat = item.Group.Header;
-                loadRegistrationList(tsTxtSearch.Text);
-                foreach(ListViewGroup group in lvEntries.Groups) {
-                    if (group.Header.Equals(cat)) {
-                        if (group.Items.Count > 0) {
-                            group.Items[0].Selected = true;
-                            group.Items[0].EnsureVisible();
+            try {
+                lvEntries.BeginUpdate();
+
+                RegistrationEntry entry = RegistrationEntryDao.get(entryId);
+                //Check if category changed in Groupped View
+                if(mnuRVGroupped.Checked && !entry.category.name.Equals(item.SubItems[9].Text, StringComparison.CurrentCultureIgnoreCase)) {
+                    String cat = item.Group.Header;
+                    loadRegistrationList(tsTxtSearch.Text);
+                    foreach(ListViewGroup group in lvEntries.Groups) {
+                        if(group.Header.Equals(cat)) {
+                            if(group.Items.Count > 0) {
+                                group.Items[0].Selected = true;
+                                group.Items[0].EnsureVisible();
+                            }
+                            break;
                         }
-                        break;
                     }
                 }
+                else {
+                    item.SubItems[2].Text = entry.email;
+                    item.SubItems[3].Text = entry.firstName;
+                    item.SubItems[4].Text = entry.lastName;
+                    item.SubItems[5].Text = entry.yearOfBirth.ToString();
+                    item.SubItems[6].Text = entry.clubName;
+                    item.SubItems[7].Text = entry.ageGroupName;
+                    item.SubItems[8].Text = entry.modelName;
+                    item.SubItems[9].Text = entry.category.name;
+                    item.SubItems[10].Text = entry.className;
+                    item.SubItems[11].Text = entry.modelScale;
+                    item.SubItems[12].Text = entry.modelPublisher;
+                }
+                highlightInvalidRegistrationEntries();
+                if(showOnlyInvalid && tsBtnErrorCount.Visible) {
+                    tsBtnErrorCount.Checked = true;
+                    tsBtnErrorCount_Click(tsBtnErrorCount, new EventArgs());
+                }
+                else {
+                    tsBtnClearFilter_Click(tsBtnErrorCount, new EventArgs());
+                }
             }
-            else {
-                item.SubItems[2].Text = entry.email;
-                item.SubItems[3].Text = entry.firstName;
-                item.SubItems[4].Text = entry.lastName;
-                item.SubItems[5].Text = entry.yearOfBirth.ToString();
-                item.SubItems[6].Text = entry.clubName;
-                item.SubItems[7].Text = entry.ageGroupName;
-                item.SubItems[8].Text = entry.modelName;
-                item.SubItems[9].Text = entry.categoryName;
-                item.SubItems[10].Text = entry.className;
-                item.SubItems[11].Text = entry.modelScale;
-                item.SubItems[12].Text = entry.modelPublisher;
+            catch(Exception err) {
+                LogWriter.error(err);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            highlightInvalidRegistrationEntries();
-            if (showOnlyInvalid && tsBtnErrorCount.Visible) {
-                tsBtnErrorCount.Checked = true;
-                tsBtnErrorCount_Click(tsBtnErrorCount, new EventArgs());
-            }
-            else {
-                tsBtnClearFilter_Click(tsBtnErrorCount, new EventArgs());
+            finally {
+                lvEntries.EndUpdate();
             }
         }
 
@@ -454,13 +466,16 @@ namespace Rejestracja {
                 item.ToolTipText = "";
 
                 //Check if model category is listed in the resources
-                Category [] catFound = modelCategories.Where(x => x.fullName.ToLower().Equals(item.SubItems[9].Text.ToLower())).ToArray();
+                Category [] catFound = modelCategories.Where(
+                    x => x.name.Equals(item.SubItems[9].Text, StringComparison.CurrentCultureIgnoreCase) &&
+                         x.code.Equals(item.SubItems[8].Text, StringComparison.CurrentCultureIgnoreCase)
+                    ).ToArray();
                 if (catFound.Length == 0) {
                     sb.Append("Kategoria modelu nie znaleziona w konfiguracji. ");
                     badEntryCount++;
                     highlightErrorCell(item, 9);
                 }
-                else if (!catFound[0].className.ToLower().Equals(item.SubItems[10].Text.ToLower())) {
+                else if (!catFound[0].className.Equals(item.SubItems[10].Text, StringComparison.CurrentCultureIgnoreCase)) {
                     if (sb.Length == 0) {
                         badEntryCount++;
                     }
@@ -469,7 +484,7 @@ namespace Rejestracja {
                     highlightErrorCell(item, 10);
                 }
 
-                AgeGroup [] agFound = ageGroups.Where(x => x.name.ToLower().Equals(item.SubItems[7].Text.ToLower())).ToArray();
+                AgeGroup [] agFound = ageGroups.Where(x => x.name.Equals(item.SubItems[7].Text, StringComparison.CurrentCultureIgnoreCase)).ToArray();
                 if(agFound.Length == 0) {
                     if (sb.Length == 0) {
                         badEntryCount++;
@@ -535,14 +550,20 @@ namespace Rejestracja {
             if (hitTest.Item != null) {
                 ListViewItem item = hitTest.Item;
                 int index = item.Index;
-                item.Checked = !item.Checked;
                 editItem(item);
             }
         }
 
+        //TODO: move popup menu to MouseUp event and leave only selecting the item in MouseDown
         private void lvEntries_MouseDown(object sender, MouseEventArgs e) {
             if (e.Button == System.Windows.Forms.MouseButtons.Right) {
+                
                 ListViewHitTestInfo hitTest = this.lvEntries.HitTest(e.X, e.Y);
+
+                if(hitTest.Location == ListViewHitTestLocations.StateImage) {
+                    return;
+                }
+
                 if (hitTest.Item != null) {
                     hitTest.Item.Selected = true;
                     mnuRCDeleteRegistration.Enabled = true;
@@ -651,7 +672,7 @@ namespace Rejestracja {
             printRegistrationCard(entryId);
         }
 
-        public void printRegistrationCard(long entryId) {
+        public void printRegistrationCard(int entryId) {
             try {
                 RegistrationEntry entry = RegistrationEntryDao.get(entryId);
                 if (entry == null) {

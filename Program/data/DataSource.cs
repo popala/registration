@@ -21,6 +21,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Rejestracja {
     class DataSource {
@@ -249,8 +250,8 @@ namespace Rejestracja {
                                         ).ToArray();
                             }
                             if (matchedModelCategory.Length > 0) {
-                                newRegistration.categoryName = matchedModelCategory[0].fullName;
-                                newRegistration.categoryId = matchedModelCategory[0].id;
+                                newRegistration.category.name = matchedModelCategory[0].fullName;
+                                newRegistration.category.id = matchedModelCategory[0].id;
                                 //Matched model category and so set the category if it should be derived from class
                                 if (fieldMap.DeriveClassFromCategory) {
                                     newRegistration.className = matchedModelCategory[0].className;
@@ -258,7 +259,7 @@ namespace Rejestracja {
                             }
                             else {
                                 //Did not match model class so see if we have category field mapped as well
-                                newRegistration.categoryName = enteredModelCategory;
+                                newRegistration.category.name = enteredModelCategory;
                                 if (fieldMap.ModelClass > -1) {
                                     newRegistration.className = parsedEntry[fieldMap.ModelClass];
                                 }
@@ -319,23 +320,24 @@ namespace Rejestracja {
                     }
 
                     if (newRegistration != null) {
-                        ret.Add(
-                            new RegistrationEntry(
-                                newRegistration.timeStamp,
-                                newRegistration.email,
-                                newRegistration.firstName,
-                                newRegistration.lastName,
-                                newRegistration.clubName,
-                                newRegistration.ageGroupName,
-                                newRegistration.modelName,
-                                newRegistration.className,
-                                newRegistration.modelScale,
-                                newRegistration.modelPublisher,
-                                newRegistration.categoryName,
-                                newRegistration.categoryId,
-                                yearOfBirth
-                            )
-                        );
+                        MessageBox.Show("TODO: Fix Import!");
+                        //ret.Add(
+                        //    new RegistrationEntry(
+                        //        newRegistration.timeStamp,
+                        //        newRegistration.email,
+                        //        newRegistration.firstName,
+                        //        newRegistration.lastName,
+                        //        newRegistration.clubName,
+                        //        newRegistration.ageGroupName,
+                        //        newRegistration.modelName,
+                        //        newRegistration.className,
+                        //        newRegistration.modelScale,
+                        //        newRegistration.modelPublisher,
+                        //        newRegistration.categoryName,
+                        //        newRegistration.categoryId,
+                        //        yearOfBirth
+                        //    )
+                        //);
                     }
                     if (badRecordCount > 0 && badRecordFile != null) {
                         File.WriteAllText(badRecordFile, badEntries.ToString());
@@ -401,7 +403,7 @@ namespace Rejestracja {
                 using (SQLiteTransaction t = cn.BeginTransaction()) {
                     foreach (RegistrationEntry entry in entries) {
 
-                        matchedCategory = categories.Where(x => x.fullName.ToLower().Equals(entry.categoryName.ToLower())).ToArray();
+                        matchedCategory = categories.Where(x => x.fullName.ToLower().Equals(entry.category.name.ToLower())).ToArray();
                         if (matchedCategory.Length > 0) {
                             cm.Parameters["@ModelCategoryId"].Value = matchedCategory[0].id;
                         }
@@ -419,7 +421,7 @@ namespace Rejestracja {
                         cm.Parameters["@ModelClass"].Value = entry.className;
                         cm.Parameters["@ModelScale"].Value = entry.modelScale;
                         cm.Parameters["@ModelPublisher"].Value = entry.modelPublisher;
-                        cm.Parameters["@ModelCategory"].Value = entry.categoryName;
+                        cm.Parameters["@ModelCategory"].Value = entry.category.name;
                         cm.Parameters["@YearOfBirth"].Value = entry.yearOfBirth;
                         try {
                             cm.ExecuteNonQuery();
