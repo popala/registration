@@ -410,17 +410,17 @@ namespace Rejestracja {
                     }
                 }
                 else {
-                    item.SubItems[2].Text = entry.email;
-                    item.SubItems[3].Text = entry.firstName;
-                    item.SubItems[4].Text = entry.lastName;
-                    item.SubItems[5].Text = entry.yearOfBirth.ToString();
-                    item.SubItems[6].Text = entry.clubName;
-                    item.SubItems[7].Text = entry.ageGroupName;
-                    item.SubItems[8].Text = entry.modelName;
+                    item.SubItems[2].Text = entry.modeler.email;
+                    item.SubItems[3].Text = entry.modeler.firstName;
+                    item.SubItems[4].Text = entry.modeler.lastName;
+                    item.SubItems[5].Text = entry.modeler.yearOfBirth.ToString();
+                    item.SubItems[6].Text = entry.modeler.clubName;
+                    item.SubItems[7].Text = entry.registration.ageGroupName;
+                    item.SubItems[8].Text = entry.model.name;
                     item.SubItems[9].Text = entry.category.name;
-                    item.SubItems[10].Text = entry.className;
-                    item.SubItems[11].Text = entry.modelScale;
-                    item.SubItems[12].Text = entry.modelPublisher;
+                    item.SubItems[10].Text = entry.category.className;
+                    item.SubItems[11].Text = entry.model.scale;
+                    item.SubItems[12].Text = entry.model.publisher;
                 }
                 highlightInvalidRegistrationEntries();
                 if(showOnlyInvalid && tsBtnErrorCount.Visible) {
@@ -554,17 +554,16 @@ namespace Rejestracja {
             }
         }
 
-        //TODO: move popup menu to MouseUp event and leave only selecting the item in MouseDown
-        private void lvEntries_MouseDown(object sender, MouseEventArgs e) {
-            if (e.Button == System.Windows.Forms.MouseButtons.Right) {
-                
+        private void lvEntries_MouseUp(object sender, MouseEventArgs e) {
+            if(e.Button == System.Windows.Forms.MouseButtons.Right) {
+
                 ListViewHitTestInfo hitTest = this.lvEntries.HitTest(e.X, e.Y);
 
                 if(hitTest.Location == ListViewHitTestLocations.StateImage) {
                     return;
                 }
 
-                if (hitTest.Item != null) {
+                if(hitTest.Item != null) {
                     hitTest.Item.Selected = true;
                     mnuRCDeleteRegistration.Enabled = true;
                     mnuRCModifyRegistration.Enabled = true;
@@ -578,6 +577,25 @@ namespace Rejestracja {
                     this._selectedItem = null;
                 }
                 cmsEntryRightClick.Show(Cursor.Position);
+            }
+        }
+
+        private void lvEntries_MouseDown(object sender, MouseEventArgs e) {
+            if (e.Button == System.Windows.Forms.MouseButtons.Right) {
+                
+                ListViewHitTestInfo hitTest = this.lvEntries.HitTest(e.X, e.Y);
+
+                if(hitTest.Location == ListViewHitTestLocations.StateImage) {
+                    return;
+                }
+
+                if (hitTest.Item != null) {
+                    hitTest.Item.Selected = true;
+                    this._selectedItem = hitTest.Item;
+                }
+                else {
+                    this._selectedItem = null;
+                }
             }
         }
 
@@ -685,7 +703,7 @@ namespace Rejestracja {
                     Directory.CreateDirectory(directory);
                 }
 
-                string outFile = String.Format("{0}\\rejestracja_{1}.docx", directory, entry.registrationId);
+                string outFile = String.Format("{0}\\rejestracja_{1}.docx", directory, entry.registration.id);
                 File.Delete(outFile);
 
                 DocHandler.generateRegistrationCard(Resources.resolvePath("templateKartyModelu"), outFile, entry);

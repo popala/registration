@@ -48,10 +48,14 @@ namespace Rejestracja.Data.Dao
                     if (dr.Read())
                     {
                         ret = new RegistrationEntry(
-                            dr.GetInt32(dr.GetOrdinal("RegistrationId")),
-                            (DateTime)dr["TmStamp"],
-                            dr["AgeGroupName"].ToString(),
-
+                            new Registration(
+                                dr.GetInt32(dr.GetOrdinal("RegistrationId")),
+                                (DateTime)dr["TmStamp"],
+                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                                dr["CategoryName"].ToString(),
+                                dr["AgeGroupName"].ToString()
+                            ),
                             new Category(
                                 dr.GetInt32(dr.GetOrdinal("CategoryId")),
                                 dr["Code"].ToString(),
@@ -59,18 +63,21 @@ namespace Rejestracja.Data.Dao
                                 dr["ModelClass"].ToString(),
                                 dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
                             ),
-
-                            dr.GetInt32(dr.GetOrdinal("ModelerId")),
-                            dr["FirstName"].ToString(),
-                            dr["LastName"].ToString(),
-                            dr["ClubName"].ToString(),
-                            dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
-                            dr["Email"].ToString(),
-
-                            dr.GetInt32(dr.GetOrdinal("ModelId")),
-                            dr["ModelName"].ToString(),
-                            dr["Publisher"].ToString(),
-                            dr["Scale"].ToString()
+                            new Modeler(
+                                dr.GetInt32(dr.GetOrdinal("ModelerId")),
+                                dr["FirstName"].ToString(),
+                                dr["LastName"].ToString(),
+                                dr["ClubName"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                                dr["Email"].ToString()
+                            ),
+                            new Model(
+                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+                                dr["ModelName"].ToString(),
+                                dr["Publisher"].ToString(),
+                                dr["Scale"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("ModelerId"))
+                            )
                         );
                     }
                 }
@@ -231,29 +238,36 @@ namespace Rejestracja.Data.Dao
                     {
                         ret.Add(
                             new RegistrationEntry(
+                                new Registration(
                                 dr.GetInt32(dr.GetOrdinal("RegistrationId")),
                                 (DateTime)dr["TmStamp"],
-                                dr["AgeGroupName"].ToString(),
-
-                                new Category(
-                                    dr.GetInt32(dr.GetOrdinal("CategoryId")),
-                                    dr["Code"].ToString(),
-                                    dr["CategoryName"].ToString(),
-                                    dr["ModelClass"].ToString(),
-                                    dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
-                                ),
-
+                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                                dr["CategoryName"].ToString(),
+                                dr["AgeGroupName"].ToString()
+                            ),
+                            new Category(
+                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                                dr["Code"].ToString(),
+                                dr["CategoryName"].ToString(),
+                                dr["ModelClass"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
+                            ),
+                            new Modeler(
                                 dr.GetInt32(dr.GetOrdinal("ModelerId")),
                                 dr["FirstName"].ToString(),
                                 dr["LastName"].ToString(),
                                 dr["ClubName"].ToString(),
                                 dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
-                                dr["Email"].ToString(),
-
+                                dr["Email"].ToString()
+                            ),
+                            new Model(
                                 dr.GetInt32(dr.GetOrdinal("ModelId")),
                                 dr["ModelName"].ToString(),
                                 dr["Publisher"].ToString(),
-                                dr["Scale"].ToString()
+                                dr["Scale"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("ModelerId"))
+                            )
                         ));
                     }
                     return ret;

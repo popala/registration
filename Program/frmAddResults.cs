@@ -86,26 +86,26 @@ namespace Rejestracja
                     return;
                 }
 
-                long catId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
-                RegistrationEntry[] entries = ResultDao.getCategoryResults(CategoryDao.get(catId).fullName).ToArray();
+                int catId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
+                Result[] results = ResultDao.getCategoryResults(catId).ToArray();
 
                 String modelClass = "";
                 String ageGroup = "";
                 ListViewGroup group = new ListViewGroup("");
 
-                foreach (RegistrationEntry entry in entries) {
-                    if (!modelClass.Equals(entry.className) || !ageGroup.Equals(entry.ageGroupName)) {
-                        modelClass = entry.className;
-                        ageGroup = entry.ageGroupName;
+                foreach (Result result in results) {
+                    if (!modelClass.Equals(result.entry.category.className) || !ageGroup.Equals(result.entry.registration.ageGroupName)) {
+                        modelClass = result.entry.category.className;
+                        ageGroup = result.entry.registration.ageGroupName;
                         group = new ListViewGroup(String.Format("{0} - {1}", ageGroup, modelClass.ToUpper()));
                         lvResults.Groups.Add(group);
                     }
                     ListViewItem item =
                         new ListViewItem(
-                            new String[] { entry.registrationId.ToString(), entry.modelName, entry.modelScale, entry.modelPublisher, (entry.place == 0 ? "" : entry.place.ToString()) },
+                            new String[] { result.entry.registration.id.ToString(), result.entry.model.name, result.entry.model.scale, result.entry.model.publisher, (result.place == 0 ? "" : result.place.ToString()) },
                             group
                         );
-                    if (entry.place > 0) {
+                    if (result.place > 0) {
                         item.Font = new Font(item.Font, FontStyle.Bold);
                     }
                     lvResults.Items.Add(item);
@@ -283,10 +283,10 @@ namespace Rejestracja
             foreach (Result result in ResultDao.getAwardResults()) {
                 ListViewItem lvItem = new ListViewItem(
                     new String[] {
-                        result.entry.registrationId.ToString(),
-                        result.entry.modelName,
-                        result.entry.modelScale,
-                        result.entry.modelPublisher,
+                        result.entry.registration.id.ToString(),
+                        result.entry.model.name,
+                        result.entry.model.scale,
+                        result.entry.model.publisher,
                         result.award.title
                     }
                 );

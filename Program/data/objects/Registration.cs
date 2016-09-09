@@ -13,6 +13,9 @@ namespace Rejestracja.Data.Objects {
         public String categoryName;
         public String ageGroupName;
 
+        public Registration() {
+        }
+
         public Registration(DateTime timeStamp, int modelId, int categoryId, String categoryName, String ageGroupName) {
             this.id = -1;
             this.timeStamp = timeStamp;

@@ -13,69 +13,29 @@ using System;
 
 namespace Rejestracja.Data.Objects {
     class RegistrationEntry {
-        public int registrationId;
-        public DateTime timeStamp;
-        public String ageGroupName;
 
+        public Registration registration;
         public Category category;
-        //public int categoryId;
-        //public String categoryName;
-        public String className;
-
-        public int modelerId;
-        public String firstName;
-        public String lastName;
-        public String clubName;
-        public int yearOfBirth;
-        public String email;
-
-        public int modelId;
-        public String modelName;
-        public String modelPublisher;
-        public String modelScale;
-        
-        public int place;
+        public Modeler modeler;
+        public Model model;
 
         public RegistrationEntry() {
+            this.registration = new Registration();
+            this.model = new Model();
+            this.modeler = new Modeler();
+            this.category = new Category();
         }
 
-        public RegistrationEntry(
-                int registrationId, DateTime timeStamp, String ageGroupName,
-                Category category,
-                int modelerId, String firstName, String lastName, String clubName, int yearOfBirth, String email,  
-                int modelId, String modelName, String modelPublisher, String modelScale) {
-
-            this.registrationId = registrationId;
-            this.timeStamp = timeStamp;
-            this.email = email;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.clubName = clubName;
-            this.ageGroupName = ageGroupName;
-            this.modelName = modelName;
+        public RegistrationEntry(Registration registration, Category category, Modeler modeler, Model model) {
+            this.registration = registration;
+            this.model = model;
+            this.modeler = modeler;
             this.category = category;
-            //this.categoryName = categoryName;
-            //this.categoryId = categoryId;
-            this.modelScale = modelScale;
-            this.modelPublisher = modelPublisher;
-            //this.className = className;
-            this.yearOfBirth = yearOfBirth;
-        }
-
-        public RegistrationEntry(int registrationId, String ageGroupName, String modelName, String className, String modelScale, String modelPublisher, int place) {
-            this.registrationId = registrationId;
-            this.ageGroupName = ageGroupName;
-            this.modelName = modelName;
-            this.className = className;
-            this.modelScale = modelScale;
-            this.modelPublisher = modelPublisher;
-            this.place = place;
         }
 
         public String ToCsvString() {
             String [] props = new String[] {
-                registrationId.ToString(), timeStamp.ToString(), email, firstName, lastName, clubName, ageGroupName, modelName, category.name, category.id.ToString(),
-                modelScale, modelPublisher, className, yearOfBirth.ToString(), place.ToString()
+                registration.ToString(), model.ToString(), modeler.ToString(), category.ToString()
             };
             return "\"" + String.Join("\",\"", props) + "\"";
         }

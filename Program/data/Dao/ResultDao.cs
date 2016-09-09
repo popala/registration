@@ -13,6 +13,7 @@ using Rejestracja.Data.Objects;
 using Rejestracja.Utils;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao {
@@ -78,10 +79,14 @@ namespace Rejestracja.Data.Dao {
                     if (dr.Read()) {
 
                         RegistrationEntry entry = new RegistrationEntry(
-                            dr.GetInt32(dr.GetOrdinal("RegistrationId")),
-                            (DateTime)dr["TmStamp"],
-                            dr["AgeGroupName"].ToString(),
-
+                            new Registration(
+                                dr.GetInt32(dr.GetOrdinal("RegistrationId")),
+                                (DateTime)dr["TmStamp"],
+                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                                dr["CategoryName"].ToString(),
+                                dr["AgeGroupName"].ToString()
+                            ),
                             new Category(
                                 dr.GetInt32(dr.GetOrdinal("CategoryId")),
                                 dr["Code"].ToString(),
@@ -89,18 +94,21 @@ namespace Rejestracja.Data.Dao {
                                 dr["ModelClass"].ToString(),
                                 dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
                             ),
-
-                            dr.GetInt32(dr.GetOrdinal("ModelerId")),
-                            dr["FirstName"].ToString(),
-                            dr["LastName"].ToString(),
-                            dr["ClubName"].ToString(),
-                            dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
-                            dr["Email"].ToString(),
-
-                            dr.GetInt32(dr.GetOrdinal("ModelId")),
-                            dr["ModelName"].ToString(),
-                            dr["Publisher"].ToString(),
-                            dr["Scale"].ToString()
+                            new Modeler(
+                                dr.GetInt32(dr.GetOrdinal("ModelerId")),
+                                dr["FirstName"].ToString(),
+                                dr["LastName"].ToString(),
+                                dr["ClubName"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                                dr["Email"].ToString()
+                            ),
+                            new Model(
+                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+                                dr["ModelName"].ToString(),
+                                dr["Publisher"].ToString(),
+                                dr["Scale"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("ModelerId"))
+                            )
                         );
 
                         if (!dr.IsDBNull(dr.GetOrdinal("Place"))) {
@@ -201,68 +209,121 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static IEnumerable<RegistrationEntry> getCategoryResults(String modelCategory) {
-            if (String.IsNullOrWhiteSpace(modelCategory)) {
-                throw new ArgumentNullException("Kategoria jest wymagana");
-            }
+//        public static IEnumerable<Result> getCategoryResults(int categoryId) {
+//            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+//            using (SQLiteCommand cm = new SQLiteCommand(
+//                    @"SELECT 
+//	                    r.Id AS RegistrationId, r.TmStamp, r.AgeGroupName,
+//	                    r.CategoryId, c.Code, COALESCE(c.Name, r.CategoryName) AS CategoryName, c.ModelClass, CASE WHEN c.DisplayOrder IS NULL THEN -1 ELSE c.DisplayOrder END AS DisplayOrder,
+//	                    mr.Id AS ModelerId, mr.FirstName, mr.LastName, mr.ClubName, mr.YearOfBirth, mr.Email,
+//	                    ml.Id AS ModelId, ml.Name AS ModelName, ml.Publisher, ml.Scale,
+//	                    res.ResultId, res.Place, ag.Age
+//                    FROM Registration r
+//	                    JOIN Models ml ON r.ModelId = ml.Id
+//	                    JOIN Modelers mr ON ml.ModelerId = mr.Id
+//	                    JOIN Categories c ON r.CategoryId = c.Id
+//	                    JOIN Results res ON res.RegistrationId = r.Id
+//	                    JOIN AgeGroups ag ON ag.Name = r.AgeGroupName
+//                    WHERE res.Place IS NOT NULL
+//	                    AND r.CategoryId = @CategoryId
+//                    ORDER BY ag.Age ASC, ModelClass, Place", cn)) {
+//                cn.Open();
+//                cm.CommandType = System.Data.CommandType.Text;
 
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT r.EntryId, r.AgeGroup, r.ModelName, r.ModelScale, r.ModelClass, r.ModelPublisher, COALESCE(s.Place,0) AS Place 
-                FROM Registration r
-                    LEFT JOIN Results s ON r.EntryId = s.EntryId AND s.AwardId IS NULL
-                WHERE r.ModelCategory = @modelCategory
-                ORDER BY r.AgeGroup, r.ModelClass, r.EntryId", cn)) {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
+//                cm.Parameters.Add("@CategoryId", DbType.Int32).Value = categoryId;
 
-                cm.Parameters.Add("@modelCategory", System.Data.DbType.String, 64).Value = modelCategory;
+//                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+//                    while (dr.Read()) {
+//                        RegistrationEntry entry = new RegistrationEntry(
+//                            new Registration(
+//                                dr.GetInt32(dr.GetOrdinal("RegistrationId")),
+//                                (DateTime)dr["TmStamp"],
+//                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+//                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+//                                dr["CategoryName"].ToString(),
+//                                dr["AgeGroupName"].ToString()
+//                            ),
+//                            new Category(
+//                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+//                                dr["Code"].ToString(),
+//                                dr["CategoryName"].ToString(),
+//                                dr["ModelClass"].ToString(),
+//                                dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
+//                            ),
+//                            new Modeler(
+//                                dr.GetInt32(dr.GetOrdinal("ModelerId")),
+//                                dr["FirstName"].ToString(),
+//                                dr["LastName"].ToString(),
+//                                dr["ClubName"].ToString(),
+//                                dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+//                                dr["Email"].ToString()
+//                            ),
+//                            new Model(
+//                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+//                                dr["ModelName"].ToString(),
+//                                dr["Publisher"].ToString(),
+//                                dr["Scale"].ToString(),
+//                                dr.GetInt32(dr.GetOrdinal("ModelerId"))
+//                            )
+//                        );
 
-                using (SQLiteDataReader dr = cm.ExecuteReader()) {
-                    while (dr.Read()) {
-                        yield return
-                            new RegistrationEntry(
-                                dr.GetInt32(dr.GetOrdinal("EntryId")),
-                                dr["AgeGroup"].ToString(),
-                                dr["ModelName"].ToString(),
-                                dr["ModelClass"].ToString(),
-                                dr["ModelScale"].ToString(),
-                                dr["ModelPublisher"].ToString(),
-                                dr.GetInt32(dr.GetOrdinal("Place"))
-                            );
-                    }
-                }
-            }
-        }
+//                        yield return
+//                            new Result(
+//                                dr.GetInt32(dr.GetOrdinal("ResultId")),
+//                                entry,
+//                                dr.GetInt32(dr.GetOrdinal("Place"))
+//                            );
+//                    }
+//                }
+//            }
+//        }
 
         public static IEnumerable<Result> getCategoryResults() {
+            return getCategoryResults(-1);
+        }
+        public static IEnumerable<Result> getCategoryResults(int categoryId) {
+
+            String query = 
+                @"SELECT 
+	                r.Id AS RegistrationId, r.TmStamp, r.AgeGroupName,
+	                r.CategoryId, c.Code, COALESCE(c.Name, r.CategoryName) AS CategoryName, c.ModelClass, CASE WHEN c.DisplayOrder IS NULL THEN -1 ELSE c.DisplayOrder END AS DisplayOrder,
+	                mr.Id AS ModelerId, mr.FirstName, mr.LastName, mr.ClubName, mr.YearOfBirth, mr.Email,
+	                ml.Id AS ModelId, ml.Name AS ModelName, ml.Publisher, ml.Scale,
+	                res.ResultId, res.Place, ag.Age
+                FROM Registration r
+	                JOIN Models ml ON r.ModelId = ml.Id
+	                JOIN Modelers mr ON ml.ModelerId = mr.Id
+	                JOIN Categories c ON r.CategoryId = c.Id
+	                JOIN Results res ON res.RegistrationId = r.Id
+	                JOIN AgeGroups ag ON ag.Name = r.AgeGroupName
+                WHERE res.Place IS NOT NULL";
+
+            if(categoryId > -1) {
+                query += " AND r.CategoryId = @CategoryId ";
+            }
+            query += " ORDER BY ag.Age ASC, DisplayOrder, CategoryName, ModelClass, Place";
+
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(
-                    @"SELECT 
-	                    r.Id AS RegistrationId, r.TmStamp, r.AgeGroupName,
-	                    r.CategoryId, c.Code, COALESCE(c.Name, r.CategoryName) AS CategoryName, c.ModelClass, CASE WHEN c.DisplayOrder IS NULL THEN -1 ELSE c.DisplayOrder END AS DisplayOrder,
-	                    mr.Id AS ModelerId, mr.FirstName, mr.LastName, mr.ClubName, mr.YearOfBirth, mr.Email,
-	                    ml.Id AS ModelId, ml.Name AS ModelName, ml.Publisher, ml.Scale,
-	                    res.ResultId, res.Place, ag.Age
-                    FROM Registration r
-	                    JOIN Models ml ON r.ModelId = ml.Id
-	                    JOIN Modelers mr ON ml.ModelerId = mr.Id
-	                    JOIN Categories c ON r.CategoryId = c.Id
-	                    JOIN Results res ON res.RegistrationId = r.Id
-	                    JOIN AgeGroups ag ON ag.Name = r.AgeGroupName
-                    WHERE res.Place IS NOT NULL
-	                    ORDER BY ag.Age ASC, DisplayOrder, CategoryName, ModelClass, Place", cn)) {
+            using (SQLiteCommand cm = new SQLiteCommand(query, cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
+
+                if(categoryId > -1) {
+                    cm.Parameters.Add("@CategoryId", DbType.Int32).Value = categoryId;
+                }
 
                 using (SQLiteDataReader dr = cm.ExecuteReader()) {
                     while (dr.Read()) {
 
                         RegistrationEntry entry = new RegistrationEntry(
-                            dr.GetInt32(dr.GetOrdinal("RegistrationId")),
-                            (DateTime)dr["TmStamp"],
-                            dr["AgeGroupName"].ToString(),
-
+                            new Registration(
+                                dr.GetInt32(dr.GetOrdinal("RegistrationId")),
+                                (DateTime)dr["TmStamp"],
+                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                                dr["CategoryName"].ToString(),
+                                dr["AgeGroupName"].ToString()
+                            ),
                             new Category(
                                 dr.GetInt32(dr.GetOrdinal("CategoryId")),
                                 dr["Code"].ToString(),
@@ -270,18 +331,21 @@ namespace Rejestracja.Data.Dao {
                                 dr["ModelClass"].ToString(),
                                 dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
                             ),
-
-                            dr.GetInt32(dr.GetOrdinal("ModelerId")),
-                            dr["FirstName"].ToString(),
-                            dr["LastName"].ToString(),
-                            dr["ClubName"].ToString(),
-                            dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
-                            dr["Email"].ToString(),
-
-                            dr.GetInt32(dr.GetOrdinal("ModelId")),
-                            dr["ModelName"].ToString(),
-                            dr["Publisher"].ToString(),
-                            dr["Scale"].ToString()
+                            new Modeler(
+                                dr.GetInt32(dr.GetOrdinal("ModelerId")),
+                                dr["FirstName"].ToString(),
+                                dr["LastName"].ToString(),
+                                dr["ClubName"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                                dr["Email"].ToString()
+                            ),
+                            new Model(
+                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+                                dr["ModelName"].ToString(),
+                                dr["Publisher"].ToString(),
+                                dr["Scale"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("ModelerId"))
+                            )
                         );
                         
                         yield return
@@ -348,23 +412,36 @@ namespace Rejestracja.Data.Dao {
                     while (dr.Read()) {
 
                         RegistrationEntry entry = new RegistrationEntry(
-                            dr.GetInt32(dr.GetOrdinal("RegistrationId")),
-                            (DateTime)dr["TmStamp"],
-                            null,
-
-                            null,
-
-                            dr.GetInt32(dr.GetOrdinal("ModelerId")),
-                            dr["FirstName"].ToString(),
-                            dr["LastName"].ToString(),
-                            dr["ClubName"].ToString(),
-                            dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
-                            dr["Email"].ToString(),
-
-                            dr.GetInt32(dr.GetOrdinal("ModelId")),
-                            dr["ModelName"].ToString(),
-                            dr["Publisher"].ToString(),
-                            dr["Scale"].ToString()
+                            new Registration(
+                                dr.GetInt32(dr.GetOrdinal("RegistrationId")),
+                                (DateTime)dr["TmStamp"],
+                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                                dr["CategoryName"].ToString(),
+                                dr["AgeGroupName"].ToString()
+                            ),
+                            new Category(
+                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                                dr["Code"].ToString(),
+                                dr["CategoryName"].ToString(),
+                                dr["ModelClass"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
+                            ),
+                            new Modeler(
+                                dr.GetInt32(dr.GetOrdinal("ModelerId")),
+                                dr["FirstName"].ToString(),
+                                dr["LastName"].ToString(),
+                                dr["ClubName"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                                dr["Email"].ToString()
+                            ),
+                            new Model(
+                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+                                dr["ModelName"].ToString(),
+                                dr["Publisher"].ToString(),
+                                dr["Scale"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("ModelerId"))
+                            )
                         );
 
                         Award award = new Award(

@@ -182,50 +182,50 @@ namespace Rejestracja {
                     try {
                         //Timestamp
                         if (fieldMap.TimeStamp > -1) {
-                            if (!DateTime.TryParse(parsedEntry[fieldMap.TimeStamp], out newRegistration.timeStamp)) {
-                                if (!DateTime.TryParse(parsedEntry[fieldMap.TimeStamp].Substring(0, parsedEntry[fieldMap.TimeStamp].LastIndexOf(' ') + 1), out newRegistration.timeStamp)) {
-                                    newRegistration.timeStamp = DateTime.Now;
+                            if (!DateTime.TryParse(parsedEntry[fieldMap.TimeStamp], out newRegistration.registration.timeStamp)) {
+                                if (!DateTime.TryParse(parsedEntry[fieldMap.TimeStamp].Substring(0, parsedEntry[fieldMap.TimeStamp].LastIndexOf(' ') + 1), out newRegistration.registration.timeStamp)) {
+                                    newRegistration.registration.timeStamp = DateTime.Now;
                                 }
                             }
                         }
                         else {
-                            newRegistration.timeStamp = DateTime.Now;
+                            newRegistration.registration.timeStamp = DateTime.Now;
                         }
 
                         //Email
                         if (fieldMap.Email > -1) {
-                            newRegistration.email = parsedEntry[fieldMap.Email].Trim().ToLower();
+                            newRegistration.modeler.email = parsedEntry[fieldMap.Email].Trim().ToLower();
                         }
 
                         //FirstName
-                        newRegistration.firstName = textInfo.ToTitleCase(parsedEntry[fieldMap.FirstName].Trim());
+                        newRegistration.modeler.firstName = textInfo.ToTitleCase(parsedEntry[fieldMap.FirstName].Trim());
 
                         //LastName
-                        newRegistration.lastName = textInfo.ToTitleCase(parsedEntry[fieldMap.LastName].Trim());
+                        newRegistration.modeler.lastName = textInfo.ToTitleCase(parsedEntry[fieldMap.LastName].Trim());
 
                         //ClubName
                         if (fieldMap.ClubName > -1) {
-                            newRegistration.clubName = parsedEntry[fieldMap.ClubName].Trim();
+                            newRegistration.modeler.clubName = parsedEntry[fieldMap.ClubName].Trim();
                         }
 
                         //YearOfBirth AND AgeGroup
                         if (int.TryParse(parsedEntry[fieldMap.YearOfBirth], out yearOfBirth)) {
-                            newRegistration.yearOfBirth = yearOfBirth;
+                            newRegistration.modeler.yearOfBirth = yearOfBirth;
                             if (fieldMap.CalculateAgeGroup) {
                                 age = DateTime.Now.Year - yearOfBirth;
 
                                 AgeGroup[] ag = ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray<AgeGroup>();
                                 if (ag.Length == 1) {
-                                    newRegistration.ageGroupName = ag[0].name;
+                                    newRegistration.registration.ageGroupName = ag[0].name;
                                 }
                             }
                             else if (fieldMap.AgeGroup > -1) {
-                                newRegistration.ageGroupName = parsedEntry[fieldMap.AgeGroup];
+                                newRegistration.registration.ageGroupName = parsedEntry[fieldMap.AgeGroup];
                             }
                         }
 
                         //ModelName
-                        newRegistration.modelName = parsedEntry[fieldMap.ModelName].Trim();
+                        newRegistration.model.name = parsedEntry[fieldMap.ModelName].Trim();
 
                         //ModelCategory
                         //Pick the first field with value
@@ -254,30 +254,30 @@ namespace Rejestracja {
                                 newRegistration.category.id = matchedModelCategory[0].id;
                                 //Matched model category and so set the category if it should be derived from class
                                 if (fieldMap.DeriveClassFromCategory) {
-                                    newRegistration.className = matchedModelCategory[0].className;
+                                    newRegistration.category.className = matchedModelCategory[0].className;
                                 }
                             }
                             else {
                                 //Did not match model class so see if we have category field mapped as well
                                 newRegistration.category.name = enteredModelCategory;
                                 if (fieldMap.ModelClass > -1) {
-                                    newRegistration.className = parsedEntry[fieldMap.ModelClass];
+                                    newRegistration.category.className = parsedEntry[fieldMap.ModelClass];
                                 }
                                 else {
-                                    newRegistration.className = modelClasses[0];
+                                    newRegistration.category.className = modelClasses[0];
                                 }
                             }
                         }
 
                         //ModelScale
-                        newRegistration.modelScale = Scale.parse(parsedEntry[fieldMap.ModelScale].Trim());
-                        if(String.IsNullOrWhiteSpace(newRegistration.modelScale)) {
-                            newRegistration.modelScale = "Inna";
+                        newRegistration.model.scale = Scale.parse(parsedEntry[fieldMap.ModelScale].Trim());
+                        if(String.IsNullOrWhiteSpace(newRegistration.model.scale)) {
+                            newRegistration.model.scale = "Inna";
                         }
                         else if (addScale) {
-                            String[] scale = modelScales.Where(x => x.ToLower().Equals(newRegistration.modelScale.ToLower())).ToArray<String>();
+                            String[] scale = modelScales.Where(x => x.ToLower().Equals(newRegistration.model.scale.ToLower())).ToArray<String>();
                             if (scale.Length == 0) {
-                                ScaleDao.add(newRegistration.modelScale, ScaleDao.getNextSortFlag());
+                                ScaleDao.add(newRegistration.model.scale, ScaleDao.getNextSortFlag());
                                 modelScales = ScaleDao.getSimpleList().ToList();
                             }
                         }
@@ -287,10 +287,10 @@ namespace Rejestracja {
                         if (!fieldMap.DeriveClassFromCategory) {
                             String[] cat = modelClasses.Where(x => x.ToLower().Equals(parsedEntry[fieldMap.ModelClass].ToLower())).ToArray<String>();
                             if (cat.Length == 1) {
-                                newRegistration.className = cat[0];
+                                newRegistration.category.className = cat[0];
                             }
                             else {
-                                newRegistration.className = parsedEntry[fieldMap.ModelClass].Trim();
+                                newRegistration.category.className = parsedEntry[fieldMap.ModelClass].Trim();
                             }
                         }
 
@@ -305,7 +305,7 @@ namespace Rejestracja {
                             }
                             
                             if(pub.Length > 0) {
-                                newRegistration.modelPublisher = pub[0];
+                                newRegistration.model.publisher = pub[0];
                             }
                             else if(addPublisher) {
                                 PublisherDao.add(parsedPublisher);
@@ -411,18 +411,18 @@ namespace Rejestracja {
                             cm.Parameters["@ModelCategoryId"].Value = -1;
                         }
 
-                        cm.Parameters["@TmStamp"].Value = entry.timeStamp;
-                        cm.Parameters["@Email"].Value = entry.email;
-                        cm.Parameters["@FirstName"].Value = entry.firstName;
-                        cm.Parameters["@LastName"].Value = entry.lastName;
-                        cm.Parameters["@ClubName"].Value = entry.clubName;
-                        cm.Parameters["@AgeGroup"].Value = entry.ageGroupName;
-                        cm.Parameters["@ModelName"].Value = entry.modelName;
-                        cm.Parameters["@ModelClass"].Value = entry.className;
-                        cm.Parameters["@ModelScale"].Value = entry.modelScale;
-                        cm.Parameters["@ModelPublisher"].Value = entry.modelPublisher;
-                        cm.Parameters["@ModelCategory"].Value = entry.category.name;
-                        cm.Parameters["@YearOfBirth"].Value = entry.yearOfBirth;
+                        //cm.Parameters["@TmStamp"].Value = entry.timeStamp;
+                        //cm.Parameters["@Email"].Value = entry.email;
+                        //cm.Parameters["@FirstName"].Value = entry.firstName;
+                        //cm.Parameters["@LastName"].Value = entry.lastName;
+                        //cm.Parameters["@ClubName"].Value = entry.clubName;
+                        //cm.Parameters["@AgeGroup"].Value = entry.ageGroupName;
+                        //cm.Parameters["@ModelName"].Value = entry.modelName;
+                        //cm.Parameters["@ModelClass"].Value = entry.className;
+                        //cm.Parameters["@ModelScale"].Value = entry.modelScale;
+                        //cm.Parameters["@ModelPublisher"].Value = entry.modelPublisher;
+                        //cm.Parameters["@ModelCategory"].Value = entry.category.name;
+                        //cm.Parameters["@YearOfBirth"].Value = entry.yearOfBirth;
                         try {
                             cm.ExecuteNonQuery();
                         }

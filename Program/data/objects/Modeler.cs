@@ -16,6 +16,9 @@ namespace Rejestracja.Data.Objects {
         public const int MAX_NAME_LENGTH = 128;
         public const int MAX_EMAIL_LENGTH = 128;
 
+        public Modeler() {
+        }
+
         public Modeler(String firstName, String lastName, String clubName, int yearOfBirth, String email) {
             this.id = -1;
             this.firstName = firstName;

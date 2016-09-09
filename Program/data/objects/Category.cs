@@ -22,6 +22,9 @@ namespace Rejestracja.Data.Objects {
 
         public const int MAX_NAME_LENGTH = 128;
 
+        public Category() {
+        }
+
         public Category(int id, String code, String name, String className, int displayOrder) {
             this.id = id;
             this.code = code;

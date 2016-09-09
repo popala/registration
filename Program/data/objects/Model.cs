@@ -14,6 +14,9 @@ namespace Rejestracja.Data.Objects {
 
         public const int MAX_NAME_LENGTH = 256;
 
+        public Model() {
+        }
+
         public Model(String name, String publisher, String scale) {
             this.id = -1;
             this.name = name;

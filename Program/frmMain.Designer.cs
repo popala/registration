@@ -701,6 +701,7 @@
             this.lvEntries.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvEntries_KeyDown);
             this.lvEntries.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvEntries_MouseDoubleClick);
             this.lvEntries.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lvEntries_MouseDown);
+            this.lvEntries.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lvEntries_MouseUp);
             // 
             // tabControl1
             // 
