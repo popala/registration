@@ -26,8 +26,8 @@ namespace Rejestracja
     {
         public frmMain _parentForm;
         private List<AgeGroup> _ageGroups;
-        private List<Category> _categories;
-        private List<Class> _classes;
+        //private List<Category> _categories;
+        //private List<Class> _classes;
 
         public void setParent(frmMain parentForm) {
             this._parentForm = parentForm;
@@ -53,13 +53,55 @@ namespace Rejestracja
             resetControls();
         }
 
+        private void loadCategoryList() {
+            List<Category> categories = CategoryDao.getList(true).ToList();
+            List<Class> classes = ClassDao.getList().ToList();
+            classes.Add(new Class(-1, "Kategorie z importu"));
+
+            foreach(Category category in categories) {
+                if(category.id < 0) {
+                    category.className = "Kategorie z importu";
+                }
+                Class c = this.classes.Find(x => x.name.Equals(category.className, StringComparison.CurrentCultureIgnoreCase));
+                c.categories.Add(category);
+            }
+
+            //Categories broken up by class
+            lvCategories.Clear();
+            lvCategories.Columns.Add("Kod");
+            lvCategories.Columns.Add("Kategoria");
+            lvCategories.Columns.Add("Grupa Wiekowa");
+
+            lvCategories.View = View.Details;
+            lvCategories.GridLines = true;
+            lvCategories.FullRowSelect = true;
+            lvCategories.HeaderStyle = ColumnHeaderStyle.Nonclickable;
+            lvCategories.CheckBoxes = true;
+
+            //Load classes plus extra one for imported categories that were not in the system
+            foreach(Class cls in classes) {
+                ListViewGroup group = new ListViewGroup(cls.name, cls.name);
+                group.Tag = cls.id;
+                lvCategories.Groups.Add(group);
+
+                foreach(Category cat in cls.categories) {
+                    ListViewItem item = new ListViewItem(new String[] { cat.code, cat.name, "" }, group);
+                    item.Name = cat.name;
+                    lvCategories.Items.Add(item);
+                }
+            }
+
+            foreach(ColumnHeader header in lvCategories.Columns) {
+                header.Width = -2;
+            }
+        }
+
         private void resetControls() {
 
             //General
             this._ageGroups = AgeGroupDao.getList().ToList();
-            this._categories = CategoryDao.getList(true).ToList();
-            this._classes = ClassDao.getList().ToList();
             this.Text = "Nowa Rejestracja";
+            loadCategoryList();
 
             //Modeler
             txtModelerId.Text = "";
@@ -86,56 +128,6 @@ namespace Rejestracja
             foreach (String item in ScaleDao.getSimpleList())
                 cboModelScale.Items.Add(item.Trim());
             cboModelScale.SelectedIndex = cboModelScale.FindString("1:33");
-
-            //Categories broken up by class
-            lvCategories.Clear();
-            lvCategories.Columns.Add("Kod");
-            lvCategories.Columns.Add("Kategoria");
-            lvCategories.Columns.Add("Grupa Wiekowa");
-
-            lvCategories.View = View.Details;
-            lvCategories.GridLines = true;
-            lvCategories.FullRowSelect = true;
-            lvCategories.HeaderStyle = ColumnHeaderStyle.Nonclickable;
-            lvCategories.CheckBoxes = true;
-
-            //Load classes plus extra one for imported categories that were not in the system
-            foreach(Class c in _classes) {
-                ListViewGroup group = new ListViewGroup(c.name, c.name);
-                group.Tag = c.id;
-                lvCategories.Groups.Add(group);
-            }
-            ListViewGroup importedCatGroup = new ListViewGroup("Kategorie z importu");
-            importedCatGroup.Tag = -1;
-            lvCategories.Groups.Add(importedCatGroup);
-            
-            //Load categories to each class
-            foreach(Category c in _categories) {
-                ListViewGroup group = null;
-                if(String.IsNullOrWhiteSpace(c.className)) {
-                    group = lvCategories.Groups[lvCategories.Groups.Count - 1];
-                }
-                else {
-                    foreach(ListViewGroup g in lvCategories.Groups) {
-                        if(g.Header.Equals(c.className, StringComparison.CurrentCultureIgnoreCase)) {
-                            group = g;
-                        }
-                    }
-                }
-
-                ListViewItem item = new ListViewItem(new String[] { c.code, c.name, "" }, group);
-                item.Name = c.name;
-                lvCategories.Items.Add(item);
-            }
-
-            //Remove class for imported categories if there are none
-            if(lvCategories.Groups[lvCategories.Groups.Count - 1].Items.Count == 0) {
-                lvCategories.Groups.RemoveAt(lvCategories.Groups.Count - 1);
-            }
-
-            foreach(ColumnHeader header in lvCategories.Columns) {
-                header.Width = -2;
-            }
 
             btnNewModel.Visible = true;
             btnAddPrintModel.Visible = true;            
@@ -506,19 +498,19 @@ namespace Rejestracja
         private void lvCategories_ItemCheck(object sender, ItemCheckEventArgs e) {
             
             ListViewItem checkedItem = lvCategories.Items[e.Index];
+            ListViewGroup group = checkedItem.Group;
 
             if(checkedItem.ForeColor == System.Drawing.Color.LightGray) {
                 e.NewValue = CheckState.Unchecked;
                 return;
             }
 
-            ListViewGroup group = checkedItem.Group;
-            Modeler modeler = ModelerDao.get(int.Parse(txtModelerId.Text));
-            int age = DateTime.Now.Year - modeler.yearOfBirth;
-
-            String ageGroupName = _ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
-
             if(!checkedItem.Checked) {
+                
+                Modeler modeler = ModelerDao.get(int.Parse(txtModelerId.Text));
+                int age = DateTime.Now.Year - modeler.yearOfBirth;    
+                String ageGroupName = _ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
+
                 checkedItem.BackColor = System.Drawing.Color.AliceBlue;
                 checkedItem.SubItems[2].Text = ageGroupName;
 
@@ -527,6 +519,7 @@ namespace Rejestracja
                         item.ForeColor = System.Drawing.Color.LightGray;
                     }
                 }
+                checkedItem.EnsureVisible();
             }
             else {
                 checkedItem.BackColor = System.Drawing.Color.White;

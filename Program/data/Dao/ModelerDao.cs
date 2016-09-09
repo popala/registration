@@ -97,12 +97,12 @@ namespace Rejestracja.Data.Dao {
                 using(SQLiteDataReader dr = cm.ExecuteReader()) {
                     if(dr.Read())
                         ret = new Modeler(
-                            dr.GetInt32(0),
-                            dr.GetString(1),
-                            dr.GetString(2),
-                            dr.GetString(3),
-                            dr.GetInt32(4),
-                            dr.GetString(3)
+                            dr.GetInt32(dr.GetOrdinal("Id")),
+                            dr["FirstName"].ToString(),
+                            dr["LastName"].ToString(),
+                            dr["ClubName"].ToString(),
+                            dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                            dr["Email"].ToString()
                         );
                 }
             }

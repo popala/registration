@@ -25,14 +25,12 @@ namespace Rejestracja {
         private String _selectedFile;
         private List<String[]> _dataSample;
         private ComboBox [] _cboFields;
+        private ComboBox[] _cboModelCategory;
+        private ComboBox[] _cboCategoryAction;
         private List<ComboBoxItem> _cboItems;
 
         public frmImportFile() {
             InitializeComponent();
-        }
-
-        public void resetMapping() {
-            cboTimeStamp.SelectedIndex = -1;
         }
 
         public void previewFile(bool? hasHeaders) {
@@ -60,9 +58,6 @@ namespace Rejestracja {
                 cboField.Items.Clear();
                 if (cboField == cboAgeGroup) {
                     cboField.Items.Add(new ComboBoxItem(-2, "Oblicz grupę wiekową z roku urodzenia"));
-                }
-                else if (cboField == cboModelClass) {
-                    cboField.Items.Add(new ComboBoxItem(-2, "Wybierz klasę w oparciu o kategorię modelu"));
                 }
                 foreach (ComboBoxItem item in this._cboItems) {
                     cboField.Items.Add(item);
@@ -99,18 +94,32 @@ namespace Rejestracja {
 
         private void frmImportFile_Load(object sender, EventArgs e) {
 
-            this._cboFields = new ComboBox[] { cboTimeStamp, cboEmail, cboFirstName, cboLastName, cboClubName, cboAgeGroup, cboYearOfBirth, cboModelName, cboModelCategory1, cboModelCategory2, cboModelCategory3, cboModelScale, cboModelClass, cboModelPublisher };
+            this._cboFields = new ComboBox[] { cboTimeStamp, cboEmail, cboFirstName, cboLastName, cboClubName, cboAgeGroup, cboYearOfBirth, cboModelName, cboModelCategory1, cboModelCategory2, cboModelCategory3, cboModelCategory4, cboModelCategory5, cboModelScale, cboModelPublisher };
 
             lvFilePreview.View = View.Details;
             lvFilePreview.Enabled = false;
             lvFilePreview.Sorting = SortOrder.None;
             lvFilePreview.GridLines = true;
 
+            _cboModelCategory = new ComboBox[] { cboModelCategory1, cboModelCategory2, cboModelCategory3, cboModelCategory4, cboModelCategory5 };
+            _cboCategoryAction = new ComboBox[] { cboCategoryAction2, cboCategoryAction3, cboCategoryAction4, cboCategoryAction5 };
+
+            foreach (ComboBox cb in _cboModelCategory) {
+                cb.SelectedIndexChanged += new EventHandler(cboModelCategory_SelectedIndexChanged);
+                cb.Enabled = false;
+            }
+            _cboModelCategory[0].Enabled = true;
+
+            String[] categoryActions = new String[] { "gdy pole puste", "osobny wpis" };
+            foreach (ComboBox cb in _cboCategoryAction) {
+                //cb.SelectedIndexChanged += new EventHandler(cboCategoryAction_SelectedIndexChanged);
+                cb.Items.AddRange(categoryActions);
+                cb.Enabled = false;
+            }
+
             lblFileName.Text = "";
             chkHasHeaders.Checked = true;
             chkDropExistingRecords.Checked = true;
-            chkAutoAddScales.Checked = true;
-            chkAutoAddPublisher.Checked = true;
             btnImport.Enabled = false;
         }
 
@@ -127,27 +136,42 @@ namespace Rejestracja {
             }
         }
 
-        private void cboModelCategory1_SelectedIndexChanged(object sender, EventArgs e) {
-            if (cboModelCategory1.SelectedIndex < 1) {
-                cboModelCategory3.SelectedIndex = -1;
-                cboModelCategory3.Enabled = false;
+        private void cboModelCategory_SelectedIndexChanged(object sender, EventArgs e) {
+            int selItem = -1;
+            for (int i = 0; i < _cboModelCategory.Length; i++) {
+                if (_cboModelCategory[i] == sender) {
+                    selItem = i;
+                    break;
+                }
+            }
 
-                cboModelCategory2.SelectedIndex = -1;
-                cboModelCategory2.Enabled = false;
+            //For the last of the category dropdowns just reset the action list
+            if (selItem == 4 && _cboModelCategory[4].SelectedIndex < 1) {
+                _cboCategoryAction[3].SelectedIndex = -1;
+                return;
             }
-            else {
-                cboModelCategory2.Enabled = true;
-            }
-        }
 
-        private void cboModelCategory2_SelectedIndexChanged(object sender, EventArgs e) {
-            if (cboModelCategory2.SelectedIndex < 1) {
-                cboModelCategory3.SelectedIndex = -1;
-                cboModelCategory3.Enabled = false;
+            //If sel index < 1 ("not used") disable next item in line, reset action box
+            if (_cboModelCategory[selItem].SelectedIndex < 1) {
+                //Reset action box
+                if (selItem > 0) {
+                    _cboCategoryAction[selItem - 1].SelectedIndex = 0;
+                }
+
+                //Disable next items
+                for (int i = selItem + 1; i < _cboModelCategory.Length; i++) {
+                    _cboCategoryAction[i - 1].SelectedIndex = -1;
+                    _cboCategoryAction[i - 1].Enabled = false;
+                    _cboModelCategory[i].SelectedIndex = -1;
+                    _cboModelCategory[i].Enabled = false;
+                }
+                return;
             }
-            else {
-                cboModelCategory3.Enabled = true;
-            }
+
+            _cboCategoryAction[selItem].Enabled = true;
+            _cboCategoryAction[selItem].SelectedIndex = 0;
+            _cboModelCategory[selItem + 1].Enabled = true;
+            _cboModelCategory[selItem + 1].SelectedIndex = 0;
         }
 
         private void cboField_SelectedIndexChanged(object sender, EventArgs e) {
@@ -195,23 +219,43 @@ namespace Rejestracja {
             try {
                 FileImportFieldMap fieldMap = new FileImportFieldMap();
                 fieldMap.TimeStamp = cboTimeStamp.SelectedIndex - 1;
-                fieldMap.Email = cboEmail.SelectedIndex - 1;
 
+                //Modeler
+                fieldMap.Email = cboEmail.SelectedIndex - 1;
                 fieldMap.FirstName = cboFirstName.SelectedIndex - 1;
                 fieldMap.LastName = cboLastName.SelectedIndex - 1;
                 fieldMap.ClubName = cboClubName.SelectedIndex - 1;
-
                 fieldMap.AgeGroup = cboAgeGroup.SelectedIndex - 2;
                 fieldMap.CalculateAgeGroup = (cboAgeGroup.SelectedIndex == 0);
                 fieldMap.YearOfBirth = cboYearOfBirth.SelectedIndex - 1;
 
+                //Scale, publisher, model
                 fieldMap.ModelName = cboModelName.SelectedIndex - 1;
-                fieldMap.ModelCategory = new int[] { cboModelCategory1.SelectedIndex - 1, cboModelCategory2.SelectedIndex - 1, cboModelCategory3.SelectedIndex - 1 };
                 fieldMap.ModelScale = cboModelScale.SelectedIndex - 1;
                 fieldMap.ModelPublisher = cboModelPublisher.SelectedIndex - 1;
-                fieldMap.DeriveClassFromCategory = (cboModelClass.SelectedIndex == 0);
-                fieldMap.ModelClass = cboModelClass.SelectedIndex - 2;
 
+                //Add different possible category mapping
+                List<int> categoryFieldMap = new List<int>();
+                fieldMap.ModelCategory = new List<int[]>();
+
+                categoryFieldMap.Add(cboModelCategory1.SelectedIndex - 1);
+                for (int i = 1; i < _cboModelCategory.Length; i++) {
+                    //If category not selected finish checking
+                    if (_cboModelCategory[i].SelectedIndex < 1) {
+                        break;
+                    }
+
+                    if (_cboCategoryAction[i - 1].SelectedIndex == 0) {
+                        categoryFieldMap.Add(_cboModelCategory[i].SelectedIndex - 1);
+                    }
+                    else {
+                        fieldMap.ModelCategory.Add(categoryFieldMap.ToArray());
+                        categoryFieldMap = new List<int>();
+                        categoryFieldMap.Add(_cboModelCategory[i].SelectedIndex - 1);
+                    }
+                }
+                fieldMap.ModelCategory.Add(categoryFieldMap.ToArray());
+                
                 DataSource ds = new DataSource();
                 if (chkDropExistingRecords.Checked) {
                     ds.dropRegistrationRecords();

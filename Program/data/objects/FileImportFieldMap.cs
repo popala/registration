@@ -10,6 +10,7 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 using System;
+using System.Collections.Generic;
 
 namespace Rejestracja.Data.Objects {
     class FileImportFieldMap {
@@ -21,7 +22,7 @@ namespace Rejestracja.Data.Objects {
         public int AgeGroup { get; set; }
         public bool CalculateAgeGroup { get; set; }
         public int ModelName { get; set; }
-        public int [] ModelCategory { get; set; }
+        public List<int[]> ModelCategory { get; set; }
         public int ModelScale { get; set; }
         public int ModelPublisher { get; set; }
         public int ModelClass { get; set; }

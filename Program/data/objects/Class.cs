@@ -10,20 +10,26 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 using System;
+using System.Collections.Generic;
 
 namespace Rejestracja.Data.Objects {
     class Class {
         public int id;
         public String name;
+        public List<Category> categories;
+
         public const int MAX_NAME_LENGTH = 128;
 
         public Class(int id, String name) {
             this.id = id;
             this.name = name;
+            this.categories = new List<Category>();
         }
 
         public Class(String name) {
+            this.id = -1;
             this.name = name;
+            this.categories = new List<Category>();
         }
     }
 }

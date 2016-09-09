@@ -174,6 +174,7 @@ namespace Rejestracja {
                 while (!parser.EndOfData) {
                     
                     RegistrationEntry newRegistration = new RegistrationEntry();
+                    List<Category> modelCategory = new List<Category>();
                     int age = 0;
                     int yearOfBirth = 0;
 
@@ -227,44 +228,80 @@ namespace Rejestracja {
                         //ModelName
                         newRegistration.model.name = parsedEntry[fieldMap.ModelName].Trim();
 
-                        //ModelCategory
-                        //Pick the first field with value
-                        String enteredModelCategory = null;
-                        foreach (int i in fieldMap.ModelCategory) {
-                            if (!String.IsNullOrWhiteSpace(parsedEntry[i])) {
-                                enteredModelCategory = parsedEntry[i];
-                                break;
-                            }
-                        }
+                        ////ModelCategory
+                        ////Pick the first field with value
+                        //String enteredModelCategory = null;
+                        //foreach (int i in fieldMap.ModelCategory) {
+                        //    if (!String.IsNullOrWhiteSpace(parsedEntry[i])) {
+                        //        enteredModelCategory = parsedEntry[i];
+                        //        break;
+                        //    }
+                        //}
 
-                        Category[] matchedModelCategory = null;
-                        if (enteredModelCategory != null) {
-                            //Try to match model category
-                            matchedModelCategory = modelCategories.Where(x => x.fullName.ToLower().Equals(enteredModelCategory.ToLower())).ToArray();
-                            if (matchedModelCategory.Length == 0) {
-                                matchedModelCategory = modelCategories.Where(
-                                    x => enteredModelCategory.ToLower().Contains("(" + x.code.ToLower() + ")") ||
-                                        enteredModelCategory.ToLower().StartsWith(x.code.ToLower() + " ") ||
-                                        enteredModelCategory.ToLower().EndsWith(" " + x.code.ToLower()) ||
-                                        enteredModelCategory.ToLower().Equals(x.code.ToLower())
-                                        ).ToArray();
-                            }
-                            if (matchedModelCategory.Length > 0) {
-                                newRegistration.category.name = matchedModelCategory[0].fullName;
-                                newRegistration.category.id = matchedModelCategory[0].id;
-                                //Matched model category and so set the category if it should be derived from class
-                                if (fieldMap.DeriveClassFromCategory) {
-                                    newRegistration.category.className = matchedModelCategory[0].className;
+                        //Category[] matchedModelCategory = null;
+                        //if (enteredModelCategory != null) {
+                        //    //Try to match model category
+                        //    matchedModelCategory = modelCategories.Where(x => x.fullName.ToLower().Equals(enteredModelCategory.ToLower())).ToArray();
+                        //    if (matchedModelCategory.Length == 0) {
+                        //        matchedModelCategory = modelCategories.Where(
+                        //            x => enteredModelCategory.ToLower().Contains("(" + x.code.ToLower() + ")") ||
+                        //                enteredModelCategory.ToLower().StartsWith(x.code.ToLower() + " ") ||
+                        //                enteredModelCategory.ToLower().EndsWith(" " + x.code.ToLower()) ||
+                        //                enteredModelCategory.ToLower().Equals(x.code.ToLower())
+                        //                ).ToArray();
+                        //    }
+                        //    if (matchedModelCategory.Length > 0) {
+                        //        newRegistration.category.name = matchedModelCategory[0].fullName;
+                        //        newRegistration.category.id = matchedModelCategory[0].id;
+                        //        //Matched model category and so set the category if it should be derived from class
+                        //        if (fieldMap.DeriveClassFromCategory) {
+                        //            newRegistration.category.className = matchedModelCategory[0].className;
+                        //        }
+                        //    }
+                        //    else {
+                        //        //Did not match model class so see if we have category field mapped as well
+                        //        newRegistration.category.name = enteredModelCategory;
+                        //        if (fieldMap.ModelClass > -1) {
+                        //            newRegistration.category.className = parsedEntry[fieldMap.ModelClass];
+                        //        }
+                        //        else {
+                        //            newRegistration.category.className = modelClasses[0];
+                        //        }
+                        //    }
+                        //}
+
+                        //ModelCategory: first will be a list fields to pick the first value from, possibly after that fields
+                        //  that if present require cloning the registration entry assigned to that second category
+                        foreach(int[] fieldList in fieldMap.ModelCategory) {
+
+                            //Pick the first field with value
+                            String enteredModelCategory = null;
+                            foreach(int i in fieldList) {
+                                if(!String.IsNullOrWhiteSpace(parsedEntry[i])) {
+                                    enteredModelCategory = parsedEntry[i];
+                                    break;
                                 }
                             }
-                            else {
-                                //Did not match model class so see if we have category field mapped as well
-                                newRegistration.category.name = enteredModelCategory;
-                                if (fieldMap.ModelClass > -1) {
-                                    newRegistration.category.className = parsedEntry[fieldMap.ModelClass];
+
+                            Category[] matchedModelCategory = null;
+                            if(enteredModelCategory != null) {
+                                //Try to match model category
+                                matchedModelCategory = modelCategories.Where(x => x.fullName.ToLower().Equals(enteredModelCategory.ToLower())).ToArray();
+                                if(matchedModelCategory.Length == 0) {
+                                    matchedModelCategory = modelCategories.Where(
+                                        x => enteredModelCategory.ToLower().Contains("(" + x.code.ToLower() + ")") ||
+                                            enteredModelCategory.ToLower().StartsWith(x.code.ToLower() + " ") ||
+                                            enteredModelCategory.ToLower().EndsWith(" " + x.code.ToLower()) ||
+                                            enteredModelCategory.ToLower().Equals(x.code.ToLower())
+                                            ).ToArray();
+                                }
+                                //Category found so populate list
+                                if(matchedModelCategory.Length > 0) {
+                                    modelCategory.Add(matchedModelCategory[0]);
                                 }
                                 else {
-                                    newRegistration.category.className = modelClasses[0];
+                                    //Did not match model category so add it with emtpy class
+                                    modelCategory.Add(new Category() { name = enteredModelCategory });
                                 }
                             }
                         }

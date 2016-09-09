@@ -60,7 +60,7 @@ namespace Rejestracja
             this.txtModelerId = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
             this.btnAddModeler = new System.Windows.Forms.Button();
-            this.lvCategories = new Rejestracja.Controls.CustListView(); //new System.Windows.Forms.ListView();
+            this.lvCategories = new Rejestracja.Controls.CustListView();
             this.cboEntryId = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -376,7 +376,7 @@ namespace Rejestracja
             this.lvCategories.TabIndex = 33;
             this.lvCategories.UseCompatibleStateImageBehavior = false;
             this.lvCategories.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvCategories_ItemCheck);
-            this.lvCategories.MouseDoubleClick += new MouseEventHandler(this.lvCategories_MouseDoubleClick);
+            this.lvCategories.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvCategories_MouseDoubleClick);
             // 
             // cboEntryId
             // 
