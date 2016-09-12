@@ -227,9 +227,9 @@ namespace Rejestracja {
 
                         //ModelCategory
                         //Pick the first field with value
-                        String enteredModelCategory = null;
+                        String enteredModelCategory = "Brak";
                         foreach (int i in fieldMap.ModelCategory) {
-                            if (!String.IsNullOrWhiteSpace(parsedEntry[i])) {
+                            if(i > -1 && !String.IsNullOrWhiteSpace(parsedEntry[i])) {
                                 enteredModelCategory = parsedEntry[i];
                                 break;
                             }
@@ -238,13 +238,13 @@ namespace Rejestracja {
                         ModelCategory[] matchedModelCategory = null;
                         if (enteredModelCategory != null) {
                             //Try to match model category
-                            matchedModelCategory = modelCategories.Where(x => x.fullName.ToLower().Equals(enteredModelCategory.ToLower())).ToArray();
+                            matchedModelCategory = modelCategories.Where(x => x.fullName.Equals(enteredModelCategory, StringComparison.CurrentCultureIgnoreCase)).ToArray();
                             if (matchedModelCategory.Length == 0) {
                                 matchedModelCategory = modelCategories.Where(
                                     x => enteredModelCategory.ToLower().Contains("(" + x.code.ToLower() + ")") ||
                                         enteredModelCategory.ToLower().StartsWith(x.code.ToLower() + " ") ||
                                         enteredModelCategory.ToLower().EndsWith(" " + x.code.ToLower()) ||
-                                        enteredModelCategory.ToLower().Equals(x.code.ToLower())
+                                        enteredModelCategory.Equals(x.code, StringComparison.CurrentCultureIgnoreCase)
                                         ).ToArray();
                             }
                             if (matchedModelCategory.Length > 0) {
@@ -273,7 +273,7 @@ namespace Rejestracja {
                             newRegistration.modelScale = "Inna";
                         }
                         else if (addScale) {
-                            String[] scale = modelScales.Where(x => x.ToLower().Equals(newRegistration.modelScale.ToLower())).ToArray<String>();
+                            String[] scale = modelScales.Where(x => x.Equals(newRegistration.modelScale, StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
                             if (scale.Length == 0) {
                                 ModelScaleDao.add(newRegistration.modelScale, ModelScaleDao.getNextSortFlag());
                                 modelScales = ModelScaleDao.getSimpleList().ToList();
@@ -283,7 +283,7 @@ namespace Rejestracja {
                         //ModelClass
                         //Only populate if it should not be derived from model category
                         if (!fieldMap.DeriveClassFromCategory) {
-                            String[] cat = modelClasses.Where(x => x.ToLower().Equals(parsedEntry[fieldMap.ModelClass].ToLower())).ToArray<String>();
+                            String[] cat = modelClasses.Where(x => x.Equals(parsedEntry[fieldMap.ModelClass], StringComparison.CurrentCultureIgnoreCase)).ToArray<String>();
                             if (cat.Length == 1) {
                                 newRegistration.modelClass = cat[0];
                             }
@@ -400,7 +400,7 @@ namespace Rejestracja {
                 using (SQLiteTransaction t = cn.BeginTransaction()) {
                     foreach (RegistrationEntry entry in entries) {
 
-                        matchedCategory = categories.Where(x => x.fullName.ToLower().Equals(entry.modelCategory.ToLower())).ToArray();
+                        matchedCategory = categories.Where(x => x.fullName.Equals(entry.modelCategory, StringComparison.CurrentCultureIgnoreCase)).ToArray();
                         if (matchedCategory.Length > 0) {
                             cm.Parameters["@ModelCategoryId"].Value = matchedCategory[0].id;
                         }

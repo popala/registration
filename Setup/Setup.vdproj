@@ -550,6 +550,28 @@
                                         {
                                         }
                                     }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_B380109762F54C808D88F26C3BCB8237"
+                                    {
+                                    "Name" = "8:templates"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_4BACF3ECDB414ED69547B5736BC37834"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_CC07E1C2DCDE4330BCAE06E26EA3A160"
+                                    {
+                                    "Name" = "8:dokumenty"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_19F6557B5A184069A58413422A6F5088"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
                                     "{9EF0B969-E518-4E46-987F-47570745A589}:_DCED3144922643CCB5DE7B25A388BDC2"
                                     {
                                     "Name" = "8:logs"

@@ -132,9 +132,9 @@ namespace Rejestracja.Utils
             Char authorMarker = 'A';
             String documentHeader = Options.get("DocumentHeader");
 
-            String ageGroup = null;
-            String modelClass = null;
-            String modelCategory = null;
+            String ageGroup = "";
+            String modelClass = "";
+            String modelCategory = "";
             ModelCategory [] category = null;
 
             String outputFileName = null;

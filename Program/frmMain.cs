@@ -456,13 +456,13 @@ namespace Rejestracja {
                 item.ToolTipText = "";
 
                 //Check if model category is listed in the resources
-                ModelCategory [] catFound = modelCategories.Where(x => x.fullName.ToLower().Equals(item.SubItems[9].Text.ToLower())).ToArray();
+                ModelCategory [] catFound = modelCategories.Where(x => x.fullName.Equals(item.SubItems[9].Text, StringComparison.CurrentCultureIgnoreCase)).ToArray();
                 if (catFound.Length == 0) {
                     sb.Append("Kategoria modelu nie znaleziona w konfiguracji. ");
                     badEntryCount++;
                     highlightErrorCell(item, 9);
                 }
-                else if (!catFound[0].modelClass.ToLower().Equals(item.SubItems[10].Text.ToLower())) {
+                else if (!catFound[0].modelClass.Equals(item.SubItems[10].Text, StringComparison.CurrentCultureIgnoreCase)) {
                     if (sb.Length == 0) {
                         badEntryCount++;
                     }
@@ -471,7 +471,7 @@ namespace Rejestracja {
                     highlightErrorCell(item, 10);
                 }
 
-                AgeGroup [] agFound = ageGroups.Where(x => x.name.ToLower().Equals(item.SubItems[7].Text.ToLower())).ToArray();
+                AgeGroup [] agFound = ageGroups.Where(x => x.name.Equals(item.SubItems[7].Text, StringComparison.CurrentCultureIgnoreCase)).ToArray();
                 if(agFound.Length == 0) {
                     if (sb.Length == 0) {
                         badEntryCount++;
