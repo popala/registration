@@ -40,5 +40,18 @@ namespace Rejestracja.Data.Objects {
             this.scale = scale;
             this.modelerId = modelerId;
         }
+
+        public bool Equals(Model m) {
+            if(m == null) {
+                return false;
+            }
+
+            return (
+                this.id == m.id &&
+                this.name.Equals(m.name, StringComparison.CurrentCultureIgnoreCase) &&
+                this.publisher.Equals(m.publisher, StringComparison.CurrentCultureIgnoreCase) &&
+                this.scale.Equals(m.scale, StringComparison.CurrentCultureIgnoreCase) &&
+                this.modelerId == m.modelerId);
+        }
     }
 }

@@ -30,6 +30,7 @@ namespace Rejestracja {
         private bool _showSettingsForm = false;
         private ListViewItem _selectedItem = null;
         private bool _refreshList = false;
+        private bool _loadingList = false;
 
         public void changeCategoryInSelected(int categoryId) {
             Category category = CategoryDao.get(categoryId);
@@ -302,6 +303,7 @@ namespace Rejestracja {
 
         private void loadRegistrationList(String searchValue) {
 
+            this._loadingList = true;
             Application.UseWaitCursor = true;
             lvEntries.BeginUpdate();
 
@@ -325,6 +327,7 @@ namespace Rejestracja {
 
             lvEntries.EndUpdate();
             Application.UseWaitCursor = false;
+            this._loadingList = false;
         }
 
         private void loadSortedRegistrationList(String searchValue) {
@@ -388,7 +391,7 @@ namespace Rejestracja {
 
             frmRegistrationEntry f = new frmRegistrationEntry();
             f.StartPosition = FormStartPosition.CenterParent;
-            f.loadModel(entryId, -1);
+            f.loadRegistrationEntry(entryId);
             f.ShowDialog(this);
 
             try {
@@ -716,6 +719,7 @@ namespace Rejestracja {
         }
 
         private void lvEntries_ItemChecked(object sender, ItemCheckedEventArgs e) {
+
             if (e.Item.Checked) {
                 mnuRSelected.Enabled = true;
                 tsBtnPrintSelected.Enabled = true;

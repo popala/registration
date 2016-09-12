@@ -93,6 +93,32 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
+        public static Registration get(int modelId, int categoryId) {
+            Registration ret = null;
+
+            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, TmStamp, ModelId, CategoryId, CategoryName, AgeGroupName FROM Registration WHERE ModelId = @ModelId AND CategoryId = @CategoryId", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                cm.Parameters.Add("@ModelId", DbType.Int32).Value = modelId;
+                cm.Parameters.Add("@CategoryId", DbType.Int32).Value = categoryId;
+
+                using(SQLiteDataReader dr = cm.ExecuteReader()) {
+                    if(dr.Read())
+                        ret = new Registration(
+                            dr.GetInt32(dr.GetOrdinal("Id")),
+                            (DateTime)dr["TmStamp"],
+                            dr.GetInt32(dr.GetOrdinal("ModelId")),
+                            dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                            dr["CategoryName"].ToString(),
+                            dr["AgeGroupName"].ToString()
+                        );
+                }
+            }
+            return ret;
+        }
+
         public static Registration get(int registrationId) {
             Registration ret = null;
 
@@ -127,6 +153,33 @@ namespace Rejestracja.Data.Dao {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.Parameters.Add("@Id", DbType.Int32).Value = id;
+                cm.ExecuteNonQuery();
+            }
+        }
+
+        public static void delete(int modelId, String categoryName) {
+            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using(SQLiteCommand cm = new SQLiteCommand(
+                    @"DELETE FROM Registration WHERE ModelId = @ModelId AND CategoryName = @CategoryName", cn)) {
+
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+                cm.Parameters.Add("@ModelId", DbType.Int32).Value = modelId;
+                cm.Parameters.Add("@CategoryName", DbType.String).Value = categoryName;
+                cm.ExecuteNonQuery();
+            }
+        }
+
+        public static void delete(int modelId, int categoryId) {
+            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using(SQLiteCommand cm = new SQLiteCommand(
+                    @"DELETE FROM Results WHERE RegistrationId IN(SELECT Id FROM Registration WHERE ModelId = @ModelId AND CategoryId = @CategoryId);
+                    DELETE FROM Registration WHERE ModelId = @ModelId AND CategoryId = @CategoryId;", cn)) {
+
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+                cm.Parameters.Add("@ModelId", DbType.Int32).Value = modelId;
+                cm.Parameters.Add("@CategoryId", DbType.Int32).Value = categoryId;
                 cm.ExecuteNonQuery();
             }
         }

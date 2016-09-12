@@ -36,5 +36,19 @@ namespace Rejestracja.Data.Objects {
             this.yearOfBirth = yearOfBirth;
             this.email = email;
         }
+
+        public bool Equals(Modeler m) {
+            if(m == null) {
+                return false;
+            }
+
+            return (
+                this.id == m.id &&
+                this.firstName.Equals(m.firstName, StringComparison.CurrentCultureIgnoreCase) &&
+                this.lastName.Equals(m.lastName, StringComparison.CurrentCultureIgnoreCase) &&
+                this.clubName.Equals(m.clubName, StringComparison.CurrentCultureIgnoreCase) &&
+                this.yearOfBirth == m.yearOfBirth &&
+                this.email.Equals(m.email, StringComparison.CurrentCultureIgnoreCase));
+        }
     }
 }

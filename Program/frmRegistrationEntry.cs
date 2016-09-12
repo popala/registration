@@ -26,8 +26,9 @@ namespace Rejestracja
     {
         public frmMain _parentForm;
         private List<AgeGroup> _ageGroups;
-        //private List<Category> _categories;
-        //private List<Class> _classes;
+        private bool _loading = false;
+        
+        private const String IMPORTED_CLS_TITLE = "Kategorie z importu";
 
         public void setParent(frmMain parentForm) {
             this._parentForm = parentForm;
@@ -50,25 +51,30 @@ namespace Rejestracja
             }
 
             lvCategories.DoubleClickDoesCheck = false;
-            resetControls();
+            resetAddControls();
         }
 
         private void loadCategoryList() {
+
+            this._loading = true;
+            lvCategories.BeginUpdate();
+
             List<Category> categories = CategoryDao.getList(true).ToList();
             List<Class> classes = ClassDao.getList().ToList();
-            classes.Add(new Class(-1, "Kategorie z importu"));
+            classes.Add(new Class(-1, IMPORTED_CLS_TITLE));
 
             foreach(Category category in categories) {
                 if(category.id < 0) {
-                    category.className = "Kategorie z importu";
+                    category.className = IMPORTED_CLS_TITLE;
                 }
-                Class c = this.classes.Find(x => x.name.Equals(category.className, StringComparison.CurrentCultureIgnoreCase));
+                Class c = classes.Find(x => x.name.Equals(category.className, StringComparison.CurrentCultureIgnoreCase));
                 c.categories.Add(category);
             }
 
             //Categories broken up by class
             lvCategories.Clear();
             lvCategories.Columns.Add("Kod");
+            lvCategories.Columns.Add("Kat.Id");
             lvCategories.Columns.Add("Kategoria");
             lvCategories.Columns.Add("Grupa Wiekowa");
 
@@ -84,9 +90,9 @@ namespace Rejestracja
                 group.Tag = cls.id;
                 lvCategories.Groups.Add(group);
 
-                foreach(Category cat in cls.categories) {
-                    ListViewItem item = new ListViewItem(new String[] { cat.code, cat.name, "" }, group);
-                    item.Name = cat.name;
+                foreach(Category category in cls.categories) {
+                    ListViewItem item = new ListViewItem(new String[] { category.code, category.id.ToString(), category.name, "" }, group);
+                    item.Name = category.name;
                     lvCategories.Items.Add(item);
                 }
             }
@@ -94,9 +100,13 @@ namespace Rejestracja
             foreach(ColumnHeader header in lvCategories.Columns) {
                 header.Width = -2;
             }
+            lvCategories.Columns[1].Width = 0;
+
+            lvCategories.EndUpdate();
+            this._loading = false;
         }
 
-        private void resetControls() {
+        private void resetAddControls() {
 
             //General
             this._ageGroups = AgeGroupDao.getList().ToList();
@@ -108,7 +118,9 @@ namespace Rejestracja
             txtEmail.Text = "";
             txtFirstName.Text = "";
             txtLastName.Text = "";
-            txtModelClub.Text = "Indywidualnie";
+            if(txtModelClub.Text.Length == 0) {
+                txtModelClub.Text = "Indywidualnie";
+            }
             
             cboYearOfBirth.Items.Clear();
             for (int i = 1900; i < DateTime.Now.Year; i++)
@@ -140,50 +152,31 @@ namespace Rejestracja
             txtEmail.Text = "";
             txtModelClub.Text = "";
             cboYearOfBirth.SelectedIndex = cboYearOfBirth.FindString("1970");
-            //txtEntryId.Text = "";
             cboEntryId.Items.Clear();
             txtModelName.Text = "";
             cboModelPublisher.SelectedIndex = -1;
             cboModelScale.SelectedIndex = cboModelScale.FindString("1:33");
+            loadCategoryList();
         }
 
-        public void loadModel(int registrationId, int modelId)
-        {
-            clear();
+        private void removeCategoriesFromList(List<ListViewItem> itemsToRemove) {
+            this._loading = true;
+            lvCategories.BeginUpdate();
 
-            Model model = null;
-
-            if(modelId > -1) {
-                model = ModelDao.get(modelId);
-            }
-            else {
-                Registration reg = RegistrationDao.get(registrationId);
-                if(reg != null) {
-                    model = ModelDao.get(reg.modelId);
-                }
+            foreach(ListViewItem item in itemsToRemove) {
+                Debug.Print("Removing not checked item {0}", item.Text);
+                lvCategories.Items.Remove(item);
             }
 
-            if(model == null)
-            {
-                MessageBox.Show("Model/rejestracja nie znaleziona!");
-                this.Close();
-            }
+            this._loading = false;
+            lvCategories.EndUpdate();
+        }
 
-            //Model info
-            Modeler modeler = ModelerDao.get(model.modelerId);
-            foreach(Model m in ModelDao.getList(model.modelerId)) {
-                cboEntryId.Items.Add(new ComboBoxItem(m.id, m.id.ToString()));
-                if(m.id == model.id) {
-                    cboEntryId.SelectedIndex = cboEntryId.Items.Count - 1;
-                    txtModelName.Text = m.name;
-                    cboModelPublisher.SelectedIndex = cboModelPublisher.FindString(m.publisher.ToLower());
-                    if(cboModelPublisher.SelectedIndex < 0)
-                        cboModelPublisher.Text = m.publisher;
-                    cboModelScale.SelectedIndex = cboModelScale.FindString(m.scale);
-                }
-            }
+        private void loadModeler(int modelerId) {
+            
+            Modeler modeler = ModelerDao.get(modelerId);
 
-            //Modeler info
+            //Load modeler info
             txtModelerId.Text = modeler.id.ToString();
             txtFirstName.Text = modeler.firstName;
             txtLastName.Text = modeler.lastName;
@@ -191,48 +184,140 @@ namespace Rejestracja
             txtModelClub.Text = modeler.clubName;
             cboYearOfBirth.SelectedIndex = cboYearOfBirth.FindString(modeler.yearOfBirth.ToString());
 
-            //Registration
-            foreach(ListViewItem item in lvCategories.CheckedItems) {
-                item.Checked = false;
-                item.SubItems[2].Text = "";
+            //Load model IDs registered to the modeler
+            cboEntryId.Items.Clear();
+            foreach(Model m in ModelDao.getList(modelerId)) {
+                cboEntryId.Items.Add(new ComboBoxItem(m.id, m.id.ToString()));
+            }
+        }
+
+        private void loadModel(int modelId, Model model) {
+            
+            Model m;
+
+            if(modelId > -1) {
+                m = ModelDao.get(modelId);
+            }
+            else {
+                m = model;
             }
 
-            //Check the assigned categories
-            //If model is not assigned to an imported category, not in the system, then hide the entire class
-            bool removeImported = true;
+            //Load model textboxes
+            cboEntryId.SelectedIndex = cboEntryId.FindString(m.id.ToString());
+            txtModelName.Text = m.name;
+            cboModelPublisher.SelectedIndex = cboModelPublisher.FindString(m.publisher.ToLower());
+            if(cboModelPublisher.SelectedIndex < 0) {
+                cboModelPublisher.Text = m.publisher;
+            }
+            cboModelScale.SelectedIndex = cboModelScale.FindString(m.scale);
 
+            //Load registration info if any available
+            //Check the assigned categories. If model is not assigned to an imported category, not in the system, then hide the entire class
+
+            loadCategoryList();
+
+            bool removeImported = true;
+            List<ListViewItem> itemsToRemove;
             List<Registration> regList = RegistrationDao.getList(model.id).ToList();
+
             foreach(Registration reg in regList) {
-                ListViewItem item = lvCategories.Items[lvCategories.Items.IndexOfKey(reg.categoryName)];
-                item.Checked = true;
-                item.SubItems[2].Text = reg.ageGroupName;
-                if((int)item.Group.Tag < 0) {
+                ListViewItem cat = lvCategories.Items[lvCategories.Items.IndexOfKey(reg.categoryName)];
+                Debug.Print("Checking {0}", cat.Text);
+                cat.Checked = true;
+                cat.SubItems[2].Text = reg.ageGroupName;
+                cat.Tag = String.Format("{0}", reg.id);
+                if((int)cat.Group.Tag < 0) {
                     removeImported = false;
                 }
+
+                //Hide categories in class if one category is already selected
+                itemsToRemove = new List<ListViewItem>();
+                foreach(ListViewItem item in cat.Group.Items) {
+                    if(item != cat) {
+                        itemsToRemove.Add(item);
+                    }
+                }
+
+                removeCategoriesFromList(itemsToRemove);
             }
-            
+
             //Remove imported categories if they're not selected
             if(removeImported) {
                 foreach(ListViewGroup group in lvCategories.Groups) {
                     if((int)group.Tag < 0) {
-                        List<ListViewItem> itemsToRemove = new List<ListViewItem>();
+                        itemsToRemove = new List<ListViewItem>();
                         foreach(ListViewItem item in group.Items) {
                             itemsToRemove.Add(item);
                         }
                         foreach(ListViewItem item in itemsToRemove) {
+                            Debug.Print("Removing not checked item {0}", item.Text);
                             lvCategories.Items.Remove(item);
                         }
                     }
                 }
             }
+        }
+
+        public void loadRegistrationEntry(int registrationId)
+        {
+            Registration reg = RegistrationDao.get(registrationId);
+
+            if(reg == null)
+            {
+                MessageBox.Show("Rejestracja nie znaleziona!");
+                this.Close();
+            }
+
+            //Populate registration info
+            Model model = ModelDao.get(reg.modelId);
+            loadModeler(model.modelerId);
+            loadModel(-1, model);
             
-            btnAddPrintModel.Visible = false;
+            //Reset controls
             btnNewModel.Visible = false;
             btnNewRegistration.Visible = false;
-            chkPrintRegistrationCard.Visible = false;
+
+            btnAddPrintModel.Text = "Zapisz zmiany";
+            btnAddPrintModel.Enabled = false;
+
+            btnAddModeler.Text = "Zapisz zmiany";
+            btnAddModeler.Enabled = false;
 
             this.Text = "Szczegóły Rejestracji";
             validateExistingEntry();
+        }
+
+        private bool modelerChanged() {
+            Modeler updatedModeler = new Modeler(int.Parse(txtModelerId.Text), txtFirstName.Text, txtLastName.Text, txtModelClub.Text, ((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
+            Modeler currentModeler = ModelerDao.get(updatedModeler.id);
+
+            return !currentModeler.Equals(currentModeler);
+
+        }
+
+        private bool modelChanged() {
+            Model updatedModel = new Model(((ComboBoxItem)cboEntryId.SelectedItem).id, txtModelName.Text, cboModelPublisher.Text, cboModelScale.Text, int.Parse(txtModelerId.Text));
+            Model currentModel = ModelDao.get(updatedModel.id);
+
+            return !currentModel.Equals(updatedModel);
+        }
+
+        private bool registrationChanged() {
+            List<Registration> updatedRegistration = new List<Registration>();
+            List<Registration> currentReg = RegistrationDao.getList(((ComboBoxItem)cboEntryId.SelectedItem).id).ToList();
+
+            foreach(ListViewItem item in lvCategories.Items) {
+                if(item.Checked) {
+                    int classId = (int)item.Group.Tag;
+                    int categoryId = (int)item.Tag;
+                }
+                else {
+                    if(item.Tag != null) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private void validateExistingEntry()
@@ -491,45 +576,57 @@ namespace Rejestracja
         }
 
         private void btnNewRegistration_Click(object sender, EventArgs e) {
-            resetControls();
+            resetAddControls();
             txtEmail.Focus();
         }
 
         private void lvCategories_ItemCheck(object sender, ItemCheckEventArgs e) {
-            
-            ListViewItem checkedItem = lvCategories.Items[e.Index];
-            ListViewGroup group = checkedItem.Group;
 
-            if(checkedItem.ForeColor == System.Drawing.Color.LightGray) {
-                e.NewValue = CheckState.Unchecked;
+            if(_loading) {
                 return;
             }
 
+            ListViewItem checkedItem = lvCategories.Items[e.Index];
+            ListViewGroup group = checkedItem.Group;
+
+            Debug.Print("ItemCheck {0}, {1}", checkedItem.Text, checkedItem.Checked);
+
+            //Remove all unchecked items in the selected class
             if(!checkedItem.Checked) {
                 
                 Modeler modeler = ModelerDao.get(int.Parse(txtModelerId.Text));
                 int age = DateTime.Now.Year - modeler.yearOfBirth;    
                 String ageGroupName = _ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
 
-                checkedItem.BackColor = System.Drawing.Color.AliceBlue;
-                checkedItem.SubItems[2].Text = ageGroupName;
-
+                List<ListViewItem> itemsToRemove = new List<ListViewItem>();
                 foreach(ListViewItem item in group.Items) {
                     if(item != checkedItem) {
-                        item.ForeColor = System.Drawing.Color.LightGray;
+                        itemsToRemove.Add(item);
                     }
                 }
+
+                removeCategoriesFromList(itemsToRemove);
+
                 checkedItem.EnsureVisible();
             }
+            //Reload the category list for selected class
             else {
-                checkedItem.BackColor = System.Drawing.Color.White;
-                checkedItem.SubItems[2].Text = "";
+                Debug.Print("Removing checked item");
+                lvCategories.Items.Remove(checkedItem);
+                //Load categories defined in the system
+                List<Category> categories = CategoryDao.getList(true).Where(x => x.className.Equals(group.Name, StringComparison.CurrentCultureIgnoreCase)).ToList();
 
-                foreach(ListViewItem item in group.Items) {
-                    if(item != checkedItem) {
-                        item.ForeColor = System.Drawing.Color.Black;
-                    }
+                foreach(Category category in categories) {
+                    ListViewItem item = new ListViewItem(new String[] { category.code, category.id.ToString(), category.name, "" }, group);
+                    item.Name = category.name;
+                    Debug.Print("Adding {0}", item.Text);
+                    lvCategories.Items.Add(item);
                 }
+
+                foreach(ColumnHeader header in lvCategories.Columns) {
+                    header.Width = -2;
+                }
+                lvCategories.Columns[1].Width = 0;
             }
         }
 
