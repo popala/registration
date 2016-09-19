@@ -32,6 +32,7 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpNewFile = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.txtContestTitle = new System.Windows.Forms.TextBox();
             this.txtDataFileName = new System.Windows.Forms.TextBox();
@@ -39,7 +40,6 @@
             this.tpOpenFile = new System.Windows.Forms.TabPage();
             this.lvFileList = new System.Windows.Forms.ListView();
             this.lblError = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tpNewFile.SuspendLayout();
             this.tpOpenFile.SuspendLayout();
@@ -68,6 +68,9 @@
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tpNewFile);
             this.tabControl1.Controls.Add(this.tpOpenFile);
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
@@ -92,6 +95,15 @@
             this.tpNewFile.Text = "Stwórz Nowy Plik";
             this.tpNewFile.UseVisualStyleBackColor = true;
             // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(22, 20);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(481, 32);
+            this.label2.TabIndex = 18;
+            this.label2.Text = "Program nie ma zapamiętanego pliku danych. Proszę wpisać nazwę z której utworzy n" +
+    "owy plik danych lub na panelu \"Otwórz Plik\" wybrać istniejący już plik.\r\n";
+            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -103,6 +115,8 @@
             // 
             // txtContestTitle
             // 
+            this.txtContestTitle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtContestTitle.Location = new System.Drawing.Point(114, 59);
             this.txtContestTitle.MaxLength = 256;
             this.txtContestTitle.Name = "txtContestTitle";
@@ -112,6 +126,8 @@
             // 
             // txtDataFileName
             // 
+            this.txtDataFileName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDataFileName.Location = new System.Drawing.Point(114, 85);
             this.txtDataFileName.MaxLength = 200;
             this.txtDataFileName.Name = "txtDataFileName";
@@ -142,6 +158,9 @@
             // 
             // lvFileList
             // 
+            this.lvFileList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lvFileList.FullRowSelect = true;
             this.lvFileList.Location = new System.Drawing.Point(3, 3);
             this.lvFileList.Name = "lvFileList";
@@ -154,6 +173,7 @@
             // 
             // lblError
             // 
+            this.lblError.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lblError.AutoSize = true;
             this.lblError.ForeColor = System.Drawing.Color.Red;
             this.lblError.Location = new System.Drawing.Point(12, 266);
@@ -161,15 +181,6 @@
             this.lblError.Size = new System.Drawing.Size(39, 13);
             this.lblError.TabIndex = 5;
             this.lblError.Text = "lblError";
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(22, 20);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(481, 32);
-            this.label2.TabIndex = 18;
-            this.label2.Text = "Program nie ma zapamiętanego pliku danych. Proszę wpisać nazwę z której utworzy n" +
-    "owy plik danych lub na panelu \"Otwórz Plik\" wybrać istniejący już plik.\r\n";
             // 
             // frmNewDataFile
             // 

@@ -30,7 +30,6 @@ namespace Rejestracja {
         private bool _showSettingsForm = false;
         private ListViewItem _selectedItem = null;
         private bool _refreshList = false;
-        private bool _loadingList = false;
 
         public void changeCategoryInSelected(int categoryId) {
             Category category = CategoryDao.get(categoryId);
@@ -53,7 +52,7 @@ namespace Rejestracja {
 
         public frmMain() {
             InitializeComponent();
-            lvEntries.DoubleClickDoesCheck = false;
+            //lvEntries.DoubleClickDoesCheck = false;
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e) {
@@ -114,7 +113,7 @@ namespace Rejestracja {
                     fs.StartPosition = FormStartPosition.CenterScreen;
                     fs.ShowDialog(this);
                     setViewMenus(!Options.get("RegistrationView").Equals("groupped"));
-                    populateUI();
+                    refreshScreen();
                     uiEnabled(true);
                     this._showSettingsForm = false;
                 }
@@ -139,7 +138,7 @@ namespace Rejestracja {
             try {
                 //DATA FILE
                 DataSource ds = new DataSource();
-                populateUI();
+                refreshScreen();
                 uiEnabled(true);
             }
             catch (Exception err) {
@@ -190,7 +189,7 @@ namespace Rejestracja {
             lvEntries.ShowItemToolTips = true;
 
             lvEntries.Columns.Clear();
-            headers = new String[] { "Nr Rej.", "Dodane", "Email", "Imię", "Nazwisko", "Rok Ur.", "Klub", "Grupa Wiekowa", "KK", "Kategoria", "Klasa", "Nazwa Modelu", "Skala", "Wydawnictwo" };
+            headers = new String[] { "Nr Rej.", "Data Rej.", "Email", "Imię", "Nazwisko", "Rok Ur.", "Klub", "GW", "KK", "Kategoria", "Klasa", "Nazwa Modelu", "Skala", "Wydawnictwo" };
             foreach (String header in headers) {
                 lvEntries.Columns.Add(header.Trim());
             }
@@ -228,17 +227,6 @@ namespace Rejestracja {
             lvStats.Columns.Add("Nazwa");
             lvStats.Columns.Add("Wartość");
             lvStats.Columns[1].TextAlign = HorizontalAlignment.Right;
-        }
-
-        public void populateUI() {
-
-            Application.UseWaitCursor = true;
-
-            loadRegistrationList(null);
-            loadResultList();
-            loadStats();
-
-            Application.UseWaitCursor = false;
         }
 
         private void loadResultList() {
@@ -301,9 +289,8 @@ namespace Rejestracja {
             }
         }
 
-        private void loadRegistrationList(String searchValue) {
+        private void loadRegistrationList() {
 
-            this._loadingList = true;
             Application.UseWaitCursor = true;
             lvEntries.BeginUpdate();
 
@@ -311,10 +298,10 @@ namespace Rejestracja {
             lvEntries.Groups.Clear();
 
             if (mnuRVStandard.Checked) {
-                loadSortedRegistrationList(searchValue);
+                loadSortedRegistrationList(tsTxtSearch.Text);
             }
             else {
-                loadGrouppedRegistrationList(searchValue);
+                loadGrouppedRegistrationList(tsTxtSearch.Text);
             }
 
             if (mnuRVAutoWidth.Checked) {
@@ -327,7 +314,6 @@ namespace Rejestracja {
 
             lvEntries.EndUpdate();
             Application.UseWaitCursor = false;
-            this._loadingList = false;
         }
 
         private void loadSortedRegistrationList(String searchValue) {
@@ -385,47 +371,18 @@ namespace Rejestracja {
             }
         }
 
-        private void editItem(ListViewItem item) {
-            int entryId = (int)item.Tag;
+        private void editRegistrationItem(ListViewItem item) {
+            int modelId = (int)item.Tag;
             bool showOnlyInvalid = (tsBtnErrorCount.Visible && tsBtnErrorCount.Checked);
 
             frmRegistrationEntry f = new frmRegistrationEntry();
             f.StartPosition = FormStartPosition.CenterParent;
-            f.loadRegistrationEntry(entryId);
+            f.setParent(this);
+            f.loadRegistration(modelId);
             f.ShowDialog(this);
 
             try {
-                lvEntries.BeginUpdate();
-
-                RegistrationEntry entry = RegistrationEntryDao.get(entryId);
-                //Check if category changed in Groupped View
-                if(mnuRVGroupped.Checked && !entry.category.name.Equals(item.SubItems[9].Text, StringComparison.CurrentCultureIgnoreCase)) {
-                    String cat = item.Group.Header;
-                    loadRegistrationList(tsTxtSearch.Text);
-                    foreach(ListViewGroup group in lvEntries.Groups) {
-                        if(group.Header.Equals(cat)) {
-                            if(group.Items.Count > 0) {
-                                group.Items[0].Selected = true;
-                                group.Items[0].EnsureVisible();
-                            }
-                            break;
-                        }
-                    }
-                }
-                else {
-                    item.SubItems[2].Text = entry.modeler.email;
-                    item.SubItems[3].Text = entry.modeler.firstName;
-                    item.SubItems[4].Text = entry.modeler.lastName;
-                    item.SubItems[5].Text = entry.modeler.yearOfBirth.ToString();
-                    item.SubItems[6].Text = entry.modeler.clubName;
-                    item.SubItems[7].Text = entry.registration.ageGroupName;
-                    item.SubItems[8].Text = entry.model.name;
-                    item.SubItems[9].Text = entry.category.name;
-                    item.SubItems[10].Text = entry.category.className;
-                    item.SubItems[11].Text = entry.model.scale;
-                    item.SubItems[12].Text = entry.model.publisher;
-                }
-                highlightInvalidRegistrationEntries();
+                refreshScreen();
                 if(showOnlyInvalid && tsBtnErrorCount.Visible) {
                     tsBtnErrorCount.Checked = true;
                     tsBtnErrorCount_Click(tsBtnErrorCount, new EventArgs());
@@ -433,13 +390,18 @@ namespace Rejestracja {
                 else {
                     tsBtnClearFilter_Click(tsBtnErrorCount, new EventArgs());
                 }
+
+                foreach(ListViewItem it in lvEntries.Items) {
+                    if((int)it.Tag == modelId) {
+                        it.EnsureVisible();
+                        it.Selected = true;
+                        break;
+                    }
+                }
             }
             catch(Exception err) {
                 LogWriter.error(err);
                 MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally {
-                lvEntries.EndUpdate();
             }
         }
 
@@ -458,7 +420,7 @@ namespace Rejestracja {
         private void highlightInvalidRegistrationEntries() {
             List<Category> modelCategories = CategoryDao.getList().ToList();
             List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList();
-            //int errorCount = 0;
+            
             int badEntryCount = 0;
             int year = DateTime.Now.Year;
             bool checkAgeGroupAge = (Options.get("ValidateAgeGroup") == null || !Options.get("ValidateAgeGroup").ToLower().Equals("false"));
@@ -534,7 +496,7 @@ namespace Rejestracja {
 
             switch (e.KeyCode) {
                 case Keys.Enter:
-                    loadRegistrationList(tsTxtSearch.Text);
+                    refreshScreen();
                     break;
 
                 default:
@@ -553,7 +515,7 @@ namespace Rejestracja {
             if (hitTest.Item != null) {
                 ListViewItem item = hitTest.Item;
                 int index = item.Index;
-                editItem(item);
+                editRegistrationItem(item);
             }
         }
 
@@ -658,16 +620,14 @@ namespace Rejestracja {
             if (this._selectedItem == null) {
                 return;
             }
-            editItem(this._selectedItem);
+            editRegistrationItem(this._selectedItem);
         }
 
         private void deleteRegistrationItem(int entryId) {
             try {
                 RegistrationEntryDao.delete(entryId);
-                //lvEntries.SelectedItems[0].Remove();
                 lvEntries.Items.Remove(this._selectedItem);
                 this._selectedItem = null;
-                //highlightInvalidRegistrationEntries();
             }
             catch (Exception err) {
                 LogWriter.error(err);
@@ -683,8 +643,15 @@ namespace Rejestracja {
             if (MessageBox.Show("Usunięcie rejestracji jest nieodwracalne.  Jesteś pewien?", "Usuń Rejestrację", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation) != System.Windows.Forms.DialogResult.OK) {
                 return;
             }
-            int entryId = int.Parse(this._selectedItem.SubItems[0].Text);
-            deleteRegistrationItem(entryId);
+            /*
+             * TODO: 
+             * - Check if this is the only registration for this model
+             * - If so remove the model then check if this was the only model for the modeler
+             * - If so remove the modeler
+            */
+
+            int modelId = int.Parse(this._selectedItem.SubItems[0].Text);
+            deleteRegistrationItem(modelId);
             highlightInvalidRegistrationEntries();
         }
 
@@ -908,7 +875,7 @@ namespace Rejestracja {
             int resultId = int.Parse(lvResults.SelectedItems[0].SubItems[0].Text);
 
             ResultDao.delete(resultId);
-            loadResultList();
+            refreshScreen();
         }
 
         private void loadStats() {
@@ -952,12 +919,12 @@ namespace Rejestracja {
             f.StartPosition = FormStartPosition.CenterScreen;
             f._parentForm = this;
             f.ShowDialog(this);
-            loadRegistrationList(tsTxtSearch.Text);
+            refreshScreen();
         }
 
         private void txtFilterTimer_Tick(object sender, EventArgs e) {
             _txtFilterTimer.Stop();
-            loadRegistrationList(tsTxtSearch.Text);
+            refreshScreen();
         }
 
         private void lvEntries_KeyDown(object sender, KeyEventArgs e) {
@@ -976,7 +943,7 @@ namespace Rejestracja {
                     if (lvEntries.SelectedItems.Count == 0) {
                         return;
                     }
-                    editItem(lvEntries.SelectedItems[0]);
+                    editRegistrationItem(lvEntries.SelectedItems[0]);
                     break;
             }
         }
@@ -1004,7 +971,7 @@ namespace Rejestracja {
             }
             mnuRVAutoWidth.Checked = Options.get("ColumnWidth").Equals("auto");
 
-            populateUI();
+            refreshScreen();
             uiEnabled(true);
             this._showSettingsForm = false;
         }
@@ -1034,7 +1001,7 @@ namespace Rejestracja {
 
                 Options.set("RegistrationView", "standard");
             }
-            loadRegistrationList(tsTxtSearch.Text);
+            refreshScreen();
         }
 
         private void lvEntries_ColumnClick(object sender, ColumnClickEventArgs e) {
@@ -1054,7 +1021,7 @@ namespace Rejestracja {
             Options.set("RegistrationSortColumn", _registrationSortColumn.ToString());
             Options.set("RegistrationSortOrder", _registrationSortAscending ? "0" : "1");
 
-            loadRegistrationList(tsTxtSearch.Text);
+            refreshScreen();
         }
 
         private void mnuRsCategoryDiplomas_Click(object sender, EventArgs e) {
@@ -1114,7 +1081,9 @@ namespace Rejestracja {
             frmAddResults f = new frmAddResults();
             f.StartPosition = FormStartPosition.CenterParent;
             f.ShowDialog(this);
-            loadResultList();
+            if(tabControl1.SelectedTab.Text.Equals("Wyniki")) {
+                refreshScreen();
+            }
         }
 
         private void mnuRsAwardDiplomas_Click(object sender, EventArgs e) {
@@ -1173,9 +1142,7 @@ namespace Rejestracja {
             frmMergeCategory f = new frmMergeCategory();
             f.StartPosition = FormStartPosition.CenterParent;
             f.ShowDialog(this);
-            loadRegistrationList(tsTxtSearch.Text);
-            loadResultList();
-            loadStats();
+            refreshScreen();
         }
 
         private void mnuRCPrintDiploma_Click(object sender, EventArgs e) {
@@ -1250,12 +1217,10 @@ namespace Rejestracja {
             bool showOnlyErrors = tsBtnErrorCount.Visible && tsBtnErrorCount.Checked;
             if (this._refreshList) {
 
-                loadRegistrationList(tsTxtSearch.Text);
+                refreshScreen();
                 if (showOnlyErrors && tsBtnErrorCount.Visible) {
                     hideValidEntries();
                 }
-                loadResultList();
-                loadStats();
             }
         }
 
@@ -1268,7 +1233,6 @@ namespace Rejestracja {
             }
 
             Application.UseWaitCursor = true;
-            lvEntries.BeginUpdate();
             uiEnabled(false);
 
             try {
@@ -1278,20 +1242,17 @@ namespace Rejestracja {
                 }
                 if (tsBtnErrorCount.Checked && lvEntries.Items.Count == 0) {
                     tsBtnErrorCount.Checked = false;
-                    loadRegistrationList(null);
+                    refreshScreen();
                 }
                 else {
                     highlightInvalidRegistrationEntries();
                 }
-                loadResultList();
-                loadStats();
             }
             catch (Exception err) {
                 LogWriter.error(err);
                 MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally {
-                lvEntries.EndUpdate();
                 uiEnabled(true);
                 Application.UseWaitCursor = false;
             }
@@ -1301,8 +1262,7 @@ namespace Rejestracja {
             frmSettings f = new frmSettings();
             f.StartPosition = FormStartPosition.CenterParent;
             f.ShowDialog(this);
-            loadResultList();
-            highlightInvalidRegistrationEntries();
+            refreshScreen();
         }
 
         private void tsTxtSearch_TextChanged(object sender, EventArgs e) {
@@ -1324,15 +1284,17 @@ namespace Rejestracja {
                 return;
             }
             if (e.KeyCode == Keys.F5) {
-                loadRegistrationList(tsTxtSearch.Text);
-                loadResultList();
-                loadStats();
+                refreshScreen();
+                //loadRegistrationList();
+                //loadResultList();
+                //loadStats();
                 return;
             }
             if (e.KeyCode == Keys.Escape) {
                 if (tsTxtSearch.Text.Length > 0) {
                     tsTxtSearch.Text = "";
-                    loadRegistrationList(null);
+                    //loadRegistrationList(null);
+                    refreshScreen();
                 }
             }
         }
@@ -1408,7 +1370,6 @@ namespace Rejestracja {
         private void tsBtnErrorCount_Click(object sender, EventArgs e) {
             
             Application.UseWaitCursor = true;
-            lvEntries.BeginUpdate();
 
             if (tsBtnErrorCount.Checked) {
                 tsTxtSearch.Text = "";
@@ -1420,7 +1381,6 @@ namespace Rejestracja {
             else {
                 tsBtnClearFilter_Click(sender, e);
             }
-            lvEntries.EndUpdate();
             Application.UseWaitCursor = false;
         }
 
@@ -1480,9 +1440,7 @@ namespace Rejestracja {
         }
 
         private void tsBtnRefresh_Click(object sender, EventArgs e) {
-            loadRegistrationList(tsTxtSearch.Text);
-            loadResultList();
-            loadStats();
+            refreshScreen();
         }
 
         private void tsBtnClearFilter_Click(object sender, EventArgs e) {
@@ -1491,7 +1449,7 @@ namespace Rejestracja {
             tsTxtSearch.Text = "";
             tsTxtSearch.Enabled = true;
             tsBtnErrorCount.Checked = false;
-            loadRegistrationList(null);
+            refreshScreen();
         }
 
         private void tsBtnChangeCategory_Click(object sender, EventArgs e) {
@@ -1526,6 +1484,35 @@ namespace Rejestracja {
             else {
                 Options.set("ColumnWidth", "manual");
             }
+        }
+
+        public void refreshScreen() {
+            switch(tabControl1.SelectedTab.Text) {
+                case "Rejestracja":
+                    loadRegistrationList();
+                    break;
+                case "Wyniki":
+                    loadResultList();
+                    break;
+                case "Posumowanie":
+                    loadStats();
+                    break;
+            }
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e) {
+            switch(tabControl1.SelectedTab.Text) {
+                case "Rejestracja":
+                    tsTxtSearch.Enabled = true;
+                    tsBtnRefresh.Enabled = true;
+                    break;
+                default: 
+                    tsTxtSearch.Enabled = false;
+                    tsBtnRefresh.Enabled = false;
+                    refreshScreen();
+                    break;
+            }
+            
         }
     }
 }

@@ -90,7 +90,7 @@ namespace Rejestracja.Data.Dao
             string sortFieldName;
 
             switch (sortField) { 
-                case 0: sortFieldName = "RegistrationId"; break;
+                case 0: sortFieldName = "ModelId"; break;
                 case 1: sortFieldName = "TmStamp"; break;
                 case 2: sortFieldName = "Email"; break;
                 case 3: sortFieldName = "FirstName"; break;
@@ -144,7 +144,7 @@ namespace Rejestracja.Data.Dao
                         yield return
                             new String[] 
                             {
-                                dr["RegistrationId"].ToString(),
+                                dr["ModelId"].ToString(),
                                 ((DateTime)dr["TmStamp"]).ToString(Resources.DateFormat),
                                 dr["Email"].ToString(),
                                 dr["FirstName"].ToString(),
@@ -199,7 +199,7 @@ namespace Rejestracja.Data.Dao
                         yield return
                             new String[] 
                             {
-                                dr["RegistrationId"].ToString(),
+                                dr["ModelId"].ToString(),
                                 ((DateTime)dr["TmStamp"]).ToString(Resources.DateFormat),
                                 dr["Email"].ToString(),
                                 dr["FirstName"].ToString(),

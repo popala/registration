@@ -89,6 +89,36 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
+        public static void update(Model model) {
+            update(-1, null, null, null, model);
+        }
+
+        public static void update(int id, String name, String publisher, String scale) {
+            update(id, name, publisher, scale, null);
+        }
+
+        private static void update(int id, String name, String publisher, String scale, Model model) {
+            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using(SQLiteCommand cm = new SQLiteCommand(@"UPDATE Models SET Name = @Name, Publisher = @Publisher, Scale = @Scale WHERE Id = @Id", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                if(model == null) {
+                    cm.Parameters.Add("@Name", System.Data.DbType.String, Model.MAX_NAME_LENGTH).Value = name;
+                    cm.Parameters.Add("@Publisher", System.Data.DbType.String, Publisher.MAX_NAME_LENGTH).Value = publisher;
+                    cm.Parameters.Add("@Scale", System.Data.DbType.String, Scale.MAX_NAME_LENGTH).Value = scale;
+                    cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
+                }
+                else {
+                    cm.Parameters.Add("@Name", System.Data.DbType.String, Modeler.MAX_NAME_LENGTH).Value = model.name;
+                    cm.Parameters.Add("@Publisher", System.Data.DbType.String, Publisher.MAX_NAME_LENGTH).Value = model.publisher;
+                    cm.Parameters.Add("@Scale", System.Data.DbType.String, Scale.MAX_NAME_LENGTH).Value = model.scale;
+                    cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = model.id;
+                }
+                cm.ExecuteNonQuery();
+            }
+        }
+
         public static Model get(int id) {
             Model ret = null;
 

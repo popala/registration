@@ -59,9 +59,9 @@ namespace Rejestracja
             this.btnNewRegistration = new System.Windows.Forms.Button();
             this.txtModelerId = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
-            this.btnAddModeler = new System.Windows.Forms.Button();
             this.lvCategories = new Rejestracja.Controls.CustListView();
-            this.cboEntryId = new System.Windows.Forms.ComboBox();
+            this.cboModelId = new System.Windows.Forms.ComboBox();
+            this.lblAgeGroup = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -159,7 +159,7 @@ namespace Rejestracja
             // label8
             // 
             this.label8.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label8.Location = new System.Drawing.Point(12, 263);
+            this.label8.Location = new System.Drawing.Point(12, 221);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(636, 2);
             this.label8.TabIndex = 14;
@@ -169,7 +169,7 @@ namespace Rejestracja
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.label9.Location = new System.Drawing.Point(15, 241);
+            this.label9.Location = new System.Drawing.Point(15, 199);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(58, 13);
             this.label9.TabIndex = 13;
@@ -177,7 +177,7 @@ namespace Rejestracja
             // 
             // txtModelName
             // 
-            this.txtModelName.Location = new System.Drawing.Point(103, 311);
+            this.txtModelName.Location = new System.Drawing.Point(103, 269);
             this.txtModelName.MaxLength = 256;
             this.txtModelName.Name = "txtModelName";
             this.txtModelName.Size = new System.Drawing.Size(371, 20);
@@ -186,7 +186,7 @@ namespace Rejestracja
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(54, 314);
+            this.label10.Location = new System.Drawing.Point(54, 272);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(43, 13);
             this.label10.TabIndex = 15;
@@ -196,7 +196,7 @@ namespace Rejestracja
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(12, 290);
+            this.label11.Location = new System.Drawing.Point(12, 248);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(85, 13);
             this.label11.TabIndex = 17;
@@ -206,7 +206,7 @@ namespace Rejestracja
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(42, 380);
+            this.label12.Location = new System.Drawing.Point(42, 338);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(55, 13);
             this.label12.TabIndex = 19;
@@ -216,7 +216,7 @@ namespace Rejestracja
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(39, 336);
+            this.label13.Location = new System.Drawing.Point(39, 294);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(58, 13);
             this.label13.TabIndex = 21;
@@ -226,7 +226,7 @@ namespace Rejestracja
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(60, 359);
+            this.label14.Location = new System.Drawing.Point(60, 317);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(37, 13);
             this.label14.TabIndex = 23;
@@ -275,12 +275,13 @@ namespace Rejestracja
             this.cboYearOfBirth.Name = "cboYearOfBirth";
             this.cboYearOfBirth.Size = new System.Drawing.Size(98, 21);
             this.cboYearOfBirth.TabIndex = 4;
-            this.cboYearOfBirth.SelectedIndexChanged += new System.EventHandler(this.cboYearOfBirth_SelectedIndexChanged);
+            //this.cboYearOfBirth.SelectedIndexChanged += new System.EventHandler(this.cboYearOfBirth_SelectedIndexChanged);
+            this.cboYearOfBirth.TextChanged += new System.EventHandler(this.cboYearOfBirth_TextChanged);
             // 
             // cboModelPublisher
             // 
             this.cboModelPublisher.FormattingEnabled = true;
-            this.cboModelPublisher.Location = new System.Drawing.Point(103, 333);
+            this.cboModelPublisher.Location = new System.Drawing.Point(103, 291);
             this.cboModelPublisher.Name = "cboModelPublisher";
             this.cboModelPublisher.Size = new System.Drawing.Size(277, 21);
             this.cboModelPublisher.TabIndex = 7;
@@ -288,7 +289,7 @@ namespace Rejestracja
             // cboModelScale
             // 
             this.cboModelScale.FormattingEnabled = true;
-            this.cboModelScale.Location = new System.Drawing.Point(103, 356);
+            this.cboModelScale.Location = new System.Drawing.Point(103, 314);
             this.cboModelScale.Name = "cboModelScale";
             this.cboModelScale.Size = new System.Drawing.Size(115, 21);
             this.cboModelScale.TabIndex = 8;
@@ -306,7 +307,7 @@ namespace Rejestracja
             // 
             // btnNewModel
             // 
-            this.btnNewModel.Location = new System.Drawing.Point(550, 237);
+            this.btnNewModel.Location = new System.Drawing.Point(550, 195);
             this.btnNewModel.Name = "btnNewModel";
             this.btnNewModel.Size = new System.Drawing.Size(98, 23);
             this.btnNewModel.TabIndex = 11;
@@ -354,38 +355,39 @@ namespace Rejestracja
             this.label16.Text = "Numer:";
             this.label16.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // btnAddModeler
-            // 
-            this.btnAddModeler.Location = new System.Drawing.Point(103, 179);
-            this.btnAddModeler.Name = "btnAddModeler";
-            this.btnAddModeler.Size = new System.Drawing.Size(115, 23);
-            this.btnAddModeler.TabIndex = 32;
-            this.btnAddModeler.Text = "Dodaj Modelarza";
-            this.btnAddModeler.UseVisualStyleBackColor = true;
-            // 
             // lvCategories
             // 
             this.lvCategories.CheckBoxes = true;
             this.lvCategories.FullRowSelect = true;
             this.lvCategories.GridLines = true;
             this.lvCategories.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lvCategories.Location = new System.Drawing.Point(103, 379);
+            this.lvCategories.Location = new System.Drawing.Point(103, 337);
             this.lvCategories.MultiSelect = false;
             this.lvCategories.Name = "lvCategories";
-            this.lvCategories.Size = new System.Drawing.Size(533, 188);
+            this.lvCategories.Size = new System.Drawing.Size(541, 230);
             this.lvCategories.TabIndex = 33;
             this.lvCategories.UseCompatibleStateImageBehavior = false;
             this.lvCategories.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvCategories_ItemCheck);
             this.lvCategories.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvCategories_MouseDoubleClick);
             // 
-            // cboEntryId
+            // cboModelId
             // 
-            this.cboEntryId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboEntryId.FormattingEnabled = true;
-            this.cboEntryId.Location = new System.Drawing.Point(103, 287);
-            this.cboEntryId.Name = "cboEntryId";
-            this.cboEntryId.Size = new System.Drawing.Size(84, 21);
-            this.cboEntryId.TabIndex = 34;
+            this.cboModelId.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboModelId.FormattingEnabled = true;
+            this.cboModelId.Location = new System.Drawing.Point(103, 245);
+            this.cboModelId.Name = "cboModelId";
+            this.cboModelId.Size = new System.Drawing.Size(98, 21);
+            this.cboModelId.TabIndex = 34;
+            this.cboModelId.SelectedIndexChanged += new System.EventHandler(this.cboModelId_SelectedIndexChanged);
+            // 
+            // lblAgeGroup
+            // 
+            this.lblAgeGroup.AutoSize = true;
+            this.lblAgeGroup.Location = new System.Drawing.Point(207, 155);
+            this.lblAgeGroup.Name = "lblAgeGroup";
+            this.lblAgeGroup.Size = new System.Drawing.Size(65, 13);
+            this.lblAgeGroup.TabIndex = 35;
+            this.lblAgeGroup.Text = "lblAgeGroup";
             // 
             // frmRegistrationEntry
             // 
@@ -393,9 +395,9 @@ namespace Rejestracja
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
             this.ClientSize = new System.Drawing.Size(664, 668);
-            this.Controls.Add(this.cboEntryId);
+            this.Controls.Add(this.lblAgeGroup);
+            this.Controls.Add(this.cboModelId);
             this.Controls.Add(this.lvCategories);
-            this.Controls.Add(this.btnAddModeler);
             this.Controls.Add(this.txtModelerId);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.btnNewRegistration);
@@ -426,6 +428,7 @@ namespace Rejestracja
             this.Controls.Add(this.label1);
             this.Name = "frmRegistrationEntry";
             this.Text = "frmRegistrationEntry";
+            this.Load += new System.EventHandler(this.frmRegistrationEntry_Load);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -464,8 +467,8 @@ namespace Rejestracja
         private Button btnNewRegistration;
         private TextBox txtModelerId;
         private Label label16;
-        private Button btnAddModeler;
         private Rejestracja.Controls.CustListView lvCategories;
-        private ComboBox cboEntryId;
+        private ComboBox cboModelId;
+        private Label lblAgeGroup;
     }
 }

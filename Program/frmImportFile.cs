@@ -272,7 +272,7 @@ namespace Rejestracja {
                     Process.Start(Resources.DataFileFolder);
                 }
 
-                ((frmMain)this.Owner).populateUI();
+                ((frmMain)this.Owner).refreshScreen();
                 this.Close();
             }
             catch (Exception err) {

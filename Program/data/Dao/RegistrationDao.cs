@@ -59,7 +59,7 @@ namespace Rejestracja.Data.Dao {
         }
 
         public static int add(DateTime timeStamp, int modelId, int categoryId, String categoryName, String ageGroupName) {
-            return add(timeStamp, modelId, categoryId, categoryName, null);
+            return add(timeStamp, modelId, categoryId, categoryName, ageGroupName, null);
         }
 
         public static int add(Registration registration) {
@@ -144,15 +144,15 @@ namespace Rejestracja.Data.Dao {
             return ret;
         }
 
-        public static void delete(int id) {
+        public static void delete(int registrationId) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(
                     @"DELETE FROM Results WHERE RegistrationId = @Id;
-                    DELETE FROM Registration WHERE ModelId = @Id;", cn)) {
+                    DELETE FROM Registration WHERE Id = @Id;", cn)) {
 
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-                cm.Parameters.Add("@Id", DbType.Int32).Value = id;
+                cm.Parameters.Add("@Id", DbType.Int32).Value = registrationId;
                 cm.ExecuteNonQuery();
             }
         }

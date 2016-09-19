@@ -129,8 +129,6 @@
             this.tsBtnSummary = new System.Windows.Forms.ToolStripButton();
             this.tsErrorSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.tsBtnErrorCount = new System.Windows.Forms.ToolStripButton();
-            this.tpModelers = new System.Windows.Forms.TabPage();
-            this.Modele = new System.Windows.Forms.TabPage();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -527,7 +525,7 @@
             this.mnuRCCheckAll,
             this.mnuRCUncheckAll});
             this.cmsEntryRightClick.Name = "cmsRightClick";
-            this.cmsEntryRightClick.Size = new System.Drawing.Size(205, 126);
+            this.cmsEntryRightClick.Size = new System.Drawing.Size(205, 148);
             // 
             // mnuRCModifyRegistration
             // 
@@ -693,7 +691,7 @@
             this.lvEntries.Location = new System.Drawing.Point(0, 0);
             this.lvEntries.MultiSelect = false;
             this.lvEntries.Name = "lvEntries";
-            this.lvEntries.Size = new System.Drawing.Size(1168, 597);
+            this.lvEntries.Size = new System.Drawing.Size(1175, 601);
             this.lvEntries.TabIndex = 2;
             this.lvEntries.UseCompatibleStateImageBehavior = false;
             this.lvEntries.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvEntries_ColumnClick);
@@ -709,8 +707,6 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tpRegistration);
-            this.tabControl1.Controls.Add(this.tpModelers);
-            this.tabControl1.Controls.Add(this.Modele);
             this.tabControl1.Controls.Add(this.tpResults);
             this.tabControl1.Controls.Add(this.tpStats);
             this.tabControl1.Location = new System.Drawing.Point(0, 50);
@@ -718,6 +714,7 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(1179, 623);
             this.tabControl1.TabIndex = 1;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // toolStrip1
             // 
@@ -1021,24 +1018,6 @@
             this.tsBtnErrorCount.Text = "Błędy Rejestracji";
             this.tsBtnErrorCount.Click += new System.EventHandler(this.tsBtnErrorCount_Click);
             // 
-            // tpModelers
-            // 
-            this.tpModelers.Location = new System.Drawing.Point(4, 22);
-            this.tpModelers.Name = "tpModelers";
-            this.tpModelers.Size = new System.Drawing.Size(1171, 597);
-            this.tpModelers.TabIndex = 4;
-            this.tpModelers.Text = "Modelarze";
-            this.tpModelers.UseVisualStyleBackColor = true;
-            // 
-            // Modele
-            // 
-            this.Modele.Location = new System.Drawing.Point(4, 22);
-            this.Modele.Name = "Modele";
-            this.Modele.Size = new System.Drawing.Size(1171, 597);
-            this.Modele.TabIndex = 5;
-            this.Modele.Text = "Modele";
-            this.Modele.UseVisualStyleBackColor = true;
-            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1175,8 +1154,6 @@
         private System.Windows.Forms.ToolStripMenuItem mnuHHelp;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
         private System.Windows.Forms.ToolStripMenuItem mnuRVAutoWidth;
-        private System.Windows.Forms.TabPage tpModelers;
-        private System.Windows.Forms.TabPage Modele;
 
 
     }

@@ -1,4 +1,5 @@
-﻿/*
+﻿using Rejestracja.Controls;
+/*
  * Copyright (C) 2016 Paweł Opała https://github.com/popala/registration
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
@@ -11,6 +12,7 @@
  */
 using Rejestracja.Utils;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -72,16 +74,24 @@ namespace Rejestracja
         {
             lvFileList.Columns.Add("Nazwa");
             lvFileList.Columns.Add("Ostatnia Zmiana");
+            lvFileList.Columns.Add("Rozmiar");
 
             lvFileList.HideSelection = false;
             lvFileList.GridLines = true;
             lvFileList.MultiSelect = false;
 
             String[] files = Directory.GetFiles(Resources.DataFileFolder, "*.sqlite");
+            List<FileInfo> flist = new List<FileInfo>();
+
             foreach(String fileName in files)
             {
-                FileInfo f = new FileInfo(fileName);
-                lvFileList.Items.Add(new ListViewItem(new String[] { f.Name, f.LastWriteTime.ToString() }));
+                flist.Add(new FileInfo(fileName));
+                //FileInfo f = new FileInfo(fileName);
+                //lvFileList.Items.Add(new ListViewItem(new String[] { f.Name, f.LastWriteTime.ToString() }));
+            }
+            flist.Sort((x, y) => y.LastWriteTime.CompareTo(x.LastWriteTime));
+            foreach(FileInfo fi in flist) {
+                lvFileList.Items.Add(new ListViewItem(new String[] { fi.Name, fi.LastWriteTime.ToString(), (fi.Length / 1024).ToString() + " KB" }));
             }
 
             lvFileList.Columns[0].Width = lvFileList.Width - 160;

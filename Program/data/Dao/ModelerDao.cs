@@ -84,6 +84,42 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
+        public static void update(Modeler modeler) {
+            update(-1, null, null, null, -1, null, modeler);
+        }
+
+        public static void update(int id, String firstName, String lastName, String clubName, int yearOfBirth, String email) {
+            update(id, firstName, lastName, clubName, yearOfBirth, email, null);
+        }
+
+        private static void update(int id, String firstName, String lastName, String clubName, int yearOfBirth, String email, Modeler modeler) {
+            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using(SQLiteCommand cm = new SQLiteCommand(
+                        @"UPDATE Modelers SET FirstName = @FirstName, LastName = @LastName, ClubName = @ClubName, YearOfBirth = @YearOfBirth, Email = @Email
+                            WHERE Id = @Id", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                if(modeler == null) {
+                    cm.Parameters.Add("@Id", DbType.Int32).Value = id;
+                    cm.Parameters.Add("@FirstName", System.Data.DbType.String, Modeler.MAX_NAME_LENGTH).Value = firstName;
+                    cm.Parameters.Add("@LastName", System.Data.DbType.String, Modeler.MAX_NAME_LENGTH).Value = lastName;
+                    cm.Parameters.Add("@ClubName", System.Data.DbType.String, Modeler.MAX_NAME_LENGTH).Value = clubName;
+                    cm.Parameters.Add("@YearOfBirth", System.Data.DbType.Int32).Value = yearOfBirth;
+                    cm.Parameters.Add("@Email", System.Data.DbType.String, Modeler.MAX_EMAIL_LENGTH).Value = email;
+                }
+                else {
+                    cm.Parameters.Add("@Id", DbType.Int32).Value = modeler.id;
+                    cm.Parameters.Add("@FirstName", System.Data.DbType.String, Modeler.MAX_NAME_LENGTH).Value = modeler.firstName;
+                    cm.Parameters.Add("@LastName", System.Data.DbType.String, Modeler.MAX_NAME_LENGTH).Value = modeler.lastName;
+                    cm.Parameters.Add("@ClubName", System.Data.DbType.String, Modeler.MAX_NAME_LENGTH).Value = modeler.clubName;
+                    cm.Parameters.Add("@YearOfBirth", System.Data.DbType.Int32).Value = modeler.yearOfBirth;
+                    cm.Parameters.Add("@Email", System.Data.DbType.String, Modeler.MAX_EMAIL_LENGTH).Value = modeler.email;
+                }
+                cm.ExecuteNonQuery();
+            }
+        }
+
         public static Modeler get(int id) {
             Modeler ret = null;
 

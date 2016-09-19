@@ -1,7 +1,15 @@
 ﻿/*
- * Big thanks to Hippie Coder for the ListView DoubleClick fix
- * https://blogs.msdn.microsoft.com/hippietim/2006/03/27/overcoming-a-net-listview-checkboxes-quirk/
+ * Copyright (C) 2016 Paweł Opała https://github.com/popala/registration
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+ * as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  */
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,95 +22,28 @@ using System.Windows.Forms;
 
 namespace Rejestracja.Controls {
     class CustListView : ListView {
-        private bool m_doubleClickDoesCheck = true;  //  maintain the default behavior
-        private bool m_inDoubleClickCheckHack = false;
- 
-        //****************************************************************************************
-        // This function helps us overcome the problem with the managed listview wrapper wanting
-        // to turn double-clicks on checklist items into checkbox clicks.  We count on the fact
-        // that the base handler for NM_DBLCLK will send a hit test request back at us right away.
-        // So we set a special flag to return a bogus hit test result in that case.
-        //****************************************************************************************
-        private unsafe void OnWmReflectNotify(ref Message m)
-        {
-            if (!DoubleClickDoesCheck && CheckBoxes)
-            {
-                NativeMethods.NMHDR* nmhdr = (NativeMethods.NMHDR *)m.LParam;
- 
-                if (nmhdr->code == NativeMethods.NM_DBLCLK)
-                {
-                    m_inDoubleClickCheckHack = true;
-                }
+        private bool checkFromDoubleClick = false;
+
+        protected override void OnItemCheck(ItemCheckEventArgs ice) {
+            if(this.checkFromDoubleClick) {
+                ice.NewValue = ice.CurrentValue;
+                this.checkFromDoubleClick = false;
             }
+            else
+                base.OnItemCheck(ice);
         }
- 
-        [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-        protected override void WndProc(ref Message m)
-        {
-            switch (m.Msg)
-            {
-                //  This code is to hack around the fact that the managed listview
-                //  wrapper translates double clicks into checks without giving the 
-                //  host to participate.
-                //  See OnWmReflectNotify() for more details.
-                case NativeMethods.WM_REFLECT + NativeMethods.WM_NOTIFY:
-                    OnWmReflectNotify(ref m);
-                    break;
- 
-                //  This code checks to see if we have entered our hack check for
-                //  double clicking items in check lists.  During the NM_DBLCLK
-                //  processing, the managed handler will send a hit test message
-                //  to see which item to check.  Returning -1 will convince that
-                //  code not to proceed.
-                case NativeMethods.LVM_HITTEST:
-                    if (m_inDoubleClickCheckHack)
-                    {
-                        m_inDoubleClickCheckHack = false;
-                        m.Result = (System.IntPtr)(-1);
-                        return;
-                    }
-                    break;
+
+        protected override void OnMouseDown(MouseEventArgs e) {
+            // Is this a double-click?
+            if((e.Button == MouseButtons.Left) && (e.Clicks > 1)) {
+                this.checkFromDoubleClick = true;
             }
- 
-            base.WndProc(ref m);
+            base.OnMouseDown(e);
         }
- 
-        [Browsable(true), 
-         Description("When CheckBoxes is true, this controls whether or not double clicking will toggle the check."), 
-         Category("My Controls"),
-         DefaultValue(true)]
-        public bool DoubleClickDoesCheck
-        {
-            get
-            {
-                return m_doubleClickDoesCheck;
-            }
- 
-            set
-            {
-                m_doubleClickDoesCheck = value;
-            }
-        }
-    }
- 
-    //****************************************************************************************
-    //  This is stuff you would normally put in a separate file with all the other interop
-    //  you have to work with.
-    //****************************************************************************************
-    public class NativeMethods
-    {
-        public const int WM_USER = 0x0400;
-        public const int WM_REFLECT = WM_USER + 0x1C00;
-        public const int WM_NOTIFY = 0x004E;
-        public const int LVM_HITTEST = (0x1000 + 18);
-        public const int NM_DBLCLK = (-3);
- 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct NMHDR
-        {
-            public IntPtr hwndFrom;
-            public UIntPtr idFrom;
-            public int code;
+
+        protected override void OnKeyDown(KeyEventArgs e) {
+            this.checkFromDoubleClick = false;
+            base.OnKeyDown(e);
         }
     }
 }
