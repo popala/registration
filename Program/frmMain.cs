@@ -244,6 +244,7 @@ namespace Rejestracja {
         private void loadResultList() {
             try {
                 IEnumerable<string[]> results;
+                //List<KeyValuePair<string, string>> medalCount;
 
                 lvResults.BeginUpdate();
 
@@ -254,11 +255,13 @@ namespace Rejestracja {
                 String ageGroup = "";
 
                 results = ResultDao.getCategoryResultList();
+                //medalCount = ResultDao.getMedalCount();
 
                 foreach (string[] result in results) {
                     if (!ageGroup.Equals(result[1])) {
                         ageGroup = result[1];
-                        group = new ListViewGroup("Wyniki w Kategoriach - " + ageGroup.ToUpper());
+                        //String mc = medalCount.Where(x => x.Key.Equals(ageGroup, StringComparison.CurrentCultureIgnoreCase)).ToArray()[0].Value;
+                        group = new ListViewGroup("Wyniki w Kategoriach - " + ageGroup.ToUpper());// + mc);
                         lvResults.Groups.Add(group);
                     }
                     lvResults.Items.Add(new ListViewItem(result, group));

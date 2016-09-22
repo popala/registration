@@ -14,6 +14,7 @@ using Rejestracja.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Linq;
 
 namespace Rejestracja.Data.Dao {
     class ResultDao {
@@ -348,13 +349,47 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static int getDiplomaCount() {
+        public static List<KeyValuePair<string, string>> getMedalCount() {
+
+            List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList();
+            List<KeyValuePair<string, string>> ret = new List<KeyValuePair<string, string>>();
+
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT COUNT(ResultId) FROM Results", cn)) {
+            using(SQLiteCommand cm = new SQLiteCommand(
+                @"SELECT AgeGroup, Place, COUNT(ukey) AS MedalCount
+                    FROM (
+	                    SELECT r.AgeGroup, res.Place, (r.AgeGroup || res.Place) AS ukey
+		                    FROM Results res
+		                    JOIN Registration r ON res.EntryId = r.EntryId
+	                    WHERE res.Place IS NOT NULL
+                    )
+                    GROUP BY ukey", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-                return (int)cm.ExecuteScalar();
+
+                String ageGroup = null;
+                String summary = "";
+
+                using(SQLiteDataReader dr = cm.ExecuteReader()) {
+                    while(dr.Read()) {
+
+                        if(ageGroup == null) {
+                            ageGroup = dr["AgeGroup"].ToString();
+                        }
+
+                        if(!ageGroup.Equals(dr["AgeGroup"].ToString(), StringComparison.CurrentCultureIgnoreCase)) {
+                            ret.Add(new KeyValuePair<string, string>(ageGroup, summary.Substring(0, summary.Length - 1)));
+                            summary = "";
+                            ageGroup = dr["AgeGroup"].ToString();
+                        }
+                        summary += string.Format(" Miejsce {0}: {1},", dr["Place"].ToString(), dr["MedalCount"].ToString());
+                    }
+                    if(ageGroup != null) {
+                        ret.Add(new KeyValuePair<string, string>(ageGroup, summary.Substring(0, summary.Length - 1)));
+                    }
+                }
             }
+            return ret;
         }
 
         public static void createTable() {
