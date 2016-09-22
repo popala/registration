@@ -172,7 +172,7 @@ namespace Rejestracja.Data.Dao
                     int n;
                     if (Int32.TryParse(searchValue, out n))
                     {
-                        query.Append(" r.Id = @Id AND ");
+                        query.Append(" r.Id = @Id OR ");
                         cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = n;
                     }
                     query.Append(" mr.Email LIKE @SearchValue OR mr.FirstName LIKE @SearchValue OR mr.LastName LIKE @SearchValue OR ml.Name LIKE @SearchValue ");
@@ -228,7 +228,7 @@ namespace Rejestracja.Data.Dao
 
                     int n;
                     if (Int32.TryParse(searchValue, out n)) {
-                        query.Append(" r.RegistrationId = @Id AND ");
+                        query.Append(" r.RegistrationId = @Id OR ");
                         cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = n;
                     }
 
