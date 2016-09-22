@@ -130,7 +130,7 @@ namespace Rejestracja.Data.Dao
                     int n;
                     if (Int32.TryParse(searchValue, out n))
                     {
-                        query.Append(" EntryId = @EntryId AND ");
+                        query.Append(" EntryId = @EntryId OR ");
                         cm.Parameters.Add("@EntryId", System.Data.DbType.Int32).Value = n;
                     }
 
