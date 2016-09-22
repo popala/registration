@@ -148,7 +148,7 @@ namespace Rejestracja.Utils
             {
                 foreach (RegistrationEntry entry in entries)
                 {
-                    authorKey = String.Format("{0}_{1}_{2}", entry.modeler.firstName, entry.modeler.lastName, entry.modeler.yearOfBirth);
+                    authorKey = String.Format("{0}_{1}_{2}", entry.modeler.firstName.ToLowerInvariant(), entry.modeler.lastName.ToLowerInvariant(), entry.modeler.yearOfBirth);
 
                     if(!ageGroup.Equals(entry.registration.ageGroupName, StringComparison.CurrentCultureIgnoreCase) ||
                         !modelClass.Equals(entry.category.className, StringComparison.CurrentCultureIgnoreCase) ||

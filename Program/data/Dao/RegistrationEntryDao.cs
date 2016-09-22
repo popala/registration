@@ -85,6 +85,56 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
+        public static List<RegistrationEntry> getRegistrationForModel(int modelId) {
+            List<RegistrationEntry> ret = new List<RegistrationEntry>();
+
+            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using(SQLiteCommand cm = new SQLiteCommand(BASE_QUERY + " WHERE r.ModelId = @ModelId", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                cm.Parameters.Add("@ModelId", System.Data.DbType.Int32).Value = modelId;
+
+                using(SQLiteDataReader dr = cm.ExecuteReader()) {
+                    while(dr.Read()) {
+                        ret.Add(new RegistrationEntry(
+                            new Registration(
+                                dr.GetInt32(dr.GetOrdinal("RegistrationId")),
+                                (DateTime)dr["TmStamp"],
+                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                                dr["CategoryName"].ToString(),
+                                dr["AgeGroupName"].ToString()
+                            ),
+                            new Category(
+                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
+                                dr["Code"].ToString(),
+                                dr["CategoryName"].ToString(),
+                                dr["ModelClass"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
+                            ),
+                            new Modeler(
+                                dr.GetInt32(dr.GetOrdinal("ModelerId")),
+                                dr["FirstName"].ToString(),
+                                dr["LastName"].ToString(),
+                                dr["ClubName"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
+                                dr["Email"].ToString()
+                            ),
+                            new Model(
+                                dr.GetInt32(dr.GetOrdinal("ModelId")),
+                                dr["ModelName"].ToString(),
+                                dr["Publisher"].ToString(),
+                                dr["Scale"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("ModelerId"))
+                            )
+                        ));
+                    }
+                }
+            }
+            return ret;
+        }
+
         public static IEnumerable<String[]> getList(String searchValue, int sortField, bool sortAscending) {
 
             string sortFieldName;
@@ -369,36 +419,6 @@ namespace Rejestracja.Data.Dao
                 return (int)cn.LastInsertRowId;
             }
         }
-
-//        public static void update(RegistrationEntry entry)
-//        {
-//            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-//            using (SQLiteCommand cm = new SQLiteCommand(
-//                @"UPDATE Registration SET Email = @email, FirstName = @firstName, LastName = @lastName, ClubName = @clubName,
-//                        AgeGroup = @ageGroup, ModelName = @modelName, ModelClass = @modelClass, ModelScale = @modelScale, 
-//                        ModelPublisher = @modelPublisher, ModelCategory = @modelCategory, ModelCategoryId = COALESCE(@modelCategoryId, -1), YearOfBirth = @yearOfBirth
-//                  WHERE EntryId = @entryId", cn))
-//            {
-//                cn.Open();
-//                cm.CommandType = System.Data.CommandType.Text;
-
-//                cm.Parameters.Add("@email", System.Data.DbType.String, 256).Value = entry.email;
-//                cm.Parameters.Add("@firstName", System.Data.DbType.String, 64).Value = entry.firstName;
-//                cm.Parameters.Add("@lastName", System.Data.DbType.String, 64).Value = entry.lastName;
-//                cm.Parameters.Add("@clubName", System.Data.DbType.String, 128).Value = entry.clubName;
-//                cm.Parameters.Add("@ageGroup", System.Data.DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = entry.ageGroupName;
-//                cm.Parameters.Add("@modelName", System.Data.DbType.String, 256).Value = entry.modelName;
-//                cm.Parameters.Add("@modelClass", System.Data.DbType.String, 128).Value = entry.className;
-//                cm.Parameters.Add("@modelScale", System.Data.DbType.String, 8).Value = entry.modelScale;
-//                cm.Parameters.Add("@modelPublisher", System.Data.DbType.String, 64).Value = entry.modelPublisher;
-//                cm.Parameters.Add("@modelCategory", System.Data.DbType.String, 64).Value = entry.categoryName;
-//                cm.Parameters.Add("@modelCategoryId", System.Data.DbType.Int64).Value = entry.categoryId;
-//                cm.Parameters.Add("@yearOfBirth", System.Data.DbType.Int32).Value = entry.yearOfBirth;
-//                cm.Parameters.Add("@entryId", System.Data.DbType.Int64).Value = entry.registrationId;
-
-//                cm.ExecuteNonQuery();
-//            }
-//        }
 
         public static bool delete(long registrationId)
         {

@@ -657,14 +657,15 @@ namespace Rejestracja {
 
         private void mnuRCPrint_Click(object sender, EventArgs e) {
             int entryId = int.Parse(lvEntries.SelectedItems[0].SubItems[0].Text);
-            printRegistrationCard(entryId);
+            printRegistrationCards(entryId);
         }
 
-        public void printRegistrationCard(int entryId) {
+        public void printRegistrationCards(int modelId) {
             try {
-                RegistrationEntry entry = RegistrationEntryDao.get(entryId);
-                if (entry == null) {
-                    MessageBox.Show("Numer startowy nie został znaleziony", "Błędne dane", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                //RegistrationEntry entry = RegistrationEntryDao.get(entryId);
+                List<RegistrationEntry> regEntries = RegistrationEntryDao.getRegistrationForModel(modelId);
+                if (regEntries.Count == 0) {
+                    MessageBox.Show("Numer modelu nie znaleziony", "Błędne dane", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -673,11 +674,13 @@ namespace Rejestracja {
                     Directory.CreateDirectory(directory);
                 }
 
-                string outFile = String.Format("{0}\\rejestracja_{1}.docx", directory, entry.registration.id);
-                File.Delete(outFile);
+                foreach(RegistrationEntry entry in regEntries) {
+                    string outFile = String.Format("{0}\\rejestracja_{1}.docx", directory, entry.registration.id);
+                    File.Delete(outFile);
 
-                DocHandler.generateRegistrationCard(Resources.resolvePath("templateKartyModelu"), outFile, entry);
-                DocHandler.printWordDoc(outFile);
+                    DocHandler.generateRegistrationCard(Resources.resolvePath("templateKartyModelu"), outFile, entry);
+                    DocHandler.printWordDoc(outFile);
+                }
             }
             catch (Exception err) {
                 LogWriter.error(err);
@@ -855,7 +858,7 @@ namespace Rejestracja {
             }
 
             foreach (KeyValuePair<string, int> entry in entries) {
-                printRegistrationCard(entry.Value);
+                printRegistrationCards(entry.Value);
                 incrementProgressBar();
             }
 
@@ -1360,11 +1363,13 @@ namespace Rejestracja {
         }
 
         private void hideValidEntries() {
+            lvEntries.BeginUpdate();
             foreach (ListViewItem item in lvEntries.Items) {
                 if (item.ForeColor != System.Drawing.Color.Red) {
                     item.Remove();
                 }
             }
+            lvEntries.EndUpdate();
         }
 
         private void tsBtnErrorCount_Click(object sender, EventArgs e) {
