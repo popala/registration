@@ -20,35 +20,37 @@ namespace Rejestracja.Data.Dao
 {
     class AgeGroupDao
     {
-        public static bool exists(int upperAge) {
+        public static bool exists(int upperAge, int classId) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM AgeGroups WHERE Age BETWEEN @Age1 AND @Age2", cn)) {
+            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM AgeGroups WHERE Age BETWEEN @Age1 AND @Age2 AND ClassId = @ClassId", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.Parameters.Add("@Age1", DbType.Int32).Value = upperAge - 1;
                 cm.Parameters.Add("@Age2", DbType.Int32).Value = upperAge + 1;
+                cm.Parameters.Add("@ClassId", DbType.Int32).Value = classId;
 
                 object res = cm.ExecuteScalar();
                 return (res != null);
             }
         }
 
-        public static AgeGroup getOlderAgeGroup(String ageGroupName) {
+        public static AgeGroup getOlderAgeGroup(String ageGroupName, int classId) {
             
             AgeGroup ret = null;
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT a.Id, a.Name, a.Age, (SELECT MAX(Age) AS Age FROM AgeGroups WHERE Age < a.Age) AS MinAge
+                @"SELECT a.Id, a.Name, a.Age, (SELECT MAX(Age) AS Age FROM AgeGroups WHERE Age < a.Age AND ClassId = @ClassId) AS MinAge
 	                FROM AgeGroups a
 	                JOIN (
 		                SELECT MIN(Age) AS Age 
 			                FROM AgeGroups 
-			                WHERE Age > (SELECT Age FROM AgeGroups WHERE Name = @AgeGroupName)
-		                ) m ON a.Age = m.Age", cn))
+			                WHERE Age > (SELECT Age FROM AgeGroups WHERE Name = @AgeGroupName AND ClassId = @ClassId)
+		                ) m ON a.Age = m.Age AND a.ClassId = m.ClassId", cn))
             {
                 cn.Open();
                 cm.Parameters.Add("@AgeGroupName", DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = ageGroupName;
+                cm.Parameters.Add("@ClassId", DbType.Int32).Value = classId;
 
                 using (SQLiteDataReader dr = cm.ExecuteReader())
                 {
@@ -58,28 +60,29 @@ namespace Rejestracja.Data.Dao
                         if (!dr.IsDBNull(dr.GetOrdinal("MinAge"))) {
                             bottomAge = dr.GetInt32(dr.GetOrdinal("MinAge")) + 1;
                         }
-                        ret = new AgeGroup(dr.GetInt32(0), dr.GetString(1), dr.GetInt32(2), bottomAge);
+                        ret = new AgeGroup(dr.GetInt32(0), dr.GetString(1), dr.GetInt32(2), bottomAge, -1);
                     }
                 }
             }
             return ret;
         }
 
-        public static IEnumerable<AgeGroup> getList()
+        public static List<AgeGroup> getList(int classId)
         {
             List<AgeGroup> ret = new List<AgeGroup>();
             int bottomAge = 0;
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name, Age FROM AgeGroups ORDER BY Age ASC", cn))
+            using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name, Age FROM AgeGroups WHERE ClassId = @ClassId ORDER BY Age ASC", cn))
             {
                 cn.Open();
+                cm.Parameters.Add("@ClassId", DbType.Int32).Value = classId;
 
                 using (SQLiteDataReader dr = cm.ExecuteReader())
                 {
                     while (dr.Read())
                     {
-                        AgeGroup ageGroup = new AgeGroup(dr.GetInt32(0), dr.GetString(1), dr.GetInt32(2), bottomAge);
+                        AgeGroup ageGroup = new AgeGroup(dr.GetInt32(0), dr.GetString(1), dr.GetInt32(2), bottomAge, -1);
                         bottomAge = ageGroup.upperAge + 1;
                         ret.Add(ageGroup);
                     }
@@ -88,34 +91,31 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public static IEnumerable<String> getSimpleList()
+        public static int add(String name, int age, int classId)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand("SELECT Name FROM AgeGroups ORDER BY Name ASC", cn))
-            {
-                cn.Open();
-
-                using (SQLiteDataReader dr = cm.ExecuteReader())
-                {
-                    while (dr.Read())
-                        yield return dr.GetString(0);
-                }
-            }
-        }
-
-        public static int add(String name, int age)
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO AgeGroups(Name, Age) VALUES(@Name, @Age)", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO AgeGroups(Classid, Name, Age) VALUES(@ClassId, @Name, @Age)", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
                 cm.Parameters.Add("@Name", DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = name;
                 cm.Parameters.Add("@Age", DbType.Int32).Value = age;
+                cm.Parameters.Add("@ClassId", DbType.Int32).Value = classId;
                 cm.ExecuteNonQuery();
 
                 return (int)cn.LastInsertRowId;
+            }
+        }
+
+        public static void deleteForClass(int classId) {
+            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM AgeGroups WHERE ClassId = @Id", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = classId;
+                cm.ExecuteNonQuery();
             }
         }
 
@@ -138,6 +138,7 @@ namespace Rejestracja.Data.Dao
             using (SQLiteCommand cm = new SQLiteCommand(
                 @"CREATE TABLE AgeGroups(
                     Id INTEGER PRIMARY KEY,
+                    ClassId INTEGER NOT NULL,
                     Name TEXT NOT NULL,
                     Age INTEGER NOT NULL)", cn))
             {
@@ -145,13 +146,13 @@ namespace Rejestracja.Data.Dao
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.ExecuteNonQuery();
 
-                cm.CommandText = "CREATE UNIQUE INDEX Idx_AgeGroup_Name ON AgeGroups(Name)";
+                cm.CommandText = "CREATE UNIQUE INDEX Idx_AgeGroup_Name ON AgeGroups(ClassId, Name)";
                 cm.ExecuteNonQuery();
             }
 
-            add("Młodzik", 12);
-            add("Junior", 17);
-            add("Senior", 150);
+            add("Młodzik", 12, -1);
+            add("Junior", 17, -1);
+            add("Senior", 150, -1);
         }
     }
 }

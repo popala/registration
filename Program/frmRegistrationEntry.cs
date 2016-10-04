@@ -28,8 +28,6 @@ namespace Rejestracja
         private List<AgeGroup> _ageGroups;
         private bool _loading = false;
         
-        private const String IMPORTED_CLS_TITLE = "Kategorie z importu";
-
         public void setParent(frmMain parentForm) {
             this._parentForm = parentForm;
         }
@@ -56,17 +54,17 @@ namespace Rejestracja
 
             lvCategories.BeginUpdate();
 
-            List<Category> categories = CategoryDao.getList(true).ToList();
-            List<Class> classes = ClassDao.getList().ToList();
-            classes.Add(new Class(-1, IMPORTED_CLS_TITLE));
+            //List<Category> categories = CategoryDao.getList(true, null).ToList();
+            List<Class> classes = ClassDao.getList(true);
+            //classes.Add(new Class(-1, Class.IMPORTED_CLASS_TITLE));
 
-            foreach(Category category in categories) {
-                if(category.id < 0) {
-                    category.className = IMPORTED_CLS_TITLE;
-                }
-                Class c = classes.Find(x => x.name.Equals(category.className, StringComparison.CurrentCultureIgnoreCase));
-                c.categories.Add(category);
-            }
+            //foreach(Category category in categories) {
+            //    if(category.id < 0) {
+            //        category.className = Class.IMPORTED_CLASS_TITLE;
+            //    }
+            //    Class c = classes.Find(x => x.name.Equals(category.className, StringComparison.CurrentCultureIgnoreCase));
+            //    c.categories.Add(category);
+            //}
 
             //Categories broken up by class
             lvCategories.Clear();
@@ -111,7 +109,7 @@ namespace Rejestracja
         private void resetAddControls() {
 
             //General
-            this._ageGroups = AgeGroupDao.getList().ToList();
+            this._ageGroups = AgeGroupDao.getList(-1);
             this.Text = "Nowa Rejestracja";
             loadCategoryList();
 
@@ -338,7 +336,7 @@ namespace Rejestracja
         private void validateExistingEntry()
         {
             IEnumerable<Category> modelCategories = CategoryDao.getList();
-            bool bFound = false;
+            //bool bFound = false;
 
             lblErrors.Text = "";
             lblErrors.Visible = false;

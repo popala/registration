@@ -21,24 +21,39 @@ namespace Rejestracja.Data.Dao
     class CategoryDao
     {
         public static IEnumerable<Category> getList() {
-            return getList(false);
+            return getList(false, null);
         }
 
-        public static IEnumerable<Category> getList(bool includeImported)
+        public static IEnumerable<Category> getList(bool includeImported, String modelClass)
         {
-            String query = "SELECT Id, Code, Name, ModelClass, DisplayOrder FROM Categories ORDER BY DisplayOrder, Name ASC";
+            String query = null;
+
             if(includeImported) {
                 query =
                     @"SELECT Id, Code, Name, ModelClass, DisplayOrder FROM Categories
-                        UNION
-                        SELECT -1 AS Id, NULL AS Code, CategoryName AS Name, NULL AS ModelClass, -1 AS DisplayOrder FROM Registration WHERE CategoryId < 0
-                        ORDER BY DisplayOrder, Name ASC";
+                    UNION
+                    SELECT -1 AS Id, NULL AS Code, CategoryName AS Name, NULL AS ModelClass, -1 AS DisplayOrder FROM Registration WHERE CategoryId < 0";
+                if(!String.IsNullOrEmpty(modelClass)) {
+                    query += " AND ModelClass = @ModelClass";
+                }
             }
+            else {
+                query = "SELECT Id, Code, Name, ModelClass, DisplayOrder FROM Categories";
+                if(!String.IsNullOrEmpty(modelClass)) {
+                    query += " WHERE ModelClass = @ModelClass";
+                }
+            }
+
+            query += " ORDER BY DisplayOrder, Name ASC";
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(query, cn))
             {
                 cn.Open();
+
+                if(!String.IsNullOrEmpty(modelClass)) {
+                    cm.Parameters.Add("@ModelClass", DbType.String, Class.MAX_NAME_LENGTH).Value = modelClass;
+                }
 
                 using(SQLiteDataReader dr = cm.ExecuteReader())
                 {
@@ -214,6 +229,14 @@ namespace Rejestracja.Data.Dao
             add("WS2", "Samoloty odrzutowe", "Waloryzowane (Open)", i++);
             add("WPP", "Modele projektowane od podstaw", "Waloryzowane (Open)", i++);
             add("WD", "Dioramy i makiety", "Waloryzowane (Open)", i++);
+            //Naviga
+            add("C-1", "Modele jednostek wiosłowych i żaglowych", "Naviga", i++);
+            add("C-2", "Modele jednostek o napędzie mechanicznym", "Naviga", i++);
+            add("C-3", "Modele urządzeń, itp.", "Naviga", i++);
+            add("C-4", "Modele miniaturowe", "Naviga", i++);
+            add("C-5", "Modele z butelkach", "Naviga", i++);
+            add("C-6", "Modele plastikowe", "Naviga", i++);
+            add("C-7", "Modele kartonowe i papierowe", "Naviga", i++);
         }
     }
 }

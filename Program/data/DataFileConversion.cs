@@ -8,7 +8,19 @@ namespace Rejestracja.Data {
         public static void convertTo941() {
 
             String query =
-@"CREATE TABLE Modelers(
+@"CREATE TABLE Classes(
+    Id INTEGER PRIMARY KEY,
+    Name TEXT NOT NULL,
+    RegistrationTemplate TEXT NULL,
+    JudgingFormTemplate TEXT NULL,
+    DiplomaTemplate TEXT NULL,
+    ScoringCardType INTEGER NOT NULL DEFAULT 0,
+    UseCustomAgeGroups INTEGER NOT NULL DEFAULT 0);
+INSERT INTO Classes
+    SELECT Id, Name, NULL, NULL, NULL, 0, 0 FROM ModelClass;
+CREATE UNIQUE INDEX Idx_Class_Name ON Classes(Name);
+
+CREATE TABLE Modelers(
     Id INTEGER PRIMARY KEY,
     FirstName TEXT,
     LastName TEXT,
@@ -67,13 +79,22 @@ INSERT INTO Results(RegistrationId, Place, AwardId)
 		LEFT JOIN SpecialAwards aw ON aw.Id = ores.AwardId;
 
 
-ALTER TABLE AgeGroup RENAME TO AgeGroups;
+ALTER TABLE AgeGroup RENAME TO OldAgeGroups;
+CREATE TABLE AgeGroups(
+    Id INTEGER PRIMARY KEY,
+    ClassId INTEGER NOT NULL,
+    Name TEXT NOT NULL,
+    Age INTEGER NOT NULL);
+CREATE UNIQUE INDEX Idx_AgeGroups_Name_ClsId ON AgeGroups(ClassId, Name);
+INSERT INTO AgeGroups
+    SELECT Id, -1, Name, Age FROM OldAgeGroups;
+
+
+ALTER TABLE ModelClass RENAME TO OldClasses;
 ALTER TABLE ModelCategory RENAME TO Categories;
-ALTER TABLE ModelClass RENAME TO Classes;
 ALTER TABLE ModelScale RENAME TO Scales;
 ALTER TABLE Publisher RENAME TO Publishers;
 ALTER TABLE SpecialAwards RENAME TO Awards;
-
 
 CREATE TABLE Version(Version REAL NOT NULL);
 CREATE UNIQUE INDEX Idx_Ver_Ver ON Version(Version);

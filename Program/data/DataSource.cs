@@ -155,7 +155,7 @@ namespace Rejestracja {
             TextInfo textInfo = new CultureInfo("pl-PL", false).TextInfo;
             List<String> publishers = PublisherDao.getSimpleList().ToList();
             List<Category> modelCategories = CategoryDao.getList().ToList();
-            List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList();
+            List<AgeGroup> ageGroups = AgeGroupDao.getList(-1);
             List<String> modelClasses = ClassDao.getSimpleList().ToList();
             List<String> modelScales = ScaleDao.getSimpleList().ToList();
 

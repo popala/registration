@@ -200,6 +200,7 @@
     <Resource Include="license.rtf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Icons\NewFile_6276.png" />
     <None Include="Icons\OpenFileDialog_692.png" />
     <None Include="Icons\Open_6529.png" />
@@ -229,7 +230,7 @@
     <Content Include="Templates\posumowanie.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Templates\wynikiV2.html">
+    <Content Include="Templates\wyniki.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Resource Include="x64\SQLite.Interop.dll">
@@ -290,11 +291,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Templates\kartaSedziowania.docx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Templates\wyniki.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

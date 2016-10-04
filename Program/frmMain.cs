@@ -189,7 +189,7 @@ namespace Rejestracja {
             lvEntries.ShowItemToolTips = true;
 
             lvEntries.Columns.Clear();
-            headers = new String[] { "Nr Rej.", "Data Rej.", "Email", "Imię", "Nazwisko", "Rok Ur.", "Klub", "GW", "KK", "Kategoria", "Klasa", "Nazwa Modelu", "Skala", "Wydawnictwo" };
+            headers = new String[] { "Nr Mod", "Data Rej.", "Email", "Imię", "Nazwisko", "Rok Ur.", "Klub", "GW", "Klasa", "KK", "Kategoria", "Nazwa Modelu", "Skala", "Wydawnictwo" };
             foreach (String header in headers) {
                 lvEntries.Columns.Add(header.Trim());
             }
@@ -419,7 +419,7 @@ namespace Rejestracja {
 
         private void highlightInvalidRegistrationEntries() {
             List<Category> modelCategories = CategoryDao.getList().ToList();
-            List<AgeGroup> ageGroups = AgeGroupDao.getList().ToList();
+            List<AgeGroup> ageGroups = AgeGroupDao.getList(-1);
             
             int badEntryCount = 0;
             int year = DateTime.Now.Year;
@@ -432,15 +432,15 @@ namespace Rejestracja {
 
                 //Check if model category is listed in the resources
                 Category [] catFound = modelCategories.Where(
-                    x => x.name.Equals(item.SubItems[9].Text, StringComparison.CurrentCultureIgnoreCase) &&
-                         x.code.Equals(item.SubItems[8].Text, StringComparison.CurrentCultureIgnoreCase)
+                    x => x.name.Equals(item.SubItems[10].Text, StringComparison.CurrentCultureIgnoreCase) &&
+                         x.code.Equals(item.SubItems[9].Text, StringComparison.CurrentCultureIgnoreCase)
                     ).ToArray();
                 if (catFound.Length == 0) {
                     sb.Append("Kategoria modelu nie znaleziona w konfiguracji. ");
                     badEntryCount++;
-                    highlightErrorCell(item, 9);
+                    highlightErrorCell(item, 10);
                 }
-                else if (!catFound[0].className.Equals(item.SubItems[10].Text, StringComparison.CurrentCultureIgnoreCase)) {
+                else if (!catFound[0].className.Equals(item.SubItems[8].Text, StringComparison.CurrentCultureIgnoreCase)) {
                     if (sb.Length == 0) {
                         badEntryCount++;
                     }
@@ -799,7 +799,7 @@ namespace Rejestracja {
 
             try {
                 String outFile = Path.Combine(Resources.resolvePath("folderDokumentów"), "wyniki.html");
-                String templateFile = Resources.resolvePath("templateWynikowV2");
+                String templateFile = Resources.resolvePath("templateWynikow");
 
                 String directory = Path.GetDirectoryName(outFile);
                 if (!Directory.Exists(directory)) {

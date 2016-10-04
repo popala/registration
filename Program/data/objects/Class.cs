@@ -14,9 +14,25 @@ using System.Collections.Generic;
 
 namespace Rejestracja.Data.Objects {
     class Class {
+
+        public const String IMPORTED_CLASS_TITLE = "Kategorie z importu";
+
+        public enum ScoringCardType {
+            SeparateAgeGroupSeparateCategory = 0,
+            SeparateAgeGroupCombinedCategory = 1,
+            AllCombined = 2
+        }
+
         public int id;
         public String name;
+        public bool printCustomRegistrationCard;
+        public bool useCustomAgeGroups;
+        public String registrationCardTemplate;
+        public String judgingFormTemplate;
+        public String diplomaTemplate;
+        public ScoringCardType scoringCardType;
         public List<Category> categories;
+        public List<AgeGroup> ageGroups;
 
         public const int MAX_NAME_LENGTH = 128;
 
@@ -24,12 +40,27 @@ namespace Rejestracja.Data.Objects {
             this.id = id;
             this.name = name;
             this.categories = new List<Category>();
+            
+            this.printCustomRegistrationCard = false;
+            this.useCustomAgeGroups = false;
+            this.registrationCardTemplate = null;
+            this.judgingFormTemplate = null;
+            this.diplomaTemplate = null;
+            this.scoringCardType = ScoringCardType.AllCombined;
         }
 
-        public Class(String name) {
-            this.id = -1;
+        public Class(int id, String name, String registrationCardTemplate, String judgingFormTemplate, String diplomaTemplate, bool useCustomAgeGroups, ScoringCardType scoringCardType) {
+            this.id = id;
             this.name = name;
             this.categories = new List<Category>();
+            this.ageGroups = new List<AgeGroup>();
+
+            this.printCustomRegistrationCard = (!String.IsNullOrWhiteSpace(registrationCardTemplate));
+            this.useCustomAgeGroups = useCustomAgeGroups;
+            this.registrationCardTemplate = registrationCardTemplate;
+            this.judgingFormTemplate = judgingFormTemplate;
+            this.diplomaTemplate = diplomaTemplate;
+            this.scoringCardType = scoringCardType;
         }
     }
 }

@@ -14,6 +14,9 @@ using Rejestracja.Data.Dao;
 using Rejestracja.Data.Objects;
 using Rejestracja.Utils;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -21,13 +24,37 @@ namespace Rejestracja
 {
     public partial class frmSettings : Form
     {
+        private bool _loading = false;
+
         public frmSettings()
         {
             InitializeComponent();
         }
 
+        private void frmSettings_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
+            if(!validateClassOptions()) {
+                e.Cancel = true;
+            }
+            saveGeneralOptions();
+        }
+
         private void frmSettings_Load(object sender, EventArgs e)
         {
+            _loading = true;
+
+            // *** Treeview ***
+            TreeNode n = tvSettings.Nodes.Add("dokumenty", "Dokumenty");
+            n.Nodes.Add("dokumenty1", "Nagłówek i stopka");
+            n.Nodes.Add("dokumenty2", "Wzorce");
+
+            tvSettings.Nodes.Add("grupy wiekowe", "Grupy Wiekowe");
+            n = tvSettings.Nodes.Add("klasy", "Klasy i kategorie");
+            n.Nodes.Add("tmp", "tmp");
+
+            tvSettings.Nodes.Add("nagrody", "Nagrody");
+            tvSettings.Nodes.Add("wydawcy", "Wydawcy");
+            tvSettings.Nodes.Add("skale", "Skale");
+
             btnDelete.Visible = false;
 
             // *** Model category ***
@@ -44,11 +71,12 @@ namespace Rejestracja
             lvModelCategory.MultiSelect = false;
             lvModelCategory.HideSelection = false;
             lvModelCategory.CheckBoxes = true;
-            
-            loadModelCategories();
-            if(lvModelCategory.Items.Count > 0)
-                lvModelCategory.Items[0].Selected = true;
 
+            cboJudgingFormOption.Items.Add("Osobne karty sędziowania dla każdej kategorii i grupy wiekowej");
+            cboJudgingFormOption.Items.Add("Osobne karty sędziowania dla każdej grupy wiekowej");
+            cboJudgingFormOption.Items.Add("Jedna karta sędziowania dla wszystkich kategorii i grup wiekowych");
+            cboJudgingFormOption.SelectedIndex = 0;
+            
             // *** Publisher ***
             txtPublisherName.MaxLength = 64;
 
@@ -61,10 +89,6 @@ namespace Rejestracja
             lvPublishers.HideSelection = false;
             lvPublishers.CheckBoxes = true;
 
-            loadPublishers();
-            if (lvPublishers.Items.Count > 0)
-                lvPublishers.Items[0].Selected = true;
-
             /** Age groups **/
             lvAgeGroup.View = View.Details;
             lvAgeGroup.FullRowSelect = true;
@@ -76,11 +100,7 @@ namespace Rejestracja
             lvAgeGroup.HideSelection = false;
             lvAgeGroup.CheckBoxes = true;
 
-            loadAgeGroups();
-            if (lvAgeGroup.Items.Count > 0)
-                lvAgeGroup.Items[0].Selected = true;
-
-            /** ModelCategory **/
+            /** Model class **/
             txtModelClassName.MaxLength = Class.MAX_NAME_LENGTH;
 
             lvModelClass.View = View.Details;
@@ -92,9 +112,15 @@ namespace Rejestracja
             lvModelClass.HideSelection = false;
             lvModelClass.CheckBoxes = true;
 
-            loadModelClasses();
-            if (lvModelClass.Items.Count > 0)
-                lvModelClass.Items[0].Selected = true;
+            lvClassAgeGroups.View = View.Details;
+            lvClassAgeGroups.FullRowSelect = true;
+            lvClassAgeGroups.Columns.Add("Nazwa");
+            lvClassAgeGroups.Columns.Add("Przedział Wiekowy");
+            lvClassAgeGroups.CheckBoxes = false;
+            lvClassAgeGroups.GridLines = true;
+            lvClassAgeGroups.MultiSelect = false;
+            lvClassAgeGroups.HideSelection = false;
+            lvClassAgeGroups.CheckBoxes = true;
 
             /** Special Awards **/
             txtAwardTitle.MaxLength = Award.TITLE_MAX_LENGTH;
@@ -106,10 +132,6 @@ namespace Rejestracja
             lvAwards.MultiSelect = false;
             lvAwards.HideSelection = false;
             lvAwards.CheckBoxes = true; 
-
-            loadAwards();
-            if (lvAwards.Items.Count > 0)
-                lvAwards.Items[0].Selected = true;
 
             /** ModelScale **/
             txtModelScale.MaxLength = 128;
@@ -123,26 +145,129 @@ namespace Rejestracja
             lvModelScales.HideSelection = false;
             lvModelScales.CheckBoxes = true;
 
-            loadModelScales();
-            if (lvModelScales.Items.Count > 0)
-                lvModelScales.Items[0].Selected = true;
-
             loadGeneralOptions();
             setButtons();
+
+            _loading = false;
+        }
+
+        private void btnPath_Click(object sender, EventArgs e) {
+            switch(((Button)sender).Name) {
+                case "btnRegistrationTemplatePath":
+                    selectTemplate(txtRegistrationTemplate, "RegistrationTemplate");
+                    break;
+                case "btnJudgingTemplatePath":
+                    selectTemplate(txtJudgingFormTemplate, "JudgingFormTemplate");
+                    break;
+                case "btnResultsTemplatePath":
+                    selectTemplate(txtResultsTemplate, "ResultsTemplate");
+                    break;
+                case "btnSummaryTemplatePath":
+                    selectTemplate(txtSummaryTemplate, "SummaryTemplate");
+                    break;
+                case "btnAwardDiplomaTemplatePath":
+                    selectTemplate(txtAwardDiplomaTemplate, "AwardDiplomaTemplate");
+                    break;
+                case "btnCategoryDiplomaTemplatePath":
+                    selectTemplate(txtCategoryDiplomaTemplate, "CategoryDiplomaTemplate");
+                    break;
+            }
+        }
+
+        private void selectTemplate(TextBox source, String optionName) {
+            String folder = Resources.TemplateFolder;
+
+            if(File.Exists(source.Text)) {
+                folder = new FileInfo(source.Text).DirectoryName;
+            }
+
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.InitialDirectory = folder;
+            ofd.Filter = "MS Word Document (*.doc,*.docx)|*.doc;*docx|HTML Document (*.htm,*.html)|*.htm;*.html";
+            ofd.Multiselect = false;
+
+            DialogResult result = ofd.ShowDialog();
+            if(result == System.Windows.Forms.DialogResult.OK) {
+                source.Text = ofd.FileName;
+                if(optionName != null) {
+                    Options.set(optionName, ofd.FileName);
+                }
+            }
         }
 
         private void loadGeneralOptions()
         {
             txtHeading.Text = Options.get("DocumentHeader");
             txtFooter.Text = Options.get("DocumentFooter");
-            chkValidateAge.Checked = (Options.get("ValidateAgeGroup") == null || !Options.get("ValidateAgeGroup").Equals("false"));
+
+            String templatePath = Options.get("RegistrationTemplate");
+            if(templatePath != null) {
+                txtRegistrationTemplate.Text = templatePath;
+            }
+            else {
+                txtRegistrationTemplate.Text = Resources.resolvePath("templateKartyModelu");
+            }
+
+            templatePath = Options.get("JudgingFormTemplate");
+            if(templatePath != null) {
+                txtJudgingFormTemplate.Text = templatePath;
+            }
+            else {
+                txtJudgingFormTemplate.Text = Resources.resolvePath("templateKartySędziowania");
+            }
+
+            templatePath = Options.get("ResultsTemplate");
+            if(templatePath != null) {
+                txtResultsTemplate.Text = templatePath;
+            }
+            else {
+                txtResultsTemplate.Text = Resources.resolvePath("templateWynikow");
+            }
+
+            templatePath = Options.get("SummaryTemplate");
+            if(templatePath != null) {
+                txtSummaryTemplate.Text = templatePath;
+            }
+            else {
+                txtSummaryTemplate.Text = Resources.resolvePath("templatePosumowania");
+            }
+
+            templatePath = Options.get("AwardDiplomaTemplate");
+            if(templatePath != null) {
+                txtAwardDiplomaTemplate.Text = templatePath;
+            }
+            else {
+                txtAwardDiplomaTemplate.Text = Resources.resolvePath("templateDyplomuNagrody");
+            }
+
+            templatePath = Options.get("CategoryDiplomaTemplate");
+            if(templatePath != null) {
+                txtCategoryDiplomaTemplate.Text = templatePath;
+            }
+            else {
+                txtCategoryDiplomaTemplate.Text = Resources.resolvePath("templateDyplomuKategorii");
+            }
+        }
+
+        private void saveGeneralOptions() {
+            //Document header/footer
+            Options.set("DocumentHeader", txtHeading.Text);
+            Options.set("DocumentFooter", txtFooter.Text);
+
+            //Age group validation
+            Options.set("ValidateAgeGroup", chkValidateAge.Checked.ToString().ToLower());
+
+            //Document templates
+            Options.set("RegistrationTemplate", txtRegistrationTemplate.Text);
+            Options.set("JudgingFormTemplate", txtJudgingFormTemplate.Text);
+            Options.set("ResultsTemplate", txtResultsTemplate.Text);
+            Options.set("SummaryTemplate", txtSummaryTemplate.Text);
+            Options.set("AwardDiplomaTemplate", txtAwardDiplomaTemplate.Text);
+            Options.set("CategoryDiplomaTemplate", txtCategoryDiplomaTemplate.Text);
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
-            Options.set("DocumentHeader", txtHeading.Text);
-            Options.set("DocumentFooter", txtFooter.Text);
-            Options.set("ValidateAgeGroup", chkValidateAge.Checked.ToString().ToLower());
             this.Close();
         }
 
@@ -180,6 +305,7 @@ namespace Rejestracja
         private void setButtons() {
             switch (tcOptions.SelectedIndex) {
                 case 0:
+                case 7:
                     btnDelete.Visible = false;
                     break;
                 case 1:
@@ -261,11 +387,12 @@ namespace Rejestracja
 
         #region ModelCategories
 
-        private void loadModelCategories()
+        private void loadModelCategories(String className)
         {
+            lvModelCategory.BeginUpdate();
             lvModelCategory.Items.Clear();
 
-            foreach (Category mc in CategoryDao.getList())
+            foreach (Category mc in CategoryDao.getList(false, className))
             {
                 ListViewItem li = new ListViewItem(new String[] { mc.code, mc.name, mc.className });
                 li.Tag = mc.id;
@@ -274,6 +401,7 @@ namespace Rejestracja
             lvModelCategory.Columns[0].Width = -2;
             lvModelCategory.Columns[1].Width = -2;
             lvModelCategory.Columns[2].Width = -2;
+            lvModelCategory.EndUpdate();
         }
 
         private void deleteModelCategories() {
@@ -343,10 +471,6 @@ namespace Rejestracja
 
         private void btnAddCategory_Click(object sender, EventArgs e)
         {
-            if (cboModelClass.Items.Count == 0) {
-                MessageBox.Show("Dodaj przynajmniej jedną klasę zanim dodasz kategorię", "Nowa kategoria", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
             if(txtCategoryCode.Text.Trim().Length < 1 || txtCategoryName.Text.Trim().Length < 1)
             {
                 MessageBox.Show("Kod i nazwa są wymagane", "Nowa kategoria", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -361,8 +485,8 @@ namespace Rejestracja
                 return;
             }
 
-            int catId = CategoryDao.add(txtCategoryCode.Text, txtCategoryName.Text, cboModelClass.Text, CategoryDao.getNextSortFlag());
-            loadModelCategories();
+            int catId = CategoryDao.add(txtCategoryCode.Text, txtCategoryName.Text, tvSettings.SelectedNode.Text, CategoryDao.getNextSortFlag());
+            loadModelCategories(tvSettings.SelectedNode.Text);
             setButtons();
             foreach (ListViewItem item in lvModelCategory.Items) {
                 if ((int)item.Tag == catId) {
@@ -372,8 +496,9 @@ namespace Rejestracja
                 }
             }
 
+            txtCategoryName.Text = "";
+            txtCategoryCode.Text = "";
             txtCategoryCode.Focus();
-            txtCategoryCode.SelectAll();
         }
 
         #endregion
@@ -445,7 +570,7 @@ namespace Rejestracja
 
         #endregion
 
-        #region AgeGroup
+        #region AgeGroups
 
         private void btnAddAgeGroup_Click(object sender, EventArgs e)
         {
@@ -454,13 +579,13 @@ namespace Rejestracja
                 MessageBox.Show(this, "Wiek musi być liczbą > 0", "Błędne dane", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            if (AgeGroupDao.exists(int.Parse(txtAge.Text))) {
+            if (AgeGroupDao.exists(int.Parse(txtAge.Text), -1)) {
                 MessageBox.Show("Nowa kategoria wiekowa musi różnić się o przynajmniej 2 lata od już istniejących", "Nowa grupa wiekowa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtAge.Focus();
                 txtAge.SelectAll();
                 return;
             }
-            int agId = AgeGroupDao.add(txtAgeGroup.Text, int.Parse(txtAge.Text));
+            int agId = AgeGroupDao.add(txtAgeGroup.Text, int.Parse(txtAge.Text), -1);
             loadAgeGroups();
             setButtons();
 
@@ -479,13 +604,15 @@ namespace Rejestracja
         private void loadAgeGroups() {
             lvAgeGroup.Items.Clear();
 
-            foreach (AgeGroup ageGroup in AgeGroupDao.getList()) {
+            foreach (AgeGroup ageGroup in AgeGroupDao.getList(-1)) {
                 ListViewItem li = new ListViewItem(new String[] { ageGroup.name, String.Format("{0} - {1}", ageGroup.bottomAge, ageGroup.upperAge) });
                 li.Tag = ageGroup.id;
                 lvAgeGroup.Items.Add(li);
             }
             lvAgeGroup.Columns[0].Width = -2;
             lvAgeGroup.Columns[1].Width = -2;
+
+            chkValidateAge.Checked = (Options.get("ValidateAgeGroup") == null || !Options.get("ValidateAgeGroup").Equals("false"));
         }
 
         private void deleteAgeGroups() {
@@ -517,6 +644,19 @@ namespace Rejestracja
 
         #region ModelClasses
 
+        private bool validateClassOptions() {
+            foreach(Class cls in ClassDao.getList()) {
+                if(cls.useCustomAgeGroups) {
+                    List<AgeGroup> ageGroups = AgeGroupDao.getList(cls.id);
+                    if(ageGroups.Count == 0) {
+                        MessageBox.Show("Klasa \"" + cls.name + "\" nie ma zdefiniowanych żadnych group wiekowych pomimo że odznaczono opcję \"Używaj standardowych grup wiekowych\".", "Błąd w ustawieniach klasy \"" + cls.name + "\"", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         private void btnAddModelClass_Click(object sender, EventArgs e) {
             if (txtModelClassName.Text.Trim().Length < 1) {
                 MessageBox.Show("Nazwa klasy wymagana", "Nowa klasa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -544,25 +684,25 @@ namespace Rejestracja
                 }
             }
 
+            txtModelClassName.Text = "";
             txtModelClassName.Focus();
-            txtModelClassName.SelectAll();
         }
 
         private void loadModelClasses() {
+
+            TreeNode classNode = tvSettings.Nodes.Find("klasy", true)[0];
+            classNode.Nodes.Clear();
+
+
             lvModelClass.Items.Clear();
-            cboModelClass.Items.Clear();
 
             foreach (Class cls in ClassDao.getList()) {
                 ListViewItem li = new ListViewItem(new String[] { cls.name });
                 li.Tag = cls.id;
                 lvModelClass.Items.Add(li);
-                
-                cboModelClass.Items.Add(new ComboBoxItem(cls.id, cls.name));
+                classNode.Nodes.Add("cls:" + cls.id.ToString(), cls.name);
             }
             lvModelClass.Columns[0].Width = -2;
-            if (cboModelClass.Items.Count > 0) {
-                cboModelClass.SelectedIndex = 0;
-            }
         }
 
         private void deleteModelClasses() {
@@ -582,9 +722,80 @@ namespace Rejestracja
                 ClassDao.delete(clsId);
             }
             loadModelClasses();
-            loadModelCategories();
+            loadModelCategories(tvSettings.SelectedNode.Text);
             
             lvModelClass.EndUpdate();
+        }
+
+        private void loadClassDetails(String className) {
+            _loading = true;
+
+            Class cls = ClassDao.get(className);
+
+            loadModelCategories(className);
+
+            chkUseCustomRegistrationCard.Checked = (!String.IsNullOrWhiteSpace(cls.registrationCardTemplate));
+            txtClassRegistrationTemplate.Text = cls.registrationCardTemplate;
+            chkUseCustomJudgingCard.Checked = (!String.IsNullOrWhiteSpace(cls.judgingFormTemplate));
+            txtClassJudgingFormTemplate.Text = cls.judgingFormTemplate;
+            chkUseCustomDiploma.Checked = (!String.IsNullOrWhiteSpace(cls.diplomaTemplate));
+            txtClassCategoryDiplomaTemplate.Text = cls.diplomaTemplate;
+
+            cboJudgingFormOption.SelectedIndex = (int)cls.scoringCardType;
+
+            txtClassAgeGroup.Text = "";
+            txtClassAge.Text = "";
+            lvClassAgeGroups.Items.Clear();
+
+            chkUseStandardAgeGroups.Checked = (!cls.useCustomAgeGroups);
+            if(cls.useCustomAgeGroups) {
+                loadClassAgeGroups(cls.id);
+            }
+
+            tcClassOptions.SelectedIndex = 0;
+            _loading = false;
+        }
+
+        private void loadClassAgeGroups(int classId) {
+            lvClassAgeGroups.Items.Clear();
+
+            List<AgeGroup> ageGroups = AgeGroupDao.getList(classId);
+            foreach(AgeGroup ageGroup in ageGroups) {
+                ListViewItem li = new ListViewItem(new String[] { ageGroup.name, String.Format("{0} - {1}", ageGroup.bottomAge, ageGroup.upperAge) });
+                li.Tag = ageGroup.id;
+                lvClassAgeGroups.Items.Add(li);
+            }
+            foreach(ColumnHeader column in lvClassAgeGroups.Columns) {
+                column.Width = -2;
+            }
+        }
+
+        private void chkUseStandardAgeGroups_CheckedChanged(object sender, EventArgs e) {
+
+            Class cls = ClassDao.get(tvSettings.SelectedNode.Text);
+
+            if(chkUseStandardAgeGroups.Checked) {
+
+                if(cls.ageGroups.Count > 0 && MessageBox.Show("Usunąć niestandardowe grupy wiekowe?", "Grupy wiekowe w klasie", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != System.Windows.Forms.DialogResult.Yes) {
+                    return;
+                }
+                AgeGroupDao.deleteForClass(cls.id);
+
+                txtClassAgeGroup.Enabled = false;
+                txtClassAge.Enabled = false;
+                btnAddClassAgeGroup.Enabled = false;
+                lvClassAgeGroups.Items.Clear();
+                lvClassAgeGroups.Enabled = false;
+            }
+            else {
+                txtClassAgeGroup.Enabled = true;
+                txtClassAge.Enabled = true;
+                btnAddClassAgeGroup.Enabled = true;
+                lvClassAgeGroups.Enabled = true;
+            }
+
+            cls.useCustomAgeGroups = (!chkUseStandardAgeGroups.Checked);
+            ClassDao.update(cls);
         }
 
         #endregion
@@ -796,5 +1007,121 @@ namespace Rejestracja
         }
 
         #endregion
+
+        private void tvSettings_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
+            if(e.Node == null) {
+                return;
+            }
+
+            if(e.Action == TreeViewAction.Expand) {
+                switch(e.Node.Name) {
+                    case "klasy": {
+                            TreeNode classNode = tvSettings.Nodes.Find("klasy", true)[0];
+                            classNode.Nodes.Clear();
+
+                            foreach(Class cls in ClassDao.getList()) {
+                                classNode.Nodes.Add("cls:" + cls.id.ToString(), cls.name);
+                            }
+                            break;
+                        }
+                }
+            }
+        }
+
+        private void tvSettings_AfterSelect(object sender, TreeViewEventArgs e) {
+            if(e.Node == null) {
+                return;
+            }
+
+            if(e.Node.Name.Contains(":")) {
+                loadClassDetails(e.Node.Text);
+                tcOptions.SelectedIndex = 3;
+            }
+
+            switch(e.Node.Name) {
+                case "dokumenty":
+                case "dokumenty1":
+                    tcOptions.SelectedIndex = 0;
+                    break;
+                case "dokumenty2":
+                    tcOptions.SelectedIndex = 7;
+                    break;
+                case "grupy wiekowe":
+                    loadAgeGroups(); tcOptions.SelectedIndex = 1;
+                    break;
+                case "klasy":
+                    loadModelClasses(); tcOptions.SelectedIndex = 2;
+                    break;
+                case "nagrody":
+                    loadAwards(); tcOptions.SelectedIndex = 4;
+                    break;
+                case "wydawcy":
+                    loadPublishers(); tcOptions.SelectedIndex = 5;
+                    break;
+                case "skale":
+                    loadModelScales(); tcOptions.SelectedIndex = 6;
+                    break;
+            }
+        }
+
+        private void btnAddClassAgeGroup_Click(object sender, EventArgs e) {
+            int clsId = int.Parse(tvSettings.SelectedNode.Name.ToString().Split(':')[1]);
+            int age = 0;
+
+            if(!int.TryParse(txtClassAge.Text, out age)) {
+                MessageBox.Show("Wiek musi być wartością numeryczną", "Nowa grupa wiekowa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                txtClassAge.SelectAll();
+                txtClassAge.Focus();
+                return;
+            }
+
+            if(AgeGroupDao.exists(age, clsId)) {
+                MessageBox.Show("Grupa wiekowa już istnieje", "Nowa grupa wiekowa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            AgeGroupDao.add(txtClassAgeGroup.Text, age, clsId);
+            txtClassAgeGroup.Text = "";
+            txtClassAge.Text = "";
+            loadClassAgeGroups(clsId);
+            txtClassAgeGroup.Focus();
+        }
+
+        private void cboJudgingFormOption_SelectedIndexChanged(object sender, EventArgs e) {
+            if(_loading) {
+                return;
+            }
+
+            Class cls = ClassDao.get(tvSettings.SelectedNode.Text);
+            cls.scoringCardType = (Class.ScoringCardType)cboJudgingFormOption.SelectedIndex;
+            ClassDao.update(cls);
+        }
+
+        private void chkUseCustomRegistrationCard_CheckedChanged(object sender, EventArgs e) {
+            if(chkUseCustomRegistrationCard.Checked) {
+                btnCustomRegistrationCard.Enabled = true;
+                if(_loading) {
+                    return;
+                }
+
+                txtClassRegistrationTemplate.Text = "";
+                selectTemplate(txtClassRegistrationTemplate, null);
+                if(String.IsNullOrWhiteSpace(txtClassRegistrationTemplate.Text)) {
+                    chkUseCustomRegistrationCard.Checked = false;
+                    return;
+                }
+            }
+            else {
+                btnCustomRegistrationCard.Enabled = false;
+                txtClassRegistrationTemplate.Text = "";
+                if(_loading) {
+                    return;
+                }
+            }
+
+            Class cls = ClassDao.get(tvSettings.SelectedNode.Text);
+            cls.registrationCardTemplate = txtClassRegistrationTemplate.Text;
+            ClassDao.update(cls);
+        }
     }
 }

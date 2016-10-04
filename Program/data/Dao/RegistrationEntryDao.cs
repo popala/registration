@@ -202,9 +202,9 @@ namespace Rejestracja.Data.Dao
                                 yearOfBirth.ToString(),
                                 dr["ClubName"].ToString(),
                                 dr["AgeGroupName"].ToString(),
+                                dr["ModelClass"].ToString(),
                                 dr["Code"].ToString(),
                                 dr["CategoryName"].ToString(),
-                                dr["ModelClass"].ToString(),
                                 dr["ModelName"].ToString(),
                                 dr["Scale"].ToString(),
                                 dr["Publisher"].ToString()
