@@ -464,23 +464,5 @@ namespace Rejestracja.Data.Dao {
                 return (int)cm.ExecuteScalar();
             }
         }
-
-        public static void createTable() {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.CommandText =
-                    @"CREATE TABLE Results(
-                        ResultId INTEGER PRIMARY KEY,
-                        EntryId INTEGER NOT NULL REFERENCES Registration(EntryId),
-                        AwardId INTEGER NULL REFERENCES SpecialAwards(AwardId),
-                        Place INTEGER NULL)";
-                cm.ExecuteNonQuery();
-
-                cm.CommandText = "CREATE UNIQUE INDEX Idx_Res_Unique ON Results(EntryId,AwardId,Place)";
-                cm.ExecuteNonQuery();
-            }
-        }
     }
 }

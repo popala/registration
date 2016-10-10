@@ -156,21 +156,5 @@ namespace Rejestracja.Data.Dao {
                 cm.ExecuteNonQuery();
             }
         }
-
-        public static void createTable() {
-            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(
-                    @"CREATE TABLE Models(
-                        Id INTEGER PRIMARY KEY,
-                        Name TEXT,
-                        Publisher TEXT,
-                        Scale TEXT,
-                        ModelerId INTEGER NOT NULL REFERENCES Modelers(Id));
-                    CREATE INDEX Idx_Models_MdlrId ON Models(ModelerId);", cn)) {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.ExecuteNonQuery();
-            }
-        }
     }
 }

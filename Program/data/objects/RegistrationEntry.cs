@@ -10,12 +10,14 @@
  * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  */
 using System;
+using System.Collections.Generic;
 
 namespace Rejestracja.Data.Objects {
     class RegistrationEntry {
 
         public Registration registration;
         public Category category;
+        public List<Registration> importedRegistration;
         public Modeler modeler;
         public Model model;
 
@@ -24,6 +26,7 @@ namespace Rejestracja.Data.Objects {
             this.model = new Model();
             this.modeler = new Modeler();
             this.category = new Category();
+            this.importedRegistration = new List<Registration>();
         }
 
         public RegistrationEntry(Registration registration, Category category, Modeler modeler, Model model) {

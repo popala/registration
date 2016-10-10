@@ -111,7 +111,8 @@
     <Compile Include="Data\Dao\RegistrationDao.cs" />
     <Compile Include="Data\Dao\ScaleDao.cs" />
     <Compile Include="Data\Dao\CategoryDao.cs" />
-    <Compile Include="Data\DataFileConversion.cs" />
+    <Compile Include="Data\DataFileUtil.cs" />
+    <Compile Include="Data\ImportUtil.cs" />
     <Compile Include="Data\Objects\AgeGroup.cs" />
     <Compile Include="Data\Objects\Award.cs" />
     <Compile Include="Data\Objects\Category.cs" />
@@ -200,7 +201,6 @@
     <Resource Include="license.rtf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <None Include="ClassDiagram1.cd" />
     <None Include="Icons\NewFile_6276.png" />
     <None Include="Icons\OpenFileDialog_692.png" />
     <None Include="Icons\Open_6529.png" />

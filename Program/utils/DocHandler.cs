@@ -511,6 +511,39 @@ namespace Rejestracja.Utils
             process.WaitForExit();
         }
 
+        public static void printRegistrationCards(int modelId) {
+            try {
+                List<RegistrationEntry> regEntries = RegistrationEntryDao.getRegistrationForModel(modelId);
+                if(regEntries.Count == 0) {
+                    MessageBox.Show("Numer modelu nie znaleziony", "Błędne dane", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                String directory = Path.GetDirectoryName(String.Format("{0}\\{1}\\", Resources.resolvePath("folderDokumentów"), "karty"));
+                if(!Directory.Exists(directory)) {
+                    Directory.CreateDirectory(directory);
+                }
+
+                foreach(RegistrationEntry entry in regEntries) {
+                    string outFile = String.Format("{0}\\rejestracja_{1}_kat-{2}.docx", directory, entry.registration.id, entry.registration.categoryId);
+                    File.Delete(outFile);
+
+                    Class regClass = ClassDao.getClassForCategory(entry.registration.categoryId);
+                    if(regClass.printCustomRegistrationCard) {
+                        DocHandler.generateRegistrationCard(regClass.registrationCardTemplate, outFile, entry);
+                    }
+                    else {
+                        DocHandler.generateRegistrationCard(Resources.resolvePath("templateKartyModelu"), outFile, entry);
+                    }
+                    DocHandler.printWordDoc(outFile);
+                }
+            }
+            catch(Exception err) {
+                LogWriter.error(err);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private static String sanitizeFileName(String fileName) {
             var regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
             var r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));

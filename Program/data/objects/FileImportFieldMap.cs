@@ -20,7 +20,6 @@ namespace Rejestracja.Data.Objects {
         public int LastName { get; set; }
         public int ClubName { get; set; }
         public int AgeGroup { get; set; }
-        public bool CalculateAgeGroup { get; set; }
         public int ModelName { get; set; }
         public List<int[]> ModelCategory { get; set; }
         public int ModelScale { get; set; }

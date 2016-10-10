@@ -3,7 +3,100 @@ using System;
 using System.Data.SQLite;
 
 namespace Rejestracja.Data {
-    class DataFileConversion {
+    class DataFileUtil {
+
+        public static void createTables() {
+            String query = 
+@"CREATE TABLE Classes(
+    Id INTEGER PRIMARY KEY,
+    Name TEXT NOT NULL,
+    RegistrationTemplate TEXT NULL,
+    JudgingFormTemplate TEXT NULL,
+    DiplomaTemplate TEXT NULL,
+    ScoringCardType INTEGER NOT NULL DEFAULT 0,
+    UseCustomAgeGroups INTEGER NOT NULL DEFAULT 0);
+CREATE UNIQUE INDEX Idx_Class_Name ON Classes(Name);
+
+CREATE TABLE Modelers(
+    Id INTEGER PRIMARY KEY,
+    FirstName TEXT,
+    LastName TEXT,
+    ClubName TEXT,
+    YearOfBirth INTEGER,
+    Email TEXT);
+CREATE INDEX Idx_Modeler_Name ON Modelers(FirstName, LastName, Email);
+
+CREATE TABLE Models(
+    Id INTEGER PRIMARY KEY,
+    Name TEXT,
+    Publisher TEXT,
+    Scale TEXT,
+    ModelerId INTEGER NOT NULL REFERENCES Modelers(Id));
+CREATE INDEX Idx_Models_MdlrId ON Models(ModelerId);
+
+CREATE TABLE Registration(
+    Id INTEGER PRIMARY KEY,
+    TmStamp DATETIME NOT NULL,
+    ModelId INTEGER NOT NULL REFERENCES Models(Id),
+    CategoryId INTEGER NOT NULL DEFAULT -1,
+    CategoryName TEXT NULL,
+    AgeGroupName TEXT NULL REFERENCES AgeGroup(Name));
+CREATE UNIQUE INDEX Idx_Reg_ModelCat ON Registration(ModelId, CategoryId);
+
+CREATE TABLE Results(
+	ResultId INTEGER PRIMARY KEY,
+	RegistrationId INTEGER NOT NULL REFERENCES Registration(Id),
+	AwardId INTEGER NULL REFERENCES SpecialAwards(Id),
+	Place INTEGER NULL);
+
+CREATE TABLE AgeGroups(
+    Id INTEGER PRIMARY KEY,
+    ClassId INTEGER NOT NULL,
+    Name TEXT NOT NULL,
+    Age INTEGER NOT NULL);
+CREATE UNIQUE INDEX Idx_AgeGroups_Name_ClsId ON AgeGroups(ClassId, Name);
+
+CREATE TABLE Categories(
+    Id INTEGER PRIMARY KEY,
+    Code TEXT NOT NULL,
+    Name TEXT,
+    ModelClass TEXT,
+    DisplayOrder INTEGER NOT NULL);
+CREATE INDEX Idx_MC_Code ON Categories(Code);
+CREATE INDEX Idx_MC_Class ON Categories(ModelClass);
+
+CREATE TABLE Scales(
+    Id INTEGER PRIMARY KEY,
+    Name TEXT NOT NULL);
+CREATE UNIQUE INDEX Idx_Scales_Name ON Scales(Name);
+
+CREATE TABLE Publishers(
+    Id INTEGER  PRIMARY KEY,
+    Name TEXT NOT NULL);
+CREATE INDEX Idx_Pub_Name ON Publishers(Name);
+
+CREATE TABLE Awards(
+    Id INTEGER PRIMARY KEY,
+    Title TEXT NOT NULL,
+    DisplayOrder INTEGER NOT NULL);
+CREATE INDEX Idx_Aw_Title ON Awards(Title);
+
+CREATE TABLE Options(
+    Name TEXT NOT NULL PRIMARY KEY,
+    Value TEXT NOT NULL);
+CREATE UNIQUE INDEX Idx_Opt_Name ON Options(Name);
+
+CREATE TABLE Version(Version REAL NOT NULL);
+CREATE UNIQUE INDEX Idx_Ver_Ver ON Version(Version);
+INSERT INTO Version(Version) VALUES(.941);";
+
+            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using(SQLiteCommand cm = new SQLiteCommand(query, cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+                cm.ExecuteNonQuery();
+            }
+        }
 
         public static void convertTo941() {
 

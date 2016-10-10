@@ -15,43 +15,35 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
+using System.Linq;
 
 namespace Rejestracja.Data.Dao
 {
     class ScaleDao
     {
-        public static IEnumerable<Scale> getList()
+        public static List<Scale> getList()
         {
+            List<Scale> ret = new List<Scale>();
+
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name, DisplayOrder FROM Scales ORDER BY DisplayOrder ASC", cn))
+            using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name FROM Scales", cn))
             {
                 cn.Open();
 
                 using(SQLiteDataReader dr = cm.ExecuteReader())
                 {
-                    while (dr.Read())
-                        yield return new Scale(
-                            dr.GetInt32(0),
-                            dr.GetString(1),
-                            dr.GetInt32(2)
+                    while(dr.Read()) {
+                        ret.Add(
+                            new Scale(dr.GetInt32(dr.GetOrdinal("Id")), dr["Name"].ToString())
                         );
+                    }
                 }
             }
-        }
-
-        public static IEnumerable<String> getSimpleList()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand("SELECT Name FROM Scales ORDER BY DisplayOrder ASC", cn))
-            {
-                cn.Open();
-
-                using (SQLiteDataReader dr = cm.ExecuteReader())
-                {
-                    while (dr.Read())
-                        yield return dr.GetString(0);
-                }
+            if(ret.Count > 0) {
+                ret.Sort();
             }
+
+            return ret;
         }
 
         public static bool exists(String name)
@@ -68,48 +60,18 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static int add(String name, int displayOrder)
+        public static int add(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Scales(Name, DisplayOrder) VALUES(@Name, @DisplayOrder)", cn))
+            using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Scales(Name) VALUES(@Name)", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
                 cm.Parameters.Add("@Name", System.Data.DbType.String, 128).Value = name;
-                cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int32).Value = displayOrder;
                 cm.ExecuteNonQuery();
 
                 return (int)cn.LastInsertRowId;
-            }
-        }
-
-        public static int getNextSortFlag()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(@"SELECT MAX(DisplayOrder) AS displayOrder FROM Scales", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                object res = cm.ExecuteScalar();
-                if (String.IsNullOrEmpty(res.ToString()))
-                    return 1;
-                else
-                    return (int.Parse(res.ToString()) + 1);
-            }
-        }
-
-        public static void updateDisplayOrder(int id, int displayOrder)
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(@"UPDATE Scales SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-
-                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
-                cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int32).Value = displayOrder;
-                cm.ExecuteNonQuery();
             }
         }
 
@@ -123,31 +85,6 @@ namespace Rejestracja.Data.Dao
 
                 cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
                 cm.ExecuteNonQuery();
-            }
-        }
-
-        public static void createTable()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(
-                @"CREATE TABLE Scales(
-                    Id INTEGER PRIMARY KEY,
-                    Name TEXT NOT NULL,
-                    DisplayOrder INTEGER NOT NULL)", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.ExecuteNonQuery();
-
-                cm.CommandText = "CREATE UNIQUE INDEX Idx_MS_Name ON Scales(Name)";
-                cm.ExecuteNonQuery();
-            }
-
-            String[] defaults = new String[] { "1:9", "1:16", "1:25", "1:33", "1:43", "1:48", "1:50", "1:100", "1:150", "1:200", "1:250", "1:300", "1:400", "1:500", "Inna" };
-            int displayOrder = 0;
-            foreach (String scale in defaults) {
-                add(scale, displayOrder);
-                displayOrder++; 
             }
         }
     }

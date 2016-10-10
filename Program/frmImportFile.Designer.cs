@@ -64,11 +64,9 @@
             this.cboModelCategory3 = new System.Windows.Forms.ComboBox();
             this.cboModelCategory2 = new System.Windows.Forms.ComboBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.cboAgeGroup = new System.Windows.Forms.ComboBox();
-            this.cboYearOfBirth = new System.Windows.Forms.ComboBox();
             this.label12 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
             this.chkDropExistingRecords = new System.Windows.Forms.CheckBox();
+            this.cboYearOfBirth = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -81,7 +79,7 @@
             this.btnSelectFile.Location = new System.Drawing.Point(12, 12);
             this.btnSelectFile.Name = "btnSelectFile";
             this.btnSelectFile.Size = new System.Drawing.Size(102, 23);
-            this.btnSelectFile.TabIndex = 2;
+            this.btnSelectFile.TabIndex = 3;
             this.btnSelectFile.Text = "Wybierz Plik...";
             this.btnSelectFile.UseVisualStyleBackColor = true;
             this.btnSelectFile.Click += new System.EventHandler(this.btnSelectFile_Click);
@@ -92,7 +90,7 @@
             this.lblFileName.Location = new System.Drawing.Point(120, 17);
             this.lblFileName.Name = "lblFileName";
             this.lblFileName.Size = new System.Drawing.Size(61, 13);
-            this.lblFileName.TabIndex = 3;
+            this.lblFileName.TabIndex = 4;
             this.lblFileName.Text = "lblFileName";
             // 
             // chkHasHeaders
@@ -101,7 +99,7 @@
             this.chkHasHeaders.Location = new System.Drawing.Point(45, 45);
             this.chkHasHeaders.Name = "chkHasHeaders";
             this.chkHasHeaders.Size = new System.Drawing.Size(107, 17);
-            this.chkHasHeaders.TabIndex = 4;
+            this.chkHasHeaders.TabIndex = 5;
             this.chkHasHeaders.Text = "Plik ma nagłówki";
             this.chkHasHeaders.UseVisualStyleBackColor = true;
             this.chkHasHeaders.Click += new System.EventHandler(this.chkHasHeaders_Click);
@@ -112,7 +110,7 @@
             this.btnImport.Location = new System.Drawing.Point(538, 607);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(75, 23);
-            this.btnImport.TabIndex = 0;
+            this.btnImport.TabIndex = 1;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
@@ -124,7 +122,7 @@
             this.btnCancel.Location = new System.Drawing.Point(619, 607);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 1;
+            this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Anuluj";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -148,7 +146,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(916, 587);
+            this.tabPage1.Size = new System.Drawing.Size(691, 505);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Podgląd Pliku";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -161,7 +159,7 @@
             this.lvFilePreview.FullRowSelect = true;
             this.lvFilePreview.Location = new System.Drawing.Point(0, 0);
             this.lvFilePreview.Name = "lvFilePreview";
-            this.lvFilePreview.Size = new System.Drawing.Size(721, 507);
+            this.lvFilePreview.Size = new System.Drawing.Size(691, 505);
             this.lvFilePreview.TabIndex = 1;
             this.lvFilePreview.UseCompatibleStateImageBehavior = false;
             // 
@@ -202,7 +200,7 @@
             this.chkAutoAddPublisher.Location = new System.Drawing.Point(503, 444);
             this.chkAutoAddPublisher.Name = "chkAutoAddPublisher";
             this.chkAutoAddPublisher.Size = new System.Drawing.Size(163, 17);
-            this.chkAutoAddPublisher.TabIndex = 15;
+            this.chkAutoAddPublisher.TabIndex = 11;
             this.chkAutoAddPublisher.Text = "Dodaj nie znalezione w bazie";
             this.chkAutoAddPublisher.UseVisualStyleBackColor = true;
             // 
@@ -212,7 +210,7 @@
             this.chkAutoAddScales.Location = new System.Drawing.Point(503, 417);
             this.chkAutoAddScales.Name = "chkAutoAddScales";
             this.chkAutoAddScales.Size = new System.Drawing.Size(163, 17);
-            this.chkAutoAddScales.TabIndex = 13;
+            this.chkAutoAddScales.TabIndex = 9;
             this.chkAutoAddScales.Text = "Dodaj nie znalezione w bazie";
             this.chkAutoAddScales.UseVisualStyleBackColor = true;
             // 
@@ -233,7 +231,7 @@
             this.cboModelPublisher.Location = new System.Drawing.Point(124, 442);
             this.cboModelPublisher.Name = "cboModelPublisher";
             this.cboModelPublisher.Size = new System.Drawing.Size(373, 21);
-            this.cboModelPublisher.TabIndex = 13;
+            this.cboModelPublisher.TabIndex = 10;
             this.cboModelPublisher.SelectedIndexChanged += new System.EventHandler(this.cboField_SelectedIndexChanged);
             // 
             // label11
@@ -253,7 +251,7 @@
             this.cboModelScale.Location = new System.Drawing.Point(124, 415);
             this.cboModelScale.Name = "cboModelScale";
             this.cboModelScale.Size = new System.Drawing.Size(373, 21);
-            this.cboModelScale.TabIndex = 12;
+            this.cboModelScale.TabIndex = 8;
             this.cboModelScale.SelectedIndexChanged += new System.EventHandler(this.cboField_SelectedIndexChanged);
             // 
             // label9
@@ -274,7 +272,7 @@
             this.cboModelName.Location = new System.Drawing.Point(124, 225);
             this.cboModelName.Name = "cboModelName";
             this.cboModelName.Size = new System.Drawing.Size(527, 21);
-            this.cboModelName.TabIndex = 7;
+            this.cboModelName.TabIndex = 6;
             this.cboModelName.SelectedIndexChanged += new System.EventHandler(this.cboField_SelectedIndexChanged);
             // 
             // label7
@@ -409,7 +407,7 @@
             this.panel2.Location = new System.Drawing.Point(-4, 256);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(699, 149);
-            this.panel2.TabIndex = 8;
+            this.panel2.TabIndex = 7;
             // 
             // cboModelCategory1
             // 
@@ -418,7 +416,7 @@
             this.cboModelCategory1.Location = new System.Drawing.Point(248, 8);
             this.cboModelCategory1.Name = "cboModelCategory1";
             this.cboModelCategory1.Size = new System.Drawing.Size(407, 21);
-            this.cboModelCategory1.TabIndex = 43;
+            this.cboModelCategory1.TabIndex = 0;
             // 
             // label14
             // 
@@ -436,7 +434,7 @@
             this.cboCategoryAction5.Location = new System.Drawing.Point(128, 116);
             this.cboCategoryAction5.Name = "cboCategoryAction5";
             this.cboCategoryAction5.Size = new System.Drawing.Size(114, 21);
-            this.cboCategoryAction5.TabIndex = 41;
+            this.cboCategoryAction5.TabIndex = 7;
             // 
             // cboModelCategory5
             // 
@@ -445,7 +443,7 @@
             this.cboModelCategory5.Location = new System.Drawing.Point(248, 116);
             this.cboModelCategory5.Name = "cboModelCategory5";
             this.cboModelCategory5.Size = new System.Drawing.Size(407, 21);
-            this.cboModelCategory5.TabIndex = 40;
+            this.cboModelCategory5.TabIndex = 8;
             // 
             // cboCategoryAction4
             // 
@@ -454,7 +452,7 @@
             this.cboCategoryAction4.Location = new System.Drawing.Point(128, 89);
             this.cboCategoryAction4.Name = "cboCategoryAction4";
             this.cboCategoryAction4.Size = new System.Drawing.Size(114, 21);
-            this.cboCategoryAction4.TabIndex = 39;
+            this.cboCategoryAction4.TabIndex = 5;
             // 
             // cboModelCategory4
             // 
@@ -463,7 +461,7 @@
             this.cboModelCategory4.Location = new System.Drawing.Point(248, 89);
             this.cboModelCategory4.Name = "cboModelCategory4";
             this.cboModelCategory4.Size = new System.Drawing.Size(407, 21);
-            this.cboModelCategory4.TabIndex = 38;
+            this.cboModelCategory4.TabIndex = 6;
             // 
             // cboCategoryAction3
             // 
@@ -472,7 +470,7 @@
             this.cboCategoryAction3.Location = new System.Drawing.Point(128, 62);
             this.cboCategoryAction3.Name = "cboCategoryAction3";
             this.cboCategoryAction3.Size = new System.Drawing.Size(114, 21);
-            this.cboCategoryAction3.TabIndex = 37;
+            this.cboCategoryAction3.TabIndex = 3;
             // 
             // cboCategoryAction2
             // 
@@ -481,7 +479,7 @@
             this.cboCategoryAction2.Location = new System.Drawing.Point(128, 35);
             this.cboCategoryAction2.Name = "cboCategoryAction2";
             this.cboCategoryAction2.Size = new System.Drawing.Size(114, 21);
-            this.cboCategoryAction2.TabIndex = 36;
+            this.cboCategoryAction2.TabIndex = 1;
             // 
             // label8
             // 
@@ -502,7 +500,7 @@
             this.cboModelCategory3.Location = new System.Drawing.Point(248, 62);
             this.cboModelCategory3.Name = "cboModelCategory3";
             this.cboModelCategory3.Size = new System.Drawing.Size(407, 21);
-            this.cboModelCategory3.TabIndex = 10;
+            this.cboModelCategory3.TabIndex = 4;
             // 
             // cboModelCategory2
             // 
@@ -511,39 +509,19 @@
             this.cboModelCategory2.Location = new System.Drawing.Point(248, 35);
             this.cboModelCategory2.Name = "cboModelCategory2";
             this.cboModelCategory2.Size = new System.Drawing.Size(407, 21);
-            this.cboModelCategory2.TabIndex = 9;
+            this.cboModelCategory2.TabIndex = 2;
             // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.Color.AliceBlue;
-            this.panel1.Controls.Add(this.cboAgeGroup);
             this.panel1.Controls.Add(this.cboYearOfBirth);
             this.panel1.Controls.Add(this.label12);
-            this.panel1.Controls.Add(this.label6);
-            this.panel1.Location = new System.Drawing.Point(-4, 153);
+            this.panel1.Location = new System.Drawing.Point(-4, 152);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(699, 66);
-            this.panel1.TabIndex = 30;
-            // 
-            // cboAgeGroup
-            // 
-            this.cboAgeGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboAgeGroup.FormattingEnabled = true;
-            this.cboAgeGroup.Location = new System.Drawing.Point(128, 37);
-            this.cboAgeGroup.Name = "cboAgeGroup";
-            this.cboAgeGroup.Size = new System.Drawing.Size(527, 21);
-            this.cboAgeGroup.TabIndex = 6;
-            // 
-            // cboYearOfBirth
-            // 
-            this.cboYearOfBirth.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboYearOfBirth.FormattingEnabled = true;
-            this.cboYearOfBirth.Location = new System.Drawing.Point(128, 10);
-            this.cboYearOfBirth.Name = "cboYearOfBirth";
-            this.cboYearOfBirth.Size = new System.Drawing.Size(527, 21);
-            this.cboYearOfBirth.TabIndex = 5;
+            this.panel1.TabIndex = 5;
             // 
             // label12
             // 
@@ -557,17 +535,6 @@
             this.label12.Text = "Rok Urodzenia:";
             this.label12.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Location = new System.Drawing.Point(35, 40);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(87, 13);
-            this.label6.TabIndex = 27;
-            this.label6.Text = "Grupa Wiekowa:";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
             // chkDropExistingRecords
             // 
             this.chkDropExistingRecords.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -576,9 +543,18 @@
             this.chkDropExistingRecords.Location = new System.Drawing.Point(237, 611);
             this.chkDropExistingRecords.Name = "chkDropExistingRecords";
             this.chkDropExistingRecords.Size = new System.Drawing.Size(289, 17);
-            this.chkDropExistingRecords.TabIndex = 5;
+            this.chkDropExistingRecords.TabIndex = 0;
             this.chkDropExistingRecords.Text = "Usuń instniejące rejestracje przed rozpoczęciem importu";
             this.chkDropExistingRecords.UseVisualStyleBackColor = true;
+            // 
+            // cboYearOfBirth
+            // 
+            this.cboYearOfBirth.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboYearOfBirth.FormattingEnabled = true;
+            this.cboYearOfBirth.Location = new System.Drawing.Point(128, 10);
+            this.cboYearOfBirth.Name = "cboYearOfBirth";
+            this.cboYearOfBirth.Size = new System.Drawing.Size(527, 21);
+            this.cboYearOfBirth.TabIndex = 0;
             // 
             // frmImportFile
             // 
@@ -641,9 +617,6 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label lblImportMessage;
         private System.Windows.Forms.ComboBox cboModelCategory2;
-        private System.Windows.Forms.ComboBox cboAgeGroup;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ComboBox cboYearOfBirth;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.CheckBox chkDropExistingRecords;
@@ -660,5 +633,6 @@
         private System.Windows.Forms.CheckBox chkAutoAddPublisher;
         private System.Windows.Forms.CheckBox chkAutoAddScales;
         private System.Windows.Forms.ComboBox cboModelCategory1;
+        private System.Windows.Forms.ComboBox cboYearOfBirth;
     }
 }

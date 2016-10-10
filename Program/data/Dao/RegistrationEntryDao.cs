@@ -257,9 +257,9 @@ namespace Rejestracja.Data.Dao
                                 yearOfBirth.ToString(),
                                 dr["ClubName"].ToString(),
                                 dr["AgeGroupName"].ToString(),
+                                dr["ModelClass"].ToString(),
                                 dr["Code"].ToString(),
                                 dr["CategoryName"].ToString(),
-                                dr["ModelClass"].ToString(),
                                 dr["ModelName"].ToString(),
                                 dr["Scale"].ToString(),
                                 dr["Publisher"].ToString()
@@ -459,7 +459,7 @@ namespace Rejestracja.Data.Dao
                 ret.Add(new KeyValuePair<string, string>("Liczba modeli", categoryTotal.ToString()));
 
                 //Category count
-                cm.CommandText = "SELECT COUNT(Id) FROM Categories";
+                cm.CommandText = "SELECT COUNT(DISTINCT CategoryId) FROM Registration WHERE CategoryId > -1";
                 result = cm.ExecuteScalar();
                 categoryTotal = (result == null ? 0 : int.Parse(result.ToString()));
                 ret.Add(new KeyValuePair<string, string>("Liczba kategorii", categoryTotal.ToString()));
@@ -468,7 +468,7 @@ namespace Rejestracja.Data.Dao
                 //ret.Add(new KeyValuePair<string, string>("GROUP2", "Grupy wiekowe"));
 
                 //Modelers by age group
-                ret.Add(new KeyValuePair<string, string>("GROUP2", "Liczba modelarzy w grupach wiekowych"));
+                ret.Add(new KeyValuePair<string, string>("GROUP2", "Liczba modelarzy w standardowych grupach wiekowych"));
                 cm.CommandText = 
                     @"SELECT ag.AgeGroupName AS AgeGroup, COUNT(m.Id) AS [Count]
 	                    FROM (SELECT Id, (strftime('%Y', 'now') - YearOfBirth) AS Age FROM Modelers) m
@@ -479,7 +479,8 @@ namespace Rejestracja.Data.Dao
 				                    SELECT x.Id, MAX(x.MinAge) AS MinAge FROM(
 					                    SELECT a1.Id, a1.Name, a1.Age AS MaxAge, COALESCE(a2.Age + 1, 0) AS MinAge
 						                    FROM AgeGroups a1 
-						                    LEFT JOIN AgeGroups a2 ON a1.Age > a2.Age
+						                    LEFT JOIN AgeGroups a2 ON a1.Age > a2.Age AND a2.ClassId = -1
+                                        WHERE a1.ClassId = -1
 				                    ) x GROUP BY x.Id
 			                    ) x ON ag.Id = x.Id
 		                    ) ag ON (m.Age BETWEEN ag.MinAge AND ag.MaxAge)
@@ -493,15 +494,17 @@ namespace Rejestracja.Data.Dao
                 //Models by age group
                 ret.Add(new KeyValuePair<string, string>("GROUP3", "Liczba modeli w grupach wiekowych"));
                 cm.CommandText =
-                    @"SELECT r.AgeGroupName AS AgeGroup, COUNT(r.Id) AS [Count]
+                    @"SELECT c.Name, r.AgeGroupName AS AgeGroup, COUNT(r.Id) AS [Count]
 	                    FROM Registration r
-	                    JOIN AgeGroups ag ON r.AgeGroupName = ag.Name
-	                    WHERE CategoryId > -1
-                    GROUP BY r.AgeGroupName
-                    ORDER BY ag.Age";
+	                    JOIN Categories ct ON ct.Id = r.CategoryId
+	                    JOIN Classes c ON ct.ModelClass = c.Name
+	                    LEFT JOIN AgeGroups ag ON r.AgeGroupName = ag.Name AND c.Id = ag.ClassId
+                    WHERE CategoryId > -1
+                    GROUP BY c.Id, r.AgeGroupName
+                    ORDER BY c.Id, ag.Age";
                 using (SQLiteDataReader dr = cm.ExecuteReader()) {
                     while (dr.Read()) {
-                        ret.Add(new KeyValuePair<string, string>(dr["AgeGroup"].ToString(), dr["Count"].ToString()));
+                        ret.Add(new KeyValuePair<string, string>(dr["Name"] + " - " + dr["AgeGroup"].ToString(), dr["Count"].ToString()));
                     }
                 }
 
@@ -579,24 +582,6 @@ namespace Rejestracja.Data.Dao
             }
 
             return ret;
-        }
-
-        public static void createTable() {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.CommandText =
-                    @"CREATE TABLE Registration(
-                        Id INTEGER PRIMARY KEY,
-                        TmStamp DATETIME NOT NULL,
-                        ModelId INTEGER NOT NULL REFERENCES Models(Id),
-                        CategoryId INTEGER NOT NULL DEFAULT -1,
-                        CategoryName TEXT NULL,
-                        AgeGroupName TEXT NULL REFERENCES AgeGroup(Name));
-                    CREATE UNIQUE INDEX Idx_Reg_ModelCat ON Registration(ModelId, CategoryId);";
-                cm.ExecuteNonQuery();
-            }
         }
     }
 }

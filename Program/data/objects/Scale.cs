@@ -14,22 +14,21 @@ using System;
 using System.Text.RegularExpressions;
 
 namespace Rejestracja.Data.Objects {
-    class Scale {
+    class Scale : IComparable<Scale> {
         public int id;
         public String name;
-        public int displayOrder;
 
         public const int MAX_NAME_LENGTH = 32;
+        public const String FORMAT_REGEX = "[0-9]:[0-9]{1,}";
 
-        public Scale(int id, String name, int displayOrder) {
+        public Scale(int id, String name) {
             this.id = id;
             this.name = name;
-            this.displayOrder = displayOrder;
         }
 
         public static String parse(String newScale) {
             String tmp = newScale.Replace(" ", "").Replace("\t", "");
-            if (Regex.IsMatch(tmp, "[0-9]:[0-9]{1,}")) {
+            if (Regex.IsMatch(tmp, FORMAT_REGEX)) {
                 string [] parts = tmp.Split(':');
                 try {
                     return String.Format("{0}:{1}", int.Parse(parts[0]), int.Parse(parts[1]));
@@ -42,6 +41,20 @@ namespace Rejestracja.Data.Objects {
             else {
                 return newScale;
             }
+        }
+
+        public int CompareTo(Scale otherScale) {
+            if(otherScale == null) {
+                return 1;
+            }
+
+            if(!Regex.IsMatch(otherScale.name, FORMAT_REGEX) || !Regex.IsMatch(this.name, FORMAT_REGEX)) {
+                return this.name.CompareTo(otherScale.name);
+            }
+
+            int localScaleNumber = int.Parse(this.name.Split(':')[1]);
+            int otherScaleNumber = int.Parse(otherScale.name.Split(':')[1]);
+            return localScaleNumber.CompareTo(otherScaleNumber);
         }
     }
 }

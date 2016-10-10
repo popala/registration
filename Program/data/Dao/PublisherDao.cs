@@ -91,28 +91,5 @@ namespace Rejestracja.Data.Dao
                 cm.ExecuteNonQuery();
             }
         }
-
-        public static void createTable()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(
-                @"CREATE TABLE Publishers(
-                    Id INTEGER  PRIMARY KEY,
-                    Name TEXT NOT NULL)", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.ExecuteNonQuery();
-
-                cm.CommandText = "CREATE INDEX Idx_Pub_Name ON Publishers(Name)";
-                cm.ExecuteNonQuery();
-            }
-
-            String[] defaults = new String[] { "GPM", "Answer", "WAK", "Kartonowa Kolekcja", "Mały Modelarz", "JSC" ,"Modelik", "Orlik MK", "Haliński", "Model-Kom", "Orel", "WMC", "Dom Bumagi", "Draf Model", "Szkutnik", "Wektor", "Sklej Model", "Hobby Model", "AJ Model", "Model Hobby", "Quest", "Internet", "Inne" };
-            Array.Sort(defaults, StringComparer.InvariantCulture);
-            foreach (String publisher in defaults) {
-                add(publisher);
-            }
-        }
     }
 }

@@ -418,6 +418,7 @@ namespace Rejestracja {
         }
 
         private void highlightInvalidRegistrationEntries() {
+            //TODO: validate using Classes!
             List<Category> modelCategories = CategoryDao.getList().ToList();
             List<AgeGroup> ageGroups = AgeGroupDao.getList(-1);
             
@@ -644,7 +645,7 @@ namespace Rejestracja {
                 return;
             }
             /*
-             * TODO: 
+             * TODO: fix delete registration
              * - Check if this is the only registration for this model
              * - If so remove the model then check if this was the only model for the modeler
              * - If so remove the modeler
@@ -658,34 +659,6 @@ namespace Rejestracja {
         private void mnuRCPrint_Click(object sender, EventArgs e) {
             int entryId = int.Parse(lvEntries.SelectedItems[0].SubItems[0].Text);
             printRegistrationCards(entryId);
-        }
-
-        public void printRegistrationCards(int modelId) {
-            try {
-                //RegistrationEntry entry = RegistrationEntryDao.get(entryId);
-                List<RegistrationEntry> regEntries = RegistrationEntryDao.getRegistrationForModel(modelId);
-                if (regEntries.Count == 0) {
-                    MessageBox.Show("Numer modelu nie znaleziony", "Błędne dane", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                String directory = Path.GetDirectoryName(String.Format("{0}\\{1}\\", Resources.resolvePath("folderDokumentów"), "karty"));
-                if (!Directory.Exists(directory)) {
-                    Directory.CreateDirectory(directory);
-                }
-
-                foreach(RegistrationEntry entry in regEntries) {
-                    string outFile = String.Format("{0}\\rejestracja_{1}.docx", directory, entry.registration.id);
-                    File.Delete(outFile);
-
-                    DocHandler.generateRegistrationCard(Resources.resolvePath("templateKartyModelu"), outFile, entry);
-                    DocHandler.printWordDoc(outFile);
-                }
-            }
-            catch (Exception err) {
-                LogWriter.error(err);
-                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         private void lvEntries_ItemChecked(object sender, ItemCheckedEventArgs e) {
@@ -1499,7 +1472,7 @@ namespace Rejestracja {
                 case "Wyniki":
                     loadResultList();
                     break;
-                case "Posumowanie":
+                case "Podsumowanie":
                     loadStats();
                     break;
             }

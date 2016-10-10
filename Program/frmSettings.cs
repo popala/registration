@@ -1,5 +1,4 @@
-﻿using Rejestracja.Controls;
-/*
+﻿/*
  * Copyright (C) 2016 Paweł Opała https://github.com/popala/registration
  *
  * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
@@ -10,6 +9,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  */
+using Rejestracja.Controls;
 using Rejestracja.Data.Dao;
 using Rejestracja.Data.Objects;
 using Rejestracja.Utils;
@@ -333,7 +333,6 @@ namespace Rejestracja
                 case 6:
                     btnDelete.Visible = true;
                     btnDelete.Enabled = (lvModelScales.CheckedItems.Count > 0);
-                    btnMoveUpScale.Enabled = btnMoveDownScale.Enabled = (lvModelScales.CheckedItems.Count == 1);
                     break;
             }
         }
@@ -779,7 +778,7 @@ namespace Rejestracja
                 if(cls.ageGroups.Count > 0 && MessageBox.Show("Usunąć niestandardowe grupy wiekowe?", "Grupy wiekowe w klasie", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != System.Windows.Forms.DialogResult.Yes) {
                     return;
                 }
-                AgeGroupDao.deleteForClass(cls.id);
+                AgeGroupDao.deleteClassAgeGroups(cls.id);
 
                 txtClassAgeGroup.Enabled = false;
                 txtClassAge.Enabled = false;
@@ -796,6 +795,29 @@ namespace Rejestracja
 
             cls.useCustomAgeGroups = (!chkUseStandardAgeGroups.Checked);
             ClassDao.update(cls);
+        }
+
+        private void btnAddClassAgeGroup_Click(object sender, EventArgs e) {
+            int clsId = int.Parse(tvSettings.SelectedNode.Name.ToString().Split(':')[1]);
+            int age = 0;
+
+            if(!int.TryParse(txtClassAge.Text, out age)) {
+                MessageBox.Show("Wiek musi być wartością numeryczną", "Nowa grupa wiekowa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                txtClassAge.SelectAll();
+                txtClassAge.Focus();
+                return;
+            }
+
+            if(AgeGroupDao.exists(age, clsId)) {
+                MessageBox.Show("Grupa wiekowa już istnieje", "Nowa grupa wiekowa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            AgeGroupDao.add(txtClassAgeGroup.Text, age, clsId);
+            txtClassAgeGroup.Text = "";
+            txtClassAge.Text = "";
+            loadClassAgeGroups(clsId);
+            txtClassAgeGroup.Focus();
         }
 
         #endregion
@@ -829,52 +851,6 @@ namespace Rejestracja
             lvModelScales.EndUpdate();
         }
 
-        private void btnMoveUpScale_Click(object sender, EventArgs e) {
-            if (lvModelScales.CheckedItems.Count < 1)
-                return;
-
-            if (lvModelScales.CheckedItems[0].Index < 1)
-                return;
-
-            lvModelScales.BeginUpdate();
-
-            ListViewItem item = lvModelScales.CheckedItems[0];
-            int index = lvModelScales.CheckedItems[0].Index;
-
-            lvModelScales.Items.Remove(item);
-            lvModelScales.Items.Insert(index - 1, item);
-            lvModelScales.Items[index - 1].Selected = true;
-
-            ScaleDao.updateDisplayOrder((int)lvModelScales.Items[index - 1].Tag, index - 1);
-            ScaleDao.updateDisplayOrder((int)lvModelScales.Items[index].Tag, index);
-
-            item.EnsureVisible();
-            lvModelScales.EndUpdate();
-        }
-
-        private void btnMoveDownScale_Click(object sender, EventArgs e) {
-            if (lvModelScales.CheckedItems.Count < 1)
-                return;
-
-            if (lvModelScales.CheckedItems[0].Index >= (lvModelScales.Items.Count - 1))
-                return;
-
-            lvModelScales.BeginUpdate();
-
-            ListViewItem item = lvModelScales.CheckedItems[0];
-            int index = lvModelScales.CheckedItems[0].Index;
-
-            lvModelScales.Items.Remove(item);
-            lvModelScales.Items.Insert(index + 1, item);
-            item.Selected = true;
-
-            ScaleDao.updateDisplayOrder((int)lvModelScales.Items[index].Tag, index);
-            ScaleDao.updateDisplayOrder((int)lvModelScales.Items[index + 1].Tag, index + 1);
-
-            item.EnsureVisible();
-            lvModelScales.EndUpdate();
-        }
-
         private void btnAddModelScale_Click(object sender, EventArgs e) {
             if (ScaleDao.exists(txtModelScale.Text)) {
                 MessageBox.Show("Skala już istnieje", "Nowa skala", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -883,7 +859,7 @@ namespace Rejestracja
                 return;
             }
             
-            int scaleId = ScaleDao.add(txtModelScale.Text, ScaleDao.getNextSortFlag());
+            int scaleId = ScaleDao.add(txtModelScale.Text);
             loadModelScales();
             setButtons();
 
@@ -1062,29 +1038,6 @@ namespace Rejestracja
                     loadModelScales(); tcOptions.SelectedIndex = 6;
                     break;
             }
-        }
-
-        private void btnAddClassAgeGroup_Click(object sender, EventArgs e) {
-            int clsId = int.Parse(tvSettings.SelectedNode.Name.ToString().Split(':')[1]);
-            int age = 0;
-
-            if(!int.TryParse(txtClassAge.Text, out age)) {
-                MessageBox.Show("Wiek musi być wartością numeryczną", "Nowa grupa wiekowa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                txtClassAge.SelectAll();
-                txtClassAge.Focus();
-                return;
-            }
-
-            if(AgeGroupDao.exists(age, clsId)) {
-                MessageBox.Show("Grupa wiekowa już istnieje", "Nowa grupa wiekowa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                return;
-            }
-
-            AgeGroupDao.add(txtClassAgeGroup.Text, age, clsId);
-            txtClassAgeGroup.Text = "";
-            txtClassAge.Text = "";
-            loadClassAgeGroups(clsId);
-            txtClassAgeGroup.Focus();
         }
 
         private void cboJudgingFormOption_SelectedIndexChanged(object sender, EventArgs e) {

@@ -1,4 +1,5 @@
 ﻿using Rejestracja.Controls;
+using Rejestracja.Data;
 /*
  * Copyright (C) 2016 Paweł Opała https://github.com/popala/registration
  *
@@ -43,7 +44,7 @@ namespace Rejestracja {
             lvFilePreview.Items.Clear();
 
             bool bHeaders = (hasHeaders.HasValue ? hasHeaders.Value : chkHasHeaders.Checked);
-            this._dataSample = DataSource.getFileSample(this._selectedFile, "#", ",", true, 11);
+            this._dataSample = ImportUtil.getFileSample(this._selectedFile, "#", ",", true, 11);
             int columnCount = this._dataSample[0].Length;
             int i;
 
@@ -56,9 +57,6 @@ namespace Rejestracja {
 
             foreach (ComboBox cboField in this._cboFields) {
                 cboField.Items.Clear();
-                if (cboField == cboAgeGroup) {
-                    cboField.Items.Add(new ComboBoxItem(-2, "Oblicz grupę wiekową z roku urodzenia"));
-                }
                 foreach (ComboBoxItem item in this._cboItems) {
                     cboField.Items.Add(item);
                 }
@@ -88,13 +86,12 @@ namespace Rejestracja {
             lvFilePreview.Enabled = true;
             chkHasHeaders.Enabled = true;
             btnImport.Enabled = true;
-            cboAgeGroup.SelectedIndex = 0;
             tabControl1.SelectedIndex = 1;
         }
 
         private void frmImportFile_Load(object sender, EventArgs e) {
 
-            this._cboFields = new ComboBox[] { cboTimeStamp, cboEmail, cboFirstName, cboLastName, cboClubName, cboAgeGroup, cboYearOfBirth, cboModelName, cboModelCategory1, cboModelCategory2, cboModelCategory3, cboModelCategory4, cboModelCategory5, cboModelScale, cboModelPublisher };
+            this._cboFields = new ComboBox[] { cboTimeStamp, cboEmail, cboFirstName, cboLastName, cboClubName, cboYearOfBirth, cboModelName, cboModelCategory1, cboModelCategory2, cboModelCategory3, cboModelCategory4, cboModelCategory5, cboModelScale, cboModelPublisher };
 
             lvFilePreview.View = View.Details;
             lvFilePreview.Enabled = false;
@@ -112,12 +109,13 @@ namespace Rejestracja {
 
             String[] categoryActions = new String[] { "gdy pole puste", "osobny wpis" };
             foreach (ComboBox cb in _cboCategoryAction) {
-                //cb.SelectedIndexChanged += new EventHandler(cboCategoryAction_SelectedIndexChanged);
                 cb.Items.AddRange(categoryActions);
                 cb.Enabled = false;
             }
 
             lblFileName.Text = "";
+            chkAutoAddScales.Checked = true;
+            chkAutoAddPublisher.Checked = true;
             chkHasHeaders.Checked = true;
             chkDropExistingRecords.Checked = true;
             btnImport.Enabled = false;
@@ -225,8 +223,6 @@ namespace Rejestracja {
                 fieldMap.FirstName = cboFirstName.SelectedIndex - 1;
                 fieldMap.LastName = cboLastName.SelectedIndex - 1;
                 fieldMap.ClubName = cboClubName.SelectedIndex - 1;
-                fieldMap.AgeGroup = cboAgeGroup.SelectedIndex - 2;
-                fieldMap.CalculateAgeGroup = (cboAgeGroup.SelectedIndex == 0);
                 fieldMap.YearOfBirth = cboYearOfBirth.SelectedIndex - 1;
 
                 //Scale, publisher, model
@@ -266,7 +262,7 @@ namespace Rejestracja {
                     File.Delete(badRecordFile);
                 }
                 
-                int badRecordCount = ds.bulkLoadRegistration(lblFileName.Text, fieldMap, chkHasHeaders.Checked, badRecordFile, chkAutoAddScales.Checked, chkAutoAddPublisher.Checked);
+                int badRecordCount = ImportUtil.bulkLoadRegistration(lblFileName.Text, fieldMap, chkHasHeaders.Checked, badRecordFile, chkAutoAddScales.Checked, chkAutoAddPublisher.Checked);
                 if (badRecordCount > 0) {
                     MessageBox.Show("Wystąpiły błędy przy ładowaniu rejestracji. Dane których nie udało się importować zostały zapisane w pliku:\r\n" + badRecordFile, "Import Danych", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     Process.Start(Resources.DataFileFolder);

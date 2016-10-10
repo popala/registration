@@ -93,8 +93,6 @@
             this.txtPublisherName = new System.Windows.Forms.TextBox();
             this.lvPublishers = new System.Windows.Forms.ListView();
             this.tpModelScale = new System.Windows.Forms.TabPage();
-            this.btnMoveUpScale = new System.Windows.Forms.Button();
-            this.btnMoveDownScale = new System.Windows.Forms.Button();
             this.btnAddModelScale = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.txtModelScale = new System.Windows.Forms.TextBox();
@@ -184,7 +182,7 @@
             this.txtFooter.MaxLength = 1024;
             this.txtFooter.Multiline = true;
             this.txtFooter.Name = "txtFooter";
-            this.txtFooter.Size = new System.Drawing.Size(750, 126);
+            this.txtFooter.Size = new System.Drawing.Size(800, 126);
             this.txtFooter.TabIndex = 1;
             this.txtFooter.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -205,7 +203,7 @@
             this.txtHeading.MaxLength = 1024;
             this.txtHeading.Multiline = true;
             this.txtHeading.Name = "txtHeading";
-            this.txtHeading.Size = new System.Drawing.Size(750, 126);
+            this.txtHeading.Size = new System.Drawing.Size(800, 126);
             this.txtHeading.TabIndex = 0;
             this.txtHeading.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -239,7 +237,7 @@
             // 
             this.chkValidateAge.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkValidateAge.AutoSize = true;
-            this.chkValidateAge.Location = new System.Drawing.Point(11, 584);
+            this.chkValidateAge.Location = new System.Drawing.Point(10, 608);
             this.chkValidateAge.Name = "chkValidateAge";
             this.chkValidateAge.Size = new System.Drawing.Size(577, 17);
             this.chkValidateAge.TabIndex = 16;
@@ -298,7 +296,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvAgeGroup.Location = new System.Drawing.Point(0, 38);
             this.lvAgeGroup.Name = "lvAgeGroup";
-            this.lvAgeGroup.Size = new System.Drawing.Size(875, 536);
+            this.lvAgeGroup.Size = new System.Drawing.Size(948, 564);
             this.lvAgeGroup.TabIndex = 3;
             this.lvAgeGroup.UseCompatibleStateImageBehavior = false;
             this.lvAgeGroup.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.anyListView_ItemChecked);
@@ -350,7 +348,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvModelClass.Location = new System.Drawing.Point(0, 38);
             this.lvModelClass.Name = "lvModelClass";
-            this.lvModelClass.Size = new System.Drawing.Size(875, 570);
+            this.lvModelClass.Size = new System.Drawing.Size(948, 587);
             this.lvModelClass.TabIndex = 13;
             this.lvModelClass.UseCompatibleStateImageBehavior = false;
             this.lvModelClass.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.anyListView_ItemChecked);
@@ -454,6 +452,7 @@
             this.btnMoveUpCategory.TabStop = false;
             this.btnMoveUpCategory.Text = "∧";
             this.btnMoveUpCategory.UseVisualStyleBackColor = true;
+            this.btnMoveUpCategory.Click += new System.EventHandler(this.btnMoveUpCategory_Click);
             // 
             // btnMoveDownCategory
             // 
@@ -466,6 +465,7 @@
             this.btnMoveDownCategory.TabStop = false;
             this.btnMoveDownCategory.Text = "∨";
             this.btnMoveDownCategory.UseVisualStyleBackColor = true;
+            this.btnMoveDownCategory.Click += new System.EventHandler(this.btnMoveDownCategory_Click);
             // 
             // lvModelCategory
             // 
@@ -477,6 +477,7 @@
             this.lvModelCategory.Size = new System.Drawing.Size(892, 567);
             this.lvModelCategory.TabIndex = 45;
             this.lvModelCategory.UseCompatibleStateImageBehavior = false;
+            this.lvModelCategory.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.anyListView_ItemChecked);
             // 
             // tabPage2
             // 
@@ -751,7 +752,7 @@
             // 
             this.btnMoveUpAward.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.btnMoveUpAward.Font = new System.Drawing.Font("Segoe UI Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMoveUpAward.Location = new System.Drawing.Point(832, 256);
+            this.btnMoveUpAward.Location = new System.Drawing.Point(905, 268);
             this.btnMoveUpAward.Name = "btnMoveUpAward";
             this.btnMoveUpAward.Size = new System.Drawing.Size(34, 29);
             this.btnMoveUpAward.TabIndex = 11;
@@ -764,7 +765,7 @@
             // 
             this.btnMoveDownAward.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.btnMoveDownAward.Font = new System.Drawing.Font("Segoe UI Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMoveDownAward.Location = new System.Drawing.Point(832, 291);
+            this.btnMoveDownAward.Location = new System.Drawing.Point(905, 303);
             this.btnMoveDownAward.Name = "btnMoveDownAward";
             this.btnMoveDownAward.Size = new System.Drawing.Size(35, 29);
             this.btnMoveDownAward.TabIndex = 10;
@@ -780,7 +781,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvAwards.Location = new System.Drawing.Point(0, 38);
             this.lvAwards.Name = "lvAwards";
-            this.lvAwards.Size = new System.Drawing.Size(825, 553);
+            this.lvAwards.Size = new System.Drawing.Size(899, 590);
             this.lvAwards.TabIndex = 12;
             this.lvAwards.UseCompatibleStateImageBehavior = false;
             this.lvAwards.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.anyListView_ItemChecked);
@@ -830,9 +831,9 @@
             this.lvPublishers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvPublishers.Location = new System.Drawing.Point(-3, 35);
+            this.lvPublishers.Location = new System.Drawing.Point(0, 38);
             this.lvPublishers.Name = "lvPublishers";
-            this.lvPublishers.Size = new System.Drawing.Size(881, 559);
+            this.lvPublishers.Size = new System.Drawing.Size(948, 587);
             this.lvPublishers.TabIndex = 4;
             this.lvPublishers.UseCompatibleStateImageBehavior = false;
             this.lvPublishers.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.anyListView_ItemChecked);
@@ -840,8 +841,6 @@
             // tpModelScale
             // 
             this.tpModelScale.BackColor = System.Drawing.SystemColors.Control;
-            this.tpModelScale.Controls.Add(this.btnMoveUpScale);
-            this.tpModelScale.Controls.Add(this.btnMoveDownScale);
             this.tpModelScale.Controls.Add(this.btnAddModelScale);
             this.tpModelScale.Controls.Add(this.label10);
             this.tpModelScale.Controls.Add(this.txtModelScale);
@@ -852,32 +851,6 @@
             this.tpModelScale.Size = new System.Drawing.Size(948, 628);
             this.tpModelScale.TabIndex = 5;
             this.tpModelScale.Text = "Skale";
-            // 
-            // btnMoveUpScale
-            // 
-            this.btnMoveUpScale.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.btnMoveUpScale.Font = new System.Drawing.Font("Segoe UI Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMoveUpScale.Location = new System.Drawing.Point(832, 258);
-            this.btnMoveUpScale.Name = "btnMoveUpScale";
-            this.btnMoveUpScale.Size = new System.Drawing.Size(34, 29);
-            this.btnMoveUpScale.TabIndex = 16;
-            this.btnMoveUpScale.TabStop = false;
-            this.btnMoveUpScale.Text = "∧";
-            this.btnMoveUpScale.UseVisualStyleBackColor = true;
-            this.btnMoveUpScale.Click += new System.EventHandler(this.btnMoveUpScale_Click);
-            // 
-            // btnMoveDownScale
-            // 
-            this.btnMoveDownScale.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.btnMoveDownScale.Font = new System.Drawing.Font("Segoe UI Symbol", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMoveDownScale.Location = new System.Drawing.Point(832, 293);
-            this.btnMoveDownScale.Name = "btnMoveDownScale";
-            this.btnMoveDownScale.Size = new System.Drawing.Size(35, 29);
-            this.btnMoveDownScale.TabIndex = 15;
-            this.btnMoveDownScale.TabStop = false;
-            this.btnMoveDownScale.Text = "∨";
-            this.btnMoveDownScale.UseVisualStyleBackColor = true;
-            this.btnMoveDownScale.Click += new System.EventHandler(this.btnMoveDownScale_Click);
             // 
             // btnAddModelScale
             // 
@@ -912,7 +885,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvModelScales.Location = new System.Drawing.Point(0, 38);
             this.lvModelScales.Name = "lvModelScales";
-            this.lvModelScales.Size = new System.Drawing.Size(827, 553);
+            this.lvModelScales.Size = new System.Drawing.Size(948, 590);
             this.lvModelScales.TabIndex = 13;
             this.lvModelScales.UseCompatibleStateImageBehavior = false;
             this.lvModelScales.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.anyListView_ItemChecked);
@@ -1172,8 +1145,8 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmSettings";
             this.Text = "Ustawienia";
-            this.Load += new System.EventHandler(this.frmSettings_Load);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSettings_Closing);
+            this.Load += new System.EventHandler(this.frmSettings_Load);
             this.tcOptions.ResumeLayout(false);
             this.tpDocuments.ResumeLayout(false);
             this.tpDocuments.PerformLayout();
@@ -1243,8 +1216,6 @@
         private System.Windows.Forms.ListView lvAwards;
         private System.Windows.Forms.TextBox txtFooter;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button btnMoveUpScale;
-        private System.Windows.Forms.Button btnMoveDownScale;
         private System.Windows.Forms.CheckBox chkValidateAge;
         private System.Windows.Forms.TreeView tvSettings;
         private System.Windows.Forms.TabPage tpDocumentTemplates;

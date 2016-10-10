@@ -183,22 +183,5 @@ namespace Rejestracja.Data.Dao {
                 cm.ExecuteNonQuery();
             }
         }
-
-        public static void createTable() {
-            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(
-                    @"CREATE TABLE Registration(
-                        Id INTEGER PRIMARY KEY,
-                        TmStamp DATETIME NOT NULL,
-                        ModelId INTEGER NOT NULL REFERENCES Models(Id),
-                        CategoryId INTEGER NOT NULL DEFAULT -1,
-                        CategoryName TEXT NULL,
-                        AgeGroupName TEXT NULL REFERENCES AgeGroup(Name));
-                    CREATE UNIQUE INDEX Idx_Reg_ModelCat ON Registration(ModelId, CategoryId);", cn)) {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.ExecuteNonQuery();
-            }
-        }
     }
 }

@@ -135,23 +135,5 @@ namespace Rejestracja.Data.Dao
                 }
             }
         }
-
-        public static void createTable()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(
-                @"CREATE TABLE Awards(
-                    Id INTEGER PRIMARY KEY,
-                    Title TEXT NOT NULL,
-                    DisplayOrder INTEGER NOT NULL)", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.ExecuteNonQuery();
-
-                cm.CommandText = "CREATE INDEX Idx_Aw_Title ON Awards(Title)";
-                cm.ExecuteNonQuery();
-            }
-        }
     }
 }

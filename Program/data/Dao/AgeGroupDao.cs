@@ -108,7 +108,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static void deleteForClass(int classId) {
+        public static void deleteClassAgeGroups(int classId) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM AgeGroups WHERE ClassId = @Id", cn)) {
                 cn.Open();
@@ -130,29 +130,6 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
                 cm.ExecuteNonQuery();
             }
-        }
-
-        public static void createTable()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(
-                @"CREATE TABLE AgeGroups(
-                    Id INTEGER PRIMARY KEY,
-                    ClassId INTEGER NOT NULL,
-                    Name TEXT NOT NULL,
-                    Age INTEGER NOT NULL)", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.ExecuteNonQuery();
-
-                cm.CommandText = "CREATE UNIQUE INDEX Idx_AgeGroup_Name ON AgeGroups(ClassId, Name)";
-                cm.ExecuteNonQuery();
-            }
-
-            add("Młodzik", 12, -1);
-            add("Junior", 17, -1);
-            add("Senior", 150, -1);
         }
     }
 }

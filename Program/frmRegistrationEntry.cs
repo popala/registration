@@ -25,7 +25,8 @@ namespace Rejestracja
     public partial class frmRegistrationEntry : Form
     {
         public frmMain _parentForm;
-        private List<AgeGroup> _ageGroups;
+        private List<AgeGroup> _standardAgeGroups;
+        private List<Class> _classes;// = ClassDao.getList(true);
         private bool _loading = false;
         
         public void setParent(frmMain parentForm) {
@@ -54,17 +55,7 @@ namespace Rejestracja
 
             lvCategories.BeginUpdate();
 
-            //List<Category> categories = CategoryDao.getList(true, null).ToList();
-            List<Class> classes = ClassDao.getList(true);
-            //classes.Add(new Class(-1, Class.IMPORTED_CLASS_TITLE));
-
-            //foreach(Category category in categories) {
-            //    if(category.id < 0) {
-            //        category.className = Class.IMPORTED_CLASS_TITLE;
-            //    }
-            //    Class c = classes.Find(x => x.name.Equals(category.className, StringComparison.CurrentCultureIgnoreCase));
-            //    c.categories.Add(category);
-            //}
+            _classes = ClassDao.getList(true, true);
 
             //Categories broken up by class
             lvCategories.Clear();
@@ -80,7 +71,7 @@ namespace Rejestracja
             lvCategories.CheckBoxes = true;
 
             //Load classes plus extra one for imported categories that were not in the system
-            foreach(Class cls in classes) {
+            foreach(Class cls in _classes) {
                 ListViewGroup group = new ListViewGroup(cls.name, cls.name);
                 group.Tag = cls.id;
                 lvCategories.Groups.Add(group);
@@ -109,7 +100,7 @@ namespace Rejestracja
         private void resetAddControls() {
 
             //General
-            this._ageGroups = AgeGroupDao.getList(-1);
+            this._standardAgeGroups = AgeGroupDao.getList(-1);
             this.Text = "Nowa Rejestracja";
             loadCategoryList();
 
@@ -137,8 +128,9 @@ namespace Rejestracja
             cboModelPublisher.Sorted = true;
 
             cboModelScale.Items.Clear();
-            foreach (String item in ScaleDao.getSimpleList())
-                cboModelScale.Items.Add(item.Trim());
+            foreach(Scale scale in ScaleDao.getList()) {
+                cboModelScale.Items.Add(scale.name);
+            }
             cboModelScale.SelectedIndex = cboModelScale.FindString("1:33");
 
             chkPrintRegistrationCard.Checked = true;
@@ -158,9 +150,6 @@ namespace Rejestracja
             txtEmail.Text = modeler.email;
             txtModelClub.Text = modeler.clubName;
             cboYearOfBirth.SelectedIndex = cboYearOfBirth.FindString(modeler.yearOfBirth.ToString());
-
-            //int age = DateTime.Now.Year - ((ComboBoxItem)cboYearOfBirth.SelectedItem).id;
-            //lblAgeGroup.Text = _ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
 
             //Load model IDs registered to the modeler
             cboModelId.Items.Clear();
@@ -198,39 +187,42 @@ namespace Rejestracja
             List<Registration> regList = RegistrationDao.getList(m.id).ToList();
 
             int age = DateTime.Now.Year - ((ComboBoxItem)cboYearOfBirth.SelectedItem).id;
-            String properAgeGroup = _ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
+            //String properAgeGroup = _ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
 
             //Compare on category Id, only compare on name if ID = -1
             //Disable the rest of the group for the checked registration
             foreach(Registration reg in regList) {
-                
-                ListViewItem cat = null;
+
+                ListViewItem categoryItem = null;
 
                 if(reg.categoryId > -1) {
-                    cat = lvCategories.Items[lvCategories.Items.IndexOfKey(reg.categoryId.ToString())];
+                    categoryItem = lvCategories.Items[lvCategories.Items.IndexOfKey(reg.categoryId.ToString())];
                 }
                 else {
-                    cat = lvCategories.Items[lvCategories.Items.IndexOfKey(reg.categoryName)];
+                    categoryItem = lvCategories.Items[lvCategories.Items.IndexOfKey(reg.categoryName)];
                 }
                 
-                cat.Checked = true;
-                cat.SubItems[3].Text = reg.ageGroupName;
-                cat.Tag = String.Format("{0}", reg.id);
+                categoryItem.Checked = true;
+                categoryItem.SubItems[3].Text = reg.ageGroupName;
+                categoryItem.Tag = String.Format("{0}", reg.id);
+
+                Class currentClass = _classes.Where(x => x.name.Equals(categoryItem.Group.Name, StringComparison.CurrentCultureIgnoreCase)).ElementAt(0);
+                String properAgeGroup = currentClass.ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
 
                 if(!properAgeGroup.Equals(reg.ageGroupName, StringComparison.CurrentCultureIgnoreCase)) {
-                    cat.UseItemStyleForSubItems = false;
-                    cat.SubItems[3].Font = new System.Drawing.Font(cat.Font, System.Drawing.FontStyle.Bold);
-                    cat.SubItems[3].ForeColor = System.Drawing.Color.Red;
+                    categoryItem.UseItemStyleForSubItems = false;
+                    categoryItem.SubItems[3].Font = new System.Drawing.Font(categoryItem.Font, System.Drawing.FontStyle.Bold);
+                    categoryItem.SubItems[3].ForeColor = System.Drawing.Color.Red;
                 }
 
-                if((int)cat.Group.Tag < 0) {
+                if((int)categoryItem.Group.Tag < 0) {
                     removeImported = false;
                 }
 
                 //Disabled categories in class if one category is already selected
                 itemsToDisable = new List<ListViewItem>();
-                foreach(ListViewItem item in cat.Group.Items) {
-                    if(item != cat) {
+                foreach(ListViewItem item in categoryItem.Group.Items) {
+                    if(item != categoryItem) {
                         item.UseItemStyleForSubItems = true;
                         item.ForeColor = System.Drawing.Color.LightGray;
                     }
@@ -286,7 +278,7 @@ namespace Rejestracja
             Modeler updatedModeler = new Modeler(int.Parse(txtModelerId.Text), txtFirstName.Text, txtLastName.Text, txtModelClub.Text, ((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
             Modeler currentModeler = ModelerDao.get(updatedModeler.id);
 
-            return !currentModeler.Equals(updatedModeler);
+            return !currentModeler.IsIdentical(updatedModeler);
 
         }
 
@@ -358,6 +350,7 @@ namespace Rejestracja
 
         private bool validateNewEntry()
         {
+            //TODO: fix validation
             if (txtFirstName.Text.Length == 0 || txtLastName.Text.Length == 0) {
                 MessageBox.Show("Imię i nazwisko są wymagane", "Wymagane pola", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
@@ -424,7 +417,7 @@ namespace Rejestracja
                 cboYearOfBirth.Focus();
                 return;
             }
-            lblAgeGroup.Text = _ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
+            lblAgeGroup.Text = _standardAgeGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
         }
 
         private void saveChanges()
@@ -464,18 +457,19 @@ namespace Rejestracja
                 }
 
                 if (cboModelScale.SelectedIndex < 0) {
-                    string scale = cboModelScale.Text.Trim();
+                    string enteredScale = cboModelScale.Text.Trim();
                     if (MessageBox.Show("Dodać wpisaną skalę do bazy?", "Skala Nie Znaleziona", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
 
-                        if(scale.Contains(":")) {
-                            scale = Rejestracja.Data.Objects.Scale.parse(scale);
+                        if(enteredScale.Contains(":")) {
+                            enteredScale = Rejestracja.Data.Objects.Scale.parse(enteredScale);
                         }
-                        ScaleDao.add(scale, ScaleDao.getNextSortFlag());
+                        ScaleDao.add(enteredScale);
 
                         cboModelScale.Items.Clear();
-                        foreach (String item in ScaleDao.getSimpleList())
-                            cboModelScale.Items.Add(item.Trim());
-                        cboModelScale.SelectedIndex = cboModelScale.FindString(scale);
+                        foreach(Scale scale in ScaleDao.getList()) {
+                            cboModelScale.Items.Add(scale.name);
+                        }
+                        cboModelScale.SelectedIndex = cboModelScale.FindString(enteredScale);
                     }
                 }
 
@@ -575,14 +569,16 @@ namespace Rejestracja
                 }
                 
                 int age = DateTime.Now.Year - ((ComboBoxItem)cboYearOfBirth.SelectedItem).id;
-                String ageGroupName = _ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
+                Class currentClass = _classes.Where(x => x.name.Equals(group.Name, StringComparison.CurrentCultureIgnoreCase)).ElementAt(0);
+                String ageGroupName = currentClass.ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
+                
                 checkedItem.SubItems[3].Text = ageGroupName;
-
                 checkedItem.SubItems[3].Font = new System.Drawing.Font(checkedItem.Font, System.Drawing.FontStyle.Regular);
                 checkedItem.SubItems[3].ForeColor = System.Drawing.Color.Black;
 
                 foreach(ListViewItem item in group.Items) {
                     if(item != checkedItem) {
+                        item.UseItemStyleForSubItems = true;
                         item.ForeColor = System.Drawing.Color.LightGray;
                     }
                 }
@@ -591,6 +587,7 @@ namespace Rejestracja
             else {
                 checkedItem.SubItems[3].Text = "";
                 foreach(ListViewItem item in checkedItem.Group.Items) {
+                    item.UseItemStyleForSubItems = false;
                     item.ForeColor = System.Drawing.Color.Black;
                 }                
             }
@@ -609,21 +606,22 @@ namespace Rejestracja
                     lvCategories.BeginUpdate();
 
                     int age = DateTime.Now.Year - ((ComboBoxItem)cboYearOfBirth.SelectedItem).id;
-                    String properAgeGroup = _ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
+                    Class currentClass = _classes.Where(x => x.name.Equals(item.Group.Name, StringComparison.CurrentCultureIgnoreCase)).ElementAt(0);
+                    String properAgeGroup = currentClass.ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
 
                     int index = item.Index;
                     if(item.SubItems[2].Text.Length > 0) {
                         String ageGroup = item.SubItems[3].Text;
-                        int idx = this._ageGroups.FindIndex(x => x.name.Equals(ageGroup, StringComparison.CurrentCultureIgnoreCase));
-                        if(idx < 0 || (idx + 1) == this._ageGroups.Count) {
-                            item.SubItems[3].Text = this._ageGroups[0].name;
+                        int idx = currentClass.ageGroups.FindIndex(x => x.name.Equals(ageGroup, StringComparison.CurrentCultureIgnoreCase));
+                        if(idx < 0 || (idx + 1) == currentClass.ageGroups.Count) {
+                            item.SubItems[3].Text = currentClass.ageGroups[0].name;
                         }
                         else {
-                            item.SubItems[3].Text = this._ageGroups[++idx].name;
+                            item.SubItems[3].Text = currentClass.ageGroups[++idx].name;
                         }
                     }
-                    else if(this._ageGroups.Count > 0) {
-                        item.SubItems[3].Text = this._ageGroups[0].name;
+                    else if(currentClass.ageGroups.Count > 0) {
+                        item.SubItems[3].Text = currentClass.ageGroups[0].name;
                     }
 
                     if(properAgeGroup.Equals(item.SubItems[3].Text, StringComparison.CurrentCultureIgnoreCase)) {

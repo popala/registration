@@ -160,7 +160,7 @@ namespace Rejestracja.Data.Dao
         public static void delete(long id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE EntryId IN(SELECT EntryId FROM Registration WHERE ModelCategoryId = @Id) AND Place IS NOT NULL", cn))
+            using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE RegistrationId IN(SELECT Id FROM Registration WHERE CategoryId = @Id) AND Place IS NOT NULL", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
@@ -168,75 +168,12 @@ namespace Rejestracja.Data.Dao
                 cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
                 cm.ExecuteNonQuery();
 
-                cm.CommandText = "UPDATE Registration SET ModelCategoryId = -1 WHERE ModelCategoryId = @Id";
+                cm.CommandText = "UPDATE Registration SET CategoryId = -1 WHERE CategoryId = @Id";
                 cm.ExecuteNonQuery();
 
                 cm.CommandText = "DELETE FROM Categories WHERE Id = @Id";
                 cm.ExecuteNonQuery();
             }
-        }
-
-        public static void createTable()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(
-                @"CREATE TABLE Categories(
-                    Id INTEGER PRIMARY KEY,
-                    Code TEXT NOT NULL,
-                    Name TEXT,
-                    ModelClass TEXT,
-                    DisplayOrder INTEGER NOT NULL)", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.ExecuteNonQuery();
-
-                cm.CommandText = "CREATE INDEX Idx_MC_Code ON Categories(Code)";
-                cm.ExecuteNonQuery();
-                cm.CommandText = "CREATE INDEX Idx_MC_Class ON Categories(ModelClass)";
-                cm.ExecuteNonQuery();
-            }
-
-            int i = 0;
-            //Standard
-            add("MSO", "Statki i Okręty", "Standard", i++);
-            add("MOP", "Okręty podwodne", "Standard", i++);
-            add("MŻ", "Żaglowce", "Standard", i++);
-            add("S1A", "Samoloty jednosilnikowe śmigłowe do 1930 roku", "Standard", i++);
-            add("S1B", "Samoloty jednosilnikowe śmigłowe po 1930 roku", "Standard", i++);
-            add("S2", "Samoloty wielosilnikowe śmigłowe", "Standard", i++);
-            add("S3", "Samoloty odrzutowe", "Standard", i++);
-            add("S4", "Samoloty w skali 1:48; 1:50", "Standard", i++);
-            add("S5", "Szybowce", "Standard", i++);
-            add("S6", "Śmigłowce", "Standard", i++);
-            add("MPKC", "Pojazdy kołowe cywilne", "Standard", i++);
-            add("MPKW", "Pojazdy kołowe wojskowe", "Standard", i++);
-            add("MPSZ", "Pojazdy szynowe", "Standard", i++);
-            add("MPG", "Pojazdy gąsienicowe", "Standard", i++);
-            add("MB", "Budowle", "Standard", i++);
-            add("MF", "Figurki", "Standard", i++);
-            add("MR", "Rakiety, statki kosmiczne, S-F", "Standard", i++);
-            add("MA", "Artyleria", "Standard", i++);
-            //Open
-            add("WSO", "Statki i okręty", "Waloryzowane (Open)", i++);
-            add("WŻ", "Żaglowce", "Waloryzowane (Open)", i++);
-            add("WOP", "Okręty podwodne", "Waloryzowane (Open)", i++);
-            add("WKC", "Pojazdy kołowe cywilne", "Waloryzowane (Open)", i++);
-            add("WKW", "Pojazdy kołowe wojskowe", "Waloryzowane (Open)", i++);
-            add("WSZ", "Pojazdy szynowe", "Waloryzowane (Open)", i++);
-            add("WG", "Pojazdy gąsienicowe", "Waloryzowane (Open)", i++);
-            add("WS1", "Samoloty śmigłowe + śmigłowce (bez podziału na napęd)", "Waloryzowane (Open)", i++);
-            add("WS2", "Samoloty odrzutowe", "Waloryzowane (Open)", i++);
-            add("WPP", "Modele projektowane od podstaw", "Waloryzowane (Open)", i++);
-            add("WD", "Dioramy i makiety", "Waloryzowane (Open)", i++);
-            //Naviga
-            add("C-1", "Modele jednostek wiosłowych i żaglowych", "Naviga", i++);
-            add("C-2", "Modele jednostek o napędzie mechanicznym", "Naviga", i++);
-            add("C-3", "Modele urządzeń, itp.", "Naviga", i++);
-            add("C-4", "Modele miniaturowe", "Naviga", i++);
-            add("C-5", "Modele z butelkach", "Naviga", i++);
-            add("C-6", "Modele plastikowe", "Naviga", i++);
-            add("C-7", "Modele kartonowe i papierowe", "Naviga", i++);
         }
     }
 }

@@ -20,16 +20,18 @@ namespace Rejestracja.Data.Dao
 {
     class ClassDao
     {
+        private const String BASE_QUERY = "SELECT Id, Name, RegistrationTemplate, JudgingFormTemplate, DiplomaTemplate, ScoringCardType, UseCustomAgeGroups FROM Classes ";
+
         public static List<Class> getList() {
-            return getList(false);
+            return getList(false, false);
         }
 
-        public static List<Class> getList(bool includeCategories)
+        public static List<Class> getList(bool includeCategories, bool includeAgeGroups)
         {
             List<Class> ret = new List<Class>();
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name, RegistrationTemplate, JudgingFormTemplate, DiplomaTemplate, ScoringCardType, UseCustomAgeGroups FROM Classes ORDER BY Name ASC", cn))
+            using (SQLiteCommand cm = new SQLiteCommand(BASE_QUERY + " ORDER BY Name ASC", cn))
             {
                 cn.Open();
 
@@ -71,23 +73,40 @@ namespace Rejestracja.Data.Dao
                         }
                     }
                 }
-            }
-            return ret;
-        }
 
-        public static IEnumerable<String> getSimpleList()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand("SELECT Name FROM Classes ORDER BY Name ASC", cn))
-            {
-                cn.Open();
+                if(includeAgeGroups) {
+                    cm.CommandText = 
+                        @"SELECT ag.Id AS AgeGroupId, c.Id AS ClassId, ag.Name, ag.Age
+	                        FROM Classes c
+	                        LEFT JOIN AgeGroups ag ON
+		                        CASE WHEN c.UseCustomAgeGroups = 0 THEN -1 ELSE c.Id END = ag.ClassId
+                        ORDER BY c.Id, ag.Age";
+                    using(SQLiteDataReader dr = cm.ExecuteReader()) {
+                        
+                        int lastClassId = -2;
+                        int bottomAge = 0;
 
-                using (SQLiteDataReader dr = cm.ExecuteReader())
-                {
-                    while (dr.Read())
-                        yield return dr.GetString(0);
+                        while(dr.Read()) {
+                            int currentClassId = dr.GetInt32(dr.GetOrdinal("ClassId"));
+                            if(currentClassId != lastClassId) {
+                                bottomAge = 0;
+                            }
+                            AgeGroup ageGroup = new AgeGroup(
+                                dr.GetInt32(dr.GetOrdinal("AgeGroupId")),
+                                dr["Name"].ToString(),
+                                dr.GetInt32(dr.GetOrdinal("Age")),
+                                bottomAge,
+                                currentClassId
+                            );
+                            bottomAge = ageGroup.upperAge + 1;
+
+                            int idx = ret.FindIndex(x => x.id == ageGroup.classId);
+                            ret[idx].ageGroups.Add(ageGroup);
+                        }
+                    }
                 }
             }
+            return ret;
         }
 
         public static bool exists(String name)
@@ -119,6 +138,31 @@ namespace Rejestracja.Data.Dao
             }
         }
 
+        public static Class getClassForCategory(int id) {
+
+            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using(SQLiteCommand cm = new SQLiteCommand(BASE_QUERY + " WHERE Name = (SELECT ModelClass FROM Categories WHERE Id = @Id)", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                cm.Parameters.Add("@Id", DbType.Int32).Value = id;
+
+                using(SQLiteDataReader dr = cm.ExecuteReader()) {
+                    if(dr.Read())
+                        return new Class(
+                            dr.GetInt32(dr.GetOrdinal("Id")),
+                            dr["Name"].ToString(),
+                            dr["RegistrationTemplate"].ToString(),
+                            dr["JudgingFormTemplate"].ToString(),
+                            dr["DiplomaTemplate"].ToString(),
+                            dr.GetBoolean(dr.GetOrdinal("UseCustomAgeGroups")),
+                            (Class.ScoringCardType)dr.GetInt32(dr.GetOrdinal("ScoringCardType"))
+                        );
+                }
+            }
+            return null;
+        }
+
         public static Class get(String name) {
             return get(-1, name);
         }
@@ -130,13 +174,7 @@ namespace Rejestracja.Data.Dao
         private static Class get(int id, String name)
         {
             Class ret = null;
-            String query;
-            if(id > -1) {
-                query = "SELECT Id, Name, RegistrationTemplate, JudgingFormTemplate, DiplomaTemplate, ScoringCardType, UseCustomAgeGroups FROM Classes WHERE Id = @Id";
-            }
-            else {
-                query = "SELECT Id, Name, RegistrationTemplate, JudgingFormTemplate, DiplomaTemplate, ScoringCardType, UseCustomAgeGroups FROM Classes WHERE Name = @Name";
-            }
+            String query = BASE_QUERY + (id > -1 ? " WHERE Id = @Id" : " WHERE Name = @Name");
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(query, cn))
@@ -248,32 +286,6 @@ namespace Rejestracja.Data.Dao
                 cm.CommandText = @"DELETE FROM Classes WHERE Id = @Id";
                 cm.ExecuteNonQuery();
             }
-        }
-
-        public static void createTable()
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(
-                @"CREATE TABLE Classes(
-                    Id INTEGER PRIMARY KEY,
-                    Name TEXT NOT NULL,
-                    RegistrationTemplate TEXT NULL,
-                    JudgingFormTemplate TEXT NULL,
-                    DiplomaTemplate TEXT NULL,
-                    ScoringCardType INTEGER NOT NULL DEFAULT 0,
-                    UseCustomAgeGroups INTEGER NOT NULL DEFAULT 0)", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.ExecuteNonQuery();
-
-                cm.CommandText = "CREATE UNIQUE INDEX Idx_MCat_Name ON Classes(Name)";
-                cm.ExecuteNonQuery();
-            }
-
-            add("Standard");
-            add("Waloryzowane (Open)");
-            add("Naviga");
         }
     }
 }
