@@ -24,15 +24,10 @@ namespace Rejestracja
 {
     public partial class frmRegistrationEntry : Form
     {
-        public frmMain _parentForm;
         private List<AgeGroup> _standardAgeGroups;
         private List<Class> _classes;// = ClassDao.getList(true);
         private bool _loading = false;
         
-        public void setParent(frmMain parentForm) {
-            this._parentForm = parentForm;
-        }
-
         public frmRegistrationEntry()
         {
             InitializeComponent();
@@ -327,6 +322,8 @@ namespace Rejestracja
 
         private void validateExistingEntry()
         {
+            //TODO: fix validation of existing entry.
+
             IEnumerable<Category> modelCategories = CategoryDao.getList();
             //bool bFound = false;
 
@@ -350,7 +347,7 @@ namespace Rejestracja
 
         private bool validateNewEntry()
         {
-            //TODO: fix validation
+            //TODO: fix validation of new entry
             if (txtFirstName.Text.Length == 0 || txtLastName.Text.Length == 0) {
                 MessageBox.Show("Imię i nazwisko są wymagane", "Wymagane pola", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
@@ -499,8 +496,6 @@ namespace Rejestracja
 
                 //Add model
                 int modelId = ModelDao.add(txtModelName.Text, cboModelPublisher.Text, cboModelScale.Text, modelerId);
-                cboModelId.Items.Add(new ComboBoxItem(modelId, modelId.ToString()));
-                cboModelId.SelectedIndex = cboModelId.FindStringExact(modelId.ToString());
 
                 foreach(ListViewItem item in lvCategories.CheckedItems) {
                     RegistrationDao.add(
@@ -518,12 +513,15 @@ namespace Rejestracja
                 btnClose.Enabled = false;
 
                 if(chkPrintRegistrationCard.Checked) {
-                    this._parentForm.printRegistrationCards(((ComboBoxItem)cboModelId.SelectedItem).id);
+                    DocHandler.printRegistrationCards(modelId);
                 }
+
+                cboModelId.Items.Add(new ComboBoxItem(modelId, modelId.ToString()));
+                //cboModelId.SelectedIndex = cboModelId.FindStringExact(modelId.ToString());
 
                 cboModelId.SelectedIndex = -1;
                 txtModelName.Text = "";
-                cboModelPublisher.SelectedIndex = -1;
+                //cboModelPublisher.SelectedIndex = -1;
                 btnAddPrintModel.Enabled = true;
                 txtModelName.Focus();
             }

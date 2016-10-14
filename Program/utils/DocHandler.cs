@@ -79,46 +79,78 @@ namespace Rejestracja.Utils
         {
             String documentFooter = Options.get("DocumentFooter");
 
-            using (DocX template = DocX.Load(templateFile))
-            {
-                template.ReplaceText("[DataRejestracji]", entry.registration.timeStamp.ToString(Resources.DateFormat),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[NumerStartowy]", entry.registration.id.ToString(),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[NS]", entry.registration.id.ToString(),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Email]", entry.modeler.email,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Imie]", entry.modeler.firstName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Imię]", entry.modeler.firstName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Nazwisko]", entry.modeler.lastName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[L]", entry.modeler.lastName.Substring(0, 1).ToUpper(),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KlubModelarski]", entry.modeler.clubName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[GrupaWiekowa]", entry.registration.ageGroupName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[NazwaModelu]", entry.model.name,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[SkalaModelu]", entry.model.scale,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KlasaModelu]", entry.category.className,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Wydawnictwo]", entry.model.publisher,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KategoriaModelu]", entry.category.name,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[RokUrodzenia]", entry.modeler.yearOfBirth.ToString(),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Stopka]", documentFooter,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Stopka!]", documentFooter.ToUpper(),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+            if(templateFile.EndsWith(".doc") || templateFile.EndsWith(".docx")) {
+                //MS Word template
+                using(DocX template = DocX.Load(templateFile)) {
+                    template.ReplaceText("[DataRejestracji]", entry.registration.timeStamp.ToString(Resources.DateFormat),
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[NumerStartowy]", entry.registration.id.ToString(),
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[NS]", entry.registration.id.ToString(),
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[Email]", entry.modeler.email,
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[Imie]", entry.modeler.firstName,
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[Imię]", entry.modeler.firstName,
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[Nazwisko]", entry.modeler.lastName,
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[L]", entry.modeler.lastName.Substring(0, 1).ToUpper(),
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[KlubModelarski]", entry.modeler.clubName,
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[GrupaWiekowa]", entry.registration.ageGroupName,
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[NazwaModelu]", entry.model.name,
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[SkalaModelu]", entry.model.scale,
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[KlasaModelu]", entry.category.className,
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[Wydawnictwo]", entry.model.publisher,
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[KategoriaModelu]", entry.category.name,
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[RokUrodzenia]", entry.modeler.yearOfBirth.ToString(),
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[Stopka]", documentFooter,
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    template.ReplaceText("[Stopka!]", documentFooter.ToUpper(),
+                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
 
-                template.SaveAs(outFile);
+                    template.SaveAs(outFile);
+                }
+            }
+            else {
+                //HTML template
+                String htmlTemplate;
+
+                using(StreamReader sr = File.OpenText(templateFile)) {
+                    htmlTemplate = sr.ReadToEnd();
+                }
+
+                htmlTemplate = htmlTemplate
+                    .Replace("[DataRejestracji]", entry.registration.timeStamp.ToString(Resources.DateFormat))
+                    .Replace("[NumerStartowy]", entry.registration.id.ToString())
+                    .Replace("[NS]", entry.registration.id.ToString())
+                    .Replace("[Email]", entry.modeler.email)
+                    .Replace("[Imie]", entry.modeler.firstName)
+                    .Replace("[Imię]", entry.modeler.firstName)
+                    .Replace("[Nazwisko]", entry.modeler.lastName)
+                    .Replace("[L]", entry.modeler.lastName.Substring(0, 1).ToUpper())
+                    .Replace("[KlubModelarski]", entry.modeler.clubName)
+                    .Replace("[GrupaWiekowa]", entry.registration.ageGroupName)
+                    .Replace("[NazwaModelu]", entry.model.name)
+                    .Replace("[SkalaModelu]", entry.model.scale)
+                    .Replace("[KlasaModelu]", entry.category.className)
+                    .Replace("[Wydawnictwo]", entry.model.publisher)
+                    .Replace("[KategoriaModelu]", entry.category.name)
+                    .Replace("[RokUrodzenia]", entry.modeler.yearOfBirth.ToString())
+                    .Replace("[Stopka]", documentFooter)
+                    .Replace("[Stopka!]", documentFooter.ToUpper());
+
+                File.WriteAllText(outFile, htmlTemplate);
             }
         }
 
@@ -478,7 +510,16 @@ namespace Rejestracja.Utils
             File.WriteAllText(outputFileName, htmlTemplate);
         }
 
-        public static void PrintHtmlDoc(String filePath) {
+        public static void PrintDocument(String filePath) {
+            if(filePath.EndsWith(".htm", StringComparison.CurrentCultureIgnoreCase) || filePath.EndsWith(".html", StringComparison.CurrentCultureIgnoreCase)) {
+                PrintHtmlDoc(filePath);
+            }
+            else {
+                PrintWordDoc(filePath);
+            }
+        }
+
+        private static void PrintHtmlDoc(String filePath) {
             // Create a WebBrowser instance. 
             WebBrowser webBrowserForPrinting = new WebBrowser();
 
@@ -497,7 +538,7 @@ namespace Rejestracja.Utils
             ((WebBrowser)sender).Dispose();
         }
 
-        public static void printWordDoc(String filePath)
+        private static void PrintWordDoc(String filePath)
         {
             ProcessStartInfo psi = new ProcessStartInfo()
             {
@@ -512,6 +553,9 @@ namespace Rejestracja.Utils
         }
 
         public static void printRegistrationCards(int modelId) {
+
+            bool printDefaultCard = false;
+
             try {
                 List<RegistrationEntry> regEntries = RegistrationEntryDao.getRegistrationForModel(modelId);
                 if(regEntries.Count == 0) {
@@ -525,18 +569,27 @@ namespace Rejestracja.Utils
                 }
 
                 foreach(RegistrationEntry entry in regEntries) {
-                    string outFile = String.Format("{0}\\rejestracja_{1}_kat-{2}.docx", directory, entry.registration.id, entry.registration.categoryId);
+                    String outFile = String.Format("{0}\\rejestracja_{1}_kat-{2}.docx", directory, entry.registration.id, entry.registration.categoryId);
                     File.Delete(outFile);
 
                     Class regClass = ClassDao.getClassForCategory(entry.registration.categoryId);
                     if(regClass.printCustomRegistrationCard) {
                         DocHandler.generateRegistrationCard(regClass.registrationCardTemplate, outFile, entry);
+                        DocHandler.PrintDocument(outFile);        
                     }
                     else {
-                        DocHandler.generateRegistrationCard(Resources.resolvePath("templateKartyModelu"), outFile, entry);
+                        printDefaultCard = true;
                     }
-                    DocHandler.printWordDoc(outFile);
                 }
+
+                if(printDefaultCard) {
+                    String defaultCardTemplate = Resources.resolvePath("templateKartyModelu");
+                    String extention = defaultCardTemplate.Substring(defaultCardTemplate.LastIndexOf('.') + 1);
+                    String outFile = String.Format("{0}\\rejestracja_{1}.{2}", directory, regEntries[0].registration.id, extention);
+                    DocHandler.generateRegistrationCard(defaultCardTemplate, outFile, regEntries[0]);
+                    DocHandler.PrintDocument(outFile);
+                }
+                
             }
             catch(Exception err) {
                 LogWriter.error(err);

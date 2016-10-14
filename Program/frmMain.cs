@@ -355,9 +355,9 @@ namespace Rejestracja {
                 ListViewGroup group = new ListViewGroup("");
 
                 foreach (string[] entry in entries) {
-                    if (!categoryName.Equals(entry[9])) {
-                        categoryName = entry[9];
-                        group = new ListViewGroup(categoryName);
+                    if (!categoryName.Equals(entry[10], StringComparison.CurrentCultureIgnoreCase)) {
+                        categoryName = entry[10];
+                        group = new ListViewGroup(String.Format("{0} - {1} ({2})", entry[8], entry[10], entry[9]));
                         lvEntries.Groups.Add(group);
                     }
                     ListViewItem item = new ListViewItem(entry, group);
@@ -377,7 +377,6 @@ namespace Rejestracja {
 
             frmRegistrationEntry f = new frmRegistrationEntry();
             f.StartPosition = FormStartPosition.CenterParent;
-            f.setParent(this);
             f.loadRegistration(modelId);
             f.ShowDialog(this);
 
@@ -658,7 +657,7 @@ namespace Rejestracja {
 
         private void mnuRCPrint_Click(object sender, EventArgs e) {
             int entryId = int.Parse(lvEntries.SelectedItems[0].SubItems[0].Text);
-            printRegistrationCards(entryId);
+            DocHandler.printRegistrationCards(entryId);
         }
 
         private void lvEntries_ItemChecked(object sender, ItemCheckedEventArgs e) {
@@ -722,7 +721,7 @@ namespace Rejestracja {
                     toolStripProgressBar.Maximum = files.Length;
 
                     foreach (FileInfo file in files) {
-                        DocHandler.printWordDoc(file.FullName);
+                        DocHandler.PrintDocument(file.FullName);
                     }
 
                     showStripLabelMessage("Dokumenty wysłane do druku");
@@ -785,7 +784,7 @@ namespace Rejestracja {
 
                 DocHandler.generateHtmlResultsV2(templateFile, outFile);
                 if (q == System.Windows.Forms.DialogResult.Yes) {
-                    DocHandler.PrintHtmlDoc(outFile);
+                    DocHandler.PrintDocument(outFile);
                 }
                 System.Diagnostics.Process.Start(outFile);
             }
@@ -831,7 +830,7 @@ namespace Rejestracja {
             }
 
             foreach (KeyValuePair<string, int> entry in entries) {
-                printRegistrationCards(entry.Value);
+                DocHandler.printRegistrationCards(entry.Value);
                 incrementProgressBar();
             }
 
@@ -893,7 +892,6 @@ namespace Rejestracja {
             tabControl1.SelectTab(0);
             frmRegistrationEntry f = new frmRegistrationEntry();
             f.StartPosition = FormStartPosition.CenterScreen;
-            f._parentForm = this;
             f.ShowDialog(this);
             refreshScreen();
         }
@@ -1035,7 +1033,7 @@ namespace Rejestracja {
                     String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
                     DocHandler.generateDiploma(templateFile, outputFile, result);
                     if (printForms) {
-                        DocHandler.printWordDoc(outputFile);
+                        DocHandler.PrintDocument(outputFile);
                     }
                     incrementProgressBar();
                 }
@@ -1096,7 +1094,7 @@ namespace Rejestracja {
                     String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
                     DocHandler.generateDiploma(templateFile, outputFile, result);
                     if (printForms) {
-                        DocHandler.printWordDoc(outputFile);
+                        DocHandler.PrintDocument(outputFile);
                     }
                     incrementProgressBar();
                 }
@@ -1143,7 +1141,7 @@ namespace Rejestracja {
                     String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
                     File.Delete(outputFile);
                     DocHandler.generateDiploma(templateFile, outputFile, result);
-                    DocHandler.printWordDoc(outputFile);
+                    DocHandler.PrintDocument(outputFile);
 
                     showStripLabelMessage("Dokument wysłany do druku");
                 }
@@ -1159,7 +1157,7 @@ namespace Rejestracja {
                     File.Delete(outputFile);
 
                     DocHandler.generateDiploma(templateFile, outputFile, result);
-                    DocHandler.printWordDoc(outputFile);
+                    DocHandler.PrintDocument(outputFile);
 
                     showStripLabelMessage("Dokument wysłany do druku");
                 }
@@ -1302,7 +1300,7 @@ namespace Rejestracja {
 
                 DocHandler.generateHtmlSummary(templateFile, outFile);
                 if (q == System.Windows.Forms.DialogResult.Yes) {
-                    DocHandler.PrintHtmlDoc(outFile);
+                    DocHandler.PrintDocument(outFile);
                 }
                 System.Diagnostics.Process.Start(outFile);
             }

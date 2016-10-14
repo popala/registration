@@ -275,7 +275,6 @@ namespace Rejestracja
             this.cboYearOfBirth.Name = "cboYearOfBirth";
             this.cboYearOfBirth.Size = new System.Drawing.Size(98, 21);
             this.cboYearOfBirth.TabIndex = 4;
-            //this.cboYearOfBirth.SelectedIndexChanged += new System.EventHandler(this.cboYearOfBirth_SelectedIndexChanged);
             this.cboYearOfBirth.TextChanged += new System.EventHandler(this.cboYearOfBirth_TextChanged);
             // 
             // cboModelPublisher
@@ -361,6 +360,7 @@ namespace Rejestracja
             this.lvCategories.FullRowSelect = true;
             this.lvCategories.GridLines = true;
             this.lvCategories.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lvCategories.HideSelection = false;
             this.lvCategories.Location = new System.Drawing.Point(103, 337);
             this.lvCategories.MultiSelect = false;
             this.lvCategories.Name = "lvCategories";
