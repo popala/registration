@@ -455,8 +455,11 @@ namespace Rejestracja
 
                 if (cboModelScale.SelectedIndex < 0) {
                     string enteredScale = cboModelScale.Text.Trim();
-                    if (MessageBox.Show("Dodać wpisaną skalę do bazy?", "Skala Nie Znaleziona", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
-
+                    int idx = cboModelScale.FindStringExact(enteredScale);
+                    if(idx > -1) {
+                        cboModelScale.SelectedIndex = idx;
+                    }
+                    else if(MessageBox.Show("Dodać wpisaną skalę do bazy?", "Skala Nie Znaleziona", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
                         if(enteredScale.Contains(":")) {
                             enteredScale = Rejestracja.Data.Objects.Scale.parse(enteredScale);
                         }
@@ -472,7 +475,11 @@ namespace Rejestracja
 
                 if (cboModelPublisher.SelectedIndex < 0) {
                     string publisher = cboModelPublisher.Text.Trim();
-                    if (MessageBox.Show("Dodać wpisanego wydawcę do bazy?", "Wydawca Nie Znaleziony", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
+                    int idx = cboModelPublisher.FindStringExact(publisher);
+                    if(idx > -1) {
+                        cboModelPublisher.SelectedIndex = idx;
+                    }
+                    else if (MessageBox.Show("Dodać wpisanego wydawcę do bazy?", "Wydawca Nie Znaleziony", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
                         PublisherDao.add(publisher);
                         
                         cboModelPublisher.Items.Clear();

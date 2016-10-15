@@ -84,9 +84,9 @@ namespace Rejestracja.Utils
                 using(DocX template = DocX.Load(templateFile)) {
                     template.ReplaceText("[DataRejestracji]", entry.registration.timeStamp.ToString(Resources.DateFormat),
                         false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                    template.ReplaceText("[NumerStartowy]", entry.registration.id.ToString(),
+                    template.ReplaceText("[NumerStartowy]", entry.registration.modelId.ToString(),
                         false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                    template.ReplaceText("[NS]", entry.registration.id.ToString(),
+                    template.ReplaceText("[NS]", entry.registration.modelId.ToString(),
                         false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                     template.ReplaceText("[Email]", entry.modeler.email,
                         false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
@@ -132,8 +132,8 @@ namespace Rejestracja.Utils
 
                 htmlTemplate = htmlTemplate
                     .Replace("[DataRejestracji]", entry.registration.timeStamp.ToString(Resources.DateFormat))
-                    .Replace("[NumerStartowy]", entry.registration.id.ToString())
-                    .Replace("[NS]", entry.registration.id.ToString())
+                    .Replace("[NumerStartowy]", entry.registration.modelId.ToString())
+                    .Replace("[NS]", entry.registration.modelId.ToString())
                     .Replace("[Email]", entry.modeler.email)
                     .Replace("[Imie]", entry.modeler.firstName)
                     .Replace("[Imię]", entry.modeler.firstName)
@@ -569,7 +569,7 @@ namespace Rejestracja.Utils
                 }
 
                 foreach(RegistrationEntry entry in regEntries) {
-                    String outFile = String.Format("{0}\\rejestracja_{1}_kat-{2}.docx", directory, entry.registration.id, entry.registration.categoryId);
+                    String outFile = String.Format("{0}\\rejestracja_{1}_kat-{2}.docx", directory, entry.registration.modelId, Resources.FileNameInvalidChars.Replace(entry.category.code, "-"));
                     File.Delete(outFile);
 
                     Class regClass = ClassDao.getClassForCategory(entry.registration.categoryId);
@@ -586,6 +586,7 @@ namespace Rejestracja.Utils
                     String defaultCardTemplate = Resources.resolvePath("templateKartyModelu");
                     String extention = defaultCardTemplate.Substring(defaultCardTemplate.LastIndexOf('.') + 1);
                     String outFile = String.Format("{0}\\rejestracja_{1}.{2}", directory, regEntries[0].registration.id, extention);
+                    File.Delete(outFile);
                     DocHandler.generateRegistrationCard(defaultCardTemplate, outFile, regEntries[0]);
                     DocHandler.PrintDocument(outFile);
                 }
