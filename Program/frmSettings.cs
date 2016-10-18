@@ -149,6 +149,8 @@ namespace Rejestracja
             setButtons();
 
             _loading = false;
+
+            tvSettings.SelectedNode = tvSettings.Nodes[0];
         }
 
         private void btnPath_Click(object sender, EventArgs e) {
@@ -752,6 +754,14 @@ namespace Rejestracja
             }
 
             tcClassOptions.SelectedIndex = 0;
+
+            rbPlaces.Checked = (cls.classificationType == Class.ClassificationType.Places);
+            rbMedals.Checked = (cls.classificationType == Class.ClassificationType.Medals);
+            rbDistinctions.Checked = (cls.classificationType == Class.ClassificationType.Distinctions);
+
+            nudDistinction.Visible = nudOne.Enabled = nudTwo.Enabled = nudThree.Enabled = chkPointBasedClassification.Checked = cls.usePointRange;
+            chkDistinctions.Checked = cls.useDistinctions;
+
             _loading = false;
         }
 

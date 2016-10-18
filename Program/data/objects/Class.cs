@@ -23,6 +23,12 @@ namespace Rejestracja.Data.Objects {
             AllCombined = 2
         }
 
+        public enum ClassificationType {
+            Places = 0,
+            Medals = 1,
+            Distinctions = 2
+        }
+
         public int id;
         public String name;
         public bool printCustomRegistrationCard;
@@ -33,6 +39,9 @@ namespace Rejestracja.Data.Objects {
         public ScoringCardType scoringCardType;
         public List<Category> categories;
         public List<AgeGroup> ageGroups;
+        public ClassificationType classificationType;
+        public bool usePointRange;
+        public bool useDistinctions;
 
         public const int MAX_NAME_LENGTH = 128;
 
@@ -49,7 +58,10 @@ namespace Rejestracja.Data.Objects {
             this.scoringCardType = ScoringCardType.AllCombined;
         }
 
-        public Class(int id, String name, String registrationCardTemplate, String judgingFormTemplate, String diplomaTemplate, bool useCustomAgeGroups, ScoringCardType scoringCardType) {
+        public Class(int id, String name, 
+                String registrationCardTemplate, String judgingFormTemplate, String diplomaTemplate, 
+                bool useCustomAgeGroups, ScoringCardType scoringCardType, ClassificationType classificationType,
+                bool usePointRange, bool useDistinctions) {
             this.id = id;
             this.name = name;
             this.categories = new List<Category>();
@@ -61,6 +73,10 @@ namespace Rejestracja.Data.Objects {
             this.judgingFormTemplate = judgingFormTemplate;
             this.diplomaTemplate = diplomaTemplate;
             this.scoringCardType = scoringCardType;
+
+            this.classificationType = classificationType;
+            this.usePointRange = usePointRange;
+            this.useDistinctions = useDistinctions;
         }
     }
 }

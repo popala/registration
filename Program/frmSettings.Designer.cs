@@ -80,6 +80,23 @@
             this.txtClassAgeGroup = new System.Windows.Forms.TextBox();
             this.lvClassAgeGroups = new System.Windows.Forms.ListView();
             this.chkUseStandardAgeGroups = new System.Windows.Forms.CheckBox();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.nudDistinction = new System.Windows.Forms.NumericUpDown();
+            this.lblThree = new System.Windows.Forms.Label();
+            this.lblTwo = new System.Windows.Forms.Label();
+            this.lblOne = new System.Windows.Forms.Label();
+            this.nudThree = new System.Windows.Forms.NumericUpDown();
+            this.nudTwo = new System.Windows.Forms.NumericUpDown();
+            this.nudOne = new System.Windows.Forms.NumericUpDown();
+            this.rbDistinctions = new System.Windows.Forms.RadioButton();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label23 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.rbMedals = new System.Windows.Forms.RadioButton();
+            this.rbPlaces = new System.Windows.Forms.RadioButton();
+            this.chkPointBasedClassification = new System.Windows.Forms.CheckBox();
+            this.chkDistinctions = new System.Windows.Forms.CheckBox();
             this.tpSpecialAwards = new System.Windows.Forms.TabPage();
             this.btnAddAward = new System.Windows.Forms.Button();
             this.label11 = new System.Windows.Forms.Label();
@@ -129,6 +146,11 @@
             this.tabPage2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDistinction)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudThree)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTwo)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOne)).BeginInit();
             this.tpSpecialAwards.SuspendLayout();
             this.tpPublisher.SuspendLayout();
             this.tpModelScale.SuspendLayout();
@@ -372,6 +394,7 @@
             this.tcClassOptions.Controls.Add(this.tabPage1);
             this.tcClassOptions.Controls.Add(this.tabPage2);
             this.tcClassOptions.Controls.Add(this.tabPage3);
+            this.tcClassOptions.Controls.Add(this.tabPage4);
             this.tcClassOptions.Location = new System.Drawing.Point(0, 0);
             this.tcClassOptions.Margin = new System.Windows.Forms.Padding(0);
             this.tcClassOptions.Name = "tcClassOptions";
@@ -704,6 +727,179 @@
             this.chkUseStandardAgeGroups.Text = "Używaj standardowych grup wiekowych";
             this.chkUseStandardAgeGroups.UseVisualStyleBackColor = true;
             this.chkUseStandardAgeGroups.CheckedChanged += new System.EventHandler(this.chkUseStandardAgeGroups_CheckedChanged);
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.nudDistinction);
+            this.tabPage4.Controls.Add(this.lblThree);
+            this.tabPage4.Controls.Add(this.lblTwo);
+            this.tabPage4.Controls.Add(this.lblOne);
+            this.tabPage4.Controls.Add(this.nudThree);
+            this.tabPage4.Controls.Add(this.nudTwo);
+            this.tabPage4.Controls.Add(this.nudOne);
+            this.tabPage4.Controls.Add(this.rbDistinctions);
+            this.tabPage4.Controls.Add(this.label20);
+            this.tabPage4.Controls.Add(this.label23);
+            this.tabPage4.Controls.Add(this.label18);
+            this.tabPage4.Controls.Add(this.label17);
+            this.tabPage4.Controls.Add(this.rbMedals);
+            this.tabPage4.Controls.Add(this.rbPlaces);
+            this.tabPage4.Controls.Add(this.chkPointBasedClassification);
+            this.tabPage4.Controls.Add(this.chkDistinctions);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(939, 603);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Klasyfikacja";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // nudDistinction
+            // 
+            this.nudDistinction.Location = new System.Drawing.Point(137, 291);
+            this.nudDistinction.Name = "nudDistinction";
+            this.nudDistinction.Size = new System.Drawing.Size(62, 20);
+            this.nudDistinction.TabIndex = 19;
+            // 
+            // lblThree
+            // 
+            this.lblThree.AutoSize = true;
+            this.lblThree.Location = new System.Drawing.Point(80, 252);
+            this.lblThree.Name = "lblThree";
+            this.lblThree.Size = new System.Drawing.Size(16, 13);
+            this.lblThree.TabIndex = 18;
+            this.lblThree.Text = "3.";
+            // 
+            // lblTwo
+            // 
+            this.lblTwo.AutoSize = true;
+            this.lblTwo.Location = new System.Drawing.Point(80, 233);
+            this.lblTwo.Name = "lblTwo";
+            this.lblTwo.Size = new System.Drawing.Size(16, 13);
+            this.lblTwo.TabIndex = 17;
+            this.lblTwo.Text = "2.";
+            // 
+            // lblOne
+            // 
+            this.lblOne.AutoSize = true;
+            this.lblOne.Location = new System.Drawing.Point(80, 214);
+            this.lblOne.Name = "lblOne";
+            this.lblOne.Size = new System.Drawing.Size(16, 13);
+            this.lblOne.TabIndex = 16;
+            this.lblOne.Text = "1.";
+            // 
+            // nudThree
+            // 
+            this.nudThree.Location = new System.Drawing.Point(102, 250);
+            this.nudThree.Name = "nudThree";
+            this.nudThree.Size = new System.Drawing.Size(62, 20);
+            this.nudThree.TabIndex = 15;
+            // 
+            // nudTwo
+            // 
+            this.nudTwo.Location = new System.Drawing.Point(102, 231);
+            this.nudTwo.Name = "nudTwo";
+            this.nudTwo.Size = new System.Drawing.Size(62, 20);
+            this.nudTwo.TabIndex = 14;
+            // 
+            // nudOne
+            // 
+            this.nudOne.Location = new System.Drawing.Point(102, 212);
+            this.nudOne.Name = "nudOne";
+            this.nudOne.Size = new System.Drawing.Size(62, 20);
+            this.nudOne.TabIndex = 13;
+            // 
+            // rbDistinctions
+            // 
+            this.rbDistinctions.AutoSize = true;
+            this.rbDistinctions.Location = new System.Drawing.Point(47, 109);
+            this.rbDistinctions.Name = "rbDistinctions";
+            this.rbDistinctions.Size = new System.Drawing.Size(83, 17);
+            this.rbDistinctions.TabIndex = 12;
+            this.rbDistinctions.TabStop = true;
+            this.rbDistinctions.Text = "Wyróżnienia";
+            this.rbDistinctions.UseVisualStyleBackColor = true;
+            // 
+            // label20
+            // 
+            this.label20.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label20.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label20.Location = new System.Drawing.Point(27, 169);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(883, 2);
+            this.label20.TabIndex = 11;
+            // 
+            // label23
+            // 
+            this.label23.AutoSize = true;
+            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label23.Location = new System.Drawing.Point(27, 154);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(108, 13);
+            this.label23.TabIndex = 10;
+            this.label23.Text = "Opcje Dodatkowe";
+            // 
+            // label18
+            // 
+            this.label18.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label18.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label18.Location = new System.Drawing.Point(28, 42);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(883, 2);
+            this.label18.TabIndex = 9;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.label17.Location = new System.Drawing.Point(28, 27);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(117, 13);
+            this.label17.TabIndex = 8;
+            this.label17.Text = "Sposób Klasyfikacji";
+            // 
+            // rbMedals
+            // 
+            this.rbMedals.AutoSize = true;
+            this.rbMedals.Location = new System.Drawing.Point(47, 86);
+            this.rbMedals.Name = "rbMedals";
+            this.rbMedals.Size = new System.Drawing.Size(157, 17);
+            this.rbMedals.TabIndex = 7;
+            this.rbMedals.TabStop = true;
+            this.rbMedals.Text = "Medale (Złoto/Srebro/Brąz)";
+            this.rbMedals.UseVisualStyleBackColor = true;
+            // 
+            // rbPlaces
+            // 
+            this.rbPlaces.AutoSize = true;
+            this.rbPlaces.Location = new System.Drawing.Point(47, 63);
+            this.rbPlaces.Name = "rbPlaces";
+            this.rbPlaces.Size = new System.Drawing.Size(91, 17);
+            this.rbPlaces.TabIndex = 6;
+            this.rbPlaces.TabStop = true;
+            this.rbPlaces.Text = "Miejsca (1 - 3)";
+            this.rbPlaces.UseVisualStyleBackColor = true;
+            // 
+            // chkPointBasedClassification
+            // 
+            this.chkPointBasedClassification.AutoSize = true;
+            this.chkPointBasedClassification.Location = new System.Drawing.Point(47, 187);
+            this.chkPointBasedClassification.Name = "chkPointBasedClassification";
+            this.chkPointBasedClassification.Size = new System.Drawing.Size(132, 17);
+            this.chkPointBasedClassification.TabIndex = 4;
+            this.chkPointBasedClassification.Text = "Klasyfikacja punktowa";
+            this.chkPointBasedClassification.UseVisualStyleBackColor = true;
+            // 
+            // chkDistinctions
+            // 
+            this.chkDistinctions.AutoSize = true;
+            this.chkDistinctions.Location = new System.Drawing.Point(47, 292);
+            this.chkDistinctions.Name = "chkDistinctions";
+            this.chkDistinctions.Size = new System.Drawing.Size(84, 17);
+            this.chkDistinctions.TabIndex = 1;
+            this.chkDistinctions.Text = "Wyróżnienia";
+            this.chkDistinctions.UseVisualStyleBackColor = true;
             // 
             // tpSpecialAwards
             // 
@@ -1164,6 +1360,12 @@
             this.groupBox1.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudDistinction)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudThree)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTwo)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudOne)).EndInit();
             this.tpSpecialAwards.ResumeLayout(false);
             this.tpSpecialAwards.PerformLayout();
             this.tpPublisher.ResumeLayout(false);
@@ -1268,5 +1470,22 @@
         private System.Windows.Forms.CheckBox chkUseCustomDiploma;
         private System.Windows.Forms.CheckBox chkUseCustomJudgingCard;
         private System.Windows.Forms.CheckBox chkUseCustomRegistrationCard;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.RadioButton rbDistinctions;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.RadioButton rbMedals;
+        private System.Windows.Forms.RadioButton rbPlaces;
+        private System.Windows.Forms.CheckBox chkPointBasedClassification;
+        private System.Windows.Forms.CheckBox chkDistinctions;
+        private System.Windows.Forms.NumericUpDown nudDistinction;
+        private System.Windows.Forms.Label lblThree;
+        private System.Windows.Forms.Label lblTwo;
+        private System.Windows.Forms.Label lblOne;
+        private System.Windows.Forms.NumericUpDown nudThree;
+        private System.Windows.Forms.NumericUpDown nudTwo;
+        private System.Windows.Forms.NumericUpDown nudOne;
     }
 }

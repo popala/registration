@@ -25,7 +25,7 @@ namespace Rejestracja
     public partial class frmRegistrationEntry : Form
     {
         private List<AgeGroup> _standardAgeGroups;
-        private List<Class> _classes;// = ClassDao.getList(true);
+        private List<Class> _classes;
         private bool _loading = false;
         
         public frmRegistrationEntry()
@@ -524,11 +524,9 @@ namespace Rejestracja
                 }
 
                 cboModelId.Items.Add(new ComboBoxItem(modelId, modelId.ToString()));
-                //cboModelId.SelectedIndex = cboModelId.FindStringExact(modelId.ToString());
 
                 cboModelId.SelectedIndex = -1;
                 txtModelName.Text = "";
-                //cboModelPublisher.SelectedIndex = -1;
                 btnAddPrintModel.Enabled = true;
                 txtModelName.Focus();
             }

@@ -20,7 +20,9 @@ namespace Rejestracja.Data.Dao
 {
     class ClassDao
     {
-        private const String BASE_QUERY = "SELECT Id, Name, RegistrationTemplate, JudgingFormTemplate, DiplomaTemplate, ScoringCardType, UseCustomAgeGroups FROM Classes ";
+        private const String BASE_QUERY = 
+            @"SELECT Id, Name, RegistrationTemplate, JudgingFormTemplate, DiplomaTemplate, ScoringCardType, UseCustomAgeGroups,
+                ClassificationType, UsePointRange, UseDistinctions FROM Classes ";
 
         public static List<Class> getList() {
             return getList(false, false);
@@ -45,14 +47,17 @@ namespace Rejestracja.Data.Dao
                             dr["JudgingFormTemplate"].ToString(),
                             dr["DiplomaTemplate"].ToString(),
                             dr.GetBoolean(dr.GetOrdinal("UseCustomAgeGroups")),
-                            (Class.ScoringCardType)dr.GetInt32(dr.GetOrdinal("ScoringCardType"))
+                            (Class.ScoringCardType)dr.GetInt32(dr.GetOrdinal("ScoringCardType")),
+                            (Class.ClassificationType)dr.GetInt32(dr.GetOrdinal("ClassificationType")),
+                            dr.GetBoolean(dr.GetOrdinal("UsePointRange")),
+                            dr.GetBoolean(dr.GetOrdinal("UseDistinctions"))
                         );
                         ret.Add(c);
                     }
                 }
 
                 if(includeCategories) {
-                    ret.Add(new Class(-1, Class.IMPORTED_CLASS_TITLE, null, null, null, false, Class.ScoringCardType.SeparateAgeGroupSeparateCategory));
+                    ret.Add(new Class(-1, Class.IMPORTED_CLASS_TITLE, null, null, null, false, Class.ScoringCardType.SeparateAgeGroupSeparateCategory, Class.ClassificationType.Places, false, false));
 
                     cm.CommandText =
                         @"SELECT Id, Code, Name, ModelClass, DisplayOrder FROM Categories
@@ -156,7 +161,10 @@ namespace Rejestracja.Data.Dao
                             dr["JudgingFormTemplate"].ToString(),
                             dr["DiplomaTemplate"].ToString(),
                             dr.GetBoolean(dr.GetOrdinal("UseCustomAgeGroups")),
-                            (Class.ScoringCardType)dr.GetInt32(dr.GetOrdinal("ScoringCardType"))
+                            (Class.ScoringCardType)dr.GetInt32(dr.GetOrdinal("ScoringCardType")),
+                            (Class.ClassificationType)dr.GetInt32(dr.GetOrdinal("ClassificationType")),
+                            dr.GetBoolean(dr.GetOrdinal("UsePointRange")),
+                            dr.GetBoolean(dr.GetOrdinal("UseDistinctions"))
                         );
                 }
             }
@@ -199,7 +207,10 @@ namespace Rejestracja.Data.Dao
                             dr["JudgingFormTemplate"].ToString(),
                             dr["DiplomaTemplate"].ToString(),
                             dr.GetBoolean(dr.GetOrdinal("UseCustomAgeGroups")),
-                            (Class.ScoringCardType)dr.GetInt32(dr.GetOrdinal("ScoringCardType"))
+                            (Class.ScoringCardType)dr.GetInt32(dr.GetOrdinal("ScoringCardType")),
+                            (Class.ClassificationType)dr.GetInt32(dr.GetOrdinal("ClassificationType")),
+                            dr.GetBoolean(dr.GetOrdinal("UsePointRange")),
+                            dr.GetBoolean(dr.GetOrdinal("UseDistinctions"))
                         );
                 }
 

@@ -14,8 +14,18 @@ namespace Rejestracja.Data {
     JudgingFormTemplate TEXT NULL,
     DiplomaTemplate TEXT NULL,
     ScoringCardType INTEGER NOT NULL DEFAULT 0,
-    UseCustomAgeGroups INTEGER NOT NULL DEFAULT 0);
+    UseCustomAgeGroups INTEGER NOT NULL DEFAULT 0,
+    ClassificationType INTEGER NOT NULL DEFAULT 0,
+    UsePointRange INTEGER NOT NULL DEFAULT 0,
+    UseDistinctions INTEGERE NOT NULL DEFAULT 0);
 CREATE UNIQUE INDEX Idx_Class_Name ON Classes(Name);
+
+CREATE TABLE Classification(
+    ClassId INTEGER NOT NULL REFERENCES Classes(Id),
+    Place INTEGER NOT NULL DEFAULT 0,
+    PointRange INTEGER NOT NULL DEFAULT 0
+);
+CREATE UNIQUE INDEX Idx_Classif ON Classification(ClassId, Place);
 
 CREATE TABLE Modelers(
     Id INTEGER PRIMARY KEY,
