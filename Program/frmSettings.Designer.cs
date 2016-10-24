@@ -136,6 +136,7 @@
             this.btnClose = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             this.tvSettings = new System.Windows.Forms.TreeView();
+            this.lblWarning = new System.Windows.Forms.Label();
             this.tcOptions.SuspendLayout();
             this.tpDocuments.SuspendLayout();
             this.tpAgeGroup.SuspendLayout();
@@ -401,6 +402,7 @@
             this.tcClassOptions.SelectedIndex = 0;
             this.tcClassOptions.Size = new System.Drawing.Size(947, 629);
             this.tcClassOptions.TabIndex = 0;
+            this.tcClassOptions.SelectedIndexChanged += new System.EventHandler(this.tcClassOptions_SelectedIndexChanged);
             // 
             // tabPage1
             // 
@@ -759,6 +761,7 @@
             this.nudDistinction.Name = "nudDistinction";
             this.nudDistinction.Size = new System.Drawing.Size(62, 20);
             this.nudDistinction.TabIndex = 19;
+            this.nudDistinction.ValueChanged += new System.EventHandler(numericUpDown_ValueChanged);
             // 
             // lblThree
             // 
@@ -793,6 +796,7 @@
             this.nudThree.Name = "nudThree";
             this.nudThree.Size = new System.Drawing.Size(62, 20);
             this.nudThree.TabIndex = 15;
+            this.nudThree.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
             // 
             // nudTwo
             // 
@@ -800,6 +804,7 @@
             this.nudTwo.Name = "nudTwo";
             this.nudTwo.Size = new System.Drawing.Size(62, 20);
             this.nudTwo.TabIndex = 14;
+            this.nudTwo.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
             // 
             // nudOne
             // 
@@ -807,6 +812,7 @@
             this.nudOne.Name = "nudOne";
             this.nudOne.Size = new System.Drawing.Size(62, 20);
             this.nudOne.TabIndex = 13;
+            this.nudOne.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
             // 
             // rbDistinctions
             // 
@@ -818,6 +824,7 @@
             this.rbDistinctions.TabStop = true;
             this.rbDistinctions.Text = "Wyróżnienia";
             this.rbDistinctions.UseVisualStyleBackColor = true;
+            this.rbDistinctions.CheckedChanged += new System.EventHandler(this.radioButton_Checked);
             // 
             // label20
             // 
@@ -869,6 +876,7 @@
             this.rbMedals.TabStop = true;
             this.rbMedals.Text = "Medale (Złoto/Srebro/Brąz)";
             this.rbMedals.UseVisualStyleBackColor = true;
+            this.rbMedals.CheckedChanged += new System.EventHandler(this.radioButton_Checked);
             // 
             // rbPlaces
             // 
@@ -880,6 +888,7 @@
             this.rbPlaces.TabStop = true;
             this.rbPlaces.Text = "Miejsca (1 - 3)";
             this.rbPlaces.UseVisualStyleBackColor = true;
+            this.rbPlaces.CheckedChanged += new System.EventHandler(this.radioButton_Checked);
             // 
             // chkPointBasedClassification
             // 
@@ -890,6 +899,7 @@
             this.chkPointBasedClassification.TabIndex = 4;
             this.chkPointBasedClassification.Text = "Klasyfikacja punktowa";
             this.chkPointBasedClassification.UseVisualStyleBackColor = true;
+            this.chkPointBasedClassification.CheckedChanged += new System.EventHandler(this.chkPointBasedClassification_CheckedChanged);
             // 
             // chkDistinctions
             // 
@@ -900,6 +910,7 @@
             this.chkDistinctions.TabIndex = 1;
             this.chkDistinctions.Text = "Wyróżnienia";
             this.chkDistinctions.UseVisualStyleBackColor = true;
+            this.chkDistinctions.CheckedChanged += new System.EventHandler(this.chkDistinctions_CheckedChanged);
             // 
             // tpSpecialAwards
             // 
@@ -1329,11 +1340,23 @@
             this.tvSettings.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvSettings_BeforeExpand);
             this.tvSettings.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvSettings_AfterSelect);
             // 
+            // lblWarning
+            // 
+            this.lblWarning.AutoSize = true;
+            this.lblWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.lblWarning.ForeColor = System.Drawing.Color.Red;
+            this.lblWarning.Location = new System.Drawing.Point(240, 642);
+            this.lblWarning.Name = "lblWarning";
+            this.lblWarning.Size = new System.Drawing.Size(57, 13);
+            this.lblWarning.TabIndex = 4;
+            this.lblWarning.Text = "lblWarning";
+            // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1188, 677);
+            this.Controls.Add(this.lblWarning);
             this.Controls.Add(this.tvSettings);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.btnClose);
@@ -1375,6 +1398,7 @@
             this.tpDocumentTemplates.ResumeLayout(false);
             this.tpDocumentTemplates.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -1487,5 +1511,6 @@
         private System.Windows.Forms.NumericUpDown nudThree;
         private System.Windows.Forms.NumericUpDown nudTwo;
         private System.Windows.Forms.NumericUpDown nudOne;
+        private System.Windows.Forms.Label lblWarning;
     }
 }

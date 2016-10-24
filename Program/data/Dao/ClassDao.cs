@@ -22,7 +22,7 @@ namespace Rejestracja.Data.Dao
     {
         private const String BASE_QUERY = 
             @"SELECT Id, Name, RegistrationTemplate, JudgingFormTemplate, DiplomaTemplate, ScoringCardType, UseCustomAgeGroups,
-                ClassificationType, UsePointRange, UseDistinctions FROM Classes ";
+                ClassificationType, UsePointRange, PointRanges, UseDistinctions FROM Classes ";
 
         public static List<Class> getList() {
             return getList(false, false);
@@ -52,6 +52,13 @@ namespace Rejestracja.Data.Dao
                             dr.GetBoolean(dr.GetOrdinal("UsePointRange")),
                             dr.GetBoolean(dr.GetOrdinal("UseDistinctions"))
                         );
+                        if(c.usePointRange) {
+                            String [] pointRanges = dr["PointRanges"].ToString().Split(',');
+                            c.pointRanges = new int[pointRanges.Length];
+                            for(int i = 0; i < pointRanges.Length; i++) {
+                                c.pointRanges[i] = int.Parse(pointRanges[i]);
+                            }
+                        }
                         ret.Add(c);
                     }
                 }
@@ -212,6 +219,13 @@ namespace Rejestracja.Data.Dao
                             dr.GetBoolean(dr.GetOrdinal("UsePointRange")),
                             dr.GetBoolean(dr.GetOrdinal("UseDistinctions"))
                         );
+                        if(ret.usePointRange) {
+                            String[] pointRanges = dr["PointRanges"].ToString().Split(',');
+                            ret.pointRanges = new int[pointRanges.Length];
+                            for(int i = 0; i < pointRanges.Length; i++) {
+                                ret.pointRanges[i] = int.Parse(pointRanges[i]);
+                            }
+                        }
                 }
 
                 cm.Parameters.Clear();
@@ -237,29 +251,31 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public static void update(int id, String name, Class.ScoringCardType scoringCardType, bool useCustomAgeGroups, String registrationTemplate, String judgingFormTemplate, String diplomaTemplate)
-        {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(
-                @"UPDATE Classes SET
-                    Name = @Name,
-                    RegistrationTemplate = @RegistrationTemplate, JudgingFormTemplate = @JudgingFormTemplate, DiplomaTemplate = @DiplomaTemplate,
-                    ScoringCardType = @ScoringCardType, UseCustomAgeGroups = @UseCustomAgeGroups
-                WHERE Id = @Id", cn))
-            {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
+//        public static void update(int id, String name, Class.ScoringCardType scoringCardType, bool useCustomAgeGroups, String registrationTemplate, String judgingFormTemplate, String diplomaTemplate)
+//        {
+//            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+//            using(SQLiteCommand cm = new SQLiteCommand(
+//                @"UPDATE Classes SET
+//                    Name = @Name,
+//                    RegistrationTemplate = @RegistrationTemplate, JudgingFormTemplate = @JudgingFormTemplate, DiplomaTemplate = @DiplomaTemplate,
+//                    ScoringCardType = @ScoringCardType, UseCustomAgeGroups = @UseCustomAgeGroups, ClassificationType = @ClassificationType,
+//                    UsePointRange = @UsePointRange, PointRanges = @PointRanges, UseDistinctions = @UseDistinctions
+//                WHERE Id = @Id", cn))
+//            {
+//                cn.Open();
+//                cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
-                cm.Parameters.Add("@Name", System.Data.DbType.String, Class.MAX_NAME_LENGTH).Value = name;
-                cm.Parameters.Add("@RegistrationTemplate", System.Data.DbType.String).Value = registrationTemplate;
-                cm.Parameters.Add("@JudgingFormTemplate", System.Data.DbType.String).Value = judgingFormTemplate;
-                cm.Parameters.Add("@DiplomaTemplate", System.Data.DbType.String).Value = diplomaTemplate;
-                cm.Parameters.Add("@ScoringCardType", System.Data.DbType.Int32).Value = (int)scoringCardType;
-                cm.Parameters.Add("@UseCustomAgeGroups", System.Data.DbType.Boolean).Value = useCustomAgeGroups;
-                cm.ExecuteNonQuery();
-            }
-        }
+//                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
+//                cm.Parameters.Add("@Name", System.Data.DbType.String, Class.MAX_NAME_LENGTH).Value = name;
+//                cm.Parameters.Add("@RegistrationTemplate", System.Data.DbType.String).Value = registrationTemplate;
+//                cm.Parameters.Add("@JudgingFormTemplate", System.Data.DbType.String).Value = judgingFormTemplate;
+//                cm.Parameters.Add("@DiplomaTemplate", System.Data.DbType.String).Value = diplomaTemplate;
+//                cm.Parameters.Add("@ScoringCardType", System.Data.DbType.Int32).Value = (int)scoringCardType;
+//                cm.Parameters.Add("@UseCustomAgeGroups", System.Data.DbType.Boolean).Value = useCustomAgeGroups;
+//                cm.Parameters.Add("@ClassificationType", System.Data.DbType.Int32).Value = (int)
+//                cm.ExecuteNonQuery();
+//            }
+//        }
 
         public static void update(Class modelClass) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -267,18 +283,28 @@ namespace Rejestracja.Data.Dao
                 @"UPDATE Classes SET
                     Name = @Name,
                     RegistrationTemplate = @RegistrationTemplate, JudgingFormTemplate = @JudgingFormTemplate, DiplomaTemplate = @DiplomaTemplate,
-                    ScoringCardType = @ScoringCardType, UseCustomAgeGroups = @UseCustomAgeGroups
+                    ScoringCardType = @ScoringCardType, UseCustomAgeGroups = @UseCustomAgeGroups, ClassificationType = @ClassificationType,
+                    UsePointRange = @UsePointRange, PointRanges = @PointRanges, UseDistinctions = @UseDistinctions
                 WHERE Id = @Id", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = modelClass.id;
-                cm.Parameters.Add("@Name", System.Data.DbType.String, Class.MAX_NAME_LENGTH).Value = modelClass.name;
-                cm.Parameters.Add("@RegistrationTemplate", System.Data.DbType.String).Value = modelClass.registrationCardTemplate;
-                cm.Parameters.Add("@JudgingFormTemplate", System.Data.DbType.String).Value = modelClass.judgingFormTemplate;
-                cm.Parameters.Add("@DiplomaTemplate", System.Data.DbType.String).Value = modelClass.diplomaTemplate;
-                cm.Parameters.Add("@ScoringCardType", System.Data.DbType.Int32).Value = (int)modelClass.scoringCardType;
-                cm.Parameters.Add("@UseCustomAgeGroups", System.Data.DbType.Boolean).Value = modelClass.useCustomAgeGroups;
+                cm.Parameters.Add("@Id", DbType.Int32).Value = modelClass.id;
+                cm.Parameters.Add("@Name", DbType.String, Class.MAX_NAME_LENGTH).Value = modelClass.name;
+                cm.Parameters.Add("@RegistrationTemplate", DbType.String).Value = modelClass.registrationCardTemplate;
+                cm.Parameters.Add("@JudgingFormTemplate", DbType.String).Value = modelClass.judgingFormTemplate;
+                cm.Parameters.Add("@DiplomaTemplate", DbType.String).Value = modelClass.diplomaTemplate;
+                cm.Parameters.Add("@ScoringCardType", DbType.Int32).Value = (int)modelClass.scoringCardType;
+                cm.Parameters.Add("@UseCustomAgeGroups", DbType.Boolean).Value = modelClass.useCustomAgeGroups;
+                cm.Parameters.Add("@ClassificationType", DbType.Int32).Value = (int)modelClass.classificationType;
+                cm.Parameters.Add("@UsePointRange", DbType.Boolean).Value = modelClass.usePointRange;
+                if(modelClass.usePointRange && modelClass.pointRanges != null && modelClass.pointRanges.Length > 0) {
+                    cm.Parameters.Add("@PointRanges", DbType.String).Value = String.Join(",", modelClass.pointRanges);
+                }
+                else {
+                    cm.Parameters.Add("@PointRanges", DbType.String).Value = null;
+                }
+                cm.Parameters.Add("@UseDistinctions", DbType.Boolean).Value = modelClass.useDistinctions;
                 cm.ExecuteNonQuery();
             }
         }

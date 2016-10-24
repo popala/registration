@@ -41,6 +41,7 @@ namespace Rejestracja.Data.Objects {
         public List<AgeGroup> ageGroups;
         public ClassificationType classificationType;
         public bool usePointRange;
+        public int[] pointRanges;
         public bool useDistinctions;
 
         public const int MAX_NAME_LENGTH = 128;

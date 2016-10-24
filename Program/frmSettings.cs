@@ -25,6 +25,7 @@ namespace Rejestracja
     public partial class frmSettings : Form
     {
         private bool _loading = false;
+        private Class _selectedClass;
 
         public frmSettings()
         {
@@ -121,6 +122,13 @@ namespace Rejestracja
             lvClassAgeGroups.MultiSelect = false;
             lvClassAgeGroups.HideSelection = false;
             lvClassAgeGroups.CheckBoxes = true;
+
+            nudDistinction.Minimum = nudOne.Minimum = nudTwo.Minimum = 0;
+            nudThree.Minimum = 2;
+            nudThree.Maximum = nudTwo.Maximum = nudThree.Maximum = 1000;
+
+            lblWarning.Text = "Zmiany na tym ekranie spowodują usunięcie wyników w zmienionej klasie";
+            lblWarning.Visible = false;
 
             /** Special Awards **/
             txtAwardTitle.MaxLength = Award.TITLE_MAX_LENGTH;
@@ -305,38 +313,36 @@ namespace Rejestracja
         }
 
         private void setButtons() {
+
             switch (tcOptions.SelectedIndex) {
                 case 0:
                 case 7:
                     btnDelete.Visible = false;
-                    break;
+                    return;
+                    //break;
                 case 1:
-                    btnDelete.Visible = true;
                     btnDelete.Enabled = (lvAgeGroup.CheckedItems.Count > 0);
                     break;
                 case 2:
-                    btnDelete.Visible = true;
                     btnDelete.Enabled = (lvModelClass.CheckedItems.Count > 0);
                     break;
                 case 3:
-                    btnDelete.Visible = true;
                     btnDelete.Enabled = (lvModelCategory.CheckedItems.Count > 0);
                     btnMoveUpCategory.Enabled = btnMoveDownCategory.Enabled = (lvModelCategory.CheckedItems.Count == 1);
                     break;
                 case 4:
-                    btnDelete.Visible = true;
                     btnDelete.Enabled = (lvAwards.CheckedItems.Count > 0);
                     btnMoveUpAward.Enabled = btnMoveDownAward.Enabled = (lvAwards.CheckedItems.Count == 1);
                     break;
                 case 5:
-                    btnDelete.Visible = true;
                     btnDelete.Enabled = (lvPublishers.CheckedItems.Count > 0);
                     break;
                 case 6:
-                    btnDelete.Visible = true;
                     btnDelete.Enabled = (lvModelScales.CheckedItems.Count > 0);
                     break;
             }
+
+            btnDelete.Visible = true;
         }
 
         private void anyListView_ItemChecked(object sender, ItemCheckedEventArgs e) {
@@ -730,37 +736,43 @@ namespace Rejestracja
 
         private void loadClassDetails(String className) {
             _loading = true;
-
-            Class cls = ClassDao.get(className);
+            
+            _selectedClass = ClassDao.get(className);
 
             loadModelCategories(className);
 
-            chkUseCustomRegistrationCard.Checked = (!String.IsNullOrWhiteSpace(cls.registrationCardTemplate));
-            txtClassRegistrationTemplate.Text = cls.registrationCardTemplate;
-            chkUseCustomJudgingCard.Checked = (!String.IsNullOrWhiteSpace(cls.judgingFormTemplate));
-            txtClassJudgingFormTemplate.Text = cls.judgingFormTemplate;
-            chkUseCustomDiploma.Checked = (!String.IsNullOrWhiteSpace(cls.diplomaTemplate));
-            txtClassCategoryDiplomaTemplate.Text = cls.diplomaTemplate;
+            chkUseCustomRegistrationCard.Checked = (!String.IsNullOrWhiteSpace(_selectedClass.registrationCardTemplate));
+            txtClassRegistrationTemplate.Text = _selectedClass.registrationCardTemplate;
+            chkUseCustomJudgingCard.Checked = (!String.IsNullOrWhiteSpace(_selectedClass.judgingFormTemplate));
+            txtClassJudgingFormTemplate.Text = _selectedClass.judgingFormTemplate;
+            chkUseCustomDiploma.Checked = (!String.IsNullOrWhiteSpace(_selectedClass.diplomaTemplate));
+            txtClassCategoryDiplomaTemplate.Text = _selectedClass.diplomaTemplate;
 
-            cboJudgingFormOption.SelectedIndex = (int)cls.scoringCardType;
+            cboJudgingFormOption.SelectedIndex = (int)_selectedClass.scoringCardType;
 
             txtClassAgeGroup.Text = "";
             txtClassAge.Text = "";
             lvClassAgeGroups.Items.Clear();
 
-            chkUseStandardAgeGroups.Checked = (!cls.useCustomAgeGroups);
-            if(cls.useCustomAgeGroups) {
-                loadClassAgeGroups(cls.id);
+            chkUseStandardAgeGroups.Checked = (!_selectedClass.useCustomAgeGroups);
+            if(_selectedClass.useCustomAgeGroups) {
+                loadClassAgeGroups(_selectedClass.id);
             }
 
             tcClassOptions.SelectedIndex = 0;
 
-            rbPlaces.Checked = (cls.classificationType == Class.ClassificationType.Places);
-            rbMedals.Checked = (cls.classificationType == Class.ClassificationType.Medals);
-            rbDistinctions.Checked = (cls.classificationType == Class.ClassificationType.Distinctions);
+            rbPlaces.Checked = (_selectedClass.classificationType == Class.ClassificationType.Places);
+            rbMedals.Checked = (_selectedClass.classificationType == Class.ClassificationType.Medals);
+            rbDistinctions.Checked = (_selectedClass.classificationType == Class.ClassificationType.Distinctions);
 
-            nudDistinction.Visible = nudOne.Enabled = nudTwo.Enabled = nudThree.Enabled = chkPointBasedClassification.Checked = cls.usePointRange;
-            chkDistinctions.Checked = cls.useDistinctions;
+            nudDistinction.Visible = nudOne.Enabled = nudTwo.Enabled = nudThree.Enabled = chkPointBasedClassification.Checked = _selectedClass.usePointRange;
+            chkDistinctions.Checked = _selectedClass.useDistinctions;
+            chkPointBasedClassification.Checked = _selectedClass.usePointRange;
+            if(_selectedClass.usePointRange) {
+                nudOne.Value = _selectedClass.pointRanges[0];
+                nudTwo.Value = _selectedClass.pointRanges[1];
+                nudThree.Value = _selectedClass.pointRanges[2];
+            }
 
             _loading = false;
         }
@@ -781,14 +793,12 @@ namespace Rejestracja
 
         private void chkUseStandardAgeGroups_CheckedChanged(object sender, EventArgs e) {
 
-            Class cls = ClassDao.get(tvSettings.SelectedNode.Text);
-
             if(chkUseStandardAgeGroups.Checked) {
 
-                if(cls.ageGroups.Count > 0 && MessageBox.Show("Usunąć niestandardowe grupy wiekowe?", "Grupy wiekowe w klasie", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != System.Windows.Forms.DialogResult.Yes) {
+                if(_selectedClass.ageGroups.Count > 0 && MessageBox.Show("Usunąć niestandardowe grupy wiekowe?", "Grupy wiekowe w klasie", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != System.Windows.Forms.DialogResult.Yes) {
                     return;
                 }
-                AgeGroupDao.deleteClassAgeGroups(cls.id);
+                AgeGroupDao.deleteClassAgeGroups(_selectedClass.id);
 
                 txtClassAgeGroup.Enabled = false;
                 txtClassAge.Enabled = false;
@@ -803,8 +813,8 @@ namespace Rejestracja
                 lvClassAgeGroups.Enabled = true;
             }
 
-            cls.useCustomAgeGroups = (!chkUseStandardAgeGroups.Checked);
-            ClassDao.update(cls);
+            _selectedClass.useCustomAgeGroups = (!chkUseStandardAgeGroups.Checked);
+            ClassDao.update(_selectedClass);
         }
 
         private void btnAddClassAgeGroup_Click(object sender, EventArgs e) {
@@ -828,6 +838,159 @@ namespace Rejestracja
             txtClassAge.Text = "";
             loadClassAgeGroups(clsId);
             txtClassAgeGroup.Focus();
+        }
+
+        private void tcClassOptions_SelectedIndexChanged(object sender, EventArgs e) {
+
+            switch(tcClassOptions.SelectedIndex) {
+                case 0:
+                case 2:
+                    btnDelete.Visible = true;
+                    lblWarning.Visible = true;
+                    break;
+                case 1:
+                    lblWarning.Visible = false;
+                    break;
+                default:
+                    btnDelete.Visible = false;
+                    lblWarning.Visible = true;
+                    break;
+            }
+        }
+
+        private void cboJudgingFormOption_SelectedIndexChanged(object sender, EventArgs e) {
+            if(_loading) {
+                return;
+            }
+
+            _selectedClass.scoringCardType = (Class.ScoringCardType)cboJudgingFormOption.SelectedIndex;
+            ClassDao.update(_selectedClass);
+        }
+
+        private void chkUseCustomRegistrationCard_CheckedChanged(object sender, EventArgs e) {
+            if(chkUseCustomRegistrationCard.Checked) {
+                btnCustomRegistrationCard.Enabled = true;
+                if(_loading) {
+                    return;
+                }
+
+                txtClassRegistrationTemplate.Text = "";
+                selectTemplate(txtClassRegistrationTemplate, null);
+                if(String.IsNullOrWhiteSpace(txtClassRegistrationTemplate.Text)) {
+                    chkUseCustomRegistrationCard.Checked = false;
+                    return;
+                }
+            }
+            else {
+                btnCustomRegistrationCard.Enabled = false;
+                txtClassRegistrationTemplate.Text = "";
+                if(_loading) {
+                    return;
+                }
+            }
+
+            _selectedClass.registrationCardTemplate = txtClassRegistrationTemplate.Text;
+            ClassDao.update(_selectedClass);
+        }
+
+        private void radioButton_Checked(object sender, EventArgs e) {
+            if(rbDistinctions.Checked) {
+                chkDistinctions.Checked = false;
+                chkDistinctions.Enabled = false;
+                chkPointBasedClassification.Checked = false;
+                chkPointBasedClassification.Enabled = false;
+                nudDistinction.Visible = false;
+            }
+            else {
+                chkDistinctions.Enabled = true;
+                chkPointBasedClassification.Enabled = true;
+                if(chkPointBasedClassification.Checked) {
+                    nudDistinction.Visible = true;
+                    nudDistinction.Enabled = chkDistinctions.Checked;
+                }
+                else {
+                    nudDistinction.Visible = false;
+                }
+            }
+
+            if(_loading) {
+                return;
+            }
+
+            if(rbPlaces.Checked) {
+                _selectedClass.classificationType = Class.ClassificationType.Places;
+                _selectedClass.useDistinctions = chkDistinctions.Checked;
+            }
+            else if(rbMedals.Checked) {
+                _selectedClass.classificationType = Class.ClassificationType.Medals;
+                _selectedClass.useDistinctions = chkDistinctions.Checked;
+            }
+            else {
+                _selectedClass.classificationType = Class.ClassificationType.Distinctions;
+                _selectedClass.useDistinctions = false;
+            }
+            ClassDao.update(_selectedClass);
+        }
+
+        private void chkPointBasedClassification_CheckedChanged(object sender, EventArgs e) {
+            if(chkPointBasedClassification.Checked) {
+                nudOne.Value = 95;
+                nudTwo.Value = 90;
+                nudThree.Value = 85;
+                nudOne.Enabled = nudTwo.Enabled = nudThree.Enabled = true;
+                nudDistinction.Visible = true;
+            }
+            else {
+                nudOne.Enabled = nudTwo.Enabled = nudThree.Enabled = false;
+                nudOne.Value = 0;
+                nudTwo.Value = 0;
+                nudThree.Value = 0;
+                nudDistinction.Visible = false;
+            }
+            nudDistinction.Enabled = chkDistinctions.Checked;
+            if(nudDistinction.Enabled) {
+                nudDistinction.Value = 80;
+            }
+        }
+
+        private void numericUpDown_ValueChanged(object sender, EventArgs e) {
+            NumericUpDown ctl = sender as NumericUpDown;
+
+            if(!ctl.Enabled) {
+                return;
+            }
+
+            switch(ctl.Name) {
+                case "nudDistinction":
+                    if(nudDistinction.Value >= nudThree.Value) {
+                        nudDistinction.Value = nudThree.Value - 1;
+                    }
+                    break;
+
+                case "nudOne":
+                    if(nudOne.Value <= nudTwo.Value) {
+                        nudTwo.Value = nudOne.Value - 1;
+                    }
+                    break;
+
+                case "nudTwo":
+                    if(nudTwo.Value >= nudOne.Value) {
+                        nudTwo.Value = nudOne.Value - 1;
+                    }
+                    if(nudTwo.Value <= nudThree.Value) {
+                        nudThree.Value = nudTwo.Value - 1;
+                    }
+                    break;
+
+                case "nudThree":
+                    if(nudThree.Value >= nudTwo.Value) {
+                        nudThree.Value = nudTwo.Value - 1;
+                    }
+                    if(nudDistinction.Enabled && nudThree.Value <= nudDistinction.Value) {
+                        nudDistinction.Value = nudThree.Value - 1;
+                    }
+                    break;
+            }
         }
 
         #endregion
@@ -1022,6 +1185,8 @@ namespace Rejestracja
             if(e.Node.Name.Contains(":")) {
                 loadClassDetails(e.Node.Text);
                 tcOptions.SelectedIndex = 3;
+                lblWarning.Visible = true;
+                return;
             }
 
             switch(e.Node.Name) {
@@ -1037,7 +1202,9 @@ namespace Rejestracja
                     break;
                 case "klasy":
                     loadModelClasses(); tcOptions.SelectedIndex = 2;
-                    break;
+                    lblWarning.Visible = true;
+                    return;
+                    //break;
                 case "nagrody":
                     loadAwards(); tcOptions.SelectedIndex = 4;
                     break;
@@ -1048,43 +1215,27 @@ namespace Rejestracja
                     loadModelScales(); tcOptions.SelectedIndex = 6;
                     break;
             }
+            lblWarning.Visible = false;
         }
 
-        private void cboJudgingFormOption_SelectedIndexChanged(object sender, EventArgs e) {
+        private void chkDistinctions_CheckedChanged(object sender, EventArgs e) {
             if(_loading) {
                 return;
             }
 
-            Class cls = ClassDao.get(tvSettings.SelectedNode.Text);
-            cls.scoringCardType = (Class.ScoringCardType)cboJudgingFormOption.SelectedIndex;
-            ClassDao.update(cls);
-        }
-
-        private void chkUseCustomRegistrationCard_CheckedChanged(object sender, EventArgs e) {
-            if(chkUseCustomRegistrationCard.Checked) {
-                btnCustomRegistrationCard.Enabled = true;
-                if(_loading) {
-                    return;
-                }
-
-                txtClassRegistrationTemplate.Text = "";
-                selectTemplate(txtClassRegistrationTemplate, null);
-                if(String.IsNullOrWhiteSpace(txtClassRegistrationTemplate.Text)) {
-                    chkUseCustomRegistrationCard.Checked = false;
-                    return;
+            if(chkDistinctions.Checked) {
+                if(chkPointBasedClassification.Checked) {
+                    nudDistinction.Enabled = true;
+                    nudDistinction.Value = nudThree.Value - 5;
                 }
             }
             else {
-                btnCustomRegistrationCard.Enabled = false;
-                txtClassRegistrationTemplate.Text = "";
-                if(_loading) {
-                    return;
-                }
+                nudDistinction.Enabled = false;
+                nudDistinction.ResetText();
             }
 
-            Class cls = ClassDao.get(tvSettings.SelectedNode.Text);
-            cls.registrationCardTemplate = txtClassRegistrationTemplate.Text;
-            ClassDao.update(cls);
+            _selectedClass.useDistinctions = chkDistinctions.Checked;
+            ClassDao.update(_selectedClass);
         }
     }
 }
