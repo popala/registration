@@ -942,6 +942,7 @@ namespace Rejestracja
             }
             else {
                 nudOne.Enabled = nudTwo.Enabled = nudThree.Enabled = false;
+                nudOne.Minimum = nudTwo.Minimum = nudThree.Minimum = 0;
                 nudOne.Value = 0;
                 nudTwo.Value = 0;
                 nudThree.Value = 0;
@@ -956,7 +957,7 @@ namespace Rejestracja
         private void numericUpDown_ValueChanged(object sender, EventArgs e) {
             NumericUpDown ctl = sender as NumericUpDown;
 
-            if(!ctl.Enabled) {
+            if(!ctl.Enabled || _loading) {
                 return;
             }
 
@@ -1004,7 +1005,9 @@ namespace Rejestracja
                 li.Tag = scale.id;
                 lvModelScales.Items.Add(li);
             }
-            lvModelScales.Columns[0].Width = -2;
+            if (lvModelScales.Items.Count > 0) {
+                lvModelScales.Columns[0].Width = -2;
+            }
         }
 
         private void deleteModelScales() {
