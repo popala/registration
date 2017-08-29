@@ -1287,7 +1287,7 @@ namespace Rejestracja {
 
             try {
                 String outFile = String.Format("{0}\\{1}", Resources.resolvePath("folderDokumentów"), "podsumowanie.html");
-                String templateFile = Resources.resolvePath("templatePosumowania");
+                String templateFile = Resources.resolvePath("templatePodsumowania");
 
                 String directory = Path.GetDirectoryName(outFile);
                 if (!Directory.Exists(directory)) {

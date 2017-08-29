@@ -239,7 +239,7 @@ namespace Rejestracja
                 txtSummaryTemplate.Text = templatePath;
             }
             else {
-                txtSummaryTemplate.Text = Resources.resolvePath("templatePosumowania");
+                txtSummaryTemplate.Text = Resources.resolvePath("templatePodsumowania");
             }
 
             templatePath = Options.get("AwardDiplomaTemplate");

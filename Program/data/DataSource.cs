@@ -115,7 +115,7 @@ namespace Rejestracja {
             CategoryDao.add("C-7", "Modele kartonowe i papierowe", "Naviga", i++);
 
             //Publishers
-            String[] defaults = new String[] { "GPM", "Answer", "WAK", "Kartonowa Kolekcja", "Mały Modelarz", "JSC", "Modelik", "Orlik MK", "Haliński", "Model-Kom", "Orel", "WMC", "Dom Bumagi", "Draf Model", "Szkutnik", "Wektor", "Sklej Model", "Hobby Model", "AJ Model", "Model Hobby", "Quest", "Internet", "Inne" };
+            String[] defaults = new String[] { "GPM", "Answer", "WAK", "Kartonowa Kolekcja", "Mały Modelarz", "JSC", "Modelik", "Orlik MK", "Haliński", "Model-Kom", "Orel", "WMC", "Dom Bumagi", "Draf Model", "Szkutnik", "Wektor", "Sklej Model", "Hobby Model", "AJ Model", "Model Hobby", "Quest", "Internet", "Świat z Kartonu", "Inne" };
             Array.Sort(defaults, StringComparer.InvariantCulture);
             foreach(String publisher in defaults) {
                 PublisherDao.add(publisher);

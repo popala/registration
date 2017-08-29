@@ -60,7 +60,7 @@ namespace Rejestracja.Utils {
     </head>
     <body>
         [NAGLOWEK]
-        [POSUMOWANIE]
+        [PODSUMOWANIE]
     </body>
 </html>";
 

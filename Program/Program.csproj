@@ -228,7 +228,7 @@
     <None Include="Icons\PrintDocumentControl_697.png" />
     <None Include="Icons\plane.ico" />
     <None Include="Resources\StatusAnnotations_Help_and_inconclusive_32xLG_color.png" />
-    <Content Include="Templates\posumowanie.html">
+    <Content Include="Templates\podsumowanie.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Templates\wyniki.html">
