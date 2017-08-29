@@ -50,6 +50,21 @@ namespace Rejestracja {
             this._showSettingsForm = value;
         }
 
+        public void setFileName(String fileName) {
+            String formattedName;
+
+            if (fileName.Contains("\\")) {
+                formattedName = fileName.Substring(fileName.LastIndexOf("\\") + 1);
+            } else if(fileName.Contains("/")) {
+                formattedName = fileName.Substring(fileName.LastIndexOf("/") + 1);
+            } else {
+                formattedName = fileName;
+            }
+
+            formattedName = formattedName.Replace(".sqlite", "");
+            this.Text = String.Format("Rejestracja - {0}", formattedName);
+        }
+
         public frmMain() {
             //System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
             //System.Threading.Thread.CurrentThread.CurrentUICulture = new CultureInfo("pl");
@@ -141,6 +156,7 @@ namespace Rejestracja {
                 DataSource ds = new DataSource();
                 populateUI();
                 uiEnabled(true);
+                setFileName(Properties.Settings.Default.DataFile);
             }
             catch (Exception err) {
                 uiEnabled(false);

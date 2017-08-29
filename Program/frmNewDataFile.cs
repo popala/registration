@@ -53,6 +53,7 @@ namespace Rejestracja
             DataSource ds = new DataSource(strFilePath);
             frmMain parent = (frmMain)this.Owner;
             parent.setShowSettingsForm(true);
+            parent.setFileName(strFilePath);
 
             Application.UseWaitCursor = false;
 
