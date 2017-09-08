@@ -270,7 +270,7 @@ namespace Rejestracja.Utils
 
             foreach (Result result in results)
             {
-                if (ageGroup != result.entry.ageGroup || modelCategory != result.entry.modelCategory)
+                if (!ageGroup.Equals(result.entry.ageGroup, StringComparison.CurrentCultureIgnoreCase) || !modelCategory.Equals(result.entry.modelCategory, StringComparison.CurrentCultureIgnoreCase))
                 {
                     if(ageGroup != null)
                     {
@@ -283,7 +283,7 @@ namespace Rejestracja.Utils
                     resultHtml.AppendFormat(@"<div class=""tbl""><h2>Grupa Wiekowa <span class=""ageGroup"">{0}</span> - <span class=""modelCategory"">{1}</span></h2>",
                         result.entry.ageGroup.ToUpper(), result.entry.modelCategory).AppendLine();
                 }
-                if (modelClass != result.entry.modelClass)
+                if (!modelClass.Equals(result.entry.modelClass, StringComparison.CurrentCultureIgnoreCase))
                 {
                     lpCounter = 1;
 
@@ -378,13 +378,16 @@ namespace Rejestracja.Utils
             foreach (Result result in results) {
                 
                 //Category, class or age group changed so close the table if age group is not empty
-                if (ageGroup != result.entry.ageGroup || modelClass != result.entry.modelClass || modelCategory != result.entry.modelCategory) {
+                if (!ageGroup.Equals(result.entry.ageGroup, StringComparison.CurrentCultureIgnoreCase) ||
+                    !modelClass.Equals(result.entry.modelClass, StringComparison.CurrentCultureIgnoreCase) ||
+                    !modelCategory.Equals(result.entry.modelCategory, StringComparison.CurrentCultureIgnoreCase)) {
+                    
                     if (ageGroup != null) {
                         sb.AppendLine("</table>");
                     }
                 
                     //If age group changed we need H1, H2
-                    if (ageGroup == null || !ageGroup.Equals(result.entry.ageGroup)) {
+                    if (ageGroup == null || !ageGroup.Equals(result.entry.ageGroup, StringComparison.CurrentCultureIgnoreCase)) {
                         if (ageGroup != null) {
                             sb.AppendLine(docFooter);
                         }
