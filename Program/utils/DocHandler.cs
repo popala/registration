@@ -132,9 +132,9 @@ namespace Rejestracja.Utils
             Char authorMarker = 'A';
             String documentHeader = Options.get("DocumentHeader");
 
-            String ageGroup = null;
-            String modelClass = null;
-            String modelCategory = null;
+            String ageGroup = "";
+            String modelClass = "";
+            String modelCategory = "";
             ModelCategory [] category = null;
 
             String outputFileName = null;
@@ -148,9 +148,11 @@ namespace Rejestracja.Utils
             {
                 foreach (RegistrationEntry entry in entries)
                 {
-                    authorKey = String.Format("{0}_{1}_{2}", entry.firstName, entry.lastName, entry.yearOfBirth);
+                    authorKey = String.Format("{0}_{1}_{2}", entry.firstName.ToLowerInvariant(), entry.lastName.ToLowerInvariant(), entry.yearOfBirth);
 
-                    if (ageGroup != entry.ageGroup || modelClass != entry.modelCategory || modelCategory != entry.modelClass)
+                    if(!ageGroup.Equals(entry.ageGroup, StringComparison.CurrentCultureIgnoreCase) ||
+                        !modelClass.Equals(entry.modelClass, StringComparison.CurrentCultureIgnoreCase) ||
+                        !modelCategory.Equals(entry.modelCategory, StringComparison.CurrentCultureIgnoreCase))
                     {
                         if (doc != null)
                         {
@@ -160,14 +162,14 @@ namespace Rejestracja.Utils
                         }
 
                         //Match existing category
-                        category = categories.Where(x => x.fullName.ToLower().Equals(entry.modelCategory.ToLower())).ToArray();
+                        category = categories.Where(x => x.fullName.Equals(entry.modelCategory, StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
                         outputFileName = 
                             String.Format("{0}\\{1}_{2}_{3}.docx", 
-                            outFolder, 
-                            entry.ageGroup.ToUpper(),
-                            Resources.FileNameInvalidChars.Replace(entry.modelClass, "").ToUpper(), 
-                            Resources.FileNameInvalidChars.Replace(entry.modelCategory, ""));
+                            outFolder,
+                            Resources.FileNameInvalidChars.Replace(entry.ageGroup, "-").ToUpper(),
+                            Resources.FileNameInvalidChars.Replace(entry.modelClass, "-").ToUpper(), 
+                            Resources.FileNameInvalidChars.Replace(entry.modelCategory, "-"));
 
                         File.Copy(template, outputFileName);
 
@@ -192,8 +194,8 @@ namespace Rejestracja.Utils
                         tbl = doc.Tables[1];
 
                         ageGroup = entry.ageGroup;
-                        modelClass = entry.modelCategory;
-                        modelCategory = entry.modelClass;
+                        modelClass = entry.modelClass;
+                        modelCategory = entry.modelCategory;
 
                         row = tbl.Rows[1];
 
@@ -507,6 +509,12 @@ namespace Rejestracja.Utils
             };
             Process process = Process.Start(psi);
             process.WaitForExit();
+        }
+
+        private static String sanitizeFileName(String fileName) {
+            var regexSearch = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+            var r = new Regex(string.Format("[{0}]", Regex.Escape(regexSearch)));
+            return r.Replace(fileName, "_");
         }
     }
 }

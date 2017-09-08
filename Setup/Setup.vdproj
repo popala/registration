@@ -550,6 +550,28 @@
                                         {
                                         }
                                     }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_B380109762F54C808D88F26C3BCB8237"
+                                    {
+                                    "Name" = "8:templates"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_4BACF3ECDB414ED69547B5736BC37834"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
+                                    "{9EF0B969-E518-4E46-987F-47570745A589}:_CC07E1C2DCDE4330BCAE06E26EA3A160"
+                                    {
+                                    "Name" = "8:dokumenty"
+                                    "AlwaysCreate" = "11:FALSE"
+                                    "Condition" = "8:"
+                                    "Transitive" = "11:FALSE"
+                                    "Property" = "8:_19F6557B5A184069A58413422A6F5088"
+                                        "Folders"
+                                        {
+                                        }
+                                    }
                                     "{9EF0B969-E518-4E46-987F-47570745A589}:_DCED3144922643CCB5DE7B25A388BDC2"
                                     {
                                     "Name" = "8:logs"
@@ -639,15 +661,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Rejestrator Oszołomów"
-        "ProductCode" = "8:{A0B1687D-ECC1-475F-AF8A-B3A1E0658633}"
-        "PackageCode" = "8:{F7C74306-C55D-4690-8C35-1925AF51BA70}"
+        "ProductCode" = "8:{A0E943F9-9AD9-4F3F-B209-03CA4E5C69FC}"
+        "PackageCode" = "8:{4D31586D-D114-4DAB-B956-150CFD4129AF}"
         "UpgradeCode" = "8:{393535DE-8772-4280-AC85-396A15E2BE5B}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:FALSE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:0.99.1"
+        "ProductVersion" = "8:0.93.1"
         "Manufacturer" = "8:Przeciszow"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:https://github.com/popala/registration"

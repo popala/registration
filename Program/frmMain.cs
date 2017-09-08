@@ -50,6 +50,21 @@ namespace Rejestracja {
             this._showSettingsForm = value;
         }
 
+        public void setFileName(String fileName) {
+            String formattedName;
+
+            if (fileName.Contains("\\")) {
+                formattedName = fileName.Substring(fileName.LastIndexOf("\\") + 1);
+            } else if(fileName.Contains("/")) {
+                formattedName = fileName.Substring(fileName.LastIndexOf("/") + 1);
+            } else {
+                formattedName = fileName;
+            }
+
+            formattedName = formattedName.Replace(".sqlite", "");
+            this.Text = String.Format("Rejestracja - {0}", formattedName);
+        }
+
         public frmMain() {
             //System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
             //System.Threading.Thread.CurrentThread.CurrentUICulture = new CultureInfo("pl");
@@ -141,6 +156,7 @@ namespace Rejestracja {
                 DataSource ds = new DataSource();
                 populateUI();
                 uiEnabled(true);
+                setFileName(Properties.Settings.Default.DataFile);
             }
             catch (Exception err) {
                 uiEnabled(false);
@@ -244,6 +260,7 @@ namespace Rejestracja {
         private void loadResultList() {
             try {
                 IEnumerable<string[]> results;
+                //List<KeyValuePair<string, string>> medalCount;
 
                 lvResults.BeginUpdate();
 
@@ -254,11 +271,13 @@ namespace Rejestracja {
                 String ageGroup = "";
 
                 results = ResultDao.getCategoryResultList();
+                //medalCount = ResultDao.getMedalCount();
 
                 foreach (string[] result in results) {
                     if (!ageGroup.Equals(result[1])) {
                         ageGroup = result[1];
-                        group = new ListViewGroup("Wyniki w Kategoriach - " + ageGroup.ToUpper());
+                        //String mc = medalCount.Where(x => x.Key.Equals(ageGroup, StringComparison.CurrentCultureIgnoreCase)).ToArray()[0].Value;
+                        group = new ListViewGroup("Wyniki w Kategoriach - " + ageGroup.ToUpper());// + mc);
                         lvResults.Groups.Add(group);
                     }
                     lvResults.Items.Add(new ListViewItem(result, group));
@@ -456,13 +475,13 @@ namespace Rejestracja {
                 item.ToolTipText = "";
 
                 //Check if model category is listed in the resources
-                ModelCategory [] catFound = modelCategories.Where(x => x.fullName.ToLower().Equals(item.SubItems[9].Text.ToLower())).ToArray();
+                ModelCategory [] catFound = modelCategories.Where(x => x.fullName.Equals(item.SubItems[9].Text, StringComparison.CurrentCultureIgnoreCase)).ToArray();
                 if (catFound.Length == 0) {
                     sb.Append("Kategoria modelu nie znaleziona w konfiguracji. ");
                     badEntryCount++;
                     highlightErrorCell(item, 9);
                 }
-                else if (!catFound[0].modelClass.ToLower().Equals(item.SubItems[10].Text.ToLower())) {
+                else if (!catFound[0].modelClass.Equals(item.SubItems[10].Text, StringComparison.CurrentCultureIgnoreCase)) {
                     if (sb.Length == 0) {
                         badEntryCount++;
                     }
@@ -471,7 +490,7 @@ namespace Rejestracja {
                     highlightErrorCell(item, 10);
                 }
 
-                AgeGroup [] agFound = ageGroups.Where(x => x.name.ToLower().Equals(item.SubItems[7].Text.ToLower())).ToArray();
+                AgeGroup [] agFound = ageGroups.Where(x => x.name.Equals(item.SubItems[7].Text, StringComparison.CurrentCultureIgnoreCase)).ToArray();
                 if(agFound.Length == 0) {
                     if (sb.Length == 0) {
                         badEntryCount++;

@@ -137,6 +137,10 @@ DocProject/Help/html
 #HTML Help
 Help/
 
+#Todo list
+todo.txt
+dev_resources/
+
 # Click-Once directory
 publish/
 
