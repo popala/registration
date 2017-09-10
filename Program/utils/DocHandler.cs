@@ -378,7 +378,8 @@ namespace Rejestracja.Utils
             foreach (Result result in results) {
                 
                 //Category, class or age group changed so close the table if age group is not empty
-                if (!ageGroup.Equals(result.entry.ageGroup, StringComparison.CurrentCultureIgnoreCase) ||
+                if (ageGroup == null ||
+                    !ageGroup.Equals(result.entry.ageGroup, StringComparison.CurrentCultureIgnoreCase) ||
                     !modelClass.Equals(result.entry.modelClass, StringComparison.CurrentCultureIgnoreCase) ||
                     !modelCategory.Equals(result.entry.modelCategory, StringComparison.CurrentCultureIgnoreCase)) {
                     
