@@ -246,7 +246,7 @@ namespace Rejestracja.Data.Dao
             }
 
             if(ret.useCustomAgeGroups) {
-                ret.ageGroups = AgeGroupDao.getList(ret.id);
+                ret.ageGroups = new AgeGroupDao().getList(ret.id);
             }
             return ret;
         }

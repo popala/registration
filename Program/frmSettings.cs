@@ -26,10 +26,12 @@ namespace Rejestracja
     {
         private bool _loading = false;
         private Class _selectedClass;
+        private AgeGroupDao ageGroupDao;
 
         public frmSettings()
         {
             InitializeComponent();
+            ageGroupDao = new AgeGroupDao();
         }
 
         private void frmSettings_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -586,13 +588,13 @@ namespace Rejestracja
                 MessageBox.Show(this, "Wiek musi być liczbą > 0", "Błędne dane", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            if (AgeGroupDao.exists(int.Parse(txtAge.Text), -1)) {
+            if (ageGroupDao.exists(int.Parse(txtAge.Text), -1)) {
                 MessageBox.Show("Nowa kategoria wiekowa musi różnić się o przynajmniej 2 lata od już istniejących", "Nowa grupa wiekowa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtAge.Focus();
                 txtAge.SelectAll();
                 return;
             }
-            int agId = AgeGroupDao.add(txtAgeGroup.Text, int.Parse(txtAge.Text), -1);
+            int agId = ageGroupDao.add(txtAgeGroup.Text, int.Parse(txtAge.Text), -1);
             loadAgeGroups();
             setButtons();
 
@@ -611,7 +613,7 @@ namespace Rejestracja
         private void loadAgeGroups() {
             lvAgeGroup.Items.Clear();
 
-            foreach (AgeGroup ageGroup in AgeGroupDao.getList(-1)) {
+            foreach (AgeGroup ageGroup in ageGroupDao.getList(-1)) {
                 ListViewItem li = new ListViewItem(new String[] { ageGroup.name, String.Format("{0} - {1}", ageGroup.bottomAge, ageGroup.upperAge) });
                 li.Tag = ageGroup.id;
                 lvAgeGroup.Items.Add(li);
@@ -633,7 +635,7 @@ namespace Rejestracja
             lvAgeGroup.BeginUpdate();
             foreach (ListViewItem item in lvAgeGroup.CheckedItems) {
                 int ageGroupId = (int)item.Tag;
-                AgeGroupDao.delete(ageGroupId);
+                ageGroupDao.delete(ageGroupId);
                 lvAgeGroup.Items.Remove(item);
             }
             lvAgeGroup.EndUpdate();
@@ -654,7 +656,7 @@ namespace Rejestracja
         private bool validateClassOptions() {
             foreach(Class cls in ClassDao.getList()) {
                 if(cls.useCustomAgeGroups) {
-                    List<AgeGroup> ageGroups = AgeGroupDao.getList(cls.id);
+                    List<AgeGroup> ageGroups = ageGroupDao.getList(cls.id);
                     if(ageGroups.Count == 0) {
                         MessageBox.Show("Klasa \"" + cls.name + "\" nie ma zdefiniowanych żadnych group wiekowych pomimo że odznaczono opcję \"Używaj standardowych grup wiekowych\".", "Błąd w ustawieniach klasy \"" + cls.name + "\"", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return false;
@@ -780,7 +782,7 @@ namespace Rejestracja
         private void loadClassAgeGroups(int classId) {
             lvClassAgeGroups.Items.Clear();
 
-            List<AgeGroup> ageGroups = AgeGroupDao.getList(classId);
+            List<AgeGroup> ageGroups = ageGroupDao.getList(classId);
             foreach(AgeGroup ageGroup in ageGroups) {
                 ListViewItem li = new ListViewItem(new String[] { ageGroup.name, String.Format("{0} - {1}", ageGroup.bottomAge, ageGroup.upperAge) });
                 li.Tag = ageGroup.id;
@@ -798,7 +800,7 @@ namespace Rejestracja
                 if(_selectedClass.ageGroups.Count > 0 && MessageBox.Show("Usunąć niestandardowe grupy wiekowe?", "Grupy wiekowe w klasie", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != System.Windows.Forms.DialogResult.Yes) {
                     return;
                 }
-                AgeGroupDao.deleteClassAgeGroups(_selectedClass.id);
+                new AgeGroupDao().deleteClassAgeGroups(_selectedClass.id);
 
                 txtClassAgeGroup.Enabled = false;
                 txtClassAge.Enabled = false;
@@ -828,12 +830,12 @@ namespace Rejestracja
                 return;
             }
 
-            if(AgeGroupDao.exists(age, clsId)) {
+            if(ageGroupDao.exists(age, clsId)) {
                 MessageBox.Show("Grupa wiekowa już istnieje", "Nowa grupa wiekowa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
-            AgeGroupDao.add(txtClassAgeGroup.Text, age, clsId);
+            ageGroupDao.add(txtClassAgeGroup.Text, age, clsId);
             txtClassAgeGroup.Text = "";
             txtClassAge.Text = "";
             loadClassAgeGroups(clsId);

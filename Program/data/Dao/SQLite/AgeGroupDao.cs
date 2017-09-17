@@ -18,9 +18,9 @@ using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao
 {
-    class AgeGroupDao
+    class AgeGroupDao : IAgeGroupDao
     {
-        public static bool exists(int upperAge, int classId) {
+        public bool exists(int upperAge, int classId) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM AgeGroups WHERE Age BETWEEN @Age1 AND @Age2 AND ClassId = @ClassId", cn)) {
                 cn.Open();
@@ -34,7 +34,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static AgeGroup getOlderAgeGroup(String ageGroupName, int classId) {
+        public AgeGroup getOlderAgeGroup(String ageGroupName, int classId) {
             
             AgeGroup ret = null;
 
@@ -67,7 +67,7 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public static List<AgeGroup> getList(int classId)
+        public List<AgeGroup> getList(int classId)
         {
             List<AgeGroup> ret = new List<AgeGroup>();
             int bottomAge = 0;
@@ -91,7 +91,7 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public static int add(String name, int age, int classId)
+        public int add(String name, int age, int classId)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO AgeGroups(Classid, Name, Age) VALUES(@ClassId, @Name, @Age)", cn))
@@ -108,7 +108,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static void deleteClassAgeGroups(int classId) {
+        public void deleteClassAgeGroups(int classId) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM AgeGroups WHERE ClassId = @Id", cn)) {
                 cn.Open();
@@ -119,7 +119,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static void delete(int id)
+        public void delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM AgeGroups WHERE Id = @Id", cn))

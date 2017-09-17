@@ -58,10 +58,12 @@ namespace Rejestracja {
         }
 
         private void insertDefaults() {
+            AgeGroupDao ageGroupDao = new AgeGroupDao();
+
             //Standard age groups
-            AgeGroupDao.add("Młodzik", 12, -1);
-            AgeGroupDao.add("Junior", 17, -1);
-            AgeGroupDao.add("Senior", 150, -1);
+            ageGroupDao.add("Młodzik", 12, -1);
+            ageGroupDao.add("Junior", 17, -1);
+            ageGroupDao.add("Senior", 150, -1);
 
             //Standard classes
             ClassDao.add("Standard");
@@ -69,8 +71,8 @@ namespace Rejestracja {
 
             //Naviga
             int classId = ClassDao.add("Naviga");
-            AgeGroupDao.add("Młodzik", 13, classId);
-            AgeGroupDao.add("Senior", 150, classId);
+            ageGroupDao.add("Młodzik", 13, classId);
+            ageGroupDao.add("Senior", 150, classId);
 
             //Categories
             int i = 0;

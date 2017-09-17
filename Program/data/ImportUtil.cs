@@ -21,7 +21,7 @@ namespace Rejestracja.Data {
             TextInfo textInfo = new CultureInfo("pl-PL", false).TextInfo;
             List<String> publishers = PublisherDao.getSimpleList().ToList();
             List<Category> modelCategories = CategoryDao.getList().ToList();
-            List<AgeGroup> standardAgeGroups = AgeGroupDao.getList(-1);
+            List<AgeGroup> standardAgeGroups = new AgeGroupDao().getList(-1);
             //List<String> modelClasses = ClassDao.getSimpleList().ToList();
             List<String> modelScales = ScaleDao.getList().Select(x => x.name).ToList();
             List<Class> modelClasses = ClassDao.getList(true, true);

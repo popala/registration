@@ -103,14 +103,15 @@
     <Compile Include="Controls\CustListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Data\Dao\AgeGroupDao.cs" />
-    <Compile Include="Data\Dao\AwardDao.cs" />
-    <Compile Include="Data\Dao\ClassDao.cs" />
-    <Compile Include="Data\Dao\ModelDao.cs" />
-    <Compile Include="Data\Dao\ModelerDao.cs" />
-    <Compile Include="Data\Dao\RegistrationDao.cs" />
-    <Compile Include="Data\Dao\ScaleDao.cs" />
-    <Compile Include="Data\Dao\CategoryDao.cs" />
+    <Compile Include="Data\Dao\SQLite\AgeGroupDao.cs" />
+    <Compile Include="Data\Dao\SQLite\AwardDao.cs" />
+    <Compile Include="Data\Dao\SQLite\ClassDao.cs" />
+    <Compile Include="Data\Dao\Interfaces\IAgeGroupDao.cs" />
+    <Compile Include="Data\Dao\SQLite\ModelDao.cs" />
+    <Compile Include="Data\Dao\SQLite\ModelerDao.cs" />
+    <Compile Include="Data\Dao\SQLite\RegistrationDao.cs" />
+    <Compile Include="Data\Dao\SQLite\ScaleDao.cs" />
+    <Compile Include="Data\Dao\SQLite\CategoryDao.cs" />
     <Compile Include="Data\DataFileUtil.cs" />
     <Compile Include="Data\ImportUtil.cs" />
     <Compile Include="Data\Objects\AgeGroup.cs" />
@@ -143,8 +144,8 @@
     </Compile>
     <Compile Include="Utils\Extensions.cs" />
     <Compile Include="Utils\Options.cs" />
-    <Compile Include="Data\Dao\PublisherDao.cs" />
-    <Compile Include="Data\Dao\ResultDao.cs" />
+    <Compile Include="Data\Dao\SQLite\PublisherDao.cs" />
+    <Compile Include="Data\Dao\SQLite\ResultDao.cs" />
     <Compile Include="frmImportFile.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -174,7 +175,7 @@
     <Compile Include="Utils\DocHandler.cs" />
     <Compile Include="Data\Objects\FileImportFieldMap.cs" />
     <Compile Include="Utils\LogWriter.cs" />
-    <Compile Include="Data\Dao\RegistrationEntryDao.cs" />
+    <Compile Include="Data\Dao\SQLite\RegistrationEntryDao.cs" />
     <Compile Include="Utils\Resources.cs" />
     <Compile Include="frmAddResults.cs">
       <SubType>Form</SubType>
@@ -311,6 +312,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\Dao\MySQL\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

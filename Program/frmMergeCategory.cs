@@ -49,7 +49,7 @@ namespace Rejestracja {
 
         private void lvCategories_ItemChecked(object sender, ItemCheckedEventArgs e) {
             if (e.Item.Checked) {
-                AgeGroup ag = AgeGroupDao.getOlderAgeGroup(e.Item.Text, -1);
+                AgeGroup ag = new AgeGroupDao().getOlderAgeGroup(e.Item.Text, -1);
                 if (ag == null) {
                     e.Item.Checked = false;
                 }

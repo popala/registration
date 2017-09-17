@@ -419,7 +419,7 @@ namespace Rejestracja {
         private void highlightInvalidRegistrationEntries() {
             //TODO: validate using Classes!
             List<Category> modelCategories = CategoryDao.getList().ToList();
-            List<AgeGroup> ageGroups = AgeGroupDao.getList(-1);
+            List<AgeGroup> ageGroups = new AgeGroupDao().getList(-1);
             
             int badEntryCount = 0;
             int year = DateTime.Now.Year;

@@ -95,7 +95,7 @@ namespace Rejestracja
         private void resetAddControls() {
 
             //General
-            this._standardAgeGroups = AgeGroupDao.getList(-1);
+            this._standardAgeGroups = new AgeGroupDao().getList(-1);
             this.Text = "Nowa Rejestracja";
             loadCategoryList();
 
