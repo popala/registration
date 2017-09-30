@@ -17,9 +17,9 @@ using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao
 {
-    class AwardDao
+    class AwardDao : IAwardDao
     {
-        public static Award get(int id)
+        public Award get(int id)
         {
             Award ret = null;
 
@@ -45,7 +45,7 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public static int add(String title, int displayOrder)
+        public int add(String title, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Awards(Title, DisplayOrder) VALUES(@Title, @DisplayOrder)", cn))
@@ -61,7 +61,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static void updateDisplayOrder(int id, int displayOrder) {
+        public void updateDisplayOrder(int id, int displayOrder) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"UPDATE Awards SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn)) {
                 cn.Open();
@@ -73,7 +73,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static bool delete(int id)
+        public bool delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Results WHERE AwardId = @Id", cn))
@@ -88,7 +88,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static bool exists(String title) {
+        public bool exists(String title) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM Awards WHERE UPPER(Title) = UPPER(@Title)", cn)) {
                 cn.Open();
@@ -100,7 +100,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static int getNextSortFlag() {
+        public int getNextSortFlag() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"SELECT MAX(DisplayOrder) AS displayOrder FROM Awards", cn)) {
                 cn.Open();
@@ -113,7 +113,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static IEnumerable<Award> getList()
+        public IEnumerable<Award> getList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, Title, DisplayOrder FROM Awards ORDER BY DisplayOrder ASC", cn))

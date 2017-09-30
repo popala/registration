@@ -14,12 +14,15 @@ using System;
 using System.Collections.Generic;
 
 namespace Rejestracja.Data.Dao {
-    interface IAgeGroupDao {
-        bool exists(int upperAge, int classId);
-        AgeGroup getOlderAgeGroup(String ageGroupName, int classId);
-        List<AgeGroup> getList(int classId);
-        int add(String name, int age, int classId);
-        void deleteClassAgeGroups(int classId);
+    interface IModelDao {
+        IEnumerable<Model> getList();
+        IEnumerable<Model> search(String value);
+        IEnumerable<Model> getList(int modelerId);
+        int add(String name, String publisher, String scale, int modelerId);
+        int add(Model model);
+        void update(Model model);
+        void update(int id, String name, String publisher, String scale);
+        Model get(int id);
         void delete(int id);
     }
 }

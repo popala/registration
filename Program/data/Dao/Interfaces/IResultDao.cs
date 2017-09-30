@@ -14,12 +14,19 @@ using System;
 using System.Collections.Generic;
 
 namespace Rejestracja.Data.Dao {
-    interface IAgeGroupDao {
-        bool exists(int upperAge, int classId);
-        AgeGroup getOlderAgeGroup(String ageGroupName, int classId);
-        List<AgeGroup> getList(int classId);
-        int add(String name, int age, int classId);
-        void deleteClassAgeGroups(int classId);
-        void delete(int id);
+    interface IResultDao {
+        long addCategoryResult(long entryId, int place);
+        long addAwardWinner(long entryId, long awardId);
+        Result get(int resultId);
+        void delete(int resultId);
+        void deleteAwardResult(long entryId, long awardId);
+        void deleteCategoryResult(long entryId, int place);
+        bool awardResultExists(long entryId, long awardId);
+        IEnumerable<String[]> getCategoryResultList();
+        IEnumerable<Result> getCategoryResults();
+        IEnumerable<Result> getCategoryResults(int categoryId);
+        IEnumerable<String[]> getAwardResultList();
+        IEnumerable<Result> getAwardResults();
+        int getDiplomaCount();
     }
 }

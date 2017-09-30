@@ -19,9 +19,9 @@ using System.Linq;
 
 namespace Rejestracja.Data.Dao
 {
-    class ScaleDao
+    class ScaleDao : IScaleDao
     {
-        public static List<Scale> getList()
+        public List<Scale> getList()
         {
             List<Scale> ret = new List<Scale>();
 
@@ -46,7 +46,7 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public static bool exists(String name)
+        public bool exists(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM Scales WHERE Name = @Name", cn))
@@ -60,7 +60,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static int add(String name)
+        public int add(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Scales(Name) VALUES(@Name)", cn))
@@ -75,7 +75,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static void delete(int id)
+        public void delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Scales WHERE Id = @Id", cn))

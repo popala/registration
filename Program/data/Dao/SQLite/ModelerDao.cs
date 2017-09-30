@@ -9,17 +9,17 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Rejestracja.Data.Dao {
-    class ModelerDao {
+    class ModelerDao : IModelerDao {
 
-        public static IEnumerable<Modeler> getList() {
+        public IEnumerable<Modeler> getList() {
             return getList(null);
         }
 
-        public static IEnumerable<Modeler> search(String value) {
+        public IEnumerable<Modeler> search(String value) {
             return getList(value);
         }
 
-        private static IEnumerable<Modeler> getList(String searchValue) {
+        private IEnumerable<Modeler> getList(String searchValue) {
 
             StringBuilder query = new StringBuilder("SELECT Id, FirstName, LastName, ClubName, YearOfBirth, Email FROM Modelers ");
             if(!String.IsNullOrWhiteSpace(searchValue)) {
@@ -49,11 +49,11 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static int add(String firstName, String lastName, String clubName, int yearOfBirth, String email) {
+        public int add(String firstName, String lastName, String clubName, int yearOfBirth, String email) {
             return add(firstName, lastName, clubName, yearOfBirth, email, null);
         }
 
-        public static int add(Modeler modeler) {
+        public int add(Modeler modeler) {
             return add(null, null, null, 0, null, modeler);
         }
 
@@ -84,11 +84,11 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static void update(Modeler modeler) {
+        public void update(Modeler modeler) {
             update(-1, null, null, null, -1, null, modeler);
         }
 
-        public static void update(int id, String firstName, String lastName, String clubName, int yearOfBirth, String email) {
+        public void update(int id, String firstName, String lastName, String clubName, int yearOfBirth, String email) {
             update(id, firstName, lastName, clubName, yearOfBirth, email, null);
         }
 
@@ -120,7 +120,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static Modeler get(int id) {
+        public Modeler get(int id) {
             Modeler ret = null;
 
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -145,7 +145,7 @@ namespace Rejestracja.Data.Dao {
             return ret;
         }
 
-        public static void delete(int id) {
+        public void delete(int id) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(
                     @"DELETE FROM Results 

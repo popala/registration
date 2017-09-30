@@ -9,20 +9,20 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Rejestracja.Data.Dao {
-    class ModelDao {
-        public static IEnumerable<Model> getList() {
+    class ModelDao : IModelDao {
+        public IEnumerable<Model> getList() {
             return getList(null, -1);
         }
 
-        public static IEnumerable<Model> search(String value) {
+        public IEnumerable<Model> search(String value) {
             return getList(value, -1);
         }
 
-        public static IEnumerable<Model> getList(int modelerId) {
+        public IEnumerable<Model> getList(int modelerId) {
             return getList(null, modelerId);
         }
 
-        private static IEnumerable<Model> getList(String searchValue, int modelerId) {
+        private IEnumerable<Model> getList(String searchValue, int modelerId) {
 
             StringBuilder query = new StringBuilder("SELECT Id, Name, Publisher, Scale, ModelerId FROM Models ");
             if(!String.IsNullOrWhiteSpace(searchValue)) {
@@ -57,15 +57,15 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static int add(String name, String publisher, String scale, int modelerId) {
+        public int add(String name, String publisher, String scale, int modelerId) {
             return add(name, publisher, scale, modelerId, null);
         }
 
-        public static int add(Model model) {
+        public int add(Model model) {
             return add(null, null, null, 0, model);
         }
 
-        private static int add(String name, String publisher, String scale, int modelerId, Model model) {
+        private int add(String name, String publisher, String scale, int modelerId, Model model) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Models(Name, Publisher, Scale, ModelerId) VALUES(@Name, @Publisher, @Scale, @ModelerId)", cn)) {
                 cn.Open();
@@ -89,15 +89,15 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static void update(Model model) {
+        public void update(Model model) {
             update(-1, null, null, null, model);
         }
 
-        public static void update(int id, String name, String publisher, String scale) {
+        public void update(int id, String name, String publisher, String scale) {
             update(id, name, publisher, scale, null);
         }
 
-        private static void update(int id, String name, String publisher, String scale, Model model) {
+        private void update(int id, String name, String publisher, String scale, Model model) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"UPDATE Models SET Name = @Name, Publisher = @Publisher, Scale = @Scale WHERE Id = @Id", cn)) {
                 cn.Open();
@@ -119,7 +119,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static Model get(int id) {
+        public Model get(int id) {
             Model ret = null;
 
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -143,7 +143,7 @@ namespace Rejestracja.Data.Dao {
             return ret;
         }
 
-        public static void delete(int id) {
+        public void delete(int id) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(
                     @"DELETE FROM Results WHERE RegistrationId IN(SELECT RegistrationId FROM Registration WHERE ModelId = @Id);

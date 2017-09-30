@@ -9,10 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Rejestracja.Data.Dao {
-    class RegistrationDao {
+    class RegistrationDao : IRegistrationDao {
 
-        public static IEnumerable<Registration> getList() {
-
+        public IEnumerable<Registration> getList() {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, TmStamp, ModelId, CategoryId, CategoryName, AgeGroupName FROM Registration ORDER BY Id", cn)) {
                 
@@ -32,8 +31,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static IEnumerable<Registration> getList(int modelId) {
-
+        public IEnumerable<Registration> getList(int modelId) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(
                 @"SELECT r.Id, r.TmStamp, r.ModelId, r.CategoryId, COALESCE(c.Name, r.CategoryName) AS CategoryName, r.AgeGroupName
@@ -58,15 +56,15 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static int add(DateTime timeStamp, int modelId, int categoryId, String categoryName, String ageGroupName) {
+        public int add(DateTime timeStamp, int modelId, int categoryId, String categoryName, String ageGroupName) {
             return add(timeStamp, modelId, categoryId, categoryName, ageGroupName, null);
         }
 
-        public static int add(Registration registration) {
+        public int add(Registration registration) {
             return add(DateTime.MinValue, -1, -1, null, null, registration);
         }
 
-        private static int add(DateTime timeStamp, int modelId, int categoryId, String categoryName, String ageGroupName, Registration registration) {
+        private int add(DateTime timeStamp, int modelId, int categoryId, String categoryName, String ageGroupName, Registration registration) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(
                     @"INSERT INTO Registration(TmStamp, ModelId, CategoryId, CategoryName, AgeGroupName) VALUES(@TmStamp, @ModelId, @CategoryId, @CategoryName, @AgeGroupName)", cn)) {
@@ -93,7 +91,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static Registration get(int modelId, int categoryId) {
+        public Registration get(int modelId, int categoryId) {
             Registration ret = null;
 
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -119,7 +117,7 @@ namespace Rejestracja.Data.Dao {
             return ret;
         }
 
-        public static Registration get(int registrationId) {
+        public Registration get(int registrationId) {
             Registration ret = null;
 
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -144,7 +142,7 @@ namespace Rejestracja.Data.Dao {
             return ret;
         }
 
-        public static void delete(int registrationId) {
+        public void delete(int registrationId) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(
                     @"DELETE FROM Results WHERE RegistrationId = @Id;
@@ -157,7 +155,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static void delete(int modelId, String categoryName) {
+        public void delete(int modelId, String categoryName) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(
                     @"DELETE FROM Registration WHERE ModelId = @ModelId AND CategoryName = @CategoryName", cn)) {
@@ -170,7 +168,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static void delete(int modelId, int categoryId) {
+        public void delete(int modelId, int categoryId) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(
                     @"DELETE FROM Results WHERE RegistrationId IN(SELECT Id FROM Registration WHERE ModelId = @ModelId AND CategoryId = @CategoryId);

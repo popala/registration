@@ -70,7 +70,7 @@ namespace Rejestracja {
                 lvCategories.Groups.Clear();
                 lvCategories.Items.Clear();
 
-                List<String[]> categories = RegistrationEntryDao.getListForMergingCategories(maxCountInCategory).ToList();
+                List<String[]> categories = new RegistrationEntryDao().getListForMergingCategories(maxCountInCategory).ToList();
                 long categoryId = -2;
                 ListViewGroup group = null;
 
@@ -103,6 +103,7 @@ namespace Rejestracja {
         }
 
         private void btnMerge_Click(object sender, EventArgs e) {
+            RegistrationEntryDao registrationEntryDao = new RegistrationEntryDao();
             long categoryId = -1;
             String targetAgeGroup = null;
             String sourceAgeGroup = null;
@@ -118,7 +119,7 @@ namespace Rejestracja {
                     }
                     sourceAgeGroup = item.Text;
                     targetAgeGroup = lvCategories.Items[i + 1].Text;
-                    RegistrationEntryDao.mergeAgeGroupsInCategory(categoryId, sourceAgeGroup, targetAgeGroup);
+                    registrationEntryDao.mergeAgeGroupsInCategory(categoryId, sourceAgeGroup, targetAgeGroup);
                 }
             }
 

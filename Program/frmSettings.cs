@@ -24,14 +24,26 @@ namespace Rejestracja
 {
     public partial class frmSettings : Form
     {
+        private Timer _nudPBClassificationTimer;
         private bool _loading = false;
         private Class _selectedClass;
-        private AgeGroupDao ageGroupDao;
+        private AgeGroupDao _ageGroupDao;
+        private AwardDao _awardDao;
+        private CategoryDao _categoryDao;
+        private ClassDao _classDao;
+        private PublisherDao _publisherDao;
+        private ScaleDao _scaleDao;
 
         public frmSettings()
         {
             InitializeComponent();
-            ageGroupDao = new AgeGroupDao();
+
+            _ageGroupDao = new AgeGroupDao();
+            _awardDao = new AwardDao();
+            _categoryDao = new CategoryDao();
+            _classDao = new ClassDao();
+            _publisherDao = new PublisherDao();
+            _scaleDao = new ScaleDao();
         }
 
         private void frmSettings_Closing(object sender, System.ComponentModel.CancelEventArgs e) {
@@ -158,9 +170,28 @@ namespace Rejestracja
             loadGeneralOptions();
             setButtons();
 
+            _nudPBClassificationTimer = new Timer();
+            _nudPBClassificationTimer.Interval = 1000;
+            _nudPBClassificationTimer.Tick += new EventHandler(this.nudPBClassificationTimer_Tick);
+
             _loading = false;
 
             tvSettings.SelectedNode = tvSettings.Nodes[0];
+        }
+
+        private void nudPBClassificationTimer_Tick(object sender, EventArgs e) {
+            
+            _nudPBClassificationTimer.Stop();
+
+            _selectedClass.usePointRange = chkPointBasedClassification.Checked;
+            if (chkPointBasedClassification.Checked) {
+                if (chkDistinctions.Checked) {
+                    _selectedClass.pointRanges = new[] { (int)nudOne.Value, (int)nudTwo.Value, (int)nudThree.Value, (int)nudDistinction.Value };
+                } else {
+                    _selectedClass.pointRanges = new[] { (int)nudOne.Value, (int)nudTwo.Value, (int)nudThree.Value };
+                }
+            }
+            _classDao.update(_selectedClass);
         }
 
         private void btnPath_Click(object sender, EventArgs e) {
@@ -401,7 +432,7 @@ namespace Rejestracja
             lvModelCategory.BeginUpdate();
             lvModelCategory.Items.Clear();
 
-            foreach (Category mc in CategoryDao.getList(false, className))
+            foreach (Category mc in _categoryDao.getList(false, className))
             {
                 ListViewItem li = new ListViewItem(new String[] { mc.code, mc.name, mc.className });
                 li.Tag = mc.id;
@@ -424,7 +455,7 @@ namespace Rejestracja
             lvModelCategory.BeginUpdate();
             foreach (ListViewItem item in lvModelCategory.CheckedItems) {
                 int categoryId = (int)item.Tag;
-                CategoryDao.delete(categoryId);
+                _categoryDao.delete(categoryId);
                 lvModelCategory.Items.Remove(item);
             }
             lvModelCategory.EndUpdate();
@@ -446,8 +477,8 @@ namespace Rejestracja
             lvModelCategory.Items.Insert(index - 1, item);
             lvModelCategory.Items[index - 1].Selected = true;
 
-            CategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index - 1].Tag, index - 1);
-            CategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index].Tag, index);
+            _categoryDao.updateDisplayOrder((int)lvModelCategory.Items[index - 1].Tag, index - 1);
+            _categoryDao.updateDisplayOrder((int)lvModelCategory.Items[index].Tag, index);
 
             item.EnsureVisible();
             lvModelCategory.EndUpdate();
@@ -470,8 +501,8 @@ namespace Rejestracja
             lvModelCategory.Items.Insert(index + 1, selectedItem);
             selectedItem.Selected = true;
 
-            CategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index].Tag, index);
-            CategoryDao.updateDisplayOrder((int)lvModelCategory.Items[index + 1].Tag, index + 1);
+            _categoryDao.updateDisplayOrder((int)lvModelCategory.Items[index].Tag, index);
+            _categoryDao.updateDisplayOrder((int)lvModelCategory.Items[index + 1].Tag, index + 1);
 
             selectedItem.EnsureVisible();
             lvModelCategory.EndUpdate();
@@ -486,7 +517,7 @@ namespace Rejestracja
                 return;
             }
 
-            if (CategoryDao.codeExists(txtCategoryCode.Text.Trim()))
+            if (_categoryDao.codeExists(txtCategoryCode.Text.Trim()))
             {
                 MessageBox.Show("Kod kategorii jest już wykorzystany", "Nowa kategoria", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtCategoryCode.Focus();
@@ -494,7 +525,7 @@ namespace Rejestracja
                 return;
             }
 
-            int catId = CategoryDao.add(txtCategoryCode.Text, txtCategoryName.Text, tvSettings.SelectedNode.Text, CategoryDao.getNextSortFlag());
+            int catId = _categoryDao.add(txtCategoryCode.Text, txtCategoryName.Text, tvSettings.SelectedNode.Text, _categoryDao.getNextSortFlag());
             loadModelCategories(tvSettings.SelectedNode.Text);
             setButtons();
             foreach (ListViewItem item in lvModelCategory.Items) {
@@ -518,7 +549,7 @@ namespace Rejestracja
         {
             lvPublishers.Items.Clear();
 
-            foreach (Publisher pub in PublisherDao.getList())
+            foreach (Publisher pub in _publisherDao.getList())
             {
                 ListViewItem li = new ListViewItem(new String[] { pub.name });
                 li.Tag = pub.id;
@@ -538,7 +569,7 @@ namespace Rejestracja
             lvPublishers.BeginUpdate();
             foreach (ListViewItem item in lvPublishers.CheckedItems) {
                 int publisherId = (int)item.Tag;
-                PublisherDao.delete(publisherId);
+                _publisherDao.delete(publisherId);
                 lvPublishers.Items.Remove(item);
             }
             lvPublishers.EndUpdate();
@@ -554,7 +585,7 @@ namespace Rejestracja
                 return;
             }
 
-            if (PublisherDao.exists(txtPublisherName.Text.Trim()))
+            if (_publisherDao.exists(txtPublisherName.Text.Trim()))
             {
                 MessageBox.Show("Nazwa wydawcy jest już w bazie", "Nowy wydawca", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtPublisherName.Focus();
@@ -562,7 +593,7 @@ namespace Rejestracja
                 return;
             }
 
-            int pubId = PublisherDao.add(txtPublisherName.Text.Trim());
+            int pubId = _publisherDao.add(txtPublisherName.Text.Trim());
             loadPublishers();
             setButtons();
             foreach (ListViewItem item in lvPublishers.Items) {
@@ -588,13 +619,13 @@ namespace Rejestracja
                 MessageBox.Show(this, "Wiek musi być liczbą > 0", "Błędne dane", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
-            if (ageGroupDao.exists(int.Parse(txtAge.Text), -1)) {
+            if (_ageGroupDao.exists(int.Parse(txtAge.Text), -1)) {
                 MessageBox.Show("Nowa kategoria wiekowa musi różnić się o przynajmniej 2 lata od już istniejących", "Nowa grupa wiekowa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtAge.Focus();
                 txtAge.SelectAll();
                 return;
             }
-            int agId = ageGroupDao.add(txtAgeGroup.Text, int.Parse(txtAge.Text), -1);
+            int agId = _ageGroupDao.add(txtAgeGroup.Text, int.Parse(txtAge.Text), -1);
             loadAgeGroups();
             setButtons();
 
@@ -613,7 +644,7 @@ namespace Rejestracja
         private void loadAgeGroups() {
             lvAgeGroup.Items.Clear();
 
-            foreach (AgeGroup ageGroup in ageGroupDao.getList(-1)) {
+            foreach (AgeGroup ageGroup in _ageGroupDao.getList(-1)) {
                 ListViewItem li = new ListViewItem(new String[] { ageGroup.name, String.Format("{0} - {1}", ageGroup.bottomAge, ageGroup.upperAge) });
                 li.Tag = ageGroup.id;
                 lvAgeGroup.Items.Add(li);
@@ -635,7 +666,7 @@ namespace Rejestracja
             lvAgeGroup.BeginUpdate();
             foreach (ListViewItem item in lvAgeGroup.CheckedItems) {
                 int ageGroupId = (int)item.Tag;
-                ageGroupDao.delete(ageGroupId);
+                _ageGroupDao.delete(ageGroupId);
                 lvAgeGroup.Items.Remove(item);
             }
             lvAgeGroup.EndUpdate();
@@ -654,9 +685,9 @@ namespace Rejestracja
         #region ModelClasses
 
         private bool validateClassOptions() {
-            foreach(Class cls in ClassDao.getList()) {
+            foreach(Class cls in _classDao.getList()) {
                 if(cls.useCustomAgeGroups) {
-                    List<AgeGroup> ageGroups = ageGroupDao.getList(cls.id);
+                    List<AgeGroup> ageGroups = _ageGroupDao.getList(cls.id);
                     if(ageGroups.Count == 0) {
                         MessageBox.Show("Klasa \"" + cls.name + "\" nie ma zdefiniowanych żadnych group wiekowych pomimo że odznaczono opcję \"Używaj standardowych grup wiekowych\".", "Błąd w ustawieniach klasy \"" + cls.name + "\"", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return false;
@@ -674,14 +705,14 @@ namespace Rejestracja
                 return;
             }
 
-            if (ClassDao.exists(txtModelClassName.Text.Trim())) {
+            if (_classDao.exists(txtModelClassName.Text.Trim())) {
                 MessageBox.Show("Klasa istnieje", "Nowa klasa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtModelClassName.Focus();
                 txtModelClassName.SelectAll();
                 return;
             }
 
-            int mcId = ClassDao.add(txtModelClassName.Text.Trim());
+            int mcId = _classDao.add(txtModelClassName.Text.Trim());
             loadModelClasses();
             setButtons();
             
@@ -705,7 +736,7 @@ namespace Rejestracja
 
             lvModelClass.Items.Clear();
 
-            foreach (Class cls in ClassDao.getList()) {
+            foreach (Class cls in _classDao.getList()) {
                 ListViewItem li = new ListViewItem(new String[] { cls.name });
                 li.Tag = cls.id;
                 lvModelClass.Items.Add(li);
@@ -728,7 +759,7 @@ namespace Rejestracja
             //has to get reloaded as well
             foreach (ListViewItem item in lvModelClass.CheckedItems) {
                 int clsId = (int)item.Tag;
-                ClassDao.delete(clsId);
+                _classDao.delete(clsId);
             }
             loadModelClasses();
             loadModelCategories(tvSettings.SelectedNode.Text);
@@ -738,8 +769,8 @@ namespace Rejestracja
 
         private void loadClassDetails(String className) {
             _loading = true;
-            
-            _selectedClass = ClassDao.get(className);
+
+            _selectedClass = _classDao.get(className);
 
             loadModelCategories(className);
 
@@ -774,6 +805,15 @@ namespace Rejestracja
                 nudOne.Value = _selectedClass.pointRanges[0];
                 nudTwo.Value = _selectedClass.pointRanges[1];
                 nudThree.Value = _selectedClass.pointRanges[2];
+                // Loading distinctions we don't always have point range defined so use a default value
+                if (_selectedClass.useDistinctions) {
+                    nudDistinction.Enabled = true;
+                    if (_selectedClass.pointRanges.Length > 3) {
+                        nudDistinction.Value = _selectedClass.pointRanges[3];
+                    } else {
+                        nudDistinction.Value = _selectedClass.pointRanges[2] - 5;
+                    }
+                }
             }
 
             _loading = false;
@@ -782,7 +822,7 @@ namespace Rejestracja
         private void loadClassAgeGroups(int classId) {
             lvClassAgeGroups.Items.Clear();
 
-            List<AgeGroup> ageGroups = ageGroupDao.getList(classId);
+            List<AgeGroup> ageGroups = _ageGroupDao.getList(classId);
             foreach(AgeGroup ageGroup in ageGroups) {
                 ListViewItem li = new ListViewItem(new String[] { ageGroup.name, String.Format("{0} - {1}", ageGroup.bottomAge, ageGroup.upperAge) });
                 li.Tag = ageGroup.id;
@@ -816,7 +856,7 @@ namespace Rejestracja
             }
 
             _selectedClass.useCustomAgeGroups = (!chkUseStandardAgeGroups.Checked);
-            ClassDao.update(_selectedClass);
+            _classDao.update(_selectedClass);
         }
 
         private void btnAddClassAgeGroup_Click(object sender, EventArgs e) {
@@ -830,12 +870,12 @@ namespace Rejestracja
                 return;
             }
 
-            if(ageGroupDao.exists(age, clsId)) {
+            if(_ageGroupDao.exists(age, clsId)) {
                 MessageBox.Show("Grupa wiekowa już istnieje", "Nowa grupa wiekowa", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
-            ageGroupDao.add(txtClassAgeGroup.Text, age, clsId);
+            _ageGroupDao.add(txtClassAgeGroup.Text, age, clsId);
             txtClassAgeGroup.Text = "";
             txtClassAge.Text = "";
             loadClassAgeGroups(clsId);
@@ -866,7 +906,7 @@ namespace Rejestracja
             }
 
             _selectedClass.scoringCardType = (Class.ScoringCardType)cboJudgingFormOption.SelectedIndex;
-            ClassDao.update(_selectedClass);
+            _classDao.update(_selectedClass);
         }
 
         private void chkUseCustomRegistrationCard_CheckedChanged(object sender, EventArgs e) {
@@ -892,7 +932,7 @@ namespace Rejestracja
             }
 
             _selectedClass.registrationCardTemplate = txtClassRegistrationTemplate.Text;
-            ClassDao.update(_selectedClass);
+            _classDao.update(_selectedClass);
         }
 
         private void radioButton_Checked(object sender, EventArgs e) {
@@ -931,10 +971,11 @@ namespace Rejestracja
                 _selectedClass.classificationType = Class.ClassificationType.Distinctions;
                 _selectedClass.useDistinctions = false;
             }
-            ClassDao.update(_selectedClass);
+            _classDao.update(_selectedClass);
         }
 
         private void chkPointBasedClassification_CheckedChanged(object sender, EventArgs e) {
+
             if(chkPointBasedClassification.Checked) {
                 nudOne.Value = 95;
                 nudTwo.Value = 90;
@@ -954,6 +995,11 @@ namespace Rejestracja
             if(nudDistinction.Enabled) {
                 nudDistinction.Value = 80;
             }
+
+            if (_loading) {
+                return;
+            }
+            _nudPBClassificationTimer.Start();
         }
 
         private void numericUpDown_ValueChanged(object sender, EventArgs e) {
@@ -994,6 +1040,7 @@ namespace Rejestracja
                     }
                     break;
             }
+            _nudPBClassificationTimer.Enabled = true;
         }
 
         #endregion
@@ -1002,7 +1049,7 @@ namespace Rejestracja
 
         private void loadModelScales() {
             lvModelScales.Items.Clear();
-            foreach (Scale scale in ScaleDao.getList()) {
+            foreach (Scale scale in _scaleDao.getList()) {
                 ListViewItem li = new ListViewItem(new String[] { scale.name });
                 li.Tag = scale.id;
                 lvModelScales.Items.Add(li);
@@ -1023,21 +1070,21 @@ namespace Rejestracja
             lvModelScales.BeginUpdate();
             foreach (ListViewItem item in lvModelScales.CheckedItems) {
                 int scaleId = (int)item.Tag;
-                ScaleDao.delete(scaleId);
+                _scaleDao.delete(scaleId);
                 lvModelScales.Items.Remove(item);
             }
             lvModelScales.EndUpdate();
         }
 
         private void btnAddModelScale_Click(object sender, EventArgs e) {
-            if (ScaleDao.exists(txtModelScale.Text)) {
+            if (_scaleDao.exists(txtModelScale.Text)) {
                 MessageBox.Show("Skala już istnieje", "Nowa skala", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 txtModelScale.Focus();
                 txtModelScale.SelectAll();
                 return;
             }
             
-            int scaleId = ScaleDao.add(txtModelScale.Text);
+            int scaleId = _scaleDao.add(txtModelScale.Text);
             loadModelScales();
             setButtons();
 
@@ -1059,7 +1106,7 @@ namespace Rejestracja
 
         private void loadAwards() {
             lvAwards.Items.Clear();
-            foreach(Award award in AwardDao.getList()) {
+            foreach (Award award in _awardDao.getList()) {
                 ListViewItem item = new ListViewItem(award.title);
                 item.Tag = award.id;
                 lvAwards.Items.Add(item);
@@ -1080,7 +1127,7 @@ namespace Rejestracja
             lvAwards.BeginUpdate();
             foreach (ListViewItem item in lvAwards.CheckedItems) {
                 int awardId = (int)item.Tag;
-                AwardDao.delete(awardId);
+                _awardDao.delete(awardId);
                 lvAwards.Items.Remove(item);
             }
             lvAwards.EndUpdate();
@@ -1093,12 +1140,12 @@ namespace Rejestracja
                 return;
             }
 
-            if (AwardDao.exists(awardTitle)) {
+            if (_awardDao.exists(awardTitle)) {
                 MessageBox.Show("Nagroda już istnieje", "Nowa Nagroda", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
-            int awardId = AwardDao.add(awardTitle, AwardDao.getNextSortFlag());
+            int awardId = _awardDao.add(awardTitle, _awardDao.getNextSortFlag());
             loadAwards();
             setButtons();
 
@@ -1130,8 +1177,8 @@ namespace Rejestracja
             lvAwards.Items.Insert(index - 1, item);
             lvAwards.Items[index - 1].Selected = true;
 
-            AwardDao.updateDisplayOrder((int)lvAwards.Items[index - 1].Tag, index - 1);
-            AwardDao.updateDisplayOrder((int)lvAwards.Items[index].Tag, index);
+            _awardDao.updateDisplayOrder((int)lvAwards.Items[index - 1].Tag, index - 1);
+            _awardDao.updateDisplayOrder((int)lvAwards.Items[index].Tag, index);
 
             item.EnsureVisible();
             lvAwards.EndUpdate();
@@ -1153,8 +1200,8 @@ namespace Rejestracja
             lvAwards.Items.Insert(index + 1, item);
             item.Selected = true;
 
-            AwardDao.updateDisplayOrder((int)lvAwards.Items[index].Tag, index);
-            AwardDao.updateDisplayOrder((int)lvAwards.Items[index + 1].Tag, index + 1);
+            _awardDao.updateDisplayOrder((int)lvAwards.Items[index].Tag, index);
+            _awardDao.updateDisplayOrder((int)lvAwards.Items[index + 1].Tag, index + 1);
 
             item.EnsureVisible();
             lvAwards.EndUpdate();
@@ -1173,7 +1220,7 @@ namespace Rejestracja
                             TreeNode classNode = tvSettings.Nodes.Find("klasy", true)[0];
                             classNode.Nodes.Clear();
 
-                            foreach(Class cls in ClassDao.getList()) {
+                            foreach (Class cls in _classDao.getList()) {
                                 classNode.Nodes.Add("cls:" + cls.id.ToString(), cls.name);
                             }
                             break;
@@ -1228,9 +1275,12 @@ namespace Rejestracja
                 return;
             }
 
+            _loading = true;
+
             if(chkDistinctions.Checked) {
                 if(chkPointBasedClassification.Checked) {
                     nudDistinction.Enabled = true;
+                    nudDistinction.Value = nudThree.Value;
                     nudDistinction.Value = nudThree.Value - 5;
                 }
             }
@@ -1240,7 +1290,15 @@ namespace Rejestracja
             }
 
             _selectedClass.useDistinctions = chkDistinctions.Checked;
-            ClassDao.update(_selectedClass);
+            if (chkDistinctions.Checked) {
+                Array.Resize(ref _selectedClass.pointRanges, 4);
+                _selectedClass.pointRanges[3] = (int)nudDistinction.Value;
+            } else {
+                Array.Resize(ref _selectedClass.pointRanges, 3);
+            }
+            _classDao.update(_selectedClass);
+
+            _loading = false;
         }
     }
 }

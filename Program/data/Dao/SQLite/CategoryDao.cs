@@ -18,13 +18,13 @@ using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao
 {
-    class CategoryDao
+    class CategoryDao : ICategoryDao
     {
-        public static IEnumerable<Category> getList() {
+        public IEnumerable<Category> getList() {
             return getList(false, null);
         }
 
-        public static IEnumerable<Category> getList(bool includeImported, String modelClass)
+        public IEnumerable<Category> getList(bool includeImported, String modelClass)
         {
             String query = null;
 
@@ -69,7 +69,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static bool codeExists(String code)
+        public bool codeExists(String code)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM Categories WHERE Code = @Code", cn))
@@ -83,7 +83,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static int add(String code, String name, String modelClass, int displayOrder)
+        public int add(String code, String name, String modelClass, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Categories(Code, Name, ModelClass, DisplayOrder) VALUES(@Code, @Name, @ModelClass, @DisplayOrder)", cn))
@@ -101,7 +101,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static int getNextSortFlag()
+        public int getNextSortFlag()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"SELECT MAX(DisplayOrder) AS displayOrder FROM Categories", cn))
@@ -116,7 +116,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static Category get(long id)
+        public Category get(long id)
         {
             Category ret = null;
 
@@ -143,7 +143,7 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public static void updateDisplayOrder(long id, int displayOrder)
+        public void updateDisplayOrder(long id, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"UPDATE Categories SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn))
@@ -157,7 +157,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static void delete(long id)
+        public void delete(long id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE RegistrationId IN(SELECT Id FROM Registration WHERE CategoryId = @Id) AND Place IS NOT NULL", cn))

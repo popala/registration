@@ -22,9 +22,12 @@ namespace Rejestracja
 {
     public partial class frmAddResults : Form
     {
+        private ResultDao _resultDao;
+
         public frmAddResults()
         {
             InitializeComponent();
+            _resultDao = new ResultDao();
         }
 
         private void frmAddResults_Load(object sender, EventArgs e) {
@@ -41,7 +44,7 @@ namespace Rejestracja
             lvResults.Columns.Add("Wydawca");
             lvResults.Columns.Add("Miejsce");
 
-            foreach (Category category in CategoryDao.getList()) {
+            foreach (Category category in new CategoryDao().getList()) {
                 cboModelCategory.Items.Add(new ComboBoxItem(category.id, category.fullName));
             }
             if (cboModelCategory.Items.Count > 0) {
@@ -60,7 +63,7 @@ namespace Rejestracja
             lvAwardResults.Columns.Add("Wydawca");
             lvAwardResults.Columns.Add("Nagroda");
 
-            foreach (Award award in AwardDao.getList()) {
+            foreach (Award award in new AwardDao().getList()) {
                 cboSpecialAward.Items.Add(new ComboBoxItem(award.id, award.title));
             }
             if (cboSpecialAward.Items.Count > 0) {
@@ -87,7 +90,7 @@ namespace Rejestracja
                 }
 
                 int catId = ((ComboBoxItem)cboModelCategory.SelectedItem).id;
-                Result[] results = ResultDao.getCategoryResults(catId).ToArray();
+                Result[] results = _resultDao.getCategoryResults(catId).ToArray();
 
                 String modelClass = "";
                 String ageGroup = "";
@@ -185,14 +188,14 @@ namespace Rejestracja
 
                 int nPlace;
                 if (int.TryParse(strPlace, out nPlace)) {
-                    ResultDao.deleteCategoryResult(entryId, nPlace);
+                    _resultDao.deleteCategoryResult(entryId, nPlace);
                     item.SubItems[4].Text = "";
                     item.Font = new Font(item.Font, FontStyle.Regular);
                 }
 
                 if (place > 0) {
                     item.Font = new Font(item.Font, FontStyle.Bold);
-                    ResultDao.addCategoryResult(entryId, place);
+                    _resultDao.addCategoryResult(entryId, place);
                     item.SubItems[4].Text = place.ToString();
 
                     //Adjust the column width after setting bold fond
@@ -244,7 +247,7 @@ namespace Rejestracja
             }
             
             //Check if the entry ID exists
-            RegistrationEntry entry = RegistrationEntryDao.get(entryId);
+            RegistrationEntry entry = new RegistrationEntryDao().get(entryId);
             if(entry == null) {
                 MessageBox.Show("Numer modelu nie znaleziony w bazie", "Dodawanie Wyników", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
@@ -252,13 +255,13 @@ namespace Rejestracja
 
             long awardId = ((ComboBoxItem)cboSpecialAward.SelectedItem).id;
             //Check if it is already added to the award list
-            if (ResultDao.awardResultExists(entryId, awardId)) {
+            if (_resultDao.awardResultExists(entryId, awardId)) {
                 MessageBox.Show("Wpis istnieje", "Dodawanie Wyników", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
 
             //Add it
-            ResultDao.addAwardWinner(entryId, awardId);
+            _resultDao.addAwardWinner(entryId, awardId);
             loadAwardResults();
             txtEntryId.SelectAll();
             txtEntryId.Focus();
@@ -280,7 +283,7 @@ namespace Rejestracja
 
         private void loadAwardResults() {
             lvAwardResults.Items.Clear();
-            foreach (Result result in ResultDao.getAwardResults()) {
+            foreach (Result result in _resultDao.getAwardResults()) {
                 ListViewItem lvItem = new ListViewItem(
                     new String[] {
                         result.entry.registration.id.ToString(),
@@ -303,7 +306,7 @@ namespace Rejestracja
                 return;
             }
             int resultId = (int)lvAwardResults.SelectedItems[0].Tag;
-            ResultDao.delete(resultId);
+            _resultDao.delete(resultId);
             loadAwardResults();
         }
     }

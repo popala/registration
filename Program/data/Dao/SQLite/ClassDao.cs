@@ -18,17 +18,17 @@ using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao
 {
-    class ClassDao
+    class ClassDao : IClassDao
     {
         private const String BASE_QUERY = 
             @"SELECT Id, Name, RegistrationTemplate, JudgingFormTemplate, DiplomaTemplate, ScoringCardType, UseCustomAgeGroups,
                 ClassificationType, UsePointRange, PointRanges, UseDistinctions FROM Classes ";
 
-        public static List<Class> getList() {
+        public List<Class> getList() {
             return getList(false, false);
         }
 
-        public static List<Class> getList(bool includeCategories, bool includeAgeGroups)
+        public List<Class> getList(bool includeCategories, bool includeAgeGroups)
         {
             List<Class> ret = new List<Class>();
 
@@ -121,7 +121,7 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public static bool exists(String name)
+        public bool exists(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM Classes WHERE Name = @Name", cn))
@@ -135,7 +135,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static int add(String name)
+        public int add(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Classes(Name) VALUES(@Name)", cn))
@@ -150,7 +150,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static Class getClassForCategory(int id) {
+        public Class getClassForCategory(int id) {
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(BASE_QUERY + " WHERE Name = (SELECT ModelClass FROM Categories WHERE Id = @Id)", cn)) {
@@ -178,15 +178,15 @@ namespace Rejestracja.Data.Dao
             return null;
         }
 
-        public static Class get(String name) {
+        public Class get(String name) {
             return get(-1, name);
         }
 
-        public static Class get(int id) {
+        public Class get(int id) {
             return get(id, null);
         }
 
-        private static Class get(int id, String name)
+        private Class get(int id, String name)
         {
             Class ret = null;
             String query = BASE_QUERY + (id > -1 ? " WHERE Id = @Id" : " WHERE Name = @Name");
@@ -251,33 +251,7 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-//        public static void update(int id, String name, Class.ScoringCardType scoringCardType, bool useCustomAgeGroups, String registrationTemplate, String judgingFormTemplate, String diplomaTemplate)
-//        {
-//            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-//            using(SQLiteCommand cm = new SQLiteCommand(
-//                @"UPDATE Classes SET
-//                    Name = @Name,
-//                    RegistrationTemplate = @RegistrationTemplate, JudgingFormTemplate = @JudgingFormTemplate, DiplomaTemplate = @DiplomaTemplate,
-//                    ScoringCardType = @ScoringCardType, UseCustomAgeGroups = @UseCustomAgeGroups, ClassificationType = @ClassificationType,
-//                    UsePointRange = @UsePointRange, PointRanges = @PointRanges, UseDistinctions = @UseDistinctions
-//                WHERE Id = @Id", cn))
-//            {
-//                cn.Open();
-//                cm.CommandType = System.Data.CommandType.Text;
-
-//                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
-//                cm.Parameters.Add("@Name", System.Data.DbType.String, Class.MAX_NAME_LENGTH).Value = name;
-//                cm.Parameters.Add("@RegistrationTemplate", System.Data.DbType.String).Value = registrationTemplate;
-//                cm.Parameters.Add("@JudgingFormTemplate", System.Data.DbType.String).Value = judgingFormTemplate;
-//                cm.Parameters.Add("@DiplomaTemplate", System.Data.DbType.String).Value = diplomaTemplate;
-//                cm.Parameters.Add("@ScoringCardType", System.Data.DbType.Int32).Value = (int)scoringCardType;
-//                cm.Parameters.Add("@UseCustomAgeGroups", System.Data.DbType.Boolean).Value = useCustomAgeGroups;
-//                cm.Parameters.Add("@ClassificationType", System.Data.DbType.Int32).Value = (int)
-//                cm.ExecuteNonQuery();
-//            }
-//        }
-
-        public static void update(Class modelClass) {
+        public void update(Class modelClass) {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(
                 @"UPDATE Classes SET
@@ -309,7 +283,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static void delete(int id)
+        public void delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Classes WHERE ModelClass = (SELECT Name FROM Classes WHERE Id = @Id)", cn))

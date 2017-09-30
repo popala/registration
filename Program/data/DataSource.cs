@@ -59,6 +59,10 @@ namespace Rejestracja {
 
         private void insertDefaults() {
             AgeGroupDao ageGroupDao = new AgeGroupDao();
+            CategoryDao categoryDao = new CategoryDao();
+            ClassDao classDao = new ClassDao();
+            PublisherDao publisherDao = new PublisherDao();
+            ScaleDao scaleDao = new ScaleDao();
 
             //Standard age groups
             ageGroupDao.add("Młodzik", 12, -1);
@@ -66,68 +70,68 @@ namespace Rejestracja {
             ageGroupDao.add("Senior", 150, -1);
 
             //Standard classes
-            ClassDao.add("Standard");
-            ClassDao.add("Waloryzowane (Open)");
+            classDao.add("Standard");
+            classDao.add("Waloryzowane (Open)");
 
             //Naviga
-            int classId = ClassDao.add("Naviga");
+            int classId = classDao.add("Naviga");
             ageGroupDao.add("Młodzik", 13, classId);
             ageGroupDao.add("Senior", 150, classId);
 
             //Categories
             int i = 0;
             //Standard
-            CategoryDao.add("MSO", "Statki i Okręty", "Standard", i++);
-            CategoryDao.add("MOP", "Okręty podwodne", "Standard", i++);
-            CategoryDao.add("MŻ", "Żaglowce", "Standard", i++);
-            CategoryDao.add("S1A", "Samoloty jednosilnikowe śmigłowe do 1930 roku", "Standard", i++);
-            CategoryDao.add("S1B", "Samoloty jednosilnikowe śmigłowe po 1930 roku", "Standard", i++);
-            CategoryDao.add("S2", "Samoloty wielosilnikowe śmigłowe", "Standard", i++);
-            CategoryDao.add("S3", "Samoloty odrzutowe", "Standard", i++);
-            CategoryDao.add("S4", "Samoloty w skali 1:48; 1:50", "Standard", i++);
-            CategoryDao.add("S5", "Szybowce", "Standard", i++);
-            CategoryDao.add("S6", "Śmigłowce", "Standard", i++);
-            CategoryDao.add("MPKC", "Pojazdy kołowe cywilne", "Standard", i++);
-            CategoryDao.add("MPKW", "Pojazdy kołowe wojskowe", "Standard", i++);
-            CategoryDao.add("MPSZ", "Pojazdy szynowe", "Standard", i++);
-            CategoryDao.add("MPG", "Pojazdy gąsienicowe", "Standard", i++);
-            CategoryDao.add("MB", "Budowle", "Standard", i++);
-            CategoryDao.add("MF", "Figurki", "Standard", i++);
-            CategoryDao.add("MR", "Rakiety, statki kosmiczne, S-F", "Standard", i++);
-            CategoryDao.add("MA", "Artyleria", "Standard", i++);
+            categoryDao.add("MSO", "Statki i Okręty", "Standard", i++);
+            categoryDao.add("MOP", "Okręty podwodne", "Standard", i++);
+            categoryDao.add("MŻ", "Żaglowce", "Standard", i++);
+            categoryDao.add("S1A", "Samoloty jednosilnikowe śmigłowe do 1930 roku", "Standard", i++);
+            categoryDao.add("S1B", "Samoloty jednosilnikowe śmigłowe po 1930 roku", "Standard", i++);
+            categoryDao.add("S2", "Samoloty wielosilnikowe śmigłowe", "Standard", i++);
+            categoryDao.add("S3", "Samoloty odrzutowe", "Standard", i++);
+            categoryDao.add("S4", "Samoloty w skali 1:48; 1:50", "Standard", i++);
+            categoryDao.add("S5", "Szybowce", "Standard", i++);
+            categoryDao.add("S6", "Śmigłowce", "Standard", i++);
+            categoryDao.add("MPKC", "Pojazdy kołowe cywilne", "Standard", i++);
+            categoryDao.add("MPKW", "Pojazdy kołowe wojskowe", "Standard", i++);
+            categoryDao.add("MPSZ", "Pojazdy szynowe", "Standard", i++);
+            categoryDao.add("MPG", "Pojazdy gąsienicowe", "Standard", i++);
+            categoryDao.add("MB", "Budowle", "Standard", i++);
+            categoryDao.add("MF", "Figurki", "Standard", i++);
+            categoryDao.add("MR", "Rakiety, statki kosmiczne, S-F", "Standard", i++);
+            categoryDao.add("MA", "Artyleria", "Standard", i++);
             //Open
-            CategoryDao.add("WSO", "Statki i okręty", "Waloryzowane (Open)", i++);
-            CategoryDao.add("WŻ", "Żaglowce", "Waloryzowane (Open)", i++);
-            CategoryDao.add("WOP", "Okręty podwodne", "Waloryzowane (Open)", i++);
-            CategoryDao.add("WKC", "Pojazdy kołowe cywilne", "Waloryzowane (Open)", i++);
-            CategoryDao.add("WKW", "Pojazdy kołowe wojskowe", "Waloryzowane (Open)", i++);
-            CategoryDao.add("WSZ", "Pojazdy szynowe", "Waloryzowane (Open)", i++);
-            CategoryDao.add("WG", "Pojazdy gąsienicowe", "Waloryzowane (Open)", i++);
-            CategoryDao.add("WS1", "Samoloty śmigłowe + śmigłowce (bez podziału na napęd)", "Waloryzowane (Open)", i++);
-            CategoryDao.add("WS2", "Samoloty odrzutowe", "Waloryzowane (Open)", i++);
-            CategoryDao.add("WPP", "Modele projektowane od podstaw", "Waloryzowane (Open)", i++);
-            CategoryDao.add("WD", "Dioramy i makiety", "Waloryzowane (Open)", i++);
+            categoryDao.add("WSO", "Statki i okręty", "Waloryzowane (Open)", i++);
+            categoryDao.add("WŻ", "Żaglowce", "Waloryzowane (Open)", i++);
+            categoryDao.add("WOP", "Okręty podwodne", "Waloryzowane (Open)", i++);
+            categoryDao.add("WKC", "Pojazdy kołowe cywilne", "Waloryzowane (Open)", i++);
+            categoryDao.add("WKW", "Pojazdy kołowe wojskowe", "Waloryzowane (Open)", i++);
+            categoryDao.add("WSZ", "Pojazdy szynowe", "Waloryzowane (Open)", i++);
+            categoryDao.add("WG", "Pojazdy gąsienicowe", "Waloryzowane (Open)", i++);
+            categoryDao.add("WS1", "Samoloty śmigłowe + śmigłowce (bez podziału na napęd)", "Waloryzowane (Open)", i++);
+            categoryDao.add("WS2", "Samoloty odrzutowe", "Waloryzowane (Open)", i++);
+            categoryDao.add("WPP", "Modele projektowane od podstaw", "Waloryzowane (Open)", i++);
+            categoryDao.add("WD", "Dioramy i makiety", "Waloryzowane (Open)", i++);
             //Naviga
-            CategoryDao.add("C-1", "Modele jednostek wiosłowych i żaglowych", "Naviga", i++);
-            CategoryDao.add("C-2", "Modele jednostek o napędzie mechanicznym", "Naviga", i++);
-            CategoryDao.add("C-3", "Modele urządzeń, itp.", "Naviga", i++);
-            CategoryDao.add("C-4", "Modele miniaturowe", "Naviga", i++);
-            CategoryDao.add("C-5", "Modele z butelkach", "Naviga", i++);
-            CategoryDao.add("C-6", "Modele plastikowe", "Naviga", i++);
-            CategoryDao.add("C-7", "Modele kartonowe i papierowe", "Naviga", i++);
+            categoryDao.add("C-1", "Modele jednostek wiosłowych i żaglowych", "Naviga", i++);
+            categoryDao.add("C-2", "Modele jednostek o napędzie mechanicznym", "Naviga", i++);
+            categoryDao.add("C-3", "Modele urządzeń, itp.", "Naviga", i++);
+            categoryDao.add("C-4", "Modele miniaturowe", "Naviga", i++);
+            categoryDao.add("C-5", "Modele z butelkach", "Naviga", i++);
+            categoryDao.add("C-6", "Modele plastikowe", "Naviga", i++);
+            categoryDao.add("C-7", "Modele kartonowe i papierowe", "Naviga", i++);
 
             //Publishers
             String[] defaults = new String[] { "GPM", "Answer", "WAK", "Kartonowa Kolekcja", "Mały Modelarz", "JSC", "Modelik", "Orlik MK", "Haliński", "Model-Kom", "Orel", "WMC", "Dom Bumagi", "Draf Model", "Szkutnik", "Wektor", "Sklej Model", "Hobby Model", "AJ Model", "Model Hobby", "Quest", "Internet", "Świat z Kartonu", "Inne" };
             Array.Sort(defaults, StringComparer.InvariantCulture);
             foreach(String publisher in defaults) {
-                PublisherDao.add(publisher);
+                publisherDao.add(publisher);
             }
 
             //Scales
             defaults = new String[] { "1:9", "1:16", "1:25", "1:33", "1:43", "1:48", "1:50", "1:100", "1:150", "1:200", "1:250", "1:300", "1:400", "1:500", "Inna" };
             i = 0;
             foreach(String scale in defaults) {
-                ScaleDao.add(scale);
+                scaleDao.add(scale);
             }
         }
 

@@ -16,15 +16,18 @@ namespace Rejestracja.Data {
 
         private static List<RegistrationEntry> parseCSVFile(String filePath, FileImportFieldMap fieldMap, bool hasHeaders, String badRecordFile, bool addScale, bool addPublisher, out int badRecordCount) {
 
+            PublisherDao publisherDao = new PublisherDao();
+            ScaleDao scaleDao = new ScaleDao();
+
             List<RegistrationEntry> ret = new List<RegistrationEntry>();
 
             TextInfo textInfo = new CultureInfo("pl-PL", false).TextInfo;
-            List<String> publishers = PublisherDao.getSimpleList().ToList();
-            List<Category> modelCategories = CategoryDao.getList().ToList();
+            List<String> publishers = publisherDao.getSimpleList().ToList();
+            List<Category> modelCategories = new CategoryDao().getList().ToList();
             List<AgeGroup> standardAgeGroups = new AgeGroupDao().getList(-1);
             //List<String> modelClasses = ClassDao.getSimpleList().ToList();
-            List<String> modelScales = ScaleDao.getList().Select(x => x.name).ToList();
-            List<Class> modelClasses = ClassDao.getList(true, true);
+            List<String> modelScales = new ScaleDao().getList().Select(x => x.name).ToList();
+            List<Class> modelClasses = new ClassDao().getList(true, true);
 
             badRecordCount = 0;
 
@@ -143,8 +146,8 @@ namespace Rejestracja.Data {
                         else if(addScale) {
                             String[] scale = modelScales.Where(x => x.ToLower().Equals(newRegistration.model.scale.ToLower())).ToArray<String>();
                             if(scale.Length == 0) {
-                                ScaleDao.add(newRegistration.model.scale);
-                                modelScales = ScaleDao.getList().Select(x => x.name).ToList();
+                                scaleDao.add(newRegistration.model.scale);
+                                modelScales = scaleDao.getList().Select(x => x.name).ToList();
                             }
                         }
 
@@ -162,8 +165,8 @@ namespace Rejestracja.Data {
                                 newRegistration.model.publisher = pub[0];
                             }
                             else if(addPublisher) {
-                                PublisherDao.add(parsedPublisher);
-                                publishers = PublisherDao.getSimpleList().ToList<String>();
+                                publisherDao.add(parsedPublisher);
+                                publishers = publisherDao.getSimpleList().ToList<String>();
                             }
                         }
                     }

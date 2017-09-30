@@ -156,8 +156,8 @@ namespace Rejestracja.Utils
 
         public static void generateJudgingForms(String template, String outFolder, frmMain parentForm)
         {
-            List<RegistrationEntry> entries = RegistrationEntryDao.getListForJudging();
-            List<Category> categories = CategoryDao.getList().ToList();
+            List<RegistrationEntry> entries = new RegistrationEntryDao().getListForJudging();
+            List<Category> categories = new CategoryDao().getList().ToList();
             Dictionary<String, Char> authors = new Dictionary<String, Char>();
             
             String authorKey;
@@ -270,6 +270,8 @@ namespace Rejestracja.Utils
 
         public static void generateHtmlResults(String template, String outputFileName)
         {
+            ResultDao resultDao = new ResultDao();
+
             String htmlTemplate;
             String docHeader = Options.get("DocumentHeader").Replace("\r\n", "<br/>");
 
@@ -296,7 +298,7 @@ namespace Rejestracja.Utils
             htmlTemplate = htmlTemplate.Replace("[NAGŁÓWEK]", String.Format("<h1>{0}</h1>", docHeader));
 
             //Category winners
-            IEnumerable<Result> results = ResultDao.getCategoryResults();
+            IEnumerable<Result> results = resultDao.getCategoryResults();
             StringBuilder resultHtml = new StringBuilder();
             int lpCounter = 1;
 
@@ -345,7 +347,7 @@ namespace Rejestracja.Utils
 
             //SPECIAL AWARDS
             long awardId = -1;
-            results = ResultDao.getAwardResults();
+            results = resultDao.getAwardResults();
 
             resultHtml.AppendLine(@"<h2>Nagrody Specjalne</h2>");
 
@@ -373,6 +375,9 @@ namespace Rejestracja.Utils
         }
 
         public static void generateHtmlResultsV2(String template, String outputFileName) {
+            
+            ResultDao resultDao = new ResultDao();
+
             String htmlTemplate;
             String docHeader = String.Format("<h1>{0}</h1>", Options.get("DocumentHeader").Replace("\r\n", "<br/>"));
             String docFooter = String.Format(@"<div class=""footer"">{0}</div>", Options.get("DocumentFooter").Replace("\r\n", "<br/>"));
@@ -404,7 +409,7 @@ namespace Rejestracja.Utils
             }
 
             //Category winners
-            IEnumerable<Result> results = ResultDao.getCategoryResults();
+            IEnumerable<Result> results = resultDao.getCategoryResults();
             StringBuilder sb = new StringBuilder();
 
             foreach (Result result in results) {
@@ -439,7 +444,7 @@ namespace Rejestracja.Utils
 
             //SPECIAL AWARDS
             long awardId = -1;
-            results = ResultDao.getAwardResults();
+            results = resultDao.getAwardResults();
 
             sb.AppendLine(docHeader);
             sb.AppendLine("<h2>Nagrody Specjalne</h2>");
@@ -484,7 +489,7 @@ namespace Rejestracja.Utils
             htmlTemplate = htmlTemplate.Replace("[NAGŁÓWEK]", String.Format("{0}", docHeader));
 
             //Summary stats
-            List<KeyValuePair<String, String>> stats = RegistrationEntryDao.getRegistrationStats();
+            List<KeyValuePair<String, String>> stats = new RegistrationEntryDao().getRegistrationStats();
             sb.AppendLine(@"<div class=""stats"">").AppendLine();
 
             foreach (KeyValuePair<String, String> stat in stats) {
@@ -555,9 +560,10 @@ namespace Rejestracja.Utils
         public static void printRegistrationCards(int modelId) {
 
             bool printDefaultCard = false;
+            ClassDao classDao = new ClassDao();
 
             try {
-                List<RegistrationEntry> regEntries = RegistrationEntryDao.getRegistrationForModel(modelId);
+                List<RegistrationEntry> regEntries = new RegistrationEntryDao().getRegistrationForModel(modelId);
                 if(regEntries.Count == 0) {
                     MessageBox.Show("Numer modelu nie znaleziony", "Błędne dane", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -572,7 +578,7 @@ namespace Rejestracja.Utils
                     String outFile = String.Format("{0}\\rejestracja_{1}_kat-{2}.docx", directory, entry.registration.modelId, Resources.FileNameInvalidChars.Replace(entry.category.code, "-"));
                     File.Delete(outFile);
 
-                    Class regClass = ClassDao.getClassForCategory(entry.registration.categoryId);
+                    Class regClass = classDao.getClassForCategory(entry.registration.categoryId);
                     if(regClass.printCustomRegistrationCard) {
                         DocHandler.generateRegistrationCard(regClass.registrationCardTemplate, outFile, entry);
                         DocHandler.PrintDocument(outFile);        

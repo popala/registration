@@ -27,10 +27,20 @@ namespace Rejestracja
         private List<AgeGroup> _standardAgeGroups;
         private List<Class> _classes;
         private bool _loading = false;
+        private ModelDao _modelDao;
+        private ModelerDao _modelerDao;
+        private PublisherDao _publisherDao;
+        private RegistrationDao _registrationDao;
+        private ScaleDao _scaleDao;
         
         public frmRegistrationEntry()
         {
             InitializeComponent();
+            _modelDao = new ModelDao();
+            _modelerDao = new ModelerDao();
+            _publisherDao = new PublisherDao();
+            _registrationDao = new RegistrationDao();
+            _scaleDao = new ScaleDao();
 
             foreach (Control ctl in this.Controls)
             {
@@ -50,7 +60,7 @@ namespace Rejestracja
 
             lvCategories.BeginUpdate();
 
-            _classes = ClassDao.getList(true, true);
+            _classes = new ClassDao().getList(true, true);
 
             //Categories broken up by class
             lvCategories.Clear();
@@ -118,12 +128,12 @@ namespace Rejestracja
             //Model
             cboModelId.Enabled = false;
             cboModelPublisher.Items.Clear();
-            foreach (String item in PublisherDao.getSimpleList())
+            foreach (String item in _publisherDao.getSimpleList())
                 cboModelPublisher.Items.Add(item.Trim());
             cboModelPublisher.Sorted = true;
 
             cboModelScale.Items.Clear();
-            foreach(Scale scale in ScaleDao.getList()) {
+            foreach(Scale scale in _scaleDao.getList()) {
                 cboModelScale.Items.Add(scale.name);
             }
             cboModelScale.SelectedIndex = cboModelScale.FindString("1:33");
@@ -136,7 +146,7 @@ namespace Rejestracja
 
         private void loadModeler(int modelerId) {
             
-            Modeler modeler = ModelerDao.get(modelerId);
+            Modeler modeler = _modelerDao.get(modelerId);
 
             //Load modeler info
             txtModelerId.Text = modeler.id.ToString();
@@ -148,7 +158,7 @@ namespace Rejestracja
 
             //Load model IDs registered to the modeler
             cboModelId.Items.Clear();
-            foreach(Model m in ModelDao.getList(modelerId)) {
+            foreach(Model m in _modelDao.getList(modelerId)) {
                 cboModelId.Items.Add(new ComboBoxItem(m.id, m.id.ToString()));
             }
         }
@@ -158,7 +168,7 @@ namespace Rejestracja
             Model m;
 
             if(modelId > -1) {
-                m = ModelDao.get(modelId);
+                m = _modelDao.get(modelId);
             }
             else {
                 m = model;
@@ -179,7 +189,7 @@ namespace Rejestracja
 
             bool removeImported = true;
             List<ListViewItem> itemsToDisable;
-            List<Registration> regList = RegistrationDao.getList(m.id).ToList();
+            List<Registration> regList = _registrationDao.getList(m.id).ToList();
 
             int age = DateTime.Now.Year - ((ComboBoxItem)cboYearOfBirth.SelectedItem).id;
             //String properAgeGroup = _ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
@@ -245,7 +255,7 @@ namespace Rejestracja
             this._loading = true;
 
             //Populate registration info
-            Model model = ModelDao.get(modelId);
+            Model model = _modelDao.get(modelId);
 
             if(model == null)
             {
@@ -271,7 +281,7 @@ namespace Rejestracja
 
         private bool modelerChanged() {
             Modeler updatedModeler = new Modeler(int.Parse(txtModelerId.Text), txtFirstName.Text, txtLastName.Text, txtModelClub.Text, ((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
-            Modeler currentModeler = ModelerDao.get(updatedModeler.id);
+            Modeler currentModeler = _modelerDao.get(updatedModeler.id);
 
             return !currentModeler.IsIdentical(updatedModeler);
 
@@ -279,14 +289,14 @@ namespace Rejestracja
 
         private bool modelChanged() {
             Model updatedModel = new Model(((ComboBoxItem)cboModelId.SelectedItem).id, txtModelName.Text, cboModelPublisher.Text, cboModelScale.Text, int.Parse(txtModelerId.Text));
-            Model currentModel = ModelDao.get(updatedModel.id);
+            Model currentModel = _modelDao.get(updatedModel.id);
 
             return !currentModel.Equals(updatedModel);
         }
 
         private bool registrationChanged() {
             List<Registration> updatedRegistration = new List<Registration>();
-            List<Registration> currentReg = RegistrationDao.getList(((ComboBoxItem)cboModelId.SelectedItem).id).ToList();
+            List<Registration> currentReg = _registrationDao.getList(((ComboBoxItem)cboModelId.SelectedItem).id).ToList();
 
             foreach(ListViewItem item in lvCategories.Items) {
                 if(item.Checked) {
@@ -324,7 +334,7 @@ namespace Rejestracja
         {
             //TODO: fix validation of existing entry.
 
-            IEnumerable<Category> modelCategories = CategoryDao.getList();
+            IEnumerable<Category> modelCategories = new CategoryDao().getList();
             //bool bFound = false;
 
             lblErrors.Text = "";
@@ -422,19 +432,19 @@ namespace Rejestracja
             int modelId = ((ComboBoxItem)cboModelId.SelectedItem).id;
 
             if(modelerChanged()) {
-                ModelerDao.update(int.Parse(txtModelerId.Text), txtFirstName.Text, txtLastName.Text, txtModelClub.Text, ((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
+                _modelerDao.update(int.Parse(txtModelerId.Text), txtFirstName.Text, txtLastName.Text, txtModelClub.Text, ((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
             }
             if(modelChanged()) {
-                ModelDao.update(modelId, txtModelName.Text, cboModelPublisher.Text, cboModelScale.Text);
+                _modelDao.update(modelId, txtModelName.Text, cboModelPublisher.Text, cboModelScale.Text);
             }
             if(registrationChanged()) {
                 DateTime now = DateTime.Now;
-                foreach(Registration reg in RegistrationDao.getList(modelId).ToList()) {
-                    RegistrationDao.delete(reg.id);
+                foreach (Registration reg in _registrationDao.getList(modelId).ToList()) {
+                    _registrationDao.delete(reg.id);
                 }
                 foreach(ListViewItem item in lvCategories.Items) {
                     if(item.Checked) {
-                        RegistrationDao.add(now, modelId, int.Parse(item.SubItems[1].Text), null, item.SubItems[3].Text);
+                        _registrationDao.add(now, modelId, int.Parse(item.SubItems[1].Text), null, item.SubItems[3].Text);
                     }
                 }
             }
@@ -463,10 +473,10 @@ namespace Rejestracja
                         if(enteredScale.Contains(":")) {
                             enteredScale = Rejestracja.Data.Objects.Scale.parse(enteredScale);
                         }
-                        ScaleDao.add(enteredScale);
+                        _scaleDao.add(enteredScale);
 
                         cboModelScale.Items.Clear();
-                        foreach(Scale scale in ScaleDao.getList()) {
+                        foreach(Scale scale in _scaleDao.getList()) {
                             cboModelScale.Items.Add(scale.name);
                         }
                         cboModelScale.SelectedIndex = cboModelScale.FindString(enteredScale);
@@ -480,10 +490,10 @@ namespace Rejestracja
                         cboModelPublisher.SelectedIndex = idx;
                     }
                     else if (MessageBox.Show("Dodać wpisanego wydawcę do bazy?", "Wydawca Nie Znaleziony", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
-                        PublisherDao.add(publisher);
+                        _publisherDao.add(publisher);
                         
                         cboModelPublisher.Items.Clear();
-                        foreach (String item in PublisherDao.getSimpleList())
+                        foreach (String item in _publisherDao.getSimpleList())
                             cboModelPublisher.Items.Add(item.Trim());
                         cboModelPublisher.Sorted = true;
                         cboModelPublisher.SelectedIndex = cboModelPublisher.FindString(publisher);
@@ -494,7 +504,7 @@ namespace Rejestracja
 
                 //Add modeler
                 if(txtModelerId.Text.Length == 0) {
-                    modelerId = ModelerDao.add(txtFirstName.Text, txtLastName.Text, txtModelClub.Text, ((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
+                    modelerId = _modelerDao.add(txtFirstName.Text, txtLastName.Text, txtModelClub.Text, ((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
                     txtModelerId.Text = modelerId.ToString();
                 }
                 else {
@@ -502,10 +512,10 @@ namespace Rejestracja
                 }
 
                 //Add model
-                int modelId = ModelDao.add(txtModelName.Text, cboModelPublisher.Text, cboModelScale.Text, modelerId);
+                int modelId = _modelDao.add(txtModelName.Text, cboModelPublisher.Text, cboModelScale.Text, modelerId);
 
                 foreach(ListViewItem item in lvCategories.CheckedItems) {
-                    RegistrationDao.add(
+                    _registrationDao.add(
                         DateTime.Now,
                         modelId,
                         int.Parse(item.SubItems[1].Text),

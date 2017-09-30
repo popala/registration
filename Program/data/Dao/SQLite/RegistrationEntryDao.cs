@@ -18,7 +18,7 @@ using System.Text;
 
 namespace Rejestracja.Data.Dao
 {
-    class RegistrationEntryDao
+    class RegistrationEntryDao : IRegistrationEntryDao
     {
         private const String BASE_QUERY =
             @"SELECT 
@@ -31,7 +31,7 @@ namespace Rejestracja.Data.Dao
 	            JOIN Modelers mr ON ml.ModelerId = mr.Id
 	            LEFT JOIN Categories c ON r.CategoryId = c.Id ";
 
-        public static RegistrationEntry get(int entryId)
+        public RegistrationEntry get(int entryId)
         {
             RegistrationEntry ret = null;
 
@@ -85,7 +85,7 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public static List<RegistrationEntry> getRegistrationForModel(int modelId) {
+        public List<RegistrationEntry> getRegistrationForModel(int modelId) {
             List<RegistrationEntry> ret = new List<RegistrationEntry>();
 
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
@@ -135,7 +135,7 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public static IEnumerable<String[]> getList(String searchValue, int sortField, bool sortAscending) {
+        public IEnumerable<String[]> getList(String searchValue, int sortField, bool sortAscending) {
 
             string sortFieldName;
 
@@ -158,7 +158,7 @@ namespace Rejestracja.Data.Dao
             return getList(searchValue, sortFieldName, sortAscending);
         }
 
-        private static IEnumerable<String[]> getList(String searchValue, String sortField, bool sortAscending)
+        private IEnumerable<String[]> getList(String searchValue, String sortField, bool sortAscending)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("", cn))
@@ -214,11 +214,11 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static IEnumerable<String[]> getGrouppedList() {
+        public IEnumerable<String[]> getGrouppedList() {
             return getGrouppedList(null);
         }
         
-        public static IEnumerable<String[]> getGrouppedList(String searchValue) {
+        public IEnumerable<String[]> getGrouppedList(String searchValue) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
                 StringBuilder query = new StringBuilder(BASE_QUERY);
@@ -269,7 +269,7 @@ namespace Rejestracja.Data.Dao
             }
         }
         
-        public static List<RegistrationEntry> getListForJudging()
+        public List<RegistrationEntry> getListForJudging()
         {
             List<RegistrationEntry> ret = new List<RegistrationEntry>();
 
@@ -325,7 +325,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static IEnumerable<String[]> getListForMergingCategories(int maxEntryCount) {
+        public IEnumerable<String[]> getListForMergingCategories(int maxEntryCount) {
 
             String query =
                 @"SELECT r.AgeGroupName, c.ModelClass, c.Id AS CategoryId, c.Name AS CategoryName, COUNT(r.Id) AS EntryCount, CASE c.DisplayOrder WHEN NULL THEN -1 ELSE c.DisplayOrder END AS DisplayOrder
@@ -368,7 +368,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static void mergeAgeGroupsInCategory(long modelCategoryId, String sourceAgeGroup, String targetAgeGroup) {
+        public void mergeAgeGroupsInCategory(long modelCategoryId, String sourceAgeGroup, String targetAgeGroup) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
                     @"DELETE FROM Results WHERE RegistrationId IN(SELECT Id FROM Registration WHERE AgeGroup = @SourceAgeGroup AND CategoryId = @CategoryId) AND AwardId IS NULL", cn)) {
@@ -386,7 +386,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static void changeCategory(int registrationId, int categoryId) {
+        public void changeCategory(int registrationId, int categoryId) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
                 @"UPDATE Registration SET CategoryName = NULL, CategoryId = @CategoryId WHERE Id = @Id", cn)) {
@@ -400,7 +400,7 @@ namespace Rejestracja.Data.Dao
             }
         }
         
-        public static int add(DateTime timeStamp, int modelId, int categoryId, String ageGroupName)
+        public int add(DateTime timeStamp, int modelId, int categoryId, String ageGroupName)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
@@ -420,7 +420,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static bool delete(long registrationId)
+        public bool delete(long registrationId)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Registration WHERE Id = @Id", cn))
@@ -432,7 +432,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static List<KeyValuePair<string, string>> getRegistrationStats() {
+        public List<KeyValuePair<string, string>> getRegistrationStats() {
             List<KeyValuePair<string, string>> ret = new List<KeyValuePair<string, string>>();
             int categoryTotal;
             //int i;

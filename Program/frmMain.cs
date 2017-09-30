@@ -31,15 +31,19 @@ namespace Rejestracja {
         private ListViewItem _selectedItem = null;
         private bool _refreshList = false;
 
+        private CategoryDao _categoryDao;
+        private RegistrationEntryDao _registrationEntryDao;
+        private ResultDao _resultDao;
+
         public void changeCategoryInSelected(int categoryId) {
-            Category category = CategoryDao.get(categoryId);
+            Category category = _categoryDao.get(categoryId);
             if (category == null) {
                 return;
             }
 
             foreach(ListViewItem item in lvEntries.Items) {
                 if (item.Checked) {
-                    RegistrationEntryDao.changeCategory((int)item.Tag, category.id);
+                    _registrationEntryDao.changeCategory((int)item.Tag, category.id);
                 }
             }
 
@@ -52,7 +56,9 @@ namespace Rejestracja {
 
         public frmMain() {
             InitializeComponent();
-            //lvEntries.DoubleClickDoesCheck = false;
+            _categoryDao = new CategoryDao();
+            _registrationEntryDao = new RegistrationEntryDao();
+            _resultDao = new ResultDao();
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e) {
@@ -241,7 +247,7 @@ namespace Rejestracja {
                 ListViewGroup group = new ListViewGroup();
                 String ageGroup = "";
 
-                results = ResultDao.getCategoryResultList();
+                results = _resultDao.getCategoryResultList();
 
                 foreach (string[] result in results) {
                     if (!ageGroup.Equals(result[1])) {
@@ -268,7 +274,7 @@ namespace Rejestracja {
                 group = new ListViewGroup("Nagrody Specjalne");
                 lvResults.Groups.Add(group);
 
-                results = ResultDao.getAwardResultList();
+                results = _resultDao.getAwardResultList();
                 foreach (String[] result in results) {
                     lvResults.Items.Add(new ListViewItem(result, group));
                 }
@@ -322,10 +328,10 @@ namespace Rejestracja {
                 List<string[]> entries;
 
                 if (String.IsNullOrWhiteSpace(searchValue)) {
-                    entries = RegistrationEntryDao.getList(null, _registrationSortColumn, _registrationSortAscending).ToList();
+                    entries = _registrationEntryDao.getList(null, _registrationSortColumn, _registrationSortAscending).ToList();
                 }
                 else {
-                    entries = RegistrationEntryDao.getList(searchValue, _registrationSortColumn, _registrationSortAscending).ToList();
+                    entries = _registrationEntryDao.getList(searchValue, _registrationSortColumn, _registrationSortAscending).ToList();
                 }
 
                 foreach (string[] entry in entries) {
@@ -345,10 +351,10 @@ namespace Rejestracja {
                 List<string[]> entries;
 
                 if (String.IsNullOrWhiteSpace(searchValue)) {
-                    entries = RegistrationEntryDao.getGrouppedList().ToList();
+                    entries = _registrationEntryDao.getGrouppedList().ToList();
                 }
                 else {
-                    entries = RegistrationEntryDao.getGrouppedList(searchValue).ToList();
+                    entries = _registrationEntryDao.getGrouppedList(searchValue).ToList();
                 }
 
                 String categoryName = "";
@@ -418,7 +424,7 @@ namespace Rejestracja {
 
         private void highlightInvalidRegistrationEntries() {
             //TODO: validate using Classes!
-            List<Category> modelCategories = CategoryDao.getList().ToList();
+            List<Category> modelCategories = _categoryDao.getList().ToList();
             List<AgeGroup> ageGroups = new AgeGroupDao().getList(-1);
             
             int badEntryCount = 0;
@@ -625,7 +631,7 @@ namespace Rejestracja {
 
         private void deleteRegistrationItem(int entryId) {
             try {
-                RegistrationEntryDao.delete(entryId);
+                _registrationEntryDao.delete(entryId);
                 lvEntries.Items.Remove(this._selectedItem);
                 this._selectedItem = null;
             }
@@ -849,7 +855,7 @@ namespace Rejestracja {
         private void cmsRCDeleteResult_Click(object sender, EventArgs e) {
             int resultId = int.Parse(lvResults.SelectedItems[0].SubItems[0].Text);
 
-            ResultDao.delete(resultId);
+            _resultDao.delete(resultId);
             refreshScreen();
         }
 
@@ -863,7 +869,7 @@ namespace Rejestracja {
 
                 ListViewGroup group = new ListViewGroup("");
 
-                foreach (KeyValuePair<string, string> stat in RegistrationEntryDao.getRegistrationStats()) {
+                foreach (KeyValuePair<string, string> stat in _registrationEntryDao.getRegistrationStats()) {
                     if (stat.Key.StartsWith("GROUP")) {
                         group = new ListViewGroup(stat.Value);
                         lvStats.Groups.Add(group);
@@ -1027,7 +1033,7 @@ namespace Rejestracja {
                 IEnumerable<Result> results;
 
                 String templateFile = Resources.resolvePath("templateDyplomuKategorii");
-                results = ResultDao.getCategoryResults();
+                results = _resultDao.getCategoryResults();
 
                 foreach (Result result in results) {
                     String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
@@ -1086,7 +1092,7 @@ namespace Rejestracja {
 
                 toolStripProgressBar.Value = 0;
 
-                IEnumerable<Result> results = ResultDao.getAwardResults();
+                IEnumerable<Result> results = _resultDao.getAwardResults();
                 String templateFile = Resources.resolvePath("templateDyplomuNagrody");
                 resetProgressBar(results.Count());
 
@@ -1126,7 +1132,7 @@ namespace Rejestracja {
             try {
 
                 int resultId = int.Parse(lvResults.SelectedItems[0].SubItems[0].Text);
-                Result result = ResultDao.get(resultId);
+                Result result = _resultDao.get(resultId);
                 toolStripLabelSpring.Text = "Tworzenie dokumentu...";
                 toolStripLabelSpring.Visible = true;
 

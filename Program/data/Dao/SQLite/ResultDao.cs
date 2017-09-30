@@ -17,16 +17,16 @@ using System.Data;
 using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao {
-    class ResultDao {
-        public static long addCategoryResult(long entryId, int place) {
+    class ResultDao : IResultDao {
+        public long addCategoryResult(long entryId, int place) {
             return add(entryId, (int?)null, place);
         }
 
-        public static long addAwardWinner(long entryId, long awardId) {
+        public long addAwardWinner(long entryId, long awardId) {
             return add(entryId, awardId, (int?)null);
         }
 
-        private static long add(long entryId, long? awardId, int? place) {
+        private long add(long entryId, long? awardId, int? place) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("INSERT INTO Results(EntryId,AwardId,Place) VALUES(@entryId, @awardId, @place)", cn)) {
                 cn.Open();
@@ -52,7 +52,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static Result get(int resultId) {
+        public Result get(int resultId) {
 
             Result ret = null;
 
@@ -129,7 +129,7 @@ namespace Rejestracja.Data.Dao {
             return ret;
         }
 
-        public static void delete(int resultId) {
+        public void delete(int resultId) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE ResultId = @resultId", cn)) {
                 cn.Open();
@@ -140,7 +140,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static void deleteAwardResult(long entryId, long awardId) {
+        public void deleteAwardResult(long entryId, long awardId) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE EntryId = @EntryId AND AwardId = @AwardId", cn)) {
                 cn.Open();
@@ -151,7 +151,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static void deleteCategoryResult(long entryId, int place) {
+        public void deleteCategoryResult(long entryId, int place) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE EntryId = @EntryId AND Place = @Place", cn)) {
                 cn.Open();
@@ -163,7 +163,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static bool awardResultExists(long entryId, long awardId) {
+        public bool awardResultExists(long entryId, long awardId) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("SELECT ResultId FROM Results WHERE EntryId = @EntryId AND AwardId = @AwardId", cn)) {
                 cn.Open();
@@ -176,7 +176,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static IEnumerable<String[]> getCategoryResultList() {
+        public IEnumerable<String[]> getCategoryResultList() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
                 @"SELECT res.ResultId, r.Id AS RegistrationId, r.AgeGroupName, c.ModelClass, c.Name AS CategoryName, m.Name AS ModelName, res.Place, a.Age,
@@ -209,79 +209,11 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-//        public static IEnumerable<Result> getCategoryResults(int categoryId) {
-//            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-//            using (SQLiteCommand cm = new SQLiteCommand(
-//                    @"SELECT 
-//	                    r.Id AS RegistrationId, r.TmStamp, r.AgeGroupName,
-//	                    r.CategoryId, c.Code, COALESCE(c.Name, r.CategoryName) AS CategoryName, c.ModelClass, CASE WHEN c.DisplayOrder IS NULL THEN -1 ELSE c.DisplayOrder END AS DisplayOrder,
-//	                    mr.Id AS ModelerId, mr.FirstName, mr.LastName, mr.ClubName, mr.YearOfBirth, mr.Email,
-//	                    ml.Id AS ModelId, ml.Name AS ModelName, ml.Publisher, ml.Scale,
-//	                    res.ResultId, res.Place, ag.Age
-//                    FROM Registration r
-//	                    JOIN Models ml ON r.ModelId = ml.Id
-//	                    JOIN Modelers mr ON ml.ModelerId = mr.Id
-//	                    JOIN Categories c ON r.CategoryId = c.Id
-//	                    JOIN Results res ON res.RegistrationId = r.Id
-//	                    JOIN AgeGroups ag ON ag.Name = r.AgeGroupName
-//                    WHERE res.Place IS NOT NULL
-//	                    AND r.CategoryId = @CategoryId
-//                    ORDER BY ag.Age ASC, ModelClass, Place", cn)) {
-//                cn.Open();
-//                cm.CommandType = System.Data.CommandType.Text;
-
-//                cm.Parameters.Add("@CategoryId", DbType.Int32).Value = categoryId;
-
-//                using (SQLiteDataReader dr = cm.ExecuteReader()) {
-//                    while (dr.Read()) {
-//                        RegistrationEntry entry = new RegistrationEntry(
-//                            new Registration(
-//                                dr.GetInt32(dr.GetOrdinal("RegistrationId")),
-//                                (DateTime)dr["TmStamp"],
-//                                dr.GetInt32(dr.GetOrdinal("ModelId")),
-//                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
-//                                dr["CategoryName"].ToString(),
-//                                dr["AgeGroupName"].ToString()
-//                            ),
-//                            new Category(
-//                                dr.GetInt32(dr.GetOrdinal("CategoryId")),
-//                                dr["Code"].ToString(),
-//                                dr["CategoryName"].ToString(),
-//                                dr["ModelClass"].ToString(),
-//                                dr.GetInt32(dr.GetOrdinal("DisplayOrder"))
-//                            ),
-//                            new Modeler(
-//                                dr.GetInt32(dr.GetOrdinal("ModelerId")),
-//                                dr["FirstName"].ToString(),
-//                                dr["LastName"].ToString(),
-//                                dr["ClubName"].ToString(),
-//                                dr.GetInt32(dr.GetOrdinal("YearOfBirth")),
-//                                dr["Email"].ToString()
-//                            ),
-//                            new Model(
-//                                dr.GetInt32(dr.GetOrdinal("ModelId")),
-//                                dr["ModelName"].ToString(),
-//                                dr["Publisher"].ToString(),
-//                                dr["Scale"].ToString(),
-//                                dr.GetInt32(dr.GetOrdinal("ModelerId"))
-//                            )
-//                        );
-
-//                        yield return
-//                            new Result(
-//                                dr.GetInt32(dr.GetOrdinal("ResultId")),
-//                                entry,
-//                                dr.GetInt32(dr.GetOrdinal("Place"))
-//                            );
-//                    }
-//                }
-//            }
-//        }
-
-        public static IEnumerable<Result> getCategoryResults() {
+        public IEnumerable<Result> getCategoryResults() {
             return getCategoryResults(-1);
         }
-        public static IEnumerable<Result> getCategoryResults(int categoryId) {
+
+        public IEnumerable<Result> getCategoryResults(int categoryId) {
 
             String query = 
                 @"SELECT 
@@ -359,7 +291,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static IEnumerable<String[]> getAwardResultList() {
+        public IEnumerable<String[]> getAwardResultList() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
                 @"SELECT res.ResultId, a.Title, a.DisplayOrder, res.AwardId, r.Id AS RegistrationId, m.Name AS ModelName
@@ -390,7 +322,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static IEnumerable<Result> getAwardResults() {
+        public IEnumerable<Result> getAwardResults() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
                     @"SELECT 
@@ -456,7 +388,7 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public static int getDiplomaCount() {
+        public int getDiplomaCount() {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"SELECT COUNT(ResultId) FROM Results", cn)) {
                 cn.Open();

@@ -103,6 +103,16 @@
     <Compile Include="Controls\CustListView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Data\Dao\Interfaces\IClassDao.cs" />
+    <Compile Include="Data\Dao\Interfaces\ICategoryDao.cs" />
+    <Compile Include="Data\Dao\Interfaces\IAwardDao.cs" />
+    <Compile Include="Data\Dao\Interfaces\IModelDao.cs" />
+    <Compile Include="Data\Dao\Interfaces\IModelerDao.cs" />
+    <Compile Include="Data\Dao\Interfaces\IPublisherDao.cs" />
+    <Compile Include="Data\Dao\Interfaces\IRegistrationDao.cs" />
+    <Compile Include="Data\Dao\Interfaces\IRegistrationEntryDao.cs" />
+    <Compile Include="Data\Dao\Interfaces\IResultDao.cs" />
+    <Compile Include="Data\Dao\Interfaces\IScaleDao.cs" />
     <Compile Include="Data\Dao\SQLite\AgeGroupDao.cs" />
     <Compile Include="Data\Dao\SQLite\AwardDao.cs" />
     <Compile Include="Data\Dao\SQLite\ClassDao.cs" />

@@ -13,13 +13,18 @@ using Rejestracja.Data.Objects;
 using System;
 using System.Collections.Generic;
 
-namespace Rejestracja.Data.Dao {
-    interface IAgeGroupDao {
-        bool exists(int upperAge, int classId);
-        AgeGroup getOlderAgeGroup(String ageGroupName, int classId);
-        List<AgeGroup> getList(int classId);
-        int add(String name, int age, int classId);
-        void deleteClassAgeGroups(int classId);
+namespace Rejestracja.Data.Dao
+{
+    interface IClassDao
+    {
+        List<Class> getList();
+        List<Class> getList(bool includeCategories, bool includeAgeGroups);
+        bool exists(String name);
+        int add(String name);
+        Class getClassForCategory(int id);
+        Class get(String name);
+        Class get(int id);
+        void update(Class modelClass);
         void delete(int id);
     }
 }

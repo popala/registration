@@ -60,7 +60,7 @@ namespace Rejestracja {
         }
 
         private void frmChangeCategory_Load(object sender, EventArgs e) {
-            Category[] categories = CategoryDao.getList().ToArray();
+            Category[] categories = new CategoryDao().getList().ToArray();
             foreach (Category category in categories) {
                 cboModelCategory.Items.Add(new ComboBoxItem(category.id, category.fullName));
             }

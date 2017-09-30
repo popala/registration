@@ -18,9 +18,9 @@ using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao
 {
-    class PublisherDao
+    class PublisherDao : IPublisherDao
     {
-        public static IEnumerable<Publisher> getList()
+        public IEnumerable<Publisher> getList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name FROM Publishers ORDER BY Name ASC", cn))
@@ -35,7 +35,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static IEnumerable<String> getSimpleList()
+        public IEnumerable<String> getSimpleList()
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand("SELECT Name FROM Publishers ORDER BY Name ASC", cn))
@@ -50,7 +50,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static bool exists(String name)
+        public bool exists(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM Publishers WHERE Name = @Name", cn))
@@ -64,7 +64,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static int add(String name)
+        public int add(String name)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO Publishers(Name) VALUES(@Name)", cn))
@@ -79,7 +79,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static void delete(long id)
+        public void delete(long id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Publishers WHERE Id = @Id", cn))

@@ -761,7 +761,7 @@
             this.nudDistinction.Name = "nudDistinction";
             this.nudDistinction.Size = new System.Drawing.Size(62, 20);
             this.nudDistinction.TabIndex = 19;
-            this.nudDistinction.ValueChanged += new System.EventHandler(numericUpDown_ValueChanged);
+            this.nudDistinction.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
             // 
             // lblThree
             // 
