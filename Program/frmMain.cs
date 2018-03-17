@@ -1067,12 +1067,17 @@ namespace Rejestracja {
                 results = ResultDao.getCategoryResults();
 
                 foreach (Result result in results) {
-                    String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
-                    DocHandler.generateDiploma(templateFile, outputFile, result);
-                    if (printForms) {
-                        DocHandler.printWordDoc(outputFile);
+                    try {
+                        String outputFile = Path.Combine(outputDirectory, String.Format("dyplom_{0}.docx", result.resultId));
+                        DocHandler.generateDiploma(templateFile, outputFile, result);
+                        if (printForms) {
+                            DocHandler.printWordDoc(outputFile);
+                        }
+                        incrementProgressBar();
+                    } catch (Exception err) {
+                        LogWriter.error(err);
+                        // MessageBox.Show(String.Format("Błąd przy tworzeniu dyplomu dla {0}", result.entry.)
                     }
-                    incrementProgressBar();
                 }
                 showStripLabelMessage("Dokumenty gotowe");
                 Process.Start(outputDirectory);
