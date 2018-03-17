@@ -274,7 +274,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public static IEnumerable<String[]> getListForMergingCategories(int maxEntryCount) {
+        public static IEnumerable<String[]> getListForMergingCategories(long maxEntryCount) {
 
             String query =
                 @"SELECT r.AgeGroup, r.ModelClass, r.ModelCategory, COALESCE(r.ModelCategoryId, -1) AS ModelCategoryId, COUNT(r.EntryId) AS EntryCount, CASE m.DisplayOrder WHEN NULL THEN 0 ELSE m.DisplayOrder END AS DisplayOrder
@@ -287,15 +287,16 @@ namespace Rejestracja.Data.Dao
 				                    SELECT ModelCategoryId, AgeGroup, COUNT(EntryId) AS EntryCount 
 					                    FROM Registration 
 					                    WHERE ModelCategoryId > -1
-					                    GROUP BY ModelCategoryId, AgeGroup
-					                    HAVING EntryCount < @MaxCount)
-			                    ) sm ON r.ModelCategoryId = sm.ModelCategoryId
+					                    GROUP BY ModelCategoryId, AgeGroup" +
+                                        (maxEntryCount > 0 ? " HAVING EntryCount < @MaxCount " : "") +
+                              @")
+                        ) sm ON r.ModelCategoryId = sm.ModelCategoryId
                     GROUP BY r.AgeGroup, r.ModelClass, r.ModelCategoryId
                     ORDER BY m.DisplayOrder, r.ModelCategory, ag.Age, r.ModelClass";
 
-            if (maxEntryCount < 1) {
-                yield break;
-            }
+            //if (maxEntryCount < 1) {
+            //    yield break;
+            //}
             
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(query, cn)) {

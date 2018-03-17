@@ -25,9 +25,10 @@ namespace Rejestracja {
         }
 
         private void frmMergeCategory_Load(object sender, EventArgs e) {
-            for(int i = 1; i < 6; i++) {
-                cboMaxCount.Items.Add(i);
+            for(int i = 1; i < 11; i++) {
+                cboMaxCount.Items.Add(new ComboBoxItem(i, i.ToString()));
             }
+            cboMaxCount.Items.Add(new ComboBoxItem(0, "Wszystkie kategorie"));
 
             lvCategories.View = View.Details;
             lvCategories.GridLines = true;
@@ -44,7 +45,7 @@ namespace Rejestracja {
         }
 
         private void cboMaxCount_SelectedIndexChanged(object sender, EventArgs e) {
-            loadSummary((int)cboMaxCount.SelectedItem);
+            loadSummary(((ComboBoxItem)cboMaxCount.SelectedItem).id);
         }
 
         private void lvCategories_ItemChecked(object sender, ItemCheckedEventArgs e) {
@@ -62,7 +63,7 @@ namespace Rejestracja {
             }
         }
 
-        private void loadSummary(int maxCountInCategory) {
+        private void loadSummary(long maxCountInCategory) {
             lvCategories.BeginUpdate();
 
             try {

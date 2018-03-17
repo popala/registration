@@ -421,15 +421,15 @@
             // 
             this.mnuJMergeCategories.Image = global::Rejestracja.Properties.Resources.arrow_merge_16xLG;
             this.mnuJMergeCategories.Name = "mnuJMergeCategories";
-            this.mnuJMergeCategories.Size = new System.Drawing.Size(183, 22);
-            this.mnuJMergeCategories.Text = "Łą&czenie kategorii";
+            this.mnuJMergeCategories.Size = new System.Drawing.Size(209, 22);
+            this.mnuJMergeCategories.Text = "Łą&czenie grup wiekowych";
             this.mnuJMergeCategories.Click += new System.EventHandler(this.mnuJMergeCategories_Click);
             // 
             // mnuJJudgingForms
             // 
             this.mnuJJudgingForms.Image = global::Rejestracja.Properties.Resources.PencilAngled_16xLG_color;
             this.mnuJJudgingForms.Name = "mnuJJudgingForms";
-            this.mnuJJudgingForms.Size = new System.Drawing.Size(183, 22);
+            this.mnuJJudgingForms.Size = new System.Drawing.Size(209, 22);
             this.mnuJJudgingForms.Text = "&Karty sędziowania";
             this.mnuJJudgingForms.Click += new System.EventHandler(this.mnuJJudgingForms_Click);
             // 
@@ -437,7 +437,7 @@
             // 
             this.mnuJAddResults.Image = global::Rejestracja.Properties.Resources.StatusAnnotations_Complete_and_ok_16xLG;
             this.mnuJAddResults.Name = "mnuJAddResults";
-            this.mnuJAddResults.Size = new System.Drawing.Size(183, 22);
+            this.mnuJAddResults.Size = new System.Drawing.Size(209, 22);
             this.mnuJAddResults.Text = "&Dodawanie wyników";
             this.mnuJAddResults.Click += new System.EventHandler(this.mnuJAddResults_Click);
             // 
@@ -924,7 +924,7 @@
             this.tsBtnMergeCategories.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsBtnMergeCategories.Name = "tsBtnMergeCategories";
             this.tsBtnMergeCategories.Size = new System.Drawing.Size(23, 22);
-            this.tsBtnMergeCategories.Text = "Łączenie Kategorii";
+            this.tsBtnMergeCategories.Text = "Łączenie Grup Wiekowych";
             this.tsBtnMergeCategories.Click += new System.EventHandler(this.tsBtnMergeCategories_Click);
             // 
             // tsBtnJudgingForms

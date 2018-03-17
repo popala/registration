@@ -47,7 +47,7 @@
             this.cboMaxCount.FormattingEnabled = true;
             this.cboMaxCount.Location = new System.Drawing.Point(226, 13);
             this.cboMaxCount.Name = "cboMaxCount";
-            this.cboMaxCount.Size = new System.Drawing.Size(61, 21);
+            this.cboMaxCount.Size = new System.Drawing.Size(182, 21);
             this.cboMaxCount.TabIndex = 1;
             this.cboMaxCount.SelectedIndexChanged += new System.EventHandler(this.cboMaxCount_SelectedIndexChanged);
             // 
@@ -89,7 +89,7 @@
             this.lblErrors.Name = "lblErrors";
             this.lblErrors.Size = new System.Drawing.Size(416, 18);
             this.lblErrors.TabIndex = 7;
-            this.lblErrors.Text = "Połączenie kategorii spowoduje usunięcie wyników w zlikwidowanych kategoriach";
+            this.lblErrors.Text = "Połączenie grup wiekowych spowoduje usunięcie wyników w zlikwidowanych kategoriach";
             this.lblErrors.Visible = false;
             // 
             // frmMergeCategory
@@ -106,7 +106,7 @@
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "frmMergeCategory";
-            this.Text = "Łączenie Kategorii";
+            this.Text = "Łączenie Grup Wiekowych";
             this.Load += new System.EventHandler(this.frmMergeCategory_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
