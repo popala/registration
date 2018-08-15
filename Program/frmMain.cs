@@ -362,6 +362,7 @@ namespace Rejestracja {
                 foreach (string[] entry in entries) {
                     ListViewItem item = new ListViewItem(entry);
                     item.Tag = int.Parse(entry[0]);
+                    item.Name = entry[0];
                     lvEntries.Items.Add(item);
                 }
             }
@@ -393,6 +394,7 @@ namespace Rejestracja {
                     }
                     ListViewItem item = new ListViewItem(entry, group);
                     item.Tag = int.Parse(entry[0]);
+                    item.Name = entry[0];
                     lvEntries.Items.Add(item);
                 }
             }
@@ -408,6 +410,7 @@ namespace Rejestracja {
 
             frmRegistrationEntry f = new frmRegistrationEntry();
             f.StartPosition = FormStartPosition.CenterParent;
+            f.setParent(this);
             f.loadEntry(entryId);
             f.ShowDialog(this);
 
@@ -446,6 +449,16 @@ namespace Rejestracja {
             }
             else {
                 tsBtnClearFilter_Click(tsBtnErrorCount, new EventArgs());
+            }
+
+            try {
+                ListViewItem[] res = lvEntries.Items.Find(entryId.ToString(), false);
+                if (res.Length > 0) {
+                    res[0].Selected = true;
+                    res[0].EnsureVisible();
+                }
+            } catch (Exception e) {
+                // ignore exception
             }
         }
 

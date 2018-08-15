@@ -86,6 +86,8 @@ namespace Rejestracja
             cboModelClass.SelectedIndex = cboModelClass.FindString("standard");
             cboModelClass.Enabled = false;
 
+            chkPrintRegistrationCard.Checked = false;
+
             btnAddPrintModel.Visible = true;
             btnNewModel.Visible = true;
             btnSave.Visible = false;
@@ -142,7 +144,8 @@ namespace Rejestracja
             btnNewModel.Visible = false;
             btnNewRegistration.Visible = false;
             btnSave.Visible = true;
-            chkPrintRegistrationCard.Visible = false;
+            // chkPrintRegistrationCard.Visible = false;
+            chkPrintRegistrationCard.Checked = true;
 
             this._entry = entry;
             this.Text = "Szczegóły Rejestracji";
@@ -187,8 +190,11 @@ namespace Rejestracja
                 return;
             }
 
+            string scale = cboModelScale.Text.Trim();
             if (cboModelScale.SelectedIndex < 0) {
-                string scale = cboModelScale.Text.Trim();
+                cboModelScale.SelectedIndex = cboModelScale.FindStringExact(scale);
+            }
+            if (cboModelScale.SelectedIndex < 0) {
                 if (MessageBox.Show("Dodać wpisaną skalę do bazy?", "Skala Nie Znaleziona", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
                     ModelScaleDao.add(scale, ModelScaleDao.getNextSortFlag());
 
@@ -199,8 +205,11 @@ namespace Rejestracja
                 }
             }
 
+            string publisher = cboModelPublisher.Text.Trim();
             if (cboModelPublisher.SelectedIndex < 0) {
-                string publisher = cboModelPublisher.Text.Trim();
+                cboModelPublisher.SelectedIndex = cboModelPublisher.FindStringExact(publisher);
+            }
+            if (cboModelPublisher.SelectedIndex < 0) {
                 if (MessageBox.Show("Dodać wpisanego wydawcę do bazy?", "Wydawca Nie Znaleziony", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
                     PublisherDao.add(publisher);
 
@@ -238,6 +247,9 @@ namespace Rejestracja
                         int.Parse(cboYearOfBirth.Text));
 
                 RegistrationEntryDao.update(entry);
+                if (!chkPrintRegistrationCard.Checked) {
+                    this._parentForm.printRegistrationCard(long.Parse(txtEntryId.Text));
+                }
                 this.Close();
             }
             catch(Exception err)
@@ -333,9 +345,16 @@ namespace Rejestracja
                     return;
                 }
 
+                string scale = cboModelScale.Text.Trim();
                 if (cboModelScale.SelectedIndex < 0) {
-                    string scale = cboModelScale.Text.Trim();
-                    if (MessageBox.Show("Dodać wpisaną skalę do bazy?", "Skala Nie Znaleziona", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
+                    cboModelScale.SelectedIndex = cboModelScale.FindStringExact(scale);
+                }
+                if (cboModelScale.SelectedIndex < 0) {
+                    DialogResult result = MessageBox.Show("Dodać wpisaną skalę do bazy?", "Skala Nie Znaleziona", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                    if (result == System.Windows.Forms.DialogResult.Cancel) {
+                        return;
+                    }
+                    if (result == System.Windows.Forms.DialogResult.Yes) {
                         ModelScaleDao.add(scale, ModelScaleDao.getNextSortFlag());
 
                         cboModelScale.Items.Clear();
@@ -345,8 +364,11 @@ namespace Rejestracja
                     }
                 }
 
+                string publisher = cboModelPublisher.Text.Trim();
                 if (cboModelPublisher.SelectedIndex < 0) {
-                    string publisher = cboModelPublisher.Text.Trim();
+                    cboModelPublisher.SelectedIndex = cboModelPublisher.FindStringExact(publisher);
+                }
+                if (cboModelPublisher.SelectedIndex < 0) {
                     if (MessageBox.Show("Dodać wpisanego wydawcę do bazy?", "Wydawca Nie Znaleziony", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes) {
                         PublisherDao.add(publisher);
                         
