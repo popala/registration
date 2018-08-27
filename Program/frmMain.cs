@@ -457,7 +457,7 @@ namespace Rejestracja {
                     res[0].Selected = true;
                     res[0].EnsureVisible();
                 }
-            } catch (Exception e) {
+            } catch (Exception) {
                 // ignore exception
             }
         }
