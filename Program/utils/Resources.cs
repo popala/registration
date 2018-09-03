@@ -64,15 +64,18 @@ namespace Rejestracja.Utils {
     </body>
 </html>";
 
-        public static void setDataFile(String dataFilePath) {
-
-            if (dataFilePath.Contains(Path.PathSeparator)) {
-                Properties.Settings.Default.DataFile = dataFilePath;
+        public static void setConnectionString(String dataFilePath, String mySqlConnectionString) {
+            if (!String.IsNullOrEmpty(dataFilePath)) {
+                Properties.Settings.Default.MySqlConnection = null;
+                if (dataFilePath.Contains(Path.PathSeparator)) {
+                    Properties.Settings.Default.DataFile = dataFilePath;
+                } else {
+                    Properties.Settings.Default.DataFile = Path.Combine(DataFileFolder, dataFilePath);
+                }
+            } else if (!String.IsNullOrEmpty(mySqlConnectionString)) {
+                Properties.Settings.Default.DataFile = null;
+                Properties.Settings.Default.MySqlConnection = mySqlConnectionString;
             }
-            else {
-                Properties.Settings.Default.DataFile = Path.Combine(DataFileFolder, dataFilePath);
-            }
-
             Properties.Settings.Default.Save();
         }
 
@@ -81,7 +84,17 @@ namespace Rejestracja.Utils {
         }
 
         public static String getConnectionString() {
-            return String.Format("Data Source={0}", Properties.Settings.Default.DataFile);
+            String dataFilePath = Properties.Settings.Default.DataFile;
+            if (!String.IsNullOrEmpty(dataFilePath)) {
+                return String.Format("Data Source={0}", dataFilePath);
+            }
+
+            String mySqlConnectionString = Properties.Settings.Default.MySqlConnection;
+            if (!String.IsNullOrEmpty(mySqlConnectionString)) {
+                return mySqlConnectionString;
+            }
+
+            return null;
         }
 
         public static String resolvePath(String appSettingName) {

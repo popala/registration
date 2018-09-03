@@ -14,20 +14,22 @@ using Rejestracja.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SQLite;
+using System.Data.Common;
 
 namespace Rejestracja.Data.Dao
 {
     class AgeGroupDao : IAgeGroupDao
     {
         public bool exists(int upperAge, int classId) {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(@"SELECT Id FROM AgeGroups WHERE Age BETWEEN @Age1 AND @Age2 AND ClassId = @ClassId", cn)) {
+            using (DbConnection cn = DataSource.getConnection())
+            using (DbCommand cm = DataSource.getCommand(cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-                cm.Parameters.Add("@Age1", DbType.Int32).Value = upperAge - 1;
-                cm.Parameters.Add("@Age2", DbType.Int32).Value = upperAge + 1;
-                cm.Parameters.Add("@ClassId", DbType.Int32).Value = classId;
+                cm.CommandText = @"SELECT Id FROM AgeGroups WHERE Age BETWEEN @Age1 AND @Age2 AND ClassId = @ClassId";
+
+                DataSource.addParam(cm, "@Age1", (upperAge - 1));
+                DataSource.addParam(cm, "@Age2", (upperAge + 1));
+                DataSource.addParam(cm, "@ClassId", classId);
 
                 object res = cm.ExecuteScalar();
                 return (res != null);
@@ -38,21 +40,23 @@ namespace Rejestracja.Data.Dao
             
             AgeGroup ret = null;
 
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand(
-                @"SELECT a.Id, a.Name, a.Age, (SELECT MAX(Age) AS Age FROM AgeGroups WHERE Age < a.Age AND ClassId = @ClassId) AS MinAge
+            using (DbConnection cn = DataSource.getConnection())
+            using (DbCommand cm = DataSource.getCommand(cn)) {
+                cn.Open();
+                cm.CommandType = CommandType.Text;
+                cm.CommandText =
+                    @"SELECT a.Id, a.Name, a.Age, (SELECT MAX(Age) AS Age FROM AgeGroups WHERE Age < a.Age AND ClassId = @ClassId) AS MinAge
 	                FROM AgeGroups a
 	                JOIN (
 		                SELECT MIN(Age) AS Age 
 			                FROM AgeGroups 
 			                WHERE Age > (SELECT Age FROM AgeGroups WHERE Name = @AgeGroupName AND ClassId = @ClassId)
-		                ) m ON a.Age = m.Age AND a.ClassId = m.ClassId", cn))
-            {
-                cn.Open();
-                cm.Parameters.Add("@AgeGroupName", DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = ageGroupName;
-                cm.Parameters.Add("@ClassId", DbType.Int32).Value = classId;
+		                ) m ON a.Age = m.Age AND a.ClassId = m.ClassId";
 
-                using (SQLiteDataReader dr = cm.ExecuteReader())
+                DataSource.addParam(cm, "@AgeGroupName", ageGroupName, AgeGroup.NAME_MAX_LENGTH);
+                DataSource.addParam(cm, "@ClassId", classId);
+
+                using (DbDataReader dr = cm.ExecuteReader())
                 {
                     if (dr.Read())
                     {
@@ -72,13 +76,15 @@ namespace Rejestracja.Data.Dao
             List<AgeGroup> ret = new List<AgeGroup>();
             int bottomAge = 0;
 
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand("SELECT Id, Name, Age FROM AgeGroups WHERE ClassId = @ClassId ORDER BY Age ASC", cn))
-            {
+            using (DbConnection cn = DataSource.getConnection())
+            using (DbCommand cm = DataSource.getCommand(cn)) {
                 cn.Open();
-                cm.Parameters.Add("@ClassId", DbType.Int32).Value = classId;
+                cm.CommandType = CommandType.Text;
+                cm.CommandText = "SELECT Id, Name, Age FROM AgeGroups WHERE ClassId = @ClassId ORDER BY Age ASC";
 
-                using (SQLiteDataReader dr = cm.ExecuteReader())
+                DataSource.addParam(cm, "@ClassId", classId);
+
+                using (DbDataReader dr = cm.ExecuteReader())
                 {
                     while (dr.Read())
                     {
@@ -91,43 +97,42 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public int add(String name, int age, int classId)
+        public void add(String name, int age, int classId)
         {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(@"INSERT INTO AgeGroups(Classid, Name, Age) VALUES(@ClassId, @Name, @Age)", cn))
-            {
+            using (DbConnection cn = DataSource.getConnection())
+            using (DbCommand cm = DataSource.getCommand(cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
+                cm.CommandText = @"INSERT INTO AgeGroups(Classid, Name, Age) VALUES(@ClassId, @Name, @Age)";
 
-                cm.Parameters.Add("@Name", DbType.String, AgeGroup.NAME_MAX_LENGTH).Value = name;
-                cm.Parameters.Add("@Age", DbType.Int32).Value = age;
-                cm.Parameters.Add("@ClassId", DbType.Int32).Value = classId;
+                DataSource.addParam(cm, "@Name", name, AgeGroup.NAME_MAX_LENGTH);
+                DataSource.addParam(cm, "@Age", age);
+                DataSource.addParam(cm, "@ClassId", classId);
                 cm.ExecuteNonQuery();
-
-                return (int)cn.LastInsertRowId;
             }
         }
 
         public void deleteClassAgeGroups(int classId) {
-            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM AgeGroups WHERE ClassId = @Id", cn)) {
+            using (DbConnection cn = DataSource.getConnection())
+            using (DbCommand cm = DataSource.getCommand(cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
+                cm.CommandText = @"DELETE FROM AgeGroups WHERE ClassId = @Id";
 
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = classId;
+                DataSource.addParam(cm, "@Id", classId);
                 cm.ExecuteNonQuery();
             }
         }
 
         public void delete(int id)
         {
-            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM AgeGroups WHERE Id = @Id", cn))
-            {
+            using (DbConnection cn = DataSource.getConnection())
+            using (DbCommand cm = DataSource.getCommand(cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
+                cm.CommandText = @"DELETE FROM AgeGroups WHERE Id = @Id";
 
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                DataSource.addParam(cm, "@Id", id);
                 cm.ExecuteNonQuery();
             }
         }

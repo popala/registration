@@ -1,9 +1,68 @@
 ﻿using Rejestracja.Utils;
 using System;
 using System.Data.SQLite;
+using System.IO;
 
 namespace Rejestracja.Data {
     class DataFileUtil {
+
+        public static void initDataFile() {
+            String filePath = Resources.getDataFilePath();
+            if (File.Exists(filePath)) {
+                return;
+            }
+
+            String directory = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directory)) {
+                Directory.CreateDirectory(directory);
+            }
+
+            SQLiteConnection.CreateFile(filePath);
+            DataFileUtil.createTables();
+        }
+
+        public static float getFileVersion() {
+            using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
+            using (SQLiteCommand cm = new SQLiteCommand("SELECT COUNT(name) AS cnt FROM sqlite_master WHERE type='table' AND name='Version'", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+
+                int cnt = (int)cm.ExecuteScalar();
+                if (cnt == 0) {
+                    return 0.931F;
+                }
+
+                cm.CommandText = "SELECT MAX(Version) FROM Version";
+                return (float)cm.ExecuteScalar();
+            }
+        }
+
+        public static void upgradeDataFile() {
+
+            float ver = getFileVersion();
+
+            if (ver < .941) {
+
+                //Generate backup file name
+                string dataFileName = Resources.getDataFilePath();
+                string backupFileName = null;
+
+                if (!File.Exists(dataFileName.Replace(".sqlite", ".BACKUP.sqlite"))) {
+                    backupFileName = dataFileName.Replace(".sqlite", ".BACKUP.sqlite");
+                } else {
+                    int i = 1;
+                    do {
+                        backupFileName = dataFileName.Replace(".sqlite", string.Format(".BACKUP{0}.sqlite", i));
+                    } while (File.Exists(backupFileName));
+                }
+
+                //Create backup file
+                File.Copy(dataFileName, backupFileName, false);
+
+                //Populate it
+                DataFileUtil.convertTo941();
+            }
+        }
 
         public static void createTables() {
             String query = 

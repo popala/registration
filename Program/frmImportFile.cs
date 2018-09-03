@@ -252,9 +252,8 @@ namespace Rejestracja {
                 }
                 fieldMap.ModelCategory.Add(categoryFieldMap.ToArray());
                 
-                DataSource ds = new DataSource();
                 if (chkDropExistingRecords.Checked) {
-                    ds.dropRegistrationRecords();
+                    DataSource.dropRegistrationRecords();
                 }
                 
                 String badRecordFile = Path.Combine(Resources.DataFileFolder, String.Format("bledy-import_{0}.csv", DateTime.Now.ToString("yyyy-MM-dd_H-mm-ss")));

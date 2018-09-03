@@ -18,7 +18,7 @@ namespace Rejestracja.Data.Dao {
         bool exists(int upperAge, int classId);
         AgeGroup getOlderAgeGroup(String ageGroupName, int classId);
         List<AgeGroup> getList(int classId);
-        int add(String name, int age, int classId);
+        void add(String name, int age, int classId);
         void deleteClassAgeGroups(int classId);
         void delete(int id);
     }

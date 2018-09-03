@@ -625,17 +625,17 @@ namespace Rejestracja
                 txtAge.SelectAll();
                 return;
             }
-            int agId = _ageGroupDao.add(txtAgeGroup.Text, int.Parse(txtAge.Text), -1);
+            // int agId = _ageGroupDao.add(txtAgeGroup.Text, int.Parse(txtAge.Text), -1);
             loadAgeGroups();
             setButtons();
 
-            foreach (ListViewItem item in lvAgeGroup.Items) {
-                if ((int)item.Tag == agId) {
-                    item.EnsureVisible();
-                    item.Selected = true;
-                    break;
-                }
-            }
+            //foreach (ListViewItem item in lvAgeGroup.Items) {
+            //    if ((int)item.Tag == agId) {
+            //        item.EnsureVisible();
+            //        item.Selected = true;
+            //        break;
+            //    }
+            //}
 
             txtAgeGroup.Focus();
             txtAgeGroup.SelectAll();

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Rejestracja</RootNamespace>
     <AssemblyName>Rejestracja</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>910384fa</NuGetPackageImportStamp>
@@ -114,7 +114,6 @@
     <Compile Include="Data\Dao\Interfaces\IRegistrationEntryDao.cs" />
     <Compile Include="Data\Dao\Interfaces\IResultDao.cs" />
     <Compile Include="Data\Dao\Interfaces\IScaleDao.cs" />
-    <Compile Include="Data\Dao\MySQL\AgeGroupDao.cs" />
     <Compile Include="Data\Dao\SQLite\AgeGroupDao.cs" />
     <Compile Include="Data\Dao\SQLite\AwardDao.cs" />
     <Compile Include="Data\Dao\SQLite\ClassDao.cs" />
@@ -124,6 +123,7 @@
     <Compile Include="Data\Dao\SQLite\RegistrationDao.cs" />
     <Compile Include="Data\Dao\SQLite\ScaleDao.cs" />
     <Compile Include="Data\Dao\SQLite\CategoryDao.cs" />
+    <Compile Include="Data\MySqlUtil.cs" />
     <Compile Include="Data\DataFileUtil.cs" />
     <Compile Include="Data\ImportUtil.cs" />
     <Compile Include="Data\Objects\AgeGroup.cs" />
@@ -325,7 +325,9 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Data\Dao\MySQL\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

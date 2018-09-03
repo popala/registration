@@ -14,47 +14,139 @@ using Rejestracja.Data.Dao;
 using Rejestracja.Utils;
 using System;
 using System.Data.SQLite;
+using MySql.Data.MySqlClient;
 using System.IO;
 using System.Text;
+using System.Data.Common;
+using System.Data;
 
 namespace Rejestracja {
     class DataSource {
-        private String _connectionString;
 
         public DataSource() {
-            this._connectionString = Resources.getConnectionString();
+            //this._connectionString = Resources.getConnectionString();
         }
 
         public DataSource(String newFilePath) {
-            Resources.setDataFile(newFilePath);
-            this._connectionString = Resources.getConnectionString();
-            initDataFile();
-        }
-
-        private void initDataFile() {
-            String fileName = Resources.getDataFilePath();
-
-            if (fileName == null) {
+            if (String.IsNullOrEmpty(newFilePath)) {
                 throw new FileNotFoundException("Data file path is empty");
             }
+            Resources.setConnectionString(newFilePath, null);
+            DataFileUtil.initDataFile();
 
-            if (File.Exists(fileName)) {
-                return;
-            }
-
-            String directory = Path.GetDirectoryName(fileName);
-            if (!Directory.Exists(directory)) {
-                Directory.CreateDirectory(directory);
-            }
-
-            SQLiteConnection.CreateFile(fileName);
-            DataFileUtil.createTables();
             insertDefaults();
-            
+
             Options.set("RegistrationView", "groupped");
             Options.set("RegistrationSortColumn", "0");
             Options.set("RegistrationSortOrder", "0");
             Options.set("ValidateAgeGroup", "true");
+        }
+
+        public DataSource(String server, String user, String password, String database, String additionalParams) {
+            String connectionString = 
+                String.Format("server={0};uid={1};pwd={2};{3}",
+                server,
+                user,
+                password,
+                additionalParams
+            );
+
+            using(MySqlConnection cn = new MySqlConnection(connectionString))
+            using (MySqlCommand cm = new MySqlCommand("", cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+                cm.CommandText = String.Format("CREATE DATABASE {0} IF NOT EXISTS", database);
+            }
+
+            insertDefaults();
+
+            Options.set("RegistrationView", "groupped");
+            Options.set("RegistrationSortColumn", "0");
+            Options.set("RegistrationSortOrder", "0");
+            Options.set("ValidateAgeGroup", "true");
+        }
+
+        public static DbConnection getConnection() {
+            String dataFile = Properties.Settings.Default.DataFile;
+            if (!String.IsNullOrWhiteSpace(dataFile) && File.Exists(dataFile)) {
+                return new SQLiteConnection(dataFile);
+            }
+
+            String mySqlConnectionString = Properties.Settings.Default.MySqlConnection;
+            if (!String.IsNullOrWhiteSpace(mySqlConnectionString)) {
+                return new MySqlConnection(mySqlConnectionString);
+            }
+
+            throw new ApplicationException("Missing or invalid database configuration");
+        }
+
+        public static DbCommand getCommand(DbConnection cn) {
+            if (cn is SQLiteConnection) {
+                return new SQLiteCommand((SQLiteConnection)cn);
+            } else {
+                return new MySqlCommand("", (MySqlConnection)cn);
+            }
+        }
+
+        public static void addParam(DbCommand cm, String parameterName, String parameterValue) {
+            addParam(cm, parameterName, -1);
+        }
+
+        public static void addParam(DbCommand cm, String parameterName, String parameterValue, int parameterSize) {
+            DbParameter parm = cm.CreateParameter();
+            parm.ParameterName = parameterName;
+            parm.Value = parameterValue;
+            parm.DbType = DbType.String;
+            if (parameterSize > 0) {
+                parm.Size = parameterSize;
+            }
+            cm.Parameters.Add(parm);
+        }
+
+        public static void addParam(DbCommand cm, String parameterName, int parameterValue) {
+            DbParameter parm = cm.CreateParameter();
+            parm.ParameterName = parameterName;
+            parm.Value = parameterValue;
+            parm.DbType = DbType.Int32;
+            cm.Parameters.Add(parm);
+        }
+
+        public static void addParam(DbCommand cm, String parameterName, long parameterValue) {
+            DbParameter parm = cm.CreateParameter();
+            parm.ParameterName = parameterName;
+            parm.Value = parameterValue;
+            parm.DbType = DbType.Int64;
+            cm.Parameters.Add(parm);
+        }
+
+        public static void addParam(DbCommand cm, String parameterName, bool parameterValue) {
+            DbParameter parm = cm.CreateParameter();
+            parm.ParameterName = parameterName;
+            parm.Value = parameterValue;
+            parm.DbType = DbType.Boolean;
+            cm.Parameters.Add(parm);
+        }
+
+        public static void dropRegistrationRecords() {
+            using (DbConnection cn = DataSource.getConnection())
+            using (DbCommand cm = DataSource.getCommand(cn)) {
+                cn.Open();
+                cm.CommandType = System.Data.CommandType.Text;
+                cm.CommandText = @"DELETE FROM Results; DELETE FROM Registration; DELETE FROM Models; DELETE FROM Modelers;";
+                cm.ExecuteNonQuery();
+            }
+        }
+
+        public static bool hasValidDataSource() {
+            String dataFile = Properties.Settings.Default.DataFile;
+            if (!String.IsNullOrWhiteSpace(dataFile) && File.Exists(dataFile)) {
+                return true;
+            }
+            String mySqlConnectionString = Properties.Settings.Default.MySqlConnection;
+            if (!String.IsNullOrWhiteSpace(mySqlConnectionString)) {
+                return true;
+            }
+            return false;
         }
 
         private void insertDefaults() {
@@ -139,8 +231,8 @@ namespace Rejestracja {
             StringBuilder output = new StringBuilder();
             output.AppendLine(@"""Nr Modelu"",""Dodane"",""Email"",""Imię"",""Nazwisko"",""Klub"",""Grupa Wiekowa"",""Nazwa Modelu"",""Klasa Modelu"",""Skala"",""Wydawnictwo"",""Kategoria"",""Rok Ur.""");
 
-            using (SQLiteConnection cn = new SQLiteConnection(_connectionString))
-            using (SQLiteCommand cm = new SQLiteCommand("", cn)) {
+            using (DbConnection cn = DataSource.getConnection())
+            using (DbCommand cm = DataSource.getCommand(cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
                 cm.CommandText =
@@ -148,7 +240,7 @@ namespace Rejestracja {
                         ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, COALESCE(YearOfBirth,0) AS YearOfBirth 
                     FROM Registration ORDER BY EntryId";
 
-                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                using (DbDataReader dr = cm.ExecuteReader()) {
                     if (use2003Format) {
                         while (dr.Read()) {
                             output.AppendLine(
@@ -206,58 +298,5 @@ namespace Rejestracja {
         private string wrapCsvValue2003(string value) {
             return String.Format("\"{0}\"", value);
         }
-
-        public void dropRegistrationRecords() {
-            using (SQLiteConnection cn = new SQLiteConnection(_connectionString))
-            using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Results; DELETE FROM Registration; DELETE FROM Models; DELETE FROM Modelers;", cn)) {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.ExecuteNonQuery();
-            }
-        }
-
-        public float getFileVersion() {
-            using(SQLiteConnection cn = new SQLiteConnection(_connectionString))
-            using(SQLiteCommand cm = new SQLiteCommand("SELECT COUNT(name) AS cnt FROM sqlite_master WHERE type='table' AND name='Version'", cn)) {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-
-                int cnt = (int)cm.ExecuteScalar();
-                if(cnt == 0) {
-                    return 0.931F;
-                }
-
-                cm.CommandText = "SELECT MAX(Version) FROM Version";
-                return (float)cm.ExecuteScalar();
-            }
-        }
-
-        public void upgradeDataFile() {
-
-            float ver = getFileVersion();
-            
-            if(ver < .941) {
-
-                //Generate backup file name
-                string dataFileName = Resources.getDataFilePath();
-                string backupFileName = null;
-
-                if(!File.Exists(dataFileName.Replace(".sqlite", ".BACKUP.sqlite"))) {
-                    backupFileName = dataFileName.Replace(".sqlite", ".BACKUP.sqlite");
-                }
-                else {
-                    int i = 1;
-                    do {
-                        backupFileName = dataFileName.Replace(".sqlite", string.Format(".BACKUP{0}.sqlite", i));
-                    } while(File.Exists(backupFileName));
-                }
-
-                //Create backup file
-                File.Copy(dataFileName, backupFileName, false);
-
-                //Populate it
-                DataFileUtil.convertTo941();
-            }
-        }       
     }
 }
