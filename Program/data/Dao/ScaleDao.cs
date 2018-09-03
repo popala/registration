@@ -19,7 +19,7 @@ using System.Linq;
 
 namespace Rejestracja.Data.Dao
 {
-    class ScaleDao : IScaleDao
+    class ScaleDao
     {
         public List<Scale> getList()
         {

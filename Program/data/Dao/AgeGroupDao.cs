@@ -18,7 +18,7 @@ using System.Data.Common;
 
 namespace Rejestracja.Data.Dao
 {
-    class AgeGroupDao : IAgeGroupDao
+    class AgeGroupDao
     {
         public bool exists(int upperAge, int classId) {
             using (DbConnection cn = DataSource.getConnection())

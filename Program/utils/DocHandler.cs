@@ -346,7 +346,7 @@ namespace Rejestracja.Utils
 
 
             //SPECIAL AWARDS
-            long awardId = -1;
+            int awardId = -1;
             results = resultDao.getAwardResults();
 
             resultHtml.AppendLine(@"<h2>Nagrody Specjalne</h2>");
@@ -443,7 +443,7 @@ namespace Rejestracja.Utils
             }
 
             //SPECIAL AWARDS
-            long awardId = -1;
+            int awardId = -1;
             results = resultDao.getAwardResults();
 
             sb.AppendLine(docHeader);

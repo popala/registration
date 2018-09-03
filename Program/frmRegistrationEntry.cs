@@ -145,7 +145,6 @@ namespace Rejestracja
         }
 
         private void loadModeler(int modelerId) {
-            
             Modeler modeler = _modelerDao.get(modelerId);
 
             //Load modeler info
@@ -191,7 +190,7 @@ namespace Rejestracja
             List<ListViewItem> itemsToDisable;
             List<Registration> regList = _registrationDao.getList(m.id).ToList();
 
-            int age = DateTime.Now.Year - ((ComboBoxItem)cboYearOfBirth.SelectedItem).id;
+            int age = DateTime.Now.Year - (int)((ComboBoxItem)cboYearOfBirth.SelectedItem).id;
             //String properAgeGroup = _ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray()[0].name;
 
             //Compare on category Id, only compare on name if ID = -1
@@ -280,7 +279,7 @@ namespace Rejestracja
         }
 
         private bool modelerChanged() {
-            Modeler updatedModeler = new Modeler(int.Parse(txtModelerId.Text), txtFirstName.Text, txtLastName.Text, txtModelClub.Text, ((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
+            Modeler updatedModeler = new Modeler(int.Parse(txtModelerId.Text), txtFirstName.Text, txtLastName.Text, txtModelClub.Text, (int)((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
             Modeler currentModeler = _modelerDao.get(updatedModeler.id);
 
             return !currentModeler.IsIdentical(updatedModeler);
@@ -432,7 +431,7 @@ namespace Rejestracja
             int modelId = ((ComboBoxItem)cboModelId.SelectedItem).id;
 
             if(modelerChanged()) {
-                _modelerDao.update(int.Parse(txtModelerId.Text), txtFirstName.Text, txtLastName.Text, txtModelClub.Text, ((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
+                _modelerDao.update(int.Parse(txtModelerId.Text), txtFirstName.Text, txtLastName.Text, txtModelClub.Text, (int)((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
             }
             if(modelChanged()) {
                 _modelDao.update(modelId, txtModelName.Text, cboModelPublisher.Text, cboModelScale.Text);
@@ -504,7 +503,7 @@ namespace Rejestracja
 
                 //Add modeler
                 if(txtModelerId.Text.Length == 0) {
-                    modelerId = _modelerDao.add(txtFirstName.Text, txtLastName.Text, txtModelClub.Text, ((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
+                    modelerId = _modelerDao.add(txtFirstName.Text, txtLastName.Text, txtModelClub.Text, (int)((ComboBoxItem)cboYearOfBirth.SelectedItem).id, txtEmail.Text);
                     txtModelerId.Text = modelerId.ToString();
                 }
                 else {

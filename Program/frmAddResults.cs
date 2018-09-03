@@ -181,7 +181,7 @@ namespace Rejestracja
 
                 lvResults.BeginUpdate();
 
-                long entryId = long.Parse(item.SubItems[0].Text);
+                int entryId = int.Parse(item.SubItems[0].Text);
                 String strPlace = item.SubItems[4].Text;
 
 
@@ -253,7 +253,7 @@ namespace Rejestracja
                 return;
             }
 
-            long awardId = ((ComboBoxItem)cboSpecialAward.SelectedItem).id;
+            int awardId = ((ComboBoxItem)cboSpecialAward.SelectedItem).id;
             //Check if it is already added to the award list
             if (_resultDao.awardResultExists(entryId, awardId)) {
                 MessageBox.Show("Wpis istnieje", "Dodawanie Wyników", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);

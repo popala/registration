@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Rejestracja.Data.Dao {
-    class ModelDao : IModelDao {
+    class ModelDao {
         public IEnumerable<Model> getList() {
             return getList(null, -1);
         }

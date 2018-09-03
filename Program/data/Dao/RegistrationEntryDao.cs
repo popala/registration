@@ -18,7 +18,7 @@ using System.Text;
 
 namespace Rejestracja.Data.Dao
 {
-    class RegistrationEntryDao : IRegistrationEntryDao
+    class RegistrationEntryDao
     {
         private const String BASE_QUERY =
             @"SELECT 
@@ -368,7 +368,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public void mergeAgeGroupsInCategory(long modelCategoryId, String sourceAgeGroup, String targetAgeGroup) {
+        public void mergeAgeGroupsInCategory(int modelCategoryId, String sourceAgeGroup, String targetAgeGroup) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(
                     @"DELETE FROM Results WHERE RegistrationId IN(SELECT Id FROM Registration WHERE AgeGroup = @SourceAgeGroup AND CategoryId = @CategoryId) AND AwardId IS NULL", cn)) {
@@ -377,7 +377,7 @@ namespace Rejestracja.Data.Dao
 
                 cm.Parameters.Add("@SourceAgeGroup", System.Data.DbType.String, 64).Value = sourceAgeGroup;
                 cm.Parameters.Add("@TargetAgeGroup", System.Data.DbType.String, 64).Value = targetAgeGroup;
-                cm.Parameters.Add("@CategoryId", System.Data.DbType.Int64).Value = modelCategoryId;
+                cm.Parameters.Add("@CategoryId", System.Data.DbType.Int32).Value = modelCategoryId;
 
                 cm.ExecuteNonQuery();
 
@@ -420,7 +420,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public bool delete(long registrationId)
+        public bool delete(int registrationId)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Registration WHERE Id = @Id", cn))

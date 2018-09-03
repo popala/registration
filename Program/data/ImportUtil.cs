@@ -4,7 +4,7 @@ using Rejestracja.Data.Objects;
 using Rejestracja.Utils;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+using System.Data.Common;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -25,7 +25,6 @@ namespace Rejestracja.Data {
             List<String> publishers = publisherDao.getSimpleList().ToList();
             List<Category> modelCategories = new CategoryDao().getList().ToList();
             List<AgeGroup> standardAgeGroups = new AgeGroupDao().getList(-1);
-            //List<String> modelClasses = ClassDao.getSimpleList().ToList();
             List<String> modelScales = new ScaleDao().getList().Select(x => x.name).ToList();
             List<Class> modelClasses = new ClassDao().getList(true, true);
 
@@ -218,20 +217,26 @@ namespace Rejestracja.Data {
         }
 
         private static void insertModelers(List<Modeler> modelers) {
-            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(
-                @"INSERT INTO Modelers(FirstName, LastName, ClubName, YearOfBirth, Email)
-                    VALUES(@FirstName, @LastName, @ClubName, @YearOfBirth, @Email)", cn)) {
+            using (DbConnection cn = DataSource.getConnection())
+            using (DbCommand cm = DataSource.getCommand(cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
+                cm.CommandText = 
+                    @"INSERT INTO Modelers(FirstName, LastName, ClubName, YearOfBirth, Email)
+                    VALUES(@FirstName, @LastName, @ClubName, @YearOfBirth, @Email)";
 
-                cm.Parameters.Add(new SQLiteParameter("@Email", System.Data.DbType.String));
-                cm.Parameters.Add(new SQLiteParameter("@FirstName", System.Data.DbType.String));
-                cm.Parameters.Add(new SQLiteParameter("@LastName", System.Data.DbType.String));
-                cm.Parameters.Add(new SQLiteParameter("@ClubName", System.Data.DbType.String));
-                cm.Parameters.Add(new SQLiteParameter("@YearOfBirth", System.Data.DbType.Int32));
+                DataSource.addParam(cm, "@Email", "", Modeler.MAX_EMAIL_LENGTH);
+                DataSource.addParam(cm, "@FirstName", "", Modeler.MAX_NAME_LENGTH);
+                DataSource.addParam(cm, "@LastName", "", Modeler.MAX_NAME_LENGTH);
+                DataSource.addParam(cm, "@ClubName", "", Modeler.MAX_NAME_LENGTH);
+                DataSource.addParam(cm, "@YearOfBirth", 1970);
+                //cm.Parameters.Add(new SQLiteParameter("@Email", System.Data.DbType.String));
+                //cm.Parameters.Add(new SQLiteParameter("@FirstName", System.Data.DbType.String));
+                //cm.Parameters.Add(new SQLiteParameter("@LastName", System.Data.DbType.String));
+                //cm.Parameters.Add(new SQLiteParameter("@ClubName", System.Data.DbType.String));
+                //cm.Parameters.Add(new SQLiteParameter("@YearOfBirth", System.Data.DbType.Int32));
 
-                using(SQLiteTransaction t = cn.BeginTransaction()) {
+                using(DbTransaction t = cn.BeginTransaction()) {
                     foreach(Modeler modeler in modelers) {
                         
                         cm.Parameters["@Email"].Value = modeler.email;
@@ -241,7 +246,7 @@ namespace Rejestracja.Data {
                         cm.Parameters["@YearOfBirth"].Value = modeler.yearOfBirth;
                         try {
                             cm.ExecuteNonQuery();
-                            modeler.id = (int)cn.LastInsertRowId;
+                            modeler.id = DataSource.getLastInsertId(cn);
                         }
                         catch(Exception e) {
                             LogWriter.error("Error importing a modeler", e);
@@ -253,28 +258,36 @@ namespace Rejestracja.Data {
         }
 
         private static void insertModels(List<Model> models) {
-            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(
-                @"INSERT INTO Models(Name, Publisher, Scale, ModelerId)
-                    VALUES(@Name, @Publisher, @Scale, @ModelerId)", cn)) {
+            if (models.Count == 0) {
+                return;
+            }
+
+            using (DbConnection cn = DataSource.getConnection())
+            using (DbCommand cm = DataSource.getCommand(cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
+                cm.CommandText = 
+                    @"INSERT INTO Models(Name, Publisher, Scale, ModelerId)
+                    VALUES(@Name, @Publisher, @Scale, @ModelerId)";
 
-                cm.Parameters.Add(new SQLiteParameter("@Name", System.Data.DbType.String));
-                cm.Parameters.Add(new SQLiteParameter("@Publisher", System.Data.DbType.String));
-                cm.Parameters.Add(new SQLiteParameter("@Scale", System.Data.DbType.String));
-                cm.Parameters.Add(new SQLiteParameter("@ModelerId", System.Data.DbType.Int32));
+                DataSource.addParam(cm, "@Name", models[0].name, Model.MAX_NAME_LENGTH);
+                DataSource.addParam(cm, "@Publisher", models[0].publisher, Publisher.MAX_NAME_LENGTH);
+                DataSource.addParam(cm, "@Scale", models[0].scale, Scale.MAX_NAME_LENGTH);
+                DataSource.addParam(cm, "@ModelerId", models[0].modelerId);
+                //cm.Parameters.Add(new SQLiteParameter("@Name", System.Data.DbType.String));
+                //cm.Parameters.Add(new SQLiteParameter("@Publisher", System.Data.DbType.String));
+                //cm.Parameters.Add(new SQLiteParameter("@Scale", System.Data.DbType.String));
+                //cm.Parameters.Add(new SQLiteParameter("@ModelerId", System.Data.DbType.Int32));
 
-                using(SQLiteTransaction t = cn.BeginTransaction()) {
+                using(DbTransaction t = cn.BeginTransaction()) {
                     foreach(Model model in models) {
-
                         cm.Parameters["@Name"].Value = model.name;
                         cm.Parameters["@Publisher"].Value = model.publisher;
                         cm.Parameters["@Scale"].Value = model.scale;
                         cm.Parameters["@ModelerId"].Value = model.modelerId;
                         try {
                             cm.ExecuteNonQuery();
-                            model.id = (int)cn.LastInsertRowId;
+                            model.id = DataSource.getLastInsertId(cn); //(int)cn.LastInsertRowId;
                         }
                         catch(Exception e) {
                             LogWriter.error("Error importing a modeler", e);
@@ -286,21 +299,26 @@ namespace Rejestracja.Data {
         }
 
         private static void insertRegistrationEntries(List<Registration> registrations) {
-            using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using(SQLiteCommand cm = new SQLiteCommand(
-                @"INSERT INTO Registration(TmStamp, ModelId, CategoryId, CategoryName, AgeGroupName)
-                    VALUES(@TmStamp, @ModelId, @CategoryId, @CategoryName, @AgeGroupName)", cn)) {
+            using (DbConnection cn = DataSource.getConnection())
+            using (DbCommand cm = DataSource.getCommand(cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
+                cm.CommandText =
+                    @"INSERT INTO Registration(TmStamp, ModelId, CategoryId, CategoryName, AgeGroupName)
+                    VALUES(@TmStamp, @ModelId, @CategoryId, @CategoryName, @AgeGroupName)";
 
-                cm.Parameters.Add(new SQLiteParameter("@TmStamp", System.Data.DbType.DateTime));
-                cm.Parameters.Add(new SQLiteParameter("@ModelId", System.Data.DbType.Int32));
-                cm.Parameters.Add(new SQLiteParameter("@CategoryId", System.Data.DbType.Int32));
-                cm.Parameters.Add(new SQLiteParameter("@CategoryName", System.Data.DbType.String));
-                cm.Parameters.Add(new SQLiteParameter("@AgeGroupName", System.Data.DbType.String));
+                DataSource.addParam(cm, "@TmStamp", DateTime.Now);
+                DataSource.addParam(cm, "@ModelId", 0);
+                DataSource.addParam(cm, "@CategoryId", 0);
+                DataSource.addParam(cm, "@CategoryName", "", Category.MAX_NAME_LENGTH);
+                DataSource.addParam(cm, "@AgeGroupName", "", AgeGroup.NAME_MAX_LENGTH);
+                //cm.Parameters.Add(new SQLiteParameter("@TmStamp", System.Data.DbType.DateTime));
+                //cm.Parameters.Add(new SQLiteParameter("@ModelId", System.Data.DbType.Int32));
+                //cm.Parameters.Add(new SQLiteParameter("@CategoryId", System.Data.DbType.Int32));
+                //cm.Parameters.Add(new SQLiteParameter("@CategoryName", System.Data.DbType.String));
+                //cm.Parameters.Add(new SQLiteParameter("@AgeGroupName", System.Data.DbType.String));
                 
-
-                using(SQLiteTransaction t = cn.BeginTransaction()) {
+                using(DbTransaction t = cn.BeginTransaction()) {
                     foreach(Registration registration in registrations) {
 
                         cm.Parameters["@TmStamp"].Value = registration.timeStamp;
@@ -310,7 +328,7 @@ namespace Rejestracja.Data {
                         cm.Parameters["@AgeGroupName"].Value = registration.ageGroupName;
                         try {
                             cm.ExecuteNonQuery();
-                            registration.id = (int)cn.LastInsertRowId;
+                            registration.id = DataSource.getLastInsertId(cn); //(int)cn.LastInsertRowId;
                         }
                         catch(Exception e) {
                             LogWriter.error("Error adding registration entry", e);

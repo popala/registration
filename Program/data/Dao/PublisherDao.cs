@@ -18,7 +18,7 @@ using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao
 {
-    class PublisherDao : IPublisherDao
+    class PublisherDao
     {
         public IEnumerable<Publisher> getList()
         {
@@ -79,7 +79,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public void delete(long id)
+        public void delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"DELETE FROM Publishers WHERE Id = @Id", cn))
@@ -87,7 +87,7 @@ namespace Rejestracja.Data.Dao
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
                 cm.ExecuteNonQuery();
             }
         }

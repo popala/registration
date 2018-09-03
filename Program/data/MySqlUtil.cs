@@ -25,8 +25,8 @@ namespace Rejestracja.Data {
             return sb.ToString();
         }
 
-        public static void createDatabase(string server, string database, string user, string password, int port, string additionalOptions) {
-            String connectionString = String.Format("server={0};user={1};port={2};password={3};{4}", server, user, port, password, additionalOptions);
+        public static void createDatabase(string server, string database, string user, string password, string additionalOptions) {
+            String connectionString = String.Format("server={0};user={1};password={2};{3}", server, user, password, additionalOptions);
 
             using (MySqlConnection cn = new MySqlConnection(connectionString))
             using (MySqlCommand cm = new MySqlCommand("CREATE DATABASE IF NOT EXISTS @database", cn)) {

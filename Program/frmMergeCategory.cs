@@ -71,11 +71,11 @@ namespace Rejestracja {
                 lvCategories.Items.Clear();
 
                 List<String[]> categories = new RegistrationEntryDao().getListForMergingCategories(maxCountInCategory).ToList();
-                long categoryId = -2;
+                int categoryId = -2;
                 ListViewGroup group = null;
 
                 foreach (String[] category in categories) {
-                    long catId = long.Parse(category[3]);
+                    int catId = int.Parse(category[3]);
                     if (categoryId != catId) {
                         if (categoryId > -2) {
                             group.Items[group.Items.Count - 1].ForeColor = SystemColors.GrayText;
@@ -85,7 +85,7 @@ namespace Rejestracja {
                         lvCategories.Groups.Add(group);
                     }
                     ListViewItem item = new ListViewItem(new String[] { category[0], category[1], category[4], "" }, group);
-                    item.Tag = long.Parse(category[3]);
+                    item.Tag = int.Parse(category[3]);
                     lvCategories.Items.Add(item);
                 }
                 if (group != null) {
@@ -104,7 +104,7 @@ namespace Rejestracja {
 
         private void btnMerge_Click(object sender, EventArgs e) {
             RegistrationEntryDao registrationEntryDao = new RegistrationEntryDao();
-            long categoryId = -1;
+            int categoryId = -1;
             String targetAgeGroup = null;
             String sourceAgeGroup = null;
 
@@ -113,7 +113,7 @@ namespace Rejestracja {
             for (int i = 0; i < lvCategories.Items.Count; i++) {
                 ListViewItem item = lvCategories.Items[i];
                 if (item.Checked) {
-                    categoryId = (long)item.Tag;
+                    categoryId = (int)item.Tag;
                     if (categoryId < 0) {
                         continue;
                     }

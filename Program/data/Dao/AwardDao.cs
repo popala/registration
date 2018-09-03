@@ -17,7 +17,7 @@ using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao
 {
-    class AwardDao : IAwardDao
+    class AwardDao
     {
         public Award get(int id)
         {

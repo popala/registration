@@ -18,7 +18,7 @@ using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao
 {
-    class ClassDao : IClassDao
+    class ClassDao
     {
         private const String BASE_QUERY = 
             @"SELECT Id, Name, RegistrationTemplate, JudgingFormTemplate, DiplomaTemplate, ScoringCardType, UseCustomAgeGroups,

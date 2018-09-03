@@ -24,7 +24,6 @@ namespace Rejestracja {
     class DataSource {
 
         public DataSource() {
-            //this._connectionString = Resources.getConnectionString();
         }
 
         public DataSource(String newFilePath) {
@@ -44,20 +43,16 @@ namespace Rejestracja {
 
         public DataSource(String server, String user, String password, String database, String additionalParams) {
             String connectionString = 
-                String.Format("server={0};uid={1};pwd={2};{3}",
+                String.Format("server={0};uid={1};pwd={2};database={3};{4}",
                 server,
                 user,
                 password,
+                database,
                 additionalParams
             );
 
-            using(MySqlConnection cn = new MySqlConnection(connectionString))
-            using (MySqlCommand cm = new MySqlCommand("", cn)) {
-                cn.Open();
-                cm.CommandType = System.Data.CommandType.Text;
-                cm.CommandText = String.Format("CREATE DATABASE {0} IF NOT EXISTS", database);
-            }
-
+            MySqlUtil.createDatabase(server, user, password, database, additionalParams);
+            Resources.setConnectionString(null, connectionString);
             insertDefaults();
 
             Options.set("RegistrationView", "groupped");
@@ -69,7 +64,7 @@ namespace Rejestracja {
         public static DbConnection getConnection() {
             String dataFile = Properties.Settings.Default.DataFile;
             if (!String.IsNullOrWhiteSpace(dataFile) && File.Exists(dataFile)) {
-                return new SQLiteConnection(dataFile);
+                return new SQLiteConnection(String.Format("Data Source={0}", dataFile));
             }
 
             String mySqlConnectionString = Properties.Settings.Default.MySqlConnection;
@@ -85,6 +80,16 @@ namespace Rejestracja {
                 return new SQLiteCommand((SQLiteConnection)cn);
             } else {
                 return new MySqlCommand("", (MySqlConnection)cn);
+            }
+        }
+
+        public static int getLastInsertId(DbConnection cn) {
+            if (cn is SQLiteConnection) {
+                return (int)((SQLiteConnection)cn).LastInsertRowId;
+            } else {
+                using (MySqlCommand cm = new MySqlCommand("SELECT LAST_INSERT_ID();", (MySqlConnection)cn)) {
+                    return (int)cm.ExecuteScalar();
+                }
             }
         }
 
@@ -111,19 +116,19 @@ namespace Rejestracja {
             cm.Parameters.Add(parm);
         }
 
-        public static void addParam(DbCommand cm, String parameterName, long parameterValue) {
-            DbParameter parm = cm.CreateParameter();
-            parm.ParameterName = parameterName;
-            parm.Value = parameterValue;
-            parm.DbType = DbType.Int64;
-            cm.Parameters.Add(parm);
-        }
-
         public static void addParam(DbCommand cm, String parameterName, bool parameterValue) {
             DbParameter parm = cm.CreateParameter();
             parm.ParameterName = parameterName;
             parm.Value = parameterValue;
             parm.DbType = DbType.Boolean;
+            cm.Parameters.Add(parm);
+        }
+
+        public static void addParam(DbCommand cm, String parameterName, DateTime parameterValue) {
+            DbParameter parm = cm.CreateParameter();
+            parm.ParameterName = parameterName;
+            parm.Value = parameterValue;
+            parm.DbType = DbType.DateTime;
             cm.Parameters.Add(parm);
         }
 

@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Rejestracja.Data.Dao {
-    class RegistrationDao : IRegistrationDao {
+    class RegistrationDao {
 
         public IEnumerable<Registration> getList() {
             using(SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))

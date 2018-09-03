@@ -18,7 +18,7 @@ using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao
 {
-    class CategoryDao : ICategoryDao
+    class CategoryDao
     {
         public IEnumerable<Category> getList() {
             return getList(false, null);
@@ -116,7 +116,7 @@ namespace Rejestracja.Data.Dao
             }
         }
 
-        public Category get(long id)
+        public Category get(int id)
         {
             Category ret = null;
 
@@ -126,7 +126,7 @@ namespace Rejestracja.Data.Dao
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", DbType.Int32).Value = id;
 
                 using (SQLiteDataReader dr = cm.ExecuteReader())
                 {
@@ -143,7 +143,7 @@ namespace Rejestracja.Data.Dao
             return ret;
         }
 
-        public void updateDisplayOrder(long id, int displayOrder)
+        public void updateDisplayOrder(int id, int displayOrder)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using(SQLiteCommand cm = new SQLiteCommand(@"UPDATE Categories SET DisplayOrder = @DisplayOrder WHERE Id = @Id", cn))
@@ -151,13 +151,13 @@ namespace Rejestracja.Data.Dao
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
                 cm.Parameters.Add("@DisplayOrder", System.Data.DbType.Int32).Value = displayOrder;
                 cm.ExecuteNonQuery();
             }
         }
 
-        public void delete(long id)
+        public void delete(int id)
         {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE RegistrationId IN(SELECT Id FROM Registration WHERE CategoryId = @Id) AND Place IS NOT NULL", cn))
@@ -165,7 +165,7 @@ namespace Rejestracja.Data.Dao
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
                     
-                cm.Parameters.Add("@Id", System.Data.DbType.Int64).Value = id;
+                cm.Parameters.Add("@Id", System.Data.DbType.Int32).Value = id;
                 cm.ExecuteNonQuery();
 
                 cm.CommandText = "UPDATE Registration SET CategoryId = -1 WHERE CategoryId = @Id";

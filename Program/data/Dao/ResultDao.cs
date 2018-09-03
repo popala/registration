@@ -17,16 +17,16 @@ using System.Data;
 using System.Data.SQLite;
 
 namespace Rejestracja.Data.Dao {
-    class ResultDao : IResultDao {
-        public long addCategoryResult(long entryId, int place) {
+    class ResultDao {
+        public int addCategoryResult(int entryId, int place) {
             return add(entryId, (int?)null, place);
         }
 
-        public long addAwardWinner(long entryId, long awardId) {
+        public int addAwardWinner(int entryId, int awardId) {
             return add(entryId, awardId, (int?)null);
         }
 
-        private long add(long entryId, long? awardId, int? place) {
+        private int add(int entryId, int? awardId, int? place) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("INSERT INTO Results(EntryId,AwardId,Place) VALUES(@entryId, @awardId, @place)", cn)) {
                 cn.Open();
@@ -48,7 +48,7 @@ namespace Rejestracja.Data.Dao {
                 }
                 cm.ExecuteNonQuery();
 
-                return cn.LastInsertRowId;
+                return (int)cn.LastInsertRowId;
             }
         }
 
@@ -140,36 +140,36 @@ namespace Rejestracja.Data.Dao {
             }
         }
 
-        public void deleteAwardResult(long entryId, long awardId) {
+        public void deleteAwardResult(int entryId, int awardId) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE EntryId = @EntryId AND AwardId = @AwardId", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-                cm.Parameters.Add("@EntryId", System.Data.DbType.Int64).Value = entryId;
-                cm.Parameters.Add("@AwardId", System.Data.DbType.Int64).Value = awardId;
+                cm.Parameters.Add("@EntryId", System.Data.DbType.Int32).Value = entryId;
+                cm.Parameters.Add("@AwardId", System.Data.DbType.Int32).Value = awardId;
                 cm.ExecuteNonQuery();
             }
         }
 
-        public void deleteCategoryResult(long entryId, int place) {
+        public void deleteCategoryResult(int entryId, int place) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("DELETE FROM Results WHERE EntryId = @EntryId AND Place = @Place", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
-                cm.Parameters.Add("@EntryId", System.Data.DbType.Int64).Value = entryId;
+                cm.Parameters.Add("@EntryId", System.Data.DbType.Int32).Value = entryId;
                 cm.Parameters.Add("@Place", System.Data.DbType.Int32).Value = place;
                 cm.ExecuteNonQuery();
             }
         }
 
-        public bool awardResultExists(long entryId, long awardId) {
+        public bool awardResultExists(int entryId, int awardId) {
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand("SELECT ResultId FROM Results WHERE EntryId = @EntryId AND AwardId = @AwardId", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
-                cm.Parameters.Add("@EntryId", System.Data.DbType.Int64).Value = entryId;
-                cm.Parameters.Add("@AwardId", System.Data.DbType.Int64).Value = awardId;
+                cm.Parameters.Add("@EntryId", System.Data.DbType.Int32).Value = entryId;
+                cm.Parameters.Add("@AwardId", System.Data.DbType.Int32).Value = awardId;
 
                 object res = cm.ExecuteScalar();
                 return (res != null);
