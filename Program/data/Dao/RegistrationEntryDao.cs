@@ -148,11 +148,12 @@ namespace Rejestracja.Data.Dao
                 case 5: sortFieldName = "YearOfBirth"; break;
                 case 6: sortFieldName = "ClubName"; break;
                 case 7: sortFieldName = "AgeGroupName"; break;
-                case 8: sortFieldName = "ModelName"; break;
-                case 9: sortFieldName = "CategoryName"; break;
-                case 10: sortFieldName = "ModelClass"; break;
-                case 11: sortFieldName = "Scale"; break;
-                case 12: sortFieldName = "Publisher"; break;
+                case 8:
+                case 9: sortFieldName = "ModelClass"; break;
+                case 10: sortFieldName = "CategoryName"; break;
+                case 11: sortFieldName = "ModelName"; break;
+                case 12: sortFieldName = "Scale"; break;
+                case 13: sortFieldName = "Publisher"; break;
                 default: sortFieldName = "RegistrationId"; break;
             }
             return getList(searchValue, sortFieldName, sortAscending);
@@ -338,15 +339,12 @@ namespace Rejestracja.Data.Dao
 			                    SELECT CategoryId, AgeGroupName, COUNT(Id) AS EntryCount 
 				                    FROM Registration 
 				                    WHERE CategoryId > -1
-				                    GROUP BY CategoryId, AgeGroupName
-				                    HAVING EntryCount < @MaxCount)
-	                    ) sm ON r.CategoryId = sm.CategoryId
+				                    GROUP BY CategoryId, AgeGroupName" + 
+            (maxEntryCount > 0 ? " HAVING EntryCount < @MaxCount " : "") +
+	                            @")
+                             ) sm ON r.CategoryId = sm.CategoryId
                     GROUP BY r.AgeGroupName, c.ModelClass, r.CategoryId
                     ORDER BY c.DisplayOrder, c.Name, ag.Age, c.ModelClass";
-
-            if (maxEntryCount < 1) {
-                yield break;
-            }
             
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(query, cn)) {
@@ -577,6 +575,33 @@ namespace Rejestracja.Data.Dao
                         }
 
                         ret.Add(new KeyValuePair<string, string>(dr["AgeGroupName"].ToString(), dr["Count"].ToString()));
+                    }
+                }
+
+                // --- Models by publisher ---
+                ret.Add(new KeyValuePair<string, string>("GROUP8", "Wydawcy"));
+
+                //Model count in class
+                cm.CommandText =
+                    @"SELECT COUNT(id) AS cnt, m.publisher, CAST(REPLACE(UPPER(REPLACE(scale, ""1:"", """")), ""INNA"", ""0"") AS int) AS scale, c.pubTotal
+	                    FROM Models m
+	                    JOIN (SELECT COUNT(id) AS pubTotal, publisher FROM Models GROUP BY publisher) c ON m.publisher = c.publisher
+                    GROUP BY m.publisher, scale
+                    ORDER BY m.publisher, scale DESC";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    
+                    String publisher = "";
+
+                    while (dr.Read()) {
+                        if (!publisher.Equals(dr["publisher"].ToString())) {
+                            ret.Add(new KeyValuePair<string, string>("*" + dr["publisher"].ToString(), dr["pubTotal"].ToString()));
+                            publisher = dr["publisher"].ToString();
+                        }
+                        if (dr["scale"].ToString().Equals("0")) {
+                            ret.Add(new KeyValuePair<string, string>("Inna", dr["cnt"].ToString()));
+                        } else {
+                            ret.Add(new KeyValuePair<string, string>(String.Format("1:{0}", dr["scale"].ToString()), dr["cnt"].ToString()));
+                        }
                     }
                 }
             }

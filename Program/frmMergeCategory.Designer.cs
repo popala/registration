@@ -47,7 +47,7 @@
             this.cboMaxCount.FormattingEnabled = true;
             this.cboMaxCount.Location = new System.Drawing.Point(226, 13);
             this.cboMaxCount.Name = "cboMaxCount";
-            this.cboMaxCount.Size = new System.Drawing.Size(61, 21);
+            this.cboMaxCount.Size = new System.Drawing.Size(249, 21);
             this.cboMaxCount.TabIndex = 1;
             this.cboMaxCount.SelectedIndexChanged += new System.EventHandler(this.cboMaxCount_SelectedIndexChanged);
             // 

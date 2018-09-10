@@ -12,6 +12,7 @@
 using Rejestracja.Data.Dao;
 using Rejestracja.Data.Objects;
 using Rejestracja.Utils;
+using Rejestracja.Controls;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -25,9 +26,10 @@ namespace Rejestracja {
         }
 
         private void frmMergeCategory_Load(object sender, EventArgs e) {
-            for(int i = 1; i < 6; i++) {
-                cboMaxCount.Items.Add(i);
+            for(int i = 1; i < 11; i++) {
+                cboMaxCount.Items.Add(new ComboBoxItem(i, i.ToString()));
             }
+            cboMaxCount.Items.Add(new ComboBoxItem(0, "Wszystkie kategorie"));
 
             lvCategories.View = View.Details;
             lvCategories.GridLines = true;
@@ -44,7 +46,7 @@ namespace Rejestracja {
         }
 
         private void cboMaxCount_SelectedIndexChanged(object sender, EventArgs e) {
-            loadSummary((int)cboMaxCount.SelectedItem);
+            loadSummary(((ComboBoxItem)cboMaxCount.SelectedItem).id);
         }
 
         private void lvCategories_ItemChecked(object sender, ItemCheckedEventArgs e) {
@@ -123,7 +125,7 @@ namespace Rejestracja {
                 }
             }
 
-            loadSummary((int)cboMaxCount.SelectedItem);
+            loadSummary(((ComboBoxItem)cboMaxCount.SelectedItem).id);
             Options.set("ValidateAgeGroup", "false");
             Application.UseWaitCursor = false;
         }
