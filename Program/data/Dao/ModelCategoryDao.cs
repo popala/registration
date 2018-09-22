@@ -20,10 +20,22 @@ namespace Rejestracja.Data.Dao
 {
     class ModelCategoryDao
     {
-        public static IEnumerable<ModelCategory> getList()
+        public static IEnumerable<ModelCategory> getList() {
+            return getList(0);
+        }
+
+        public static IEnumerable<ModelCategory> getList(int orderBy)
         {
+            String query = "SELECT Id, Code, Name, ModelClass, DisplayOrder FROM ModelCategory ORDER BY ";
+
+            switch (orderBy) {
+                case 1: query += "Code ASC"; break;
+                case 2: query += "Name ASC"; break;
+                default: query += "DisplayOrder ASC"; break;
+            }
+
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
-            using (SQLiteCommand cm = new SQLiteCommand("SELECT Id, Code, Name, ModelClass, DisplayOrder FROM ModelCategory ORDER BY DisplayOrder ASC", cn))
+            using (SQLiteCommand cm = new SQLiteCommand(query, cn))
             {
                 cn.Open();
 

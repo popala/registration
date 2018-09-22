@@ -166,7 +166,7 @@ namespace Rejestracja.Data.Dao {
 	                JOIN AgeGroup a ON e.AgeGroup = a.Name
                     LEFT JOIN ModelCategory mc ON mc.Id = e.ModelCategoryId
                 WHERE r.AwardId IS NULL
-                ORDER BY a.Age, DisplayOrder, e.ModelCategory, e.ModelClass, r.Place", cn)) {
+                ORDER BY a.Age, e.ModelClass, DisplayOrder, e.ModelCategory, r.Place", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
@@ -235,7 +235,7 @@ namespace Rejestracja.Data.Dao {
                     JOIN AgeGroup ag ON e.AgeGroup = ag.Name
                     LEFT JOIN ModelCategory mc ON mc.Id = e.ModelCategoryId
                 WHERE r.Place IS NOT NULL
-                    ORDER BY ag.Age ASC, mc.DisplayOrder, e.ModelCategory, e.ModelClass, r.Place", cn)) {
+                    ORDER BY ag.Age ASC, e.ModelClass, mc.DisplayOrder, e.ModelCategory, r.Place", cn)) {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;
 
