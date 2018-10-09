@@ -26,6 +26,10 @@ namespace Rejestracja.Utils
 {
     class DocHandler
     {
+        public static void mergeDocs(String documentFolder, String outFile) {
+            // TODO:
+        }
+
         public static void generateDiploma(String templateFile, String outFile, Result result)
         {
             String documentHeader = Options.get("DocumentHeader") ?? "";

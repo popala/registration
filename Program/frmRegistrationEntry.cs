@@ -248,7 +248,7 @@ namespace Rejestracja
 
                 RegistrationEntryDao.update(entry);
                 if (!chkPrintRegistrationCard.Checked) {
-                    this._parentForm.printRegistrationCard(long.Parse(txtEntryId.Text));
+                    this._parentForm.generateRegistrationCard(long.Parse(txtEntryId.Text), true);
                 }
                 this.Close();
             }
@@ -411,7 +411,7 @@ namespace Rejestracja
                 txtEntryId.Text = entry.entryId.ToString();
 
                 if (!chkPrintRegistrationCard.Checked) {
-                    this._parentForm.printRegistrationCard(entry.entryId);
+                    this._parentForm.generateRegistrationCard(entry.entryId, true);
                 }
 
                 txtEntryId.Text = "";

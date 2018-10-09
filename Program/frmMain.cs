@@ -682,10 +682,58 @@ namespace Rejestracja {
 
         private void mnuRCPrint_Click(object sender, EventArgs e) {
             int entryId = int.Parse(lvEntries.SelectedItems[0].SubItems[0].Text);
-            printRegistrationCard(entryId);
+            generateRegistrationCard(entryId, true);
         }
 
-        public void printRegistrationCard(long entryId) {
+        public void printAllRegistrationCards(bool sortByLastName) {
+            try {
+                List<KeyValuePair<string, int>> entries = new List<KeyValuePair<string, int>>();
+
+                Application.UseWaitCursor = true;
+
+                resetProgressBar(lvEntries.CheckedItems.Count);
+                toolStripProgressBar.Visible = true;
+                toolStripLabelSpring.Text = "Tworzenie dokumentów...";
+
+                // Delete all files
+                String directory = Path.GetDirectoryName(String.Format("{0}\\{1}\\", Resources.resolvePath("folderDokumentów"), "karty"));
+                if (!Directory.Exists(directory)) {
+                    Directory.CreateDirectory(directory);
+                }
+                foreach (string file in Directory.GetFiles(directory)) {
+                    File.Delete(file);
+                }
+
+                // Generate documents
+                foreach (ListViewItem item in lvEntries.Items) {
+                    entries.Add(new KeyValuePair<string, int>(item.SubItems[4].Text, int.Parse(item.SubItems[0].Text)));
+                }
+
+                if (mnuRPrintSorted.Checked) {
+                    entries.Sort((x, y) => x.Key.ToLower().CompareTo(y.Key.ToLower()));
+                }
+
+                foreach (KeyValuePair<string, int> entry in entries) {
+                    generateRegistrationCard(entry.Value, false);
+                    incrementProgressBar();
+                }
+                DocHandler.mergeDocs(directory, Path.Combine(directory, "RegCards.docx"));
+
+                toolStripLabelSpring.Text = "Wysyłanie dokumentów do druku...";
+                DocHandler.printWordDoc(Path.Combine(directory, "RegCards.docx"));
+
+                showStripLabelMessage("Dokumenty wysłane do druku");
+
+            } catch (Exception err) {
+                LogWriter.error(err);
+                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            } finally {
+                toolStripProgressBar.Visible = false;
+                Application.UseWaitCursor = false;
+            }
+        }
+
+        public void generateRegistrationCard(long entryId, bool printIt) {
             try {
                 RegistrationEntry entry = RegistrationEntryDao.get(entryId);
                 if (entry == null) {
@@ -702,7 +750,9 @@ namespace Rejestracja {
                 File.Delete(outFile);
 
                 DocHandler.generateRegistrationCard(Resources.resolvePath("templateKartyModelu"), outFile, entry);
-                DocHandler.printWordDoc(outFile);
+                if (printIt) {
+                    DocHandler.printWordDoc(outFile);
+                }
             }
             catch (Exception err) {
                 LogWriter.error(err);
@@ -879,7 +929,7 @@ namespace Rejestracja {
             }
 
             foreach (KeyValuePair<string, int> entry in entries) {
-                printRegistrationCard(entry.Value);
+                generateRegistrationCard(entry.Value, true);
                 incrementProgressBar();
             }
 
