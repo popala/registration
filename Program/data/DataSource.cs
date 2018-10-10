@@ -174,6 +174,9 @@ namespace Rejestracja {
                     RegistrationEntry newRegistration = new RegistrationEntry();
                     int age = 0;
                     int yearOfBirth = 0;
+                    DateTime dateOfBirth = DateTime.Now.AddYears(-21);
+
+                    AgeGroup defaultAgeGroup = ageGroups.OrderByDescending(x => x.upperAge).FirstOrDefault();
 
                     String[] parsedEntry = parser.ReadFields();
 
@@ -207,19 +210,31 @@ namespace Rejestracja {
                         }
 
                         //YearOfBirth AND AgeGroup
-                        if (int.TryParse(parsedEntry[fieldMap.YearOfBirth], out yearOfBirth)) {
-                            newRegistration.yearOfBirth = yearOfBirth;
-                            if (fieldMap.CalculateAgeGroup) {
-                                age = DateTime.Now.Year - yearOfBirth;
+                        if (fieldMap.YearOfBirth > -1 && !String.IsNullOrEmpty(parsedEntry[fieldMap.YearOfBirth])) {
+                            if (int.TryParse(parsedEntry[fieldMap.YearOfBirth], out yearOfBirth)) {
+                                newRegistration.yearOfBirth = yearOfBirth;
+                            } else if (DateTime.TryParse(parsedEntry[fieldMap.YearOfBirth], out dateOfBirth)) {
+                                newRegistration.yearOfBirth = dateOfBirth.Year;
+                            }
+                        }
+                        
+                        if (fieldMap.CalculateAgeGroup) {
+                            if (newRegistration.yearOfBirth < 1) {
+                                newRegistration.yearOfBirth = DateTime.Now.Year - 21;
+                            }
 
-                                AgeGroup[] ag = ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray<AgeGroup>();
-                                if (ag.Length == 1) {
-                                    newRegistration.ageGroup = ag[0].name;
-                                }
+                            age = DateTime.Now.Year - newRegistration.yearOfBirth;
+
+                            AgeGroup[] ag = ageGroups.Where(x => x.bottomAge <= age && x.upperAge >= age).ToArray<AgeGroup>();
+                            if (ag.Length == 1) {
+                                newRegistration.ageGroup = ag[0].name;
                             }
-                            else if (fieldMap.AgeGroup > -1) {
-                                newRegistration.ageGroup = parsedEntry[fieldMap.AgeGroup];
-                            }
+                        } else if (fieldMap.AgeGroup > -1) {
+                            newRegistration.ageGroup = parsedEntry[fieldMap.AgeGroup];
+                        }
+
+                        if (String.IsNullOrEmpty(newRegistration.ageGroup)) {
+                            newRegistration.ageGroup = defaultAgeGroup.name;
                         }
 
                         //ModelName
@@ -319,21 +334,22 @@ namespace Rejestracja {
 
                     if (newRegistration != null) {
                         ret.Add(
-                            new RegistrationEntry(
-                                newRegistration.timeStamp,
-                                newRegistration.email,
-                                newRegistration.firstName,
-                                newRegistration.lastName,
-                                newRegistration.clubName,
-                                newRegistration.ageGroup,
-                                newRegistration.modelName,
-                                newRegistration.modelClass,
-                                newRegistration.modelScale,
-                                newRegistration.modelPublisher,
-                                newRegistration.modelCategory,
-                                newRegistration.modelCategoryId,
-                                yearOfBirth
-                            )
+                            newRegistration
+                            //new RegistrationEntry(
+                            //    newRegistration.timeStamp,
+                            //    newRegistration.email,
+                            //    newRegistration.firstName,
+                            //    newRegistration.lastName,
+                            //    newRegistration.clubName,
+                            //    newRegistration.ageGroup,
+                            //    newRegistration.modelName,
+                            //    newRegistration.modelClass,
+                            //    newRegistration.modelScale,
+                            //    newRegistration.modelPublisher,
+                            //    newRegistration.modelCategory,
+                            //    newRegistration.modelCategoryId,
+                            //    newRegistration.yearOfBirth
+                            //)
                         );
                     }
                     if (badRecordCount > 0 && badRecordFile != null) {

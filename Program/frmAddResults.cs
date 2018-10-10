@@ -40,8 +40,8 @@ namespace Rejestracja
             lvResults.Columns.Add("Wydawca");
             lvResults.Columns.Add("Miejsce");
 
-            foreach (ModelCategory category in ModelCategoryDao.getList()) {
-                cboModelCategory.Items.Add(new ComboBoxItem(category.id, category.fullName));
+            foreach (ModelCategory category in ModelCategoryDao.getList(1)) {
+                cboModelCategory.Items.Add(new ComboBoxItem(category.id, category.code + " - " + category.name));
             }
             if (cboModelCategory.Items.Count > 0) {
                 cboModelCategory.SelectedIndex = 0;

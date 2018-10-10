@@ -457,7 +457,7 @@ namespace Rejestracja {
                     res[0].Selected = true;
                     res[0].EnsureVisible();
                 }
-            } catch (Exception e) {
+            } catch (Exception) {
                 // ignore exception
             }
         }
@@ -512,7 +512,7 @@ namespace Rejestracja {
                     highlightErrorCell(item, 7);
                 }
 
-                if (checkAgeGroupAge) {
+                if (agFound.Length > 0 && checkAgeGroupAge) {
                     int age = year - int.Parse(item.SubItems[5].Text);
                     if (age > agFound[0].upperAge || age < agFound[0].bottomAge) {
                         if (sb.Length == 0) {

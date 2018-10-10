@@ -9,7 +9,6 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-using Novacode;
 using Rejestracja.Data.Dao;
 using Rejestracja.Data.Objects;
 using System;
@@ -21,6 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Xceed.Words.NET;
 
 namespace Rejestracja.Utils
 {
@@ -31,47 +31,29 @@ namespace Rejestracja.Utils
             String documentHeader = Options.get("DocumentHeader") ?? "";
             String documentFooter = Options.get("DocumentFooter") ?? "";
 
-            using (DocX template = DocX.Load(templateFile))
-            {
-                template.ReplaceText("[Naglowek]", documentHeader, 
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Nagłówek]", documentHeader,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+            File.Copy(templateFile, outFile, true);
 
-
-                template.ReplaceText("[Imie]", result.entry.firstName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Imię]", result.entry.firstName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Nazwisko]", result.entry.lastName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-
-                template.ReplaceText("[GrupaWiekowa]", result.entry.ageGroup,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[NazwaModelu]", result.entry.modelName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KlasaModelu]", result.entry.modelClass,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KategoriaModelu]", result.entry.modelCategory,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-
-                template.ReplaceText("[Stopka]", documentFooter,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Stopka!]", documentFooter.ToUpper(),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+            using (DocX document = DocX.Load(outFile)) {
+                document.ReplaceText("[Naglowek]", documentHeader, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[Imie]", result.entry.firstName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[Imię]", result.entry.firstName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[Nazwisko]", result.entry.lastName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[GrupaWiekowa]", result.entry.ageGroup, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[NazwaModelu]", result.entry.modelName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[KlasaModelu]", result.entry.modelClass, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[KategoriaModelu]", result.entry.modelCategory, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[Stopka]", documentFooter, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[Stopka!]", documentFooter.ToUpper(), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
 
                 if (result.place > 0)
                 {
-                    template.ReplaceText("[Miejsce]", result.place.ToString(),
-                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    document.ReplaceText("[Miejsce]", result.place.ToString(), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
                 }
                 if (result.award != null)
                 {
-                    template.ReplaceText("[Nagroda]", result.award.title,
-                        false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+                    document.ReplaceText("[Nagroda]", result.award.title, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
                 }
-
-                template.SaveAs(outFile);
+                document.Save();
             }
         }
 
@@ -79,46 +61,29 @@ namespace Rejestracja.Utils
         {
             String documentFooter = Options.get("DocumentFooter");
 
-            using (DocX template = DocX.Load(templateFile))
-            {
-                template.ReplaceText("[DataRejestracji]", entry.timeStamp.ToString(Resources.DateFormat),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[NumerStartowy]", entry.entryId.ToString(),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[NS]", entry.entryId.ToString(),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Email]", entry.email,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Imie]", entry.firstName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Imię]", entry.firstName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Nazwisko]", entry.lastName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[L]", entry.lastName.Substring(0, 1).ToUpper(),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KlubModelarski]", entry.clubName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[GrupaWiekowa]", entry.ageGroup,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[NazwaModelu]", entry.modelName,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[SkalaModelu]", entry.modelScale,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KlasaModelu]", entry.modelClass,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Wydawnictwo]", entry.modelPublisher,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[KategoriaModelu]", entry.modelCategory,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[RokUrodzenia]", entry.yearOfBirth.ToString(),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Stopka]", documentFooter,
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-                template.ReplaceText("[Stopka!]", documentFooter.ToUpper(),
-                    false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
+            File.Copy(templateFile, outFile, true);
 
-                template.SaveAs(outFile);
+            using (DocX document = DocX.Load(outFile)) {
+                document.ReplaceText("[DataRejestracji]", entry.timeStamp.ToString(Resources.DateFormat), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[NumerStartowy]", entry.entryId.ToString(), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[NS]", entry.entryId.ToString(), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[Email]", entry.email, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[Imie]", entry.firstName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[Imię]", entry.firstName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[Nazwisko]", entry.lastName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[L]", entry.lastName.Substring(0, 1).ToUpper(), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[KlubModelarski]", entry.clubName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[GrupaWiekowa]", entry.ageGroup, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[NazwaModelu]", entry.modelName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[SkalaModelu]", entry.modelScale, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[KlasaModelu]", entry.modelClass, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[Wydawnictwo]", entry.modelPublisher, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[KategoriaModelu]", entry.modelCategory, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[RokUrodzenia]", entry.yearOfBirth.ToString(), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[Stopka]", documentFooter, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+                document.ReplaceText("[Stopka!]", documentFooter.ToUpper(), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+
+                document.Save();
             }
         }
 
@@ -171,7 +136,7 @@ namespace Rejestracja.Utils
                             Resources.FileNameInvalidChars.Replace(entry.modelClass, "-").ToUpper(), 
                             Resources.FileNameInvalidChars.Replace(entry.modelCategory, "-"));
 
-                        File.Copy(template, outputFileName);
+                        File.Copy(template, outputFileName, true);
 
                         doc = DocX.Load(outputFileName);
                         doc.ReplaceText("[Naglowek]", documentHeader, false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);

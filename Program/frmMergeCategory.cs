@@ -113,8 +113,7 @@ namespace Rejestracja {
             for (int i = 0; i < lvCategories.Items.Count; i++) {
                 ListViewItem item = lvCategories.Items[i];
                 if (item.Checked) {
-                    categoryId = (long)item.Tag;
-                    if (categoryId < 0) {
+                    if(!long.TryParse(item.Tag.ToString(), out categoryId)) {
                         continue;
                     }
                     sourceAgeGroup = item.Text;
