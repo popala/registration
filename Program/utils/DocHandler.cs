@@ -9,7 +9,7 @@
  *
  * You should have received a copy of the GNU General Public License along with this program.  If not, see http://www.gnu.org/licenses/.
  */
-using Novacode;
+using Xceed.Words.NET;
 using Rejestracja.Data.Dao;
 using Rejestracja.Data.Objects;
 using System;
@@ -37,7 +37,6 @@ namespace Rejestracja.Utils
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
                 template.ReplaceText("[Nagłówek]", documentHeader,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
-
 
                 template.ReplaceText("[Imie]", result.entry.modeler.firstName,
                     false, RegexOptions.IgnoreCase & RegexOptions.Singleline, null, null, MatchFormattingOptions.ExactMatch);
