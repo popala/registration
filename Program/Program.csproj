@@ -163,6 +163,7 @@
     <Compile Include="Data\Objects\FileImportFieldMap.cs" />
     <Compile Include="Utils\LogWriter.cs" />
     <Compile Include="Data\Dao\RegistrationEntryDao.cs" />
+    <Compile Include="Utils\PrintOptions.cs" />
     <Compile Include="Utils\Resources.cs" />
     <Compile Include="frmAddResults.cs">
       <SubType>Form</SubType>

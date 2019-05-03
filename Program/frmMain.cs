@@ -14,6 +14,7 @@ using Rejestracja.Data.Objects;
 using Rejestracja.Utils;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -69,6 +70,7 @@ namespace Rejestracja {
             //System.Threading.Thread.CurrentThread.CurrentCulture = new CultureInfo("pl-PL");
             //System.Threading.Thread.CurrentThread.CurrentUICulture = new CultureInfo("pl");
             InitializeComponent();
+            InitializeBackgroundWorkers();
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e) {
@@ -685,54 +687,6 @@ namespace Rejestracja {
             generateRegistrationCard(entryId, true);
         }
 
-        public void printAllRegistrationCards(bool sortByLastName) {
-            try {
-                List<KeyValuePair<string, int>> entries = new List<KeyValuePair<string, int>>();
-
-                Application.UseWaitCursor = true;
-
-                resetProgressBar(lvEntries.CheckedItems.Count);
-                toolStripProgressBar.Visible = true;
-                toolStripLabelSpring.Text = "Tworzenie dokumentów...";
-
-                // Delete all files
-                String directory = Path.GetDirectoryName(String.Format("{0}\\{1}\\", Resources.resolvePath("folderDokumentów"), "karty"));
-                if (!Directory.Exists(directory)) {
-                    Directory.CreateDirectory(directory);
-                }
-                foreach (string file in Directory.GetFiles(directory)) {
-                    File.Delete(file);
-                }
-
-                // Generate documents
-                foreach (ListViewItem item in lvEntries.Items) {
-                    entries.Add(new KeyValuePair<string, int>(item.SubItems[4].Text, int.Parse(item.SubItems[0].Text)));
-                }
-
-                if (mnuRPrintSorted.Checked) {
-                    entries.Sort((x, y) => x.Key.ToLower().CompareTo(y.Key.ToLower()));
-                }
-
-                foreach (KeyValuePair<string, int> entry in entries) {
-                    generateRegistrationCard(entry.Value, false);
-                    incrementProgressBar();
-                }
-                DocHandler.mergeDocs(directory, Path.Combine(directory, "RegCards.docx"));
-
-                toolStripLabelSpring.Text = "Wysyłanie dokumentów do druku...";
-                DocHandler.printWordDoc(Path.Combine(directory, "RegCards.docx"));
-
-                showStripLabelMessage("Dokumenty wysłane do druku");
-
-            } catch (Exception err) {
-                LogWriter.error(err);
-                MessageBox.Show(err.Message, "Błąd Aplikacji", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            } finally {
-                toolStripProgressBar.Visible = false;
-                Application.UseWaitCursor = false;
-            }
-        }
-
         public void generateRegistrationCard(long entryId, bool printIt) {
             try {
                 RegistrationEntry entry = RegistrationEntryDao.get(entryId);
@@ -902,41 +856,42 @@ namespace Rejestracja {
             }
         }
 
-        private void printEntryCards(bool printAll) {
-            List<KeyValuePair<string, int>> entries = new List<KeyValuePair<string, int>>();
-
-            Application.UseWaitCursor = true;
-
-            resetProgressBar(lvEntries.CheckedItems.Count);
-            toolStripProgressBar.Visible = true;
-            toolStripLabelSpring.Text = "Wysyłanie dokumentów do druku...";
-
-            if (printAll) {
-                foreach (ListViewItem item in lvEntries.Items) {
-                    entries.Add(new KeyValuePair<string, int>(item.SubItems[4].Text, int.Parse(item.SubItems[0].Text)));
-                }
-            }
-            else {
-                foreach (ListViewItem item in lvEntries.Items) {
-                    if (item.Checked) {
-                        entries.Add(new KeyValuePair<string, int>(item.SubItems[4].Text, int.Parse(item.SubItems[0].Text)));
-                    }
+        private void printEntryCards(PrintOptions printOptions, BackgroundWorker worker, DoWorkEventArgs e) {
+            // Check that the document dir exists and if it does, clean it up
+            String outputDirectory = Path.GetDirectoryName(String.Format("{0}\\{1}\\", Resources.resolvePath("folderDokumentów"), "karty"));
+            if (!Directory.Exists(outputDirectory)) {
+                Directory.CreateDirectory(outputDirectory);
+            } else {
+                DirectoryInfo dir = new DirectoryInfo(outputDirectory);
+                foreach (FileInfo file in dir.GetFiles("*.docx")) {
+                    file.Delete();
                 }
             }
 
-            if (mnuRPrintSorted.Checked) {
-                entries.Sort((x, y) => x.Key.ToLower().CompareTo(y.Key.ToLower()));
+            int i = 1;
+            foreach (KeyValuePair<string, int> entry in printOptions.entries) {
+                if (worker.CancellationPending) {
+                    e.Cancel = true;
+                    return;
+                }
+                generateRegistrationCard(entry.Value, !printOptions.printAsOneDocument);
+                worker.ReportProgress(i++);
             }
 
-            foreach (KeyValuePair<string, int> entry in entries) {
-                generateRegistrationCard(entry.Value, true);
-                incrementProgressBar();
+            // TODO: this needs to be modified from merging existing docs into generating a single doc
+            // the merge is taking waaaay too long
+            if (printOptions.printAsOneDocument) {
+                int count = printOptions.entries.Count;
+                worker.ReportProgress(1, new object[] { "reset", count });
+                String mergedDoc = Path.Combine(outputDirectory, "PelnaRejestracja.docx");
+
+                DocHandler.mergeDocs(outputDirectory, mergedDoc, worker, e);
+                if (worker.CancellationPending) {
+                    e.Cancel = true;
+                    return;
+                }
+                DocHandler.printWordDoc(mergedDoc);
             }
-
-            toolStripProgressBar.Visible = false;
-            showStripLabelMessage("Dokumenty wydrukowane");
-
-            Application.UseWaitCursor = false;
         }
 
         private void mnuRCUncheckAll_Click(object sender, EventArgs e) {
@@ -1282,7 +1237,26 @@ namespace Rejestracja {
         }
 
         private void mnuRSPrintChecked_Click(object sender, EventArgs e) {
-            printEntryCards(false);
+            //printEntryCards(false, true);
+            Application.UseWaitCursor = true;
+            toolStripProgressBar.Visible = true;
+            toolStripLabelSpring.Text = ("Tworzenie dokumentów i wysyłanie do druku...");
+
+            List<KeyValuePair<string, int>> entries = new List<KeyValuePair<string, int>>();
+            foreach (ListViewItem item in lvEntries.Items) {
+                if (item.Checked) {
+                    entries.Add(new KeyValuePair<string, int>(item.SubItems[4].Text, int.Parse(item.SubItems[0].Text)));
+                }
+            }
+            if (mnuRPrintSorted.Checked) {
+                entries.Sort((x, y) => x.Key.ToLower().CompareTo(y.Key.ToLower()));
+            }
+            PrintOptions printOptions = new PrintOptions(entries, true);
+
+            resetProgressBar(printOptions.entries.Count);
+            toolStripProgressBar.Visible = true;
+
+            backgroundRegistrationPrinter.RunWorkerAsync(printOptions);
         }
 
         private void mnuRSChangeCategory_Click(object sender, EventArgs e) {
@@ -1384,7 +1358,24 @@ namespace Rejestracja {
         }
 
         private void mnuRPrintAll_Click(object sender, EventArgs e) {
-            printEntryCards(true);
+            //printEntryCards(true, true);
+            Application.UseWaitCursor = true;
+            toolStripProgressBar.Visible = true;
+            toolStripLabelSpring.Text = ("Tworzenie dokumentów i wysyłanie do druku...");
+
+            List<KeyValuePair<string, int>> entries = new List<KeyValuePair<string, int>>();
+            foreach (ListViewItem item in lvEntries.Items) {
+                entries.Add(new KeyValuePair<string, int>(item.SubItems[4].Text, int.Parse(item.SubItems[0].Text)));
+            }
+            if (mnuRPrintSorted.Checked) {
+                entries.Sort((x, y) => x.Key.ToLower().CompareTo(y.Key.ToLower()));
+            }
+            PrintOptions printOptions = new PrintOptions(entries, true);
+
+            resetProgressBar(printOptions.entries.Count);
+            toolStripProgressBar.Visible = true;
+            
+            backgroundRegistrationPrinter.RunWorkerAsync(printOptions);
         }
 
         private void mnuRsSummary_Click(object sender, EventArgs e) {
@@ -1572,6 +1563,51 @@ namespace Rejestracja {
             else {
                 Options.set("ColumnWidth", "manual");
             }
+        }
+
+        /* SECTION Background workers */
+        // Set up the BackgroundWorker object by 
+        // attaching event handlers. 
+        private void InitializeBackgroundWorkers() {
+            backgroundRegistrationPrinter.DoWork += new DoWorkEventHandler(backgroundRegistrationPrinter_DoWork);
+            backgroundRegistrationPrinter.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundRegistrationPrinter_RunWorkerCompleted);
+            backgroundRegistrationPrinter.ProgressChanged += new ProgressChangedEventHandler(backgroundRegistrationPrinter_ProgressChanged);
+        }
+
+        // Do work here
+        private void backgroundRegistrationPrinter_DoWork(object sender, DoWorkEventArgs e) {
+            PrintOptions printOptions = (PrintOptions)e.Argument;
+            printEntryCards(printOptions, (sender as BackgroundWorker), e);
+            e.Result = true;
+        }
+
+        // This event handler updates the progress bar.
+        private void backgroundRegistrationPrinter_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+            //this.progressBar1.Value = e.ProgressPercentage;
+            String state = e.UserState as String ?? "";
+            if (state.Equals("reset")) {
+                toolStripLabelSpring.Text = "Przygotowywanie do druku...";
+                resetProgressBar(0);
+            } else {
+                incrementProgressBar();
+            }
+        }
+
+        private void backgroundRegistrationPrinter_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+            // First, handle the case where an exception was thrown.
+            if (e.Error != null) {
+                MessageBox.Show(e.Error.Message);
+            } else if (e.Cancelled) {
+                // Next, handle the case where the user canceled the operation.
+                // Note that due to a race condition in the DoWork event handler, the Cancelled
+                // flag may not have been set, even though CancelAsync was called.
+                showStripLabelMessage("Operacja przerwana");
+            } else {
+                // Finally, handle the case where the operation succeeded.
+                showStripLabelMessage("Dokumenty wysłane do druku");
+            }
+            toolStripProgressBar.Visible = false;
+            Application.UseWaitCursor = false;
         }
     }
 }

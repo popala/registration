@@ -129,6 +129,7 @@
             this.tsBtnSummary = new System.Windows.Forms.ToolStripButton();
             this.tsErrorSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.tsBtnErrorCount = new System.Windows.Forms.ToolStripButton();
+            this.backgroundRegistrationPrinter = new System.ComponentModel.BackgroundWorker();
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -1016,6 +1017,11 @@
             this.tsBtnErrorCount.Text = "Błędy Rejestracji";
             this.tsBtnErrorCount.Click += new System.EventHandler(this.tsBtnErrorCount_Click);
             // 
+            // backgroundRegistrationPrinter
+            // 
+            this.backgroundRegistrationPrinter.WorkerReportsProgress = true;
+            this.backgroundRegistrationPrinter.WorkerSupportsCancellation = true;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1152,6 +1158,7 @@
         private System.Windows.Forms.ToolStripMenuItem mnuHHelp;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
         private System.Windows.Forms.ToolStripMenuItem mnuRVAutoWidth;
+        private System.ComponentModel.BackgroundWorker backgroundRegistrationPrinter;
 
 
     }

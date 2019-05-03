@@ -14,6 +14,7 @@ using Rejestracja.Data.Objects;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -26,8 +27,27 @@ namespace Rejestracja.Utils
 {
     class DocHandler
     {
-        public static void mergeDocs(String documentFolder, String outFile) {
-            // TODO:
+        public static void mergeDocs(String documentFolder, String outFile, BackgroundWorker worker, DoWorkEventArgs e) {
+            if (File.Exists(outFile)) {
+                File.Delete(outFile);
+            }
+
+            List<String> fileList = Directory.EnumerateFiles(documentFolder, "*.docx", SearchOption.TopDirectoryOnly).ToList();
+
+            using (DocX document = DocX.Create(outFile, DocumentTypes.Document)) {
+                int i = 1;
+                foreach (String fileName in fileList) {
+                    document.InsertDocument(DocX.Load(fileName), true);
+                    document.Paragraphs.Last().InsertPageBreakAfterSelf();
+                    worker.ReportProgress(i++);
+
+                    if (worker.CancellationPending) {
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+                document.Save();
+            }
         }
 
         public static void generateDiploma(String templateFile, String outFile, Result result)
