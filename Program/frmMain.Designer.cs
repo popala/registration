@@ -87,6 +87,7 @@
             this.toolStripLabelSpring = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.cmsResultsRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cmsRCDeleteResult = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRCPrintDiploma = new System.Windows.Forms.ToolStripMenuItem();
@@ -578,7 +579,8 @@
             this.statusBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabelSpring,
             this.toolStripStatusLabel,
-            this.toolStripProgressBar});
+            this.toolStripProgressBar,
+            this.toolStripStatusLabel1});
             this.statusBar.Location = new System.Drawing.Point(0, 676);
             this.statusBar.Name = "statusBar";
             this.statusBar.Size = new System.Drawing.Size(1182, 22);
@@ -588,7 +590,7 @@
             // toolStripLabelSpring
             // 
             this.toolStripLabelSpring.Name = "toolStripLabelSpring";
-            this.toolStripLabelSpring.Size = new System.Drawing.Size(1167, 17);
+            this.toolStripLabelSpring.Size = new System.Drawing.Size(916, 17);
             this.toolStripLabelSpring.Spring = true;
             this.toolStripLabelSpring.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -603,6 +605,12 @@
             this.toolStripProgressBar.Name = "toolStripProgressBar";
             this.toolStripProgressBar.Size = new System.Drawing.Size(100, 16);
             this.toolStripProgressBar.Visible = false;
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(0, 17);
+            this.toolStripStatusLabel1.Visible = false;
             // 
             // cmsResultsRightClick
             // 
@@ -1159,6 +1167,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
         private System.Windows.Forms.ToolStripMenuItem mnuRVAutoWidth;
         private System.ComponentModel.BackgroundWorker backgroundRegistrationPrinter;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
 
 
     }

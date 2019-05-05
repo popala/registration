@@ -81,6 +81,59 @@ namespace Rejestracja.Utils
             }
         }
 
+        private static void replaceRegistrationTemplateValues(DocX template, RegistrationEntry entry, string footer) {
+            template.ReplaceText("[DataRejestracji]", entry.timeStamp.ToString(Resources.DateFormat), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[NumerStartowy]", entry.entryId.ToString(), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[NS]", entry.entryId.ToString(), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[Email]", entry.email, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[Imie]", entry.firstName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[Imię]", entry.firstName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[Nazwisko]", entry.lastName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[L]", entry.lastName.Substring(0, 1).ToUpper(), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[KlubModelarski]", entry.clubName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[GrupaWiekowa]", entry.ageGroup, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[NazwaModelu]", entry.modelName, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[SkalaModelu]", entry.modelScale, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[KlasaModelu]", entry.modelClass, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[Wydawnictwo]", entry.modelPublisher, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[KategoriaModelu]", entry.modelCategory, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[RokUrodzenia]", entry.yearOfBirth.ToString(), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[Stopka]", footer, false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+            template.ReplaceText("[Stopka!]", footer.ToUpper(), false, RegexOptions.IgnoreCase & RegexOptions.CultureInvariant, null, null, MatchFormattingOptions.ExactMatch);
+        }
+
+        public static void generateRegistrationCardsForPrint(String templateFile, String outFile, List<KeyValuePair<string, int>> entries, BackgroundWorker worker, DoWorkEventArgs e) {
+            String documentFooter = Options.get("DocumentFooter");
+            
+            if(File.Exists(outFile)) {
+                File.Delete(outFile);
+            }
+
+            using (DocX templateDocument = DocX.Load(templateFile))
+            using (DocX outputDocument = DocX.Create(outFile, DocumentTypes.Document)) {
+                int i = 1;
+                foreach (KeyValuePair<string, int> entryKey in entries) {
+                    RegistrationEntry entry = RegistrationEntryDao.get(entryKey.Value);
+                    if (entry == null) {
+                        MessageBox.Show("Numer startowy nie został znaleziony", "Błędne dane", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    } else {
+                        using (DocX modifiedDoc = templateDocument.Copy()) {
+                            replaceRegistrationTemplateValues(modifiedDoc, entry, documentFooter);
+                            outputDocument.InsertDocument(modifiedDoc, true);
+                            outputDocument.Paragraphs.Last().InsertPageBreakAfterSelf();
+                        }
+                    }
+                    worker.ReportProgress(i++);
+                    if (worker.CancellationPending) {
+                        outputDocument.Save();
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+                outputDocument.Save();
+            }
+        }
+
         public static void generateRegistrationCard(String templateFile, String outFile, RegistrationEntry entry)
         {
             String documentFooter = Options.get("DocumentFooter");

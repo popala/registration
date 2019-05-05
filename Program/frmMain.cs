@@ -868,29 +868,30 @@ namespace Rejestracja {
                 }
             }
 
-            int i = 1;
-            foreach (KeyValuePair<string, int> entry in printOptions.entries) {
-                if (worker.CancellationPending) {
-                    e.Cancel = true;
-                    return;
-                }
-                generateRegistrationCard(entry.Value, !printOptions.printAsOneDocument);
-                worker.ReportProgress(i++);
-            }
-
-            // TODO: this needs to be modified from merging existing docs into generating a single doc
-            // the merge is taking waaaay too long
             if (printOptions.printAsOneDocument) {
-                int count = printOptions.entries.Count;
-                worker.ReportProgress(1, new object[] { "reset", count });
+                worker.ReportProgress(1, new object[] { "reset", printOptions.entries.Count });
                 String mergedDoc = Path.Combine(outputDirectory, "PelnaRejestracja.docx");
 
-                DocHandler.mergeDocs(outputDirectory, mergedDoc, worker, e);
+                Console.Out.WriteLine("Starting document generation...");
+                DocHandler.generateRegistrationCardsForPrint(Resources.resolvePath("templateKartyModelu"), mergedDoc, printOptions.entries, worker, e);
                 if (worker.CancellationPending) {
                     e.Cancel = true;
                     return;
                 }
+                Console.Out.WriteLine("Finished generating document, sending it to a printer...");
                 DocHandler.printWordDoc(mergedDoc);
+                Console.Out.WriteLine("Done printing.");
+
+            } else {
+                int i = 1;
+                foreach (KeyValuePair<string, int> entry in printOptions.entries) {
+                    if (worker.CancellationPending) {
+                        e.Cancel = true;
+                        return;
+                    }
+                    generateRegistrationCard(entry.Value, !printOptions.printAsOneDocument);
+                    worker.ReportProgress(i++);
+                }
             }
         }
 
@@ -1594,6 +1595,7 @@ namespace Rejestracja {
         }
 
         private void backgroundRegistrationPrinter_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+            Console.Out.WriteLine("backgroundRegistrationPrinter_RunWorkerCompleted()");
             // First, handle the case where an exception was thrown.
             if (e.Error != null) {
                 MessageBox.Show(e.Error.Message);
@@ -1605,6 +1607,7 @@ namespace Rejestracja {
             } else {
                 // Finally, handle the case where the operation succeeded.
                 showStripLabelMessage("Dokumenty wysłane do druku");
+                Console.Out.WriteLine("Worker completed, success!");
             }
             toolStripProgressBar.Visible = false;
             Application.UseWaitCursor = false;
