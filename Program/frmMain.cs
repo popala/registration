@@ -170,6 +170,12 @@ namespace Rejestracja {
             tsBVStandard.Checked = standard;
             mnuRVGroupped.Checked = !standard;
             tsBVGroupped.Checked = !standard;
+            mnuRVHighlightAwards.Enabled = !standard;
+            tsBVShowAwards.Enabled = !standard;
+            if (standard) {
+                mnuRVHighlightAwards.Checked = false;
+                tsBVShowAwards.Checked = false;
+            }
         }
 
         public void uiEnabled(bool isEnabled) {
@@ -184,6 +190,8 @@ namespace Rejestracja {
 
         private void initUi(bool hasValidFile) {
             String[] headers;
+
+            lvEntries.SmallImageList = imageListMainView;
 
             tsBtnErrorCount.Visible = false;
             tsErrorSeparator.Visible = false;
@@ -330,9 +338,14 @@ namespace Rejestracja {
 
             if (mnuRVStandard.Checked) {
                 loadSortedRegistrationList(searchValue);
+                highlightInvalidRegistrationEntries();
             }
             else {
                 loadGrouppedRegistrationList(searchValue);
+                highlightInvalidRegistrationEntries();
+                if (mnuRVHighlightAwards.Checked) {
+                    highlightAwards();
+                }
             }
 
             if (mnuRVAutoWidth.Checked) {
@@ -340,8 +353,6 @@ namespace Rejestracja {
                     header.Width = -2;
                 }
             }
-
-            highlightInvalidRegistrationEntries();
 
             lvEntries.EndUpdate();
             Application.UseWaitCursor = false;
@@ -389,7 +400,7 @@ namespace Rejestracja {
                 foreach (string[] entry in entries) {
                     if (!categoryName.Equals(entry[9])) {
                         categoryName = entry[9];
-                        group = new ListViewGroup(categoryName);
+                        group = new ListViewGroup(categoryName + " - " + entry[10]);
                         lvEntries.Groups.Add(group);
                     }
                     ListViewItem item = new ListViewItem(entry, group);
@@ -472,6 +483,38 @@ namespace Rejestracja {
 
             item.SubItems[subitem].ForeColor = color;
             item.SubItems[subitem].Font = new Font(item.Font, FontStyle.Bold);
+        }
+
+        private void highlightCategoryWinner(ListViewItem item) {
+            item.ForeColor = System.Drawing.Color.DarkGreen;
+            item.UseItemStyleForSubItems = true;
+        }
+
+        private void highlightAwardWinner(ListViewItem item) {
+            item.ImageKey = "Favorite";
+        }
+
+        private void highlightAwards() {
+            List<Result> results = ResultDao.getCategoryResults().ToList();
+            foreach (Result result in results) {
+                ListViewItem[] res = lvEntries.Items.Find(result.entry.entryId.ToString(), false);
+                if (res.Length == 1) {
+                    highlightCategoryWinner(res[0]);
+                    res[0].ToolTipText = result.place.ToString() + " miejsce";
+                }
+            }
+            results = ResultDao.getAwardResults().ToList();
+            foreach (Result result in results) {
+                ListViewItem[] res = lvEntries.Items.Find(result.entry.entryId.ToString(), false);
+                if (res.Length == 1) {
+                    highlightAwardWinner(res[0]);
+                    if (res[0].ToolTipText.Length > 0) {
+                        res[0].ToolTipText += "; " + result.award.title;
+                    } else {
+                        res[0].ToolTipText = result.award.title;
+                    }
+                }
+            }
         }
 
         private void highlightInvalidRegistrationEntries() {
@@ -1048,6 +1091,11 @@ namespace Rejestracja {
             loadRegistrationList(tsTxtSearch.Text);
         }
 
+        private void mnuRVHighlightAwards_Click(object sender, EventArgs e) {
+            tsBVShowAwards.Checked = mnuRVHighlightAwards.Checked;
+            loadRegistrationList(tsTxtSearch.Text);
+        }
+
         private void mnuRsCategoryDiplomas_Click(object sender, EventArgs e) {
             DialogResult q = MessageBox.Show("Wydrukować dokumenty po utworzeniu?", "Dyplomy - Druk", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
             if (q == System.Windows.Forms.DialogResult.Cancel)
@@ -1522,6 +1570,11 @@ namespace Rejestracja {
             else {
                 Options.set("ColumnWidth", "manual");
             }
+        }
+
+        private void tsBVShowAwards_Click(object sender, EventArgs e) {
+            mnuRVHighlightAwards.Checked = tsBVShowAwards.Checked;
+            mnuRVHighlightAwards_Click(sender, e);
         }
     }
 }

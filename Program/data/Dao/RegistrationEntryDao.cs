@@ -134,7 +134,7 @@ namespace Rejestracja.Data.Dao
                         cm.Parameters.Add("@EntryId", System.Data.DbType.Int32).Value = n;
                     }
 
-                    query.Append(" Email LIKE @SearchValue OR FirstName LIKE @SearchValue OR LastName LIKE @SearchValue OR ModelName LIKE @SearchValue ");
+                    query.Append(" Email LIKE @SearchValue OR FirstName LIKE @SearchValue OR LastName LIKE @SearchValue OR ModelName LIKE @SearchValue OR ClubName LIKE @SearchValue ");
                     cm.Parameters.Add("@SearchValue", System.Data.DbType.String, 64).Value = "%" + searchValue + "%";
                 }
                 query.Append(" ORDER BY ").Append(sortField).Append(sortAscending ? " ASC" : " DESC");
@@ -195,7 +195,7 @@ namespace Rejestracja.Data.Dao
                         cm.Parameters.Add("@EntryId", System.Data.DbType.Int32).Value = n;
                     }
 
-                    query.Append(" Email LIKE @SearchValue OR FirstName LIKE @SearchValue OR LastName LIKE @SearchValue OR ModelName LIKE @SearchValue ");
+                    query.Append(" Email LIKE @SearchValue OR FirstName LIKE @SearchValue OR LastName LIKE @SearchValue OR ModelName LIKE @SearchValue OR ClubName LIKE @SearchValue ");
                     cm.Parameters.Add("@SearchValue", System.Data.DbType.String, 64).Value = "%" + searchValue + "%";
                 }
                 query.Append(" ORDER BY DisplayOrder, r.ModelCategory, r.AgeGroup, r.ModelClass, r.EntryId");
@@ -540,6 +540,19 @@ namespace Rejestracja.Data.Dao
                         }
 
                         ret.Add(new KeyValuePair<string, string>(dr["AgeGroup"].ToString(), dr["cnt"].ToString()));
+                    }
+                }
+
+                //Model count by publisher
+                ret.Add(new KeyValuePair<string, string>("GROUP8", "Wydawcy"));
+                cm.CommandText =
+                    @"SELECT COALESCE(ModelPublisher, 'N/A') AS ModelPublisher, COUNT(EntryId) AS cnt
+                        FROM Registration
+                        GROUP BY ModelPublisher
+                    ORDER BY cnt DESC";
+                using (SQLiteDataReader dr = cm.ExecuteReader()) {
+                    while (dr.Read()) {
+                        ret.Add(new KeyValuePair<string, string>(dr["ModelPublisher"].ToString(), dr["cnt"].ToString()));
                     }
                 }
             }
