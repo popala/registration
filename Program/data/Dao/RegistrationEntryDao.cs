@@ -134,7 +134,7 @@ namespace Rejestracja.Data.Dao
                         cm.Parameters.Add("@EntryId", System.Data.DbType.Int32).Value = n;
                     }
 
-                    query.Append(" Email LIKE @SearchValue OR FirstName LIKE @SearchValue OR LastName LIKE @SearchValue OR ModelName LIKE @SearchValue OR ClubName LIKE @SearchValue ");
+                    query.Append(" Email LIKE @SearchValue OR FirstName LIKE @SearchValue OR LastName LIKE @SearchValue OR ModelName LIKE @SearchValue ");
                     cm.Parameters.Add("@SearchValue", System.Data.DbType.String, 64).Value = "%" + searchValue + "%";
                 }
                 query.Append(" ORDER BY ").Append(sortField).Append(sortAscending ? " ASC" : " DESC");
@@ -195,7 +195,7 @@ namespace Rejestracja.Data.Dao
                         cm.Parameters.Add("@EntryId", System.Data.DbType.Int32).Value = n;
                     }
 
-                    query.Append(" Email LIKE @SearchValue OR FirstName LIKE @SearchValue OR LastName LIKE @SearchValue OR ModelName LIKE @SearchValue OR ClubName LIKE @SearchValue ");
+                    query.Append(" Email LIKE @SearchValue OR FirstName LIKE @SearchValue OR LastName LIKE @SearchValue OR ModelName LIKE @SearchValue ");
                     cm.Parameters.Add("@SearchValue", System.Data.DbType.String, 64).Value = "%" + searchValue + "%";
                 }
                 query.Append(" ORDER BY DisplayOrder, r.ModelCategory, r.AgeGroup, r.ModelClass, r.EntryId");
