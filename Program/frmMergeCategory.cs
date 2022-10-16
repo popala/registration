@@ -122,7 +122,7 @@ namespace Rejestracja {
                 }
             }
 
-            loadSummary((int)cboMaxCount.SelectedItem);
+            loadSummary(((ComboBoxItem)cboMaxCount.SelectedItem).id);
             Options.set("ValidateAgeGroup", "false");
             Application.UseWaitCursor = false;
         }

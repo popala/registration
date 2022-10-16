@@ -56,6 +56,7 @@
             this.mnuRVGroupped = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator15 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuRVAutoWidth = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRVHighlightAwards = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.mnuRPrintAll = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuRPrintSorted = new System.Windows.Forms.ToolStripMenuItem();
@@ -116,6 +117,7 @@
             this.tsBtnView = new System.Windows.Forms.ToolStripSplitButton();
             this.tsBVStandard = new System.Windows.Forms.ToolStripMenuItem();
             this.tsBVGroupped = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsBVShowAwards = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator12 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.tsBtnMergeCategories = new System.Windows.Forms.ToolStripButton();
@@ -129,6 +131,8 @@
             this.tsBtnSummary = new System.Windows.Forms.ToolStripButton();
             this.tsErrorSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.tsBtnErrorCount = new System.Windows.Forms.ToolStripButton();
+            this.backgroundRegistrationPrinter = new System.ComponentModel.BackgroundWorker();
+            this.imageListMainView = new System.Windows.Forms.ImageList(this.components);
             this.menuStrip1.SuspendLayout();
             this.cmsEntryRightClick.SuspendLayout();
             this.statusBar.SuspendLayout();
@@ -330,7 +334,8 @@
             this.mnuRVStandard,
             this.mnuRVGroupped,
             this.toolStripSeparator15,
-            this.mnuRVAutoWidth});
+            this.mnuRVAutoWidth,
+            this.mnuRVHighlightAwards});
             this.mnuRView.Name = "mnuRView";
             this.mnuRView.Size = new System.Drawing.Size(279, 22);
             this.mnuRView.Text = "&Widok";
@@ -365,6 +370,14 @@
             this.mnuRVAutoWidth.Size = new System.Drawing.Size(249, 22);
             this.mnuRVAutoWidth.Text = "Automatyczna szerokość kolumn";
             this.mnuRVAutoWidth.Click += new System.EventHandler(this.mnuRVAutoWidth_Click);
+            // 
+            // mnuRVHighlightAwards
+            // 
+            this.mnuRVHighlightAwards.CheckOnClick = true;
+            this.mnuRVHighlightAwards.Name = "mnuRVHighlightAwards";
+            this.mnuRVHighlightAwards.Size = new System.Drawing.Size(249, 22);
+            this.mnuRVHighlightAwards.Text = "Pokaż nagrodzonych";
+            this.mnuRVHighlightAwards.Click += new System.EventHandler(this.mnuRVHighlightAwards_Click);
             // 
             // toolStripSeparator7
             // 
@@ -884,7 +897,8 @@
             this.tsBtnView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.tsBtnView.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsBVStandard,
-            this.tsBVGroupped});
+            this.tsBVGroupped,
+            this.tsBVShowAwards});
             this.tsBtnView.Image = ((System.Drawing.Image)(resources.GetObject("tsBtnView.Image")));
             this.tsBtnView.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.tsBtnView.Name = "tsBtnView";
@@ -895,16 +909,25 @@
             // tsBVStandard
             // 
             this.tsBVStandard.Name = "tsBVStandard";
-            this.tsBVStandard.Size = new System.Drawing.Size(143, 22);
+            this.tsBVStandard.Size = new System.Drawing.Size(184, 22);
             this.tsBVStandard.Text = "Standardowy";
             this.tsBVStandard.Click += new System.EventHandler(this.tsBVStandard_Click);
             // 
             // tsBVGroupped
             // 
             this.tsBVGroupped.Name = "tsBVGroupped";
-            this.tsBVGroupped.Size = new System.Drawing.Size(143, 22);
+            this.tsBVGroupped.Size = new System.Drawing.Size(184, 22);
             this.tsBVGroupped.Text = "Grupowany";
             this.tsBVGroupped.Click += new System.EventHandler(this.tsBVGroupped_Click);
+            // 
+            // tsBVShowAwards
+            // 
+            this.tsBVShowAwards.CheckOnClick = true;
+            this.tsBVShowAwards.Enabled = false;
+            this.tsBVShowAwards.Name = "tsBVShowAwards";
+            this.tsBVShowAwards.Size = new System.Drawing.Size(184, 22);
+            this.tsBVShowAwards.Text = "Pokaż nagrodzonych";
+            this.tsBVShowAwards.Click += new System.EventHandler(this.tsBVShowAwards_Click);
             // 
             // toolStripSeparator12
             // 
@@ -1015,6 +1038,17 @@
             this.tsBtnErrorCount.Size = new System.Drawing.Size(96, 22);
             this.tsBtnErrorCount.Text = "Błędy Rejestracji";
             this.tsBtnErrorCount.Click += new System.EventHandler(this.tsBtnErrorCount_Click);
+            // 
+            // backgroundRegistrationPrinter
+            // 
+            this.backgroundRegistrationPrinter.WorkerReportsProgress = true;
+            this.backgroundRegistrationPrinter.WorkerSupportsCancellation = true;
+            // 
+            // imageListMainView
+            // 
+            this.imageListMainView.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListMainView.ImageStream")));
+            this.imageListMainView.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageListMainView.Images.SetKeyName(0, "Favorite");
             // 
             // frmMain
             // 
@@ -1152,6 +1186,11 @@
         private System.Windows.Forms.ToolStripMenuItem mnuHHelp;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator15;
         private System.Windows.Forms.ToolStripMenuItem mnuRVAutoWidth;
+        private System.ComponentModel.BackgroundWorker backgroundRegistrationPrinter;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripMenuItem tsBVShowAwards;
+        private System.Windows.Forms.ToolStripMenuItem mnuRVHighlightAwards;
+        private System.Windows.Forms.ImageList imageListMainView;
 
 
     }
