@@ -20,6 +20,9 @@ namespace Rejestracja
 {
     public partial class frmSettings : Form
     {
+        private int _modelCategorySortColumn = 0;
+        private bool _modelCategorySortAscending = true;
+
         public frmSettings()
         {
             InitializeComponent();
@@ -264,7 +267,7 @@ namespace Rejestracja
         {
             lvModelCategory.Items.Clear();
 
-            foreach (ModelCategory mc in ModelCategoryDao.getList())
+            foreach (ModelCategory mc in ModelCategoryDao.getList(_modelCategorySortColumn, _modelCategorySortAscending))
             {
                 ListViewItem li = new ListViewItem(new String[] { mc.code, mc.name, mc.modelClass });
                 li.Tag = mc.id;
