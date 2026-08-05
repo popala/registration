@@ -21,18 +21,20 @@ namespace Rejestracja.Data.Dao
     class ModelCategoryDao
     {
         public static IEnumerable<ModelCategory> getList() {
-            return getList(0);
+            return getList(0, true);
         }
 
-        public static IEnumerable<ModelCategory> getList(int orderBy)
+        public static IEnumerable<ModelCategory> getList(int orderBy, bool sortAscending)
         {
             String query = "SELECT Id, Code, Name, ModelClass, DisplayOrder FROM ModelCategory ORDER BY ";
+            String sort = (sortAscending ? "ASC" : "DESC");
 
             switch (orderBy) {
-                case 1: query += "Code ASC"; break;
-                case 2: query += "Name ASC"; break;
-                default: query += "DisplayOrder ASC"; break;
+                case 1: query += "Code"; break;
+                case 2: query += "Name"; break;
+                default: query += "DisplayOrder"; break;
             }
+            query += " " + sort;
 
             using (SQLiteConnection cn = new SQLiteConnection(Resources.getConnectionString()))
             using (SQLiteCommand cm = new SQLiteCommand(query, cn))

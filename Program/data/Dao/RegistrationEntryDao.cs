@@ -241,7 +241,7 @@ namespace Rejestracja.Data.Dao
                         ModelName, ModelClass, ModelScale, ModelPublisher, ModelCategory, COALESCE(ModelCategoryId, -1) AS ModelCategoryId,
                         COALESCE(YearOfBirth,0) AS YearOfBirth, COALESCE(SkipErrorValidation,0) AS SkipErrorValidation
                     FROM Registration 
-                    ORDER BY ModelCategory, AgeGroup, ModelClass, EntryId", cn))
+                    ORDER BY ModelCategory, AgeGroup, ModelClass, LastName, FirstName", cn))
             {
                 cn.Open();
                 cm.CommandType = System.Data.CommandType.Text;

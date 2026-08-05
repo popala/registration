@@ -59,7 +59,7 @@ namespace Rejestracja
                 cboAgeGroup.Items.Add(new ComboBoxItem(item.id, item.name));
 
             cboYearOfBirth.Items.Clear();
-            for (int i = 1900; i < 2015; i++)
+            for (int i = 1900; i < DateTime.Now.Year; i++)
                 cboYearOfBirth.Items.Add(i.ToString());
             cboYearOfBirth.SelectedIndex = cboYearOfBirth.FindString("1970");
 

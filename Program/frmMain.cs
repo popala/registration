@@ -76,7 +76,11 @@ namespace Rejestracja {
         }
 
         private void frmMain_Resize(object sender, EventArgs e) {
-            if (this.WindowState != FormWindowState.Maximized) {
+            //Ensure that a data file exists
+            String dataFile = Properties.Settings.Default.DataFile;
+            bool bHasValidFile = !String.IsNullOrWhiteSpace(dataFile) && File.Exists(dataFile);
+
+            if (this.WindowState != FormWindowState.Maximized && bHasValidFile) {
                 String size = string.Format("{0},{1},{2},{3}", this.Left, this.Top, this.Width, this.Height);
                 Options.set("frmMainSize", size);
             }
